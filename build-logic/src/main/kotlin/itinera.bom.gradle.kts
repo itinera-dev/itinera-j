@@ -4,6 +4,7 @@ plugins {
     `java-platform`
     id("com.diffplug.spotless")
     id("itinera.published")
+    id("itinera.raised-dependencies")
 }
 
 spotless {

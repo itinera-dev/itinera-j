@@ -14,6 +14,7 @@ plugins {
     id("dev.detekt")
     id("com.diffplug.spotless")
     id("itinera.published")
+    id("itinera.raised-dependencies")
     id("com.github.jk1.dependency-license-report")
 }
 

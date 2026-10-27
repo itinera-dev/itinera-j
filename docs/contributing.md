@@ -39,6 +39,7 @@ What the modules share lives in `build-logic`, a build included by `settings.gra
 - `itinera.kotlin-library`, applied by every published library: Kotlin on the JDK 25 toolchain, compiled for JVM 17 with `apiVersion` one release behind the compiler and the matching standard library, explicit API mode, warnings as errors in Kotlin and javac, the module descriptor, JUnit, Spotless, detekt, Dokka, the ABI dump, the licence check and dependency locking;
 - `itinera.published`, applied by every published artifact: Maven Central through the `com.vanniktech.maven.publish` plugin, the POM Central requires, signing when a key is given, and the `Package` repository under `build/package`;
 - `itinera.bom`, applied by `itinera-bom`;
+- `itinera.raised-dependencies`, applied by `itinera.kotlin-library`, `itinera.bom` and `itinera.root`: `RaiseGuava`, which raises Guava wherever it is resolved, as "Dependencies" says;
 - `itinera.root`, applied by the root project: the formatting of the build's own files and the check that the two manifests agree, `CheckManifests` over `ManifestAgreement`, which `build-logic`'s own tests check.
 
 `gradle/libs.versions.toml` holds every version: Kotlin, the standard library applications get, and every plugin and library, but for two that Gradle reads before the catalogue exists: the toolchain resolver plugin in `settings.gradle.kts`, and Gradle itself in `gradle/wrapper/gradle-wrapper.properties`.
@@ -73,7 +74,7 @@ A change to a version, a dependency or a plugin rewrites both in the same commit
 
 Read the diff of both files: every new entry is a dependency the change meant to add.
 
-An advisory that `advisories` reports is fixed by raising the library, through a constraint when a tool brings it, as the library convention does for the Jackson, FreeMarker and jsoup that Dokka brings, in `dokkaHtmlGeneratorRuntime`. Only an advisory on a tool that runs on this repository's own sources alone, at a version the build cannot choose, goes in `osv-scanner.toml`, with its reason and a date three months on, when it is checked again.
+An advisory that `advisories` reports is fixed by raising the library. When a tool brings it, a constraint raises it where the tool resolves it: the Jackson BOM in build-logic, for the Dokka plugin, and the Jackson BOM with constraints on FreeMarker and jsoup in `dokkaHtmlGeneratorRuntime`, for Dokka's generator, which a Dokka plugin resolved in another of Dokka's configurations needs as well. Where no configuration can be named, as for the formatters Spotless resolves on its own, a component metadata rule raises it everywhere, as `RaiseGuava`, in the convention `itinera.raised-dependencies`, does for Guava. Only an advisory on a tool that runs on this repository's own sources alone, at a version the build cannot choose, such as the Kotlin Gradle plugin that Gradle's `kotlin-dsl` embeds, goes in `osv-scanner.toml`, with its reason and a date three months on, when it is checked again.
 
 ## Conformance
 

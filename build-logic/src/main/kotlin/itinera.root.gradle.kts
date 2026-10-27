@@ -1,6 +1,7 @@
 plugins {
     base
     id("com.diffplug.spotless")
+    id("itinera.raised-dependencies")
 }
 
 spotless {
