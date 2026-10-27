@@ -58,6 +58,15 @@ public final class org/itineradev/itinera/engine/DataObject : org/itineradev/iti
 	public final fun getComponents ()Ljava/util/List;
 }
 
+public final class org/itineradev/itinera/engine/DeliveryKt {
+	public static final fun caught (Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public static final fun deliverToEveryone (Ljava/util/List;Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class org/itineradev/itinera/engine/ErrorsKt {
+	public static final fun rethrowError (Ljava/lang/Throwable;)V
+}
+
 public abstract interface class org/itineradev/itinera/engine/KotlinClasses {
 	public abstract fun shapeOf (Ljava/lang/Class;)Lorg/itineradev/itinera/engine/KotlinShape;
 }
@@ -1844,6 +1853,38 @@ public final class org/itineradev/itinera/policy/WorkflowHook : java/lang/Enum {
 	public fun toString ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/itineradev/itinera/policy/WorkflowHook;
 	public static fun values ()[Lorg/itineradev/itinera/policy/WorkflowHook;
+}
+
+public final class org/itineradev/itinera/report/DebugReporter : org/itineradev/itinera/report/Reporter {
+	public fun report (Lorg/itineradev/itinera/event/Event;)V
+}
+
+public final class org/itineradev/itinera/report/DefaultDispatcher : org/itineradev/itinera/report/Dispatcher {
+	public fun <init> ()V
+	public fun add (Lorg/itineradev/itinera/report/Reporter;)V
+	public fun dispatch (Lorg/itineradev/itinera/event/Event;)V
+	public fun setGlobalMetadata (Ljava/lang/String;Ljava/lang/Object;)V
+}
+
+public final class org/itineradev/itinera/report/DefaultDispatcherFactory : org/itineradev/itinera/report/DispatcherFactory {
+	public fun <init> ()V
+	public fun create ()Lorg/itineradev/itinera/report/DefaultDispatcher;
+	public synthetic fun create ()Lorg/itineradev/itinera/report/Dispatcher;
+}
+
+public abstract interface class org/itineradev/itinera/report/Dispatcher {
+	public abstract fun add (Lorg/itineradev/itinera/report/Reporter;)V
+	public abstract fun dispatch (Lorg/itineradev/itinera/event/Event;)V
+	public abstract fun setGlobalMetadata (Ljava/lang/String;Ljava/lang/Object;)V
+}
+
+public abstract interface class org/itineradev/itinera/report/DispatcherFactory {
+	public abstract fun create ()Lorg/itineradev/itinera/report/Dispatcher;
+}
+
+public abstract interface class org/itineradev/itinera/report/Reporter {
+	public abstract fun report (Lorg/itineradev/itinera/event/Event;)V
+	public fun setGlobalMetadata (Ljava/lang/String;Ljava/lang/Object;)V
 }
 
 public final class org/itineradev/itinera/service/ProviderName : org/itineradev/itinera/Name {

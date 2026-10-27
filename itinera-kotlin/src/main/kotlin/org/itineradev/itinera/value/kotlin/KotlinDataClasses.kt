@@ -17,6 +17,7 @@ import org.itineradev.itinera.engine.DataObject
 import org.itineradev.itinera.engine.KotlinClasses
 import org.itineradev.itinera.engine.KotlinShape
 import org.itineradev.itinera.engine.NotData
+import org.itineradev.itinera.engine.rethrowError
 
 /**
  * Reads Kotlin classes for the core, which finds it through `java.util.ServiceLoader`: a data class
@@ -46,11 +47,6 @@ private fun isClass(type: Class<*>): Boolean =
     type.getAnnotation(Metadata::class.java)?.kind == CLASS
 
 private const val CLASS = 1
-
-/** An [Error] is never caught. */
-private fun rethrowError(thrown: Throwable) {
-    if (thrown is Error) throw thrown
-}
 
 /**
  * An object's own properties are held in static fields, so they are read besides its instance
