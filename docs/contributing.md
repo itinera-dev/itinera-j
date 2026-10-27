@@ -1,0 +1,129 @@
+# Contributing to itinera-j
+
+This guide covers what is specific to the JVM implementation. The rules every itinera-dev repository follows are in the [organisation's contributing guide](https://github.com/itinera-dev/.github/blob/main/CONTRIBUTING.md), and the full process is in [PROCESS.md](https://github.com/itinera-dev/spec/blob/main/PROCESS.md).
+
+## How work arrives here
+
+What Itinera does is defined in [itinera-dev/spec](https://github.com/itinera-dev/spec): the proposals (the PRDs) and the behaviour specification. How the JVM does it is defined here, in **tech specs**.
+
+1. Each accepted proposal gets an **implementation issue** here, labelled `implements-proposal`, covering Kotlin and Java together. An issue opened before its proposal is accepted also carries `waiting for spec`, and no pull request is opened for it until that label is removed.
+2. The **tech spec** is agreed in that issue: API shape in Kotlin and in Java, artifacts and packages touched, types, annotations, builder methods, error handling, tests and the definition of done.
+3. The implementing pull request adds the tech spec as `docs/specs/NNNN-short-name.md`, where `NNNN` is the proposal's number, together with the code.
+4. The issue closes when the proposal's [conformance](https://github.com/itinera-dev/conformance) cases pass in both runners.
+
+Bugs and API questions can be opened here directly; changes to behaviour are proposals in the spec repository.
+
+## The plan being implemented
+
+Tier 1 is implemented following the [tier 1 plan](tier-1-plan.md), in stages tracked in [#1](https://github.com/itinera-dev/itinera-j/issues/1). The plan holds who the implementation is for, the architecture, the tests, the order of work and the tooling; each proposal's tech spec holds what concerns that proposal alone. From stage 3, `architecture.md` draws what has been built, and is kept true by every pull request.
+
+## The build
+
+One Gradle build, with the Kotlin DSL, a module per artifact, and every artifact at the version in `gradle.properties`:
+
+| Module | Published | Holds |
+|---|---|---|
+| `itinera` | yes | The core, written in Kotlin, which every application depends on: values, events, the synchronous parts, the builder, descriptors, the engine and `LocalExecutor`. It brings Kotlin's standard library only |
+| `itinera-kotlin` | yes | What Kotlin applications add: asynchronous workflows on coroutines, the reader and value walk for Kotlin classes, and the reified forms. It brings kotlin-reflect and kotlinx.coroutines |
+| `itinera-java` | yes, from stage 3 | What Java applications add: the Java face of the core |
+| `itinera-testing` | yes | Test support, which an application adds to its tests only |
+| `itinera-checker` | yes, from stage 12 | Compile-time checks of the annotations, for KSP and javac |
+| `itinera-bom` | yes | The bill of materials: the version of every artifact above |
+| `conformance` | no, from stage 2 | The Kotlin conformance runner |
+| `conformance-java` | no, from stage 3 | The Java conformance runner, written wholly in Java |
+
+Each published artifact is a Java module named after it, such as `org.itineradev.itinera` and `org.itineradev.itinera.kotlin`, with its descriptor in `src/main/java/module-info.java`. Kotlin compiles the module's classes, and javac then compiles the descriptor with those classes patched into the module.
+
+What the modules share lives in `build-logic`, a build included by `settings.gradle.kts`, as convention plugins:
+
+- `itinera.kotlin-library`, applied by every published library: Kotlin on the JDK 25 toolchain, compiled for JVM 17 with `apiVersion` one release behind the compiler and the matching standard library, explicit API mode, warnings as errors in Kotlin and javac, the module descriptor, JUnit, Spotless, detekt, Dokka, the ABI dump, the licence check and dependency locking;
+- `itinera.published`, applied by every published artifact: Maven Central through the `com.vanniktech.maven.publish` plugin, the POM Central requires, signing when a key is given, and the `Package` repository under `build/package`;
+- `itinera.bom`, applied by `itinera-bom`;
+- `itinera.root`, applied by the root project: the formatting of the build's own files and the check that the two manifests agree, `CheckManifests` over `ManifestAgreement`, which `build-logic`'s own tests check.
+
+`gradle/libs.versions.toml` holds every version: Kotlin, the standard library applications get, and every plugin and library, but for two that Gradle reads before the catalogue exists: the toolchain resolver plugin in `settings.gradle.kts`, and Gradle itself in `gradle/wrapper/gradle-wrapper.properties`.
+
+## Building and testing
+
+The build needs a JDK 17 or later to start Gradle; Gradle's toolchains then use JDK 25 to compile, and the JDK the tests run on. A toolchain that is not installed is downloaded through the Foojay resolver. Apart from that, `./gradlew` fetches everything, Gradle included, at the versions the repository pins.
+
+Every one of these is a required check in CI, each one Gradle task:
+
+- `./gradlew spotlessCheck`: ktfmt in its Kotlin style for Kotlin and the build scripts, google-java-format for Java, through Spotless;
+- `./gradlew detekt`: detekt on its default rules with the changes in `config/detekt/detekt.yml`;
+- `./gradlew assemble`: compiles everything, with every warning an error;
+- `./gradlew test`: JUnit Jupiter, on JDK 25 unless `-Pitinera.test-jdk=N` names another; CI runs it on JDK 17, 21 and 25 on Linux, and on JDK 25 on Windows and macOS;
+- `./gradlew checkKotlinAbi`: compares each artifact's public API with its dump under `api/`, which `./gradlew updateKotlinAbi` writes, so every change to what an artifact exposes shows in a pull request;
+- `./gradlew dokkaGenerate`: the API reference, with Dokka, every public item documented and warnings as errors;
+- `./gradlew publishAllPublicationsToPackageRepository`: everything Maven Central would receive, written to `build/package` instead: jars, sources and javadoc jars, POMs and Gradle module metadata;
+- `./gradlew checkLicense`: the licences of each artifact's run-time dependencies, what applications receive, against `config/allowed-licences.json`, the licences `deny.toml` allows in itinera-rs;
+- `./gradlew checkManifests`: the Kotlin and the Java manifests agree, as "Conformance" says;
+- `./gradlew :build-logic:check`: the tests of the build's own code.
+
+`./gradlew check dokkaGenerate publishAllPublicationsToPackageRepository` runs all of them, the tests on JDK 25. CI also runs `advisories`, [OSV-Scanner](https://google.github.io/osv-scanner/) over every lock file through its GitHub action, and `conformance`. Each week, CI also runs the tests on the newest Kotlin, pre-releases included, and on the newest JDK.
+
+## Dependencies
+
+Every configuration of every project is locked, in `gradle.lockfile` beside its build script, and `settings-gradle.lockfile` holds only the version catalogue's configuration, since the toolchain resolver plugin is pinned by its version and verified, not locked. Every artifact Gradle fetches, plugins and tools included, is checked against its SHA-256 in `gradle/verification-metadata.xml`.
+
+A change to a version, a dependency or a plugin rewrites both in the same commit:
+
+1. `./gradlew :itinera:dependencies :itinera-kotlin:dependencies :itinera-testing:dependencies :itinera-bom:dependencies :build-logic:dependencies dependencies --write-locks`, with every new project added to the list;
+2. `GRADLE_USER_HOME=$(mktemp -d) ./gradlew --write-verification-metadata sha256 check dokkaGenerate publishAllPublicationsToPackageRepository --rerun-tasks`, which fetches every artifact the build uses and records it. The empty Gradle home matters: with a warm cache, Gradle never fetches the parent POMs and BOMs it already holds, so it never records them, and CI, which starts empty, then fails verification.
+
+Read the diff of both files: every new entry is a dependency the change meant to add.
+
+## Conformance
+
+Two manifests, each of the shape the conformance cases' FORMAT.md describes: `conformance.json` for Kotlin and `conformance-java.json` for Java. Each pins the conformance cases, lists the proposals implemented and the capabilities claimed, and maps each scenario excluded as impossible to express to the test that proves it. A proposal is listed only by the pull request that completes it, and in both at once.
+
+The two must agree, which `./gradlew checkManifests` checks: the same `cases`; the same `proposals`; Kotlin's `capabilities` are Java's with `async`, which only Kotlin claims; and under `impossible`, Java lists Kotlin's tags but `unexpected-result` and `non-string-journey-id`, which Java can write and never lists, each shared tag with the same scenarios, by `feature` and `scenario`. Each manifest names its own language's proof.
+
+In CI, the `run-conformance` action of [itinera-dev/actions](https://github.com/itinera-dev/actions) reads `conformance.json`, checks the excluded scenarios, runs the scenarios whose proposals are all listed, and writes the report. While no proposal is listed, it checks the manifest without starting the runner, which arrives in stage 2 as `./gradlew :conformance:run`. The Java runner, `./gradlew :conformance-java:run`, follows in stage 3, once the action can be told which manifest to read.
+
+To run the cases yourself, check out [itinera-dev/conformance](https://github.com/itinera-dev/conformance) at the tag the manifests pin, then run a runner from this repository with:
+
+- `ITINERA_CONFORMANCE_CASES` set to that checkout's `cases` directory;
+- `ITINERA_CONFORMANCE_TAGS` set to a Cucumber tag expression selecting the scenarios to run;
+- `ITINERA_CONFORMANCE_REPORT` set to the file the Cucumber JSON report is written to.
+
+## Commit messages and the changelog
+
+Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/), and each commit that changes what an application meets carries its changelog entries as trailers, which [git-cliff](https://git-cliff.org/) gathers into a release's section of `CHANGELOG.md`. For example:
+
+```text
+feat(step)!: give an attempt a type of its own
+
+An attempt's number was a bare Int, so nothing said that it
+counted from 1 or named the first attempt.
+
+Added: `Attempt` in `org.itineradev.itinera.step`, an attempt's number, counted from 1, with `isFirst`.
+Changed: An attempt's number is an `Attempt` instead of an `Int` wherever it is public.
+Refs #N
+```
+
+1. The subject is `type(scope): description`, or `type: description`. The types are `feat`, `fix`, `refactor`, `perf`, `docs`, `test`, `ci`, `build`, `chore` and `revert`, and the scope is a package's concept or an area, such as `step`, `value`, `java`, `release` or `conformance`. A `!` before the colon marks a change that breaks code written for the last release.
+2. The body, after a blank line, says what changed and why.
+3. The trailers close the message: one `Added:`, `Changed:`, `Fixed:` or `Removed:` line for each changelog entry, then `Refs #N` or `Closes #N`. An entry says what an application meets, by its package and name, naming the artifact when it is not the core, and for a breaking change what replaces what is gone. Changes to CI, the release workflow or the documentation have entries only when they change what is published or how.
+4. A `feat`, `fix` or breaking commit with no entry, such as a fix to work that no release has shipped yet, says `Changelog: none`.
+
+The required `commit messages` check runs the `commit-messages` action of [itinera-dev/actions](https://github.com/itinera-dev/actions) on every commit of a pull request other than merges. It refuses a subject of another form, a type outside the list, a body that does not follow a blank line, a `feat`, `fix` or breaking commit with neither entries nor `Changelog: none`, entries together with `Changelog: none`, and any entry that git-cliff would not read, would cut short or would read with more attached, such as an entry on several lines or a misspelt section. It does not check the wording. Before pushing, `PYTHONPATH=<actions> python3 <actions>/commit-messages/main.py origin/main..HEAD`, run in this repository with `<actions>` a checkout of itinera-dev/actions and Python 3.11 or later, checks the local commits the same way.
+
+Pull requests merge with a merge commit, never squashed, because a squash folds every commit's trailers into one message. A commit's entries cannot change once it merges, so the release pull request reconciles entries that a later commit made untrue.
+
+`cliff.toml` holds git-cliff's template. `git cliff --unreleased --tag v<version> --strip all` prints the section for `<version>` from the entries of the commits since the last release. The template is written for git-cliff 2.14.2, which installs with `pip install git-cliff==2.14.2`.
+
+## Releasing
+
+Every artifact is published to [Maven Central](https://central.sonatype.com/) under the group `org.itinera-dev`, at one version. A maintainer requests a release by pushing, on `main`, an annotated tag `v` followed by its version, such as `v0.1.0-beta.1`, with the message `itinera-j <version>`, after the pull request that sets the version and adds its section to `CHANGELOG.md` has merged. The release workflow, `.github/workflows/release.yml`, then runs four jobs, each waiting for the one before:
+
+1. **release gate**: the `release-gate` action of itinera-dev/actions refuses the tag unless it matches the version in `gradle.properties`, the commit is on `main`, `CHANGELOG.md` has a section for the version, and the manifests list every tier 1 proposal of the pinned cases, except one whose every case needs a capability the manifest does not claim. The action reads `Cargo.toml` and `package.json` today; it learns to read `gradle.properties` and the second manifest before the first release;
+2. **CI**: the whole of `.github/workflows/ci.yml` runs again on the tagged commit, since its run on `main` after a merge blocks nothing, and its conformance job keeps the report;
+3. **Maven Central**: in the `maven-central` environment, whose deployment rule lets only tags `v*` use it, `./gradlew publishAndReleaseToMavenCentral` signs every artifact, uploads them to the Central Portal as one deployment and releases it, with the portal's user token and the signing key taken from the environment's secrets `MAVEN_CENTRAL_USERNAME`, `MAVEN_CENTRAL_PASSWORD`, `SIGNING_KEY` and `SIGNING_KEY_PASSWORD`;
+4. **GitHub release**: the `create-release` action of itinera-dev/actions creates the release with the notes of the version's changelog section, as a pre-release for a version such as `0.1.0-beta.1`, and attaches the conformance report of the CI run, as `conformance-report`; once the Java runner lands in stage 3, each runner's report has a name of its own and both are attached.
+
+A version published to Maven Central can never be deleted or replaced, which is why the gate and CI come first. Before pushing the tag, the maintainer runs `./gradlew check dokkaGenerate publishAllPublicationsToPackageRepository` at the commit to be tagged.
+
+Each artifact's javadoc jar, which Central requires and Dokka makes, is the artifact's API reference, which [javadoc.io](https://javadoc.io/) serves for every release with no work of ours.
+
+The release gate, the GitHub release and the conformance run are actions of [itinera-dev/actions](https://github.com/itinera-dev/actions), shared with every language, which this repository uses at `v1`.
