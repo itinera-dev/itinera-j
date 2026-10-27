@@ -1,0 +1,4 @@
+public final class org/itineradev/itinera/value/kotlin/TypeTokensKt {
+	public static final fun tokenOf (Lkotlin/reflect/KType;)Lorg/itineradev/itinera/value/TypeToken;
+}
+
