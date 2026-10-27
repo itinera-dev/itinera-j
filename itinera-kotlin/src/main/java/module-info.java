@@ -7,6 +7,7 @@ module org.itineradev.itinera.kotlin {
   requires kotlin.reflect;
 
   exports org.itineradev.itinera.journey.kotlin;
+  exports org.itineradev.itinera.report.async;
   exports org.itineradev.itinera.value.kotlin;
 
   provides org.itineradev.itinera.engine.KotlinClasses with
