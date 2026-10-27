@@ -1,0 +1,26 @@
+[versions]
+kotlin = "2.4.21"
+# The standard library applications get: one release behind the compiler, so
+# itinera calls nothing newer and does not raise an application's own.
+kotlin-api = "2.3"
+kotlin-stdlib = "2.3.21"
+dokka = "2.2.0"
+detekt = "2.0.0-alpha.6"
+spotless = "8.10.4"
+ktfmt = "0.64"
+# 1.37.0 calls javac API newer than JDK 25.
+google-java-format = "1.36.1"
+maven-publish = "0.37.0"
+license-report = "3.1.4"
+junit = "6.1.3"
+
+[libraries]
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+dokka-gradle-plugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
+detekt-gradle-plugin = { module = "dev.detekt:detekt-gradle-plugin", version.ref = "detekt" }
+spotless-gradle-plugin = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
+maven-publish-gradle-plugin = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "maven-publish" }
+license-report-gradle-plugin = { module = "com.github.jk1:gradle-license-report", version.ref = "license-report" }
+junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }

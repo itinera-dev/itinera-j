@@ -1,0 +1,15 @@
+# Only what differs from detekt's defaults, on which the build builds.
+
+exceptions:
+  # Kotlin's TODO() throws an Error, which itinera never catches.
+  NotImplementedDeclaration:
+    active: true
+
+style:
+  ForbiddenComment:
+    active: true
+    comments:
+      - value: 'TODO'
+        reason: 'The code holds no TODO comments: open an issue instead.'
+      - value: 'FIXME'
+        reason: 'The code holds no FIXME comments: open an issue instead.'

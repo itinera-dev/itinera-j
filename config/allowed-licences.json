@@ -1,0 +1,11 @@
+{
+  "allowedLicenses": [
+    { "moduleLicense": "MIT License" },
+    { "moduleLicense": "Apache License, Version 2.0" },
+    { "moduleLicense": "The 2-Clause BSD License" },
+    { "moduleLicense": "The 3-Clause BSD License" },
+    { "moduleLicense": "ISC License" },
+    { "moduleLicense": "Unicode License v3" },
+    { "moduleLicense": "zlib License" }
+  ]
+}
