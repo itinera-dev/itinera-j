@@ -60,7 +60,7 @@ Every one of these is a required check in CI, each one Gradle task:
 - `./gradlew checkManifests`: the Kotlin and the Java manifests agree, as "Conformance" says;
 - `./gradlew :build-logic:check`: the tests of the build's own code.
 
-`./gradlew check dokkaGenerate publishAllPublicationsToPackageRepository` runs all of them, the tests on JDK 25. CI also runs `advisories`, [OSV-Scanner](https://google.github.io/osv-scanner/) over every lock file through its GitHub action, and `conformance`. Each week, CI also runs the tests on the newest Kotlin, pre-releases included, and on the newest JDK.
+`./gradlew check dokkaGenerate publishAllPublicationsToPackageRepository` runs all of them, the tests on JDK 25. CI also runs `advisories`, [OSV-Scanner](https://google.github.io/osv-scanner/) over the lock files and the verification metadata through its GitHub action, and `conformance`. Each week, CI also runs the tests on the newest Kotlin, pre-releases included, and on the newest JDK.
 
 ## Dependencies
 
@@ -72,6 +72,8 @@ A change to a version, a dependency or a plugin rewrites both in the same commit
 2. `GRADLE_USER_HOME=$(mktemp -d) ./gradlew --write-verification-metadata sha256 check dokkaGenerate publishAllPublicationsToPackageRepository --rerun-tasks`, which fetches every artifact the build uses and records it. The empty Gradle home matters: with a warm cache, Gradle never fetches the parent POMs and BOMs it already holds, so it never records them, and CI, which starts empty, then fails verification.
 
 Read the diff of both files: every new entry is a dependency the change meant to add.
+
+An advisory that `advisories` reports is fixed by raising the library, through a constraint when a tool brings it, as the library convention does for the Jackson, FreeMarker and jsoup that Dokka brings, in `dokkaHtmlGeneratorRuntime`. Only an advisory on a tool that runs on this repository's own sources alone, at a version the build cannot choose, goes in `osv-scanner.toml`, with its reason and a date three months on, when it is checked again.
 
 ## Conformance
 

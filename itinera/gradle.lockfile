@@ -2,13 +2,13 @@
 # Manual edits can break the build and are not advised.
 # This file is expected to be part of source control.
 # To regenerate this file, run: ./gradlew :itinera:dependencies --write-locks
-com.fasterxml.jackson.core:jackson-annotations:2.15.3=dokkaHtmlGeneratorRuntimeResolver~internal
-com.fasterxml.jackson.core:jackson-core:2.15.3=dokkaHtmlGeneratorRuntimeResolver~internal
-com.fasterxml.jackson.core:jackson-databind:2.15.3=dokkaHtmlGeneratorRuntimeResolver~internal
-com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.15.3=dokkaHtmlGeneratorRuntimeResolver~internal
-com.fasterxml.jackson.module:jackson-module-kotlin:2.15.3=dokkaHtmlGeneratorRuntimeResolver~internal
-com.fasterxml.jackson:jackson-bom:2.15.3=dokkaHtmlGeneratorRuntimeResolver~internal
-com.fasterxml.woodstox:woodstox-core:6.5.1=dokkaHtmlGeneratorRuntimeResolver~internal
+com.fasterxml.jackson.core:jackson-annotations:2.18.12=dokkaHtmlGeneratorRuntimeResolver~internal
+com.fasterxml.jackson.core:jackson-core:2.18.12=dokkaHtmlGeneratorRuntimeResolver~internal
+com.fasterxml.jackson.core:jackson-databind:2.18.12=dokkaHtmlGeneratorRuntimeResolver~internal
+com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.18.12=dokkaHtmlGeneratorRuntimeResolver~internal
+com.fasterxml.jackson.module:jackson-module-kotlin:2.18.12=dokkaHtmlGeneratorRuntimeResolver~internal
+com.fasterxml.jackson:jackson-bom:2.18.12=dokkaHtmlGeneratorRuntimeResolver~internal
+com.fasterxml.woodstox:woodstox-core:7.0.0=dokkaHtmlGeneratorRuntimeResolver~internal
 com.github.ben-manes.caffeine:caffeine:2.9.3=detekt
 com.google.errorprone:error_prone_annotations:2.10.0=detekt
 dev.detekt:detekt-api:2.0.0-alpha.6=detekt
@@ -41,8 +41,8 @@ io.github.detekt.sarif4k:sarif4k-jvm:0.6.0=detekt
 io.github.detekt.sarif4k:sarif4k:0.6.0=detekt
 org.apiguardian:apiguardian-api:1.1.2=testCompileClasspath
 org.checkerframework:checker-qual:3.19.0=detekt
-org.codehaus.woodstox:stax2-api:4.2.1=dokkaHtmlGeneratorRuntimeResolver~internal
-org.freemarker:freemarker:2.3.32=dokkaHtmlGeneratorRuntimeResolver~internal
+org.codehaus.woodstox:stax2-api:4.2.2=dokkaHtmlGeneratorRuntimeResolver~internal
+org.freemarker:freemarker:2.3.35=dokkaHtmlGeneratorRuntimeResolver~internal
 org.jcommander:jcommander:1.85=detekt
 org.jetbrains.dokka:analysis-kotlin-symbols:2.2.0=dokkaHtmlGeneratorRuntimeResolver~internal
 org.jetbrains.dokka:analysis-markdown:2.2.0=dokkaHtmlGeneratorRuntimeResolver~internal
@@ -107,7 +107,7 @@ org.jetbrains:annotations:13.0=compileClasspath,kotlinAbiValidationCompatClasspa
 org.jetbrains:annotations:23.0.0=detekt,dokkaHtmlGeneratorRuntimeResolver~internal
 org.jetbrains:markdown-jvm:0.7.3=dokkaHtmlGeneratorRuntimeResolver~internal
 org.jetbrains:markdown:0.7.3=dokkaHtmlGeneratorRuntimeResolver~internal
-org.jsoup:jsoup:1.16.1=dokkaHtmlGeneratorRuntimeResolver~internal
+org.jsoup:jsoup:1.23.2=dokkaHtmlGeneratorRuntimeResolver~internal
 org.jspecify:jspecify:1.0.0=testCompileClasspath
 org.junit.jupiter:junit-jupiter-api:6.1.3=testCompileClasspath,testRuntimeClasspath
 org.junit.jupiter:junit-jupiter-engine:6.1.3=testRuntimeClasspath

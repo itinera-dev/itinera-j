@@ -87,7 +87,7 @@ Each of these is a required CI check, and every one must pass before pushing:
 
 `./gradlew check dokkaGenerate publishAllPublicationsToPackageRepository` runs all of them, the tests on JDK 25. A change to the public API also runs `./gradlew updateKotlinAbi` and commits the dumps under each artifact's `api/`. A change to a dependency or a plugin rewrites the locks and the verification metadata, as docs/contributing.md "Dependencies" says.
 
-CI also runs the `advisories` check, OSV-Scanner over the lock files, which has no Gradle task, and `conformance`.
+CI also runs the `advisories` check, OSV-Scanner over the lock files and the verification metadata, which has no Gradle task, and `conformance`.
 
 The `commit messages` check is required as well. Before pushing, run it on the commits not pushed yet, as docs/contributing.md "Commit messages and the changelog" says, since a pushed commit that has a layer of a stack above it cannot be reworded without rebasing that layer.
 

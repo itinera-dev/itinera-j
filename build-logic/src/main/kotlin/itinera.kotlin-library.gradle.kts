@@ -58,6 +58,11 @@ dependencies {
     testImplementation(platform(libs.findLibrary("junit-bom").get()))
     testImplementation(libs.findLibrary("junit-jupiter").get())
     testRuntimeOnly(libs.findLibrary("junit-platform-launcher").get())
+    dokkaHtmlGeneratorRuntime(platform(libs.findLibrary("jackson-bom").get()))
+    constraints {
+        dokkaHtmlGeneratorRuntime(libs.findLibrary("freemarker").get())
+        dokkaHtmlGeneratorRuntime(libs.findLibrary("jsoup").get())
+    }
 }
 
 // The tests run on the JDK this property names, so CI can run them on each
