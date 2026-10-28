@@ -1,5 +1,9 @@
 public final class org/itineradev/itinera/request/java/JavaRequests {
 	public static final field INSTANCE Lorg/itineradev/itinera/request/java/JavaRequests;
+	public static final fun optionalError ()Lorg/itineradev/itinera/request/Request;
+	public static final fun optionalFromStep (Ljava/lang/String;Lorg/itineradev/itinera/value/TypeToken;)Lorg/itineradev/itinera/request/Request;
+	public static final fun optionalFromWorkflow (Ljava/lang/String;Lorg/itineradev/itinera/value/TypeToken;)Lorg/itineradev/itinera/request/Request;
 	public static final fun optionalInput (Ljava/lang/String;Lorg/itineradev/itinera/value/TypeToken;)Lorg/itineradev/itinera/request/Request;
+	public static final fun optionalReason ()Lorg/itineradev/itinera/request/Request;
 }
 

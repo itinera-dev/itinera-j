@@ -1,6 +1,7 @@
 package org.itineradev.itinera.engine
 
 import org.itineradev.itinera.event.Event
+import org.itineradev.itinera.policy.HookCall
 import org.itineradev.itinera.report.ReporterOf
 import org.itineradev.itinera.request.Got
 import org.itineradev.itinera.request.StepKind
@@ -21,6 +22,9 @@ public interface Parts<M : Mode> {
 
     /** Whether [factory] builds a step of this mode. */
     public fun accepts(factory: StepFactory<*>?): Boolean
+
+    /** Whether [hook] is a hook of this mode. */
+    public fun accepts(hook: HookCall<*, *, *, *>?): Boolean
 
     /** Whether [reporter] is a reporter of this mode. */
     public fun accepts(reporter: ReporterOf<*>?): Boolean

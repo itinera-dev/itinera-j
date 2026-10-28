@@ -23,6 +23,52 @@ public final class org/itineradev/itinera/instance/async/AsyncInstanceBuilderKt 
 	public static final fun instance (Lorg/itineradev/itinera/workflow/WorkflowDescriptor;Ljava/lang/Object;)Lorg/itineradev/itinera/instance/async/AsyncInstanceBuilder;
 }
 
+public abstract interface class org/itineradev/itinera/policy/async/AsyncHook : org/itineradev/itinera/policy/HookCall {
+	public abstract synthetic fun call (Ljava/lang/Object;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class org/itineradev/itinera/policy/async/AsyncHookReporter {
+	public abstract synthetic fun error (Ljava/lang/String;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract synthetic fun error (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract synthetic fun info (Ljava/lang/String;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract synthetic fun info (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract synthetic fun setGlobalMetadata (Ljava/lang/String;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract synthetic fun warning (Ljava/lang/String;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract synthetic fun warning (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/itineradev/itinera/policy/async/AsyncStepPolicyBuilder {
+	public final fun build ()Lorg/itineradev/itinera/policy/StepPolicyDescriptor;
+	public final fun onStepAbnormalTermination (Ljava/util/List;Lorg/itineradev/itinera/policy/async/AsyncHook;)Lorg/itineradev/itinera/policy/async/AsyncStepPolicyBuilder;
+	public final fun onStepAbnormalTermination (Lorg/itineradev/itinera/policy/async/AsyncHook;)Lorg/itineradev/itinera/policy/async/AsyncStepPolicyBuilder;
+	public final fun onStepFailure (Ljava/util/List;Lorg/itineradev/itinera/policy/async/AsyncHook;)Lorg/itineradev/itinera/policy/async/AsyncStepPolicyBuilder;
+	public final fun onStepFailure (Lorg/itineradev/itinera/policy/async/AsyncHook;)Lorg/itineradev/itinera/policy/async/AsyncStepPolicyBuilder;
+	public final fun onStepRetry (Ljava/util/List;Lorg/itineradev/itinera/policy/async/AsyncHook;)Lorg/itineradev/itinera/policy/async/AsyncStepPolicyBuilder;
+	public final fun onStepRetry (Lorg/itineradev/itinera/policy/async/AsyncHook;)Lorg/itineradev/itinera/policy/async/AsyncStepPolicyBuilder;
+	public final fun onStepSuccess (Ljava/util/List;Lorg/itineradev/itinera/policy/async/AsyncHook;)Lorg/itineradev/itinera/policy/async/AsyncStepPolicyBuilder;
+	public final fun onStepSuccess (Lorg/itineradev/itinera/policy/async/AsyncHook;)Lorg/itineradev/itinera/policy/async/AsyncStepPolicyBuilder;
+}
+
+public final class org/itineradev/itinera/policy/async/AsyncStepPolicyBuilderKt {
+	public static final fun asyncStepPolicy (Ljava/lang/String;Lorg/itineradev/itinera/policy/PolicyFactory;)Lorg/itineradev/itinera/policy/async/AsyncStepPolicyBuilder;
+}
+
+public abstract interface class org/itineradev/itinera/policy/async/AsyncWorkflowHook : org/itineradev/itinera/policy/HookCall {
+	public abstract synthetic fun call (Ljava/lang/Object;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/itineradev/itinera/policy/async/AsyncWorkflowPolicyBuilder {
+	public final fun build ()Lorg/itineradev/itinera/policy/WorkflowPolicyDescriptor;
+	public final fun onWorkflowFailure (Ljava/util/List;Lorg/itineradev/itinera/policy/async/AsyncWorkflowHook;)Lorg/itineradev/itinera/policy/async/AsyncWorkflowPolicyBuilder;
+	public final fun onWorkflowFailure (Lorg/itineradev/itinera/policy/async/AsyncWorkflowHook;)Lorg/itineradev/itinera/policy/async/AsyncWorkflowPolicyBuilder;
+	public final fun onWorkflowSuccess (Ljava/util/List;Lorg/itineradev/itinera/policy/async/AsyncWorkflowHook;)Lorg/itineradev/itinera/policy/async/AsyncWorkflowPolicyBuilder;
+	public final fun onWorkflowSuccess (Lorg/itineradev/itinera/policy/async/AsyncWorkflowHook;)Lorg/itineradev/itinera/policy/async/AsyncWorkflowPolicyBuilder;
+}
+
+public final class org/itineradev/itinera/policy/async/AsyncWorkflowPolicyBuilderKt {
+	public static final fun asyncWorkflowPolicy (Ljava/lang/String;Lorg/itineradev/itinera/policy/PolicyFactory;)Lorg/itineradev/itinera/policy/async/AsyncWorkflowPolicyBuilder;
+}
+
 public final class org/itineradev/itinera/report/async/AsyncDebugReporter : org/itineradev/itinera/report/async/AsyncReporter {
 	public synthetic fun report (Lorg/itineradev/itinera/event/Event;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
@@ -59,6 +105,7 @@ public abstract interface class org/itineradev/itinera/report/async/AsyncReporte
 }
 
 public final class org/itineradev/itinera/request/async/AsyncRequestsKt {
+	public static final fun asyncHookReporter (Lorg/itineradev/itinera/request/Requests;)Lorg/itineradev/itinera/request/Request;
 	public static final fun asyncStepReporter (Lorg/itineradev/itinera/request/Requests;)Lorg/itineradev/itinera/request/Request;
 }
 

@@ -31,6 +31,76 @@ internal data class ServiceAsked(
     override fun toString(): String = "service $key: ${type.simpleName}"
 }
 
+/** Data a step contributed that a hook requests under [key], read as [type]. */
+internal data class FromStepAsked(
+    /** The key. */
+    val key: String,
+    /** The type the value is read as. */
+    val type: ValueType,
+    /** Whether a missing value aborts the journey, rather than being answered absent. */
+    val required: Boolean,
+) : Asked {
+    override fun toString(): String =
+        (if (required) "" else "optional ") + "data from the step $key: $type"
+}
+
+/** Data from the workflow that a hook requests under [key], read as [type] from the data bag. */
+internal data class FromWorkflowAsked(
+    /** The key. */
+    val key: String,
+    /** The type the value is read as. */
+    val type: ValueType,
+    /** Whether a missing value aborts the journey, rather than being answered absent. */
+    val required: Boolean,
+) : Asked {
+    override fun toString(): String =
+        (if (required) "" else "optional ") + "data from the workflow $key: $type"
+}
+
+/** The reason a step's attempt reported for failing. */
+internal data class ReasonAsked(
+    /** Whether a missing reason aborts the journey, rather than being answered absent. */
+    val required: Boolean
+) : Asked {
+    override fun toString(): String = (if (required) "" else "optional ") + "reason"
+}
+
+/** The error that ended a step's attempt abnormally. */
+internal data class ErrorAsked(
+    /** Whether a missing error aborts the journey, rather than being answered absent. */
+    val required: Boolean
+) : Asked {
+    override fun toString(): String = (if (required) "" else "optional ") + "error"
+}
+
+/** The role of [type] that the workflow provides. */
+internal data class RoleAsked(
+    /** The role's interface. */
+    val type: Class<*>
+) : Asked {
+    override fun toString(): String = "role ${type.simpleName}"
+}
+
+/** What the executor knows about the call it is given to. */
+internal enum class Known(private val text: String) : Asked {
+    /** The journey's ID. */
+    JOURNEY_ID("journey ID"),
+
+    /** The name of the step the part acts on. */
+    STEP_NAME("step name"),
+
+    /** The attempt the part acts on. */
+    ATTEMPT("attempt"),
+
+    /** Why the step failed. */
+    FAILURE_CAUSE("failure cause"),
+
+    /** Why the step is retried. */
+    RETRY_CAUSE("retry cause");
+
+    override fun toString(): String = text
+}
+
 /** A handle the executor makes for the call it is given to. */
 public enum class Handle : Asked {
     /** The contributor, for the data the part contributes. */
@@ -40,7 +110,13 @@ public enum class Handle : Asked {
     STEP_REPORTER,
 
     /** An asynchronous step's reporter, for its own events. */
-    ASYNC_STEP_REPORTER;
+    ASYNC_STEP_REPORTER,
+
+    /** A synchronous hook's reporter, for its own events. */
+    HOOK_REPORTER,
+
+    /** An asynchronous hook's reporter, for its own events. */
+    ASYNC_HOOK_REPORTER;
 
     override fun toString(): String = name.lowercase().replace('_', ' ')
 }

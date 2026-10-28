@@ -25,7 +25,7 @@ public interface StepKind<M : Mode> : BuildKind, ContributorKind, StepReporterKi
 @ExperimentalItineraApi public interface BuildKind
 
 /**
- * The kinds of part that contribute data, which may request a contributor: steps.
+ * The kinds of part that contribute data, which may request a contributor: steps and hooks.
  *
  * @sample org.itineradev.itinera.request.samples.requests
  */

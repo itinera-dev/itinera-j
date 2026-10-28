@@ -1,6 +1,9 @@
 package org.itineradev.itinera.workflow
 
 import org.itineradev.itinera.ExperimentalItineraApi
+import org.itineradev.itinera.policy.PolicyName
+import org.itineradev.itinera.policy.StepHook
+import org.itineradev.itinera.policy.WorkflowHook
 import org.itineradev.itinera.step.StepName
 
 /**
@@ -32,6 +35,57 @@ public sealed interface Violation {
     ) : Violation {
         override val named: String
             get() = "duplicate step name"
+    }
+
+    /**
+     * Two or more step policies attached to one step define the same hook.
+     *
+     * @sample org.itineradev.itinera.policy.samples.misattached
+     */
+    @JvmRecord
+    public data class StepHookDefinedTwice(
+        /** The step the policies are attached to. */
+        val step: StepName,
+        /** The hook they all define. */
+        val hook: StepHook,
+        /** The policies that define it, in the order they are attached. */
+        val policies: List<PolicyName>,
+    ) : Violation {
+        override val named: String
+            get() = "hook defined twice"
+    }
+
+    /**
+     * Two or more workflow policies define the same hook.
+     *
+     * @sample org.itineradev.itinera.policy.samples.misattached
+     */
+    @JvmRecord
+    public data class WorkflowHookDefinedTwice(
+        /** The hook they all define. */
+        val hook: WorkflowHook,
+        /** The policies that define it, in the order they are attached. */
+        val policies: List<PolicyName>,
+    ) : Violation {
+        override val named: String
+            get() = "hook defined twice"
+    }
+
+    /**
+     * A policy attached to the workflow, or to one of its steps, requests a role the workflow does
+     * not provide.
+     *
+     * @sample org.itineradev.itinera.policy.samples.misattached
+     */
+    @JvmRecord
+    public data class RoleNotProvided(
+        /** The policy. */
+        val policy: PolicyName,
+        /** The role's interface, which no role the workflow provides is or extends. */
+        val role: Class<*>,
+    ) : Violation {
+        override val named: String
+            get() = "role not provided"
     }
 
     /**
