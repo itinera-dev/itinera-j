@@ -1,0 +1,18 @@
+public final class org/itineradev/itinera/report/testing/AsyncRecordingReporter : org/itineradev/itinera/report/async/AsyncReporter {
+	public fun <init> ()V
+	public final fun getEvents ()Ljava/util/List;
+	public final fun getGlobalMetadata ()Ljava/util/Map;
+	public final fun getPath ()Ljava/util/List;
+	public synthetic fun report (Lorg/itineradev/itinera/event/Event;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun setGlobalMetadata (Ljava/lang/String;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/itineradev/itinera/report/testing/RecordingReporter : org/itineradev/itinera/report/Reporter {
+	public fun <init> ()V
+	public final fun getEvents ()Ljava/util/List;
+	public final fun getGlobalMetadata ()Ljava/util/Map;
+	public final fun getPath ()Ljava/util/List;
+	public fun report (Lorg/itineradev/itinera/event/Event;)V
+	public fun setGlobalMetadata (Ljava/lang/String;Ljava/lang/Object;)V
+}
+
