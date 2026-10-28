@@ -10,9 +10,9 @@ import org.itineradev.itinera.step.StepName
  * workflow's adapters, the steps it is attached to, what it requests, and how it is called. A step
  * has at most one adapter, and the adapter supplies the step's inputs, one call for each.
  *
- * [builder] makes one for a synchronous workflow, and `asyncInputAdapter` from `itinera-kotlin` for
- * an asynchronous one. Any other implementation runs too, checked by the executor before the
- * journey.
+ * [builder] makes one for a synchronous workflow, `asyncInputAdapter` from `itinera-kotlin` for an
+ * asynchronous one, and annotated workflows get theirs from their methods marked [InputAdapter].
+ * Any other implementation runs too, checked by the executor before the journey.
  *
  * @param W the class of the workflow object it is called with.
  * @param M the mode of the workflows the adapter can join.

@@ -12,9 +12,11 @@ import org.itineradev.itinera.step.StepFactory
 import org.itineradev.itinera.step.StepReporter
 import org.itineradev.itinera.step.SyncStepFactory
 import org.itineradev.itinera.step.SyncStepRun
+import org.itineradev.itinera.workflow.InputAdapterCall
 import org.itineradev.itinera.workflow.ItineraWorkflow
 import org.itineradev.itinera.workflow.Mode
 import org.itineradev.itinera.workflow.Sync
+import org.itineradev.itinera.workflow.SyncInputAdapter
 import org.itineradev.itinera.workflow.Violations
 import org.itineradev.itinera.workflow.WorkflowDescriptor
 
@@ -27,7 +29,7 @@ public object Described {
     private val synchronous =
         object : ClassValue<WorkflowDescriptor<*, Sync>>() {
             override fun computeValue(type: Class<*>): WorkflowDescriptor<*, Sync> =
-                read<Any?, Sync>(type, Sync, SynchronousSteps, SynchronousHooks)
+                read<Any?, Sync>(type, Sync, SynchronousSteps, SynchronousHooks, ::synchronous)
         }
 
     /**
@@ -39,8 +41,8 @@ public object Described {
         returned(synchronous.get(type))
 
     /**
-     * Reads the workflow [type] declares in [mode], whose steps [steps] makes factories for, and
-     * whose policies' hooks [hooks] calls.
+     * Reads the workflow [type] declares in [mode], whose steps [steps] makes factories for, whose
+     * policies' hooks [hooks] calls, and whose input adapters [adapters] calls.
      *
      * @throws Violations with every mistake in its declaration.
      */
@@ -49,7 +51,8 @@ public object Described {
         mode: M,
         steps: StepFactories<M>,
         hooks: HookCalls<M>,
-    ): WorkflowDescriptor<W, M> = Reading(type, mode, steps, hooks).descriptor()
+        adapters: AdapterCalls<M>,
+    ): WorkflowDescriptor<W, M> = Reading(type, mode, steps, hooks, adapters).descriptor()
 }
 
 /**
@@ -112,3 +115,8 @@ private object SynchronousHooks : HookCalls<Sync> {
             invoked(hook.method, policy, *hook.arguments(got))
         }
 }
+
+private fun synchronous(adapter: AdapterMethod): InputAdapterCall<Any?, Sync> =
+    SyncInputAdapter { workflow, got ->
+        returned(invoked(adapter.method, workflow, *adapter.arguments(got)))
+    }

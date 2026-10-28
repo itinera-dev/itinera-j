@@ -4,6 +4,7 @@ import java.lang.reflect.Method
 import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
 import kotlin.reflect.KClass
 import org.itineradev.itinera.ExperimentalItineraApi
+import org.itineradev.itinera.engine.AdapterMethod
 import org.itineradev.itinera.engine.Builders
 import org.itineradev.itinera.engine.Described
 import org.itineradev.itinera.engine.HookCalls
@@ -30,6 +31,7 @@ import org.itineradev.itinera.step.async.AsyncStepReporter
 import org.itineradev.itinera.step.async.AsyncStepRun
 import org.itineradev.itinera.workflow.Async
 import org.itineradev.itinera.workflow.InputAdapterBuilder
+import org.itineradev.itinera.workflow.InputAdapterCall
 import org.itineradev.itinera.workflow.StepBuilder
 import org.itineradev.itinera.workflow.Violations
 import org.itineradev.itinera.workflow.WorkflowBuilder
@@ -86,7 +88,13 @@ public fun <W : ItineraAsyncWorkflow> asyncDescriptorOf(
 private val asynchronous =
     object : ClassValue<WorkflowDescriptor<*, Async>>() {
         override fun computeValue(type: Class<*>): WorkflowDescriptor<*, Async> =
-            Described.read<Any?, Async>(type, Async, AsynchronousSteps, AsynchronousHooks)
+            Described.read<Any?, Async>(
+                type,
+                Async,
+                AsynchronousSteps,
+                AsynchronousHooks,
+                ::asynchronous,
+            )
     }
 
 private object AsynchronousSteps : StepFactories<Async> {
@@ -127,12 +135,17 @@ private object AsynchronousHooks : HookCalls<Async> {
         }
 }
 
+private fun asynchronous(adapter: AdapterMethod): InputAdapterCall<Any?, Async> =
+    AsyncInputAdapter { workflow, got ->
+        returned(suspended(adapter.method, workflow, adapter.arguments(got)))
+    }
+
 /**
  * Calls the `suspend` method [method] of [target] with [arguments] and awaits what it returns,
  * throwing what the method itself threw.
  */
 @JvmSynthetic
-private suspend fun suspended(method: Method, target: Any, arguments: Array<Any?>): Any? =
+private suspend fun suspended(method: Method, target: Any?, arguments: Array<Any?>): Any? =
     suspendCoroutineUninterceptedOrReturn { continuation ->
         invoked(method, target, *arguments, continuation)
     }
