@@ -26,9 +26,16 @@ final class RunTest {
   }
 
   private List<String> scenarios() {
-    return JsonMapper.builder().build().readTree(report().toFile()).values().stream()
-        .flatMap(RunTest::scenariosOf)
-        .toList();
+    return features().flatMap(RunTest::scenariosOf).toList();
+  }
+
+  private List<String> errors() {
+    var errors = features().flatMap(RunTest::errorsOf).toList();
+    return errors.isEmpty() ? List.of("no error") : errors;
+  }
+
+  private Stream<JsonNode> features() {
+    return JsonMapper.builder().build().readTree(report().toFile()).values().stream();
   }
 
   @Test
@@ -63,6 +70,24 @@ final class RunTest {
   }
 
   @Test
+  void everyScenarioThatRunsJourneysPasses() {
+    assertTrue(runs("@journeys"));
+    assertEquals(12, scenarios().size());
+  }
+
+  @Test
+  void aJourneyThatDidNotDoWhatTheCaseExpectsFailsAsUnmet() {
+    assertFalse(runs("@unmet"));
+    assertTrue(errors().stream().allMatch(RunTest::isUnmet), errors().toString());
+  }
+
+  @Test
+  void aScriptTheRunnerCannotRunYetFailsSayingSo() {
+    assertFalse(runs("@not-run-yet"));
+    assertTrue(errors().stream().allMatch(RunTest::isNotRunYet), errors().toString());
+  }
+
+  @Test
   void aScenarioWhoseSentencesDoNotMakeAModelFails() {
     assertFalse(runs("@wrong-case"));
   }
@@ -80,5 +105,33 @@ final class RunTest {
 
   private static String nameOf(JsonNode scenario) {
     return scenario.path("name").asString();
+  }
+
+  /** The error of each failed step of a feature in the report. */
+  private static Stream<String> errorsOf(JsonNode feature) {
+    return feature.path("elements").values().stream()
+        .flatMap(RunTest::stepsOf)
+        .map(RunTest::errorOf)
+        .filter(RunTest::isStated);
+  }
+
+  private static Stream<JsonNode> stepsOf(JsonNode scenario) {
+    return scenario.path("steps").values().stream();
+  }
+
+  private static String errorOf(JsonNode step) {
+    return step.path("result").path("error_message").asString();
+  }
+
+  private static boolean isStated(String error) {
+    return !error.isEmpty();
+  }
+
+  private static boolean isUnmet(String error) {
+    return error.contains("Unmet");
+  }
+
+  private static boolean isNotRunYet(String error) {
+    return error.contains("cannot run an attempt that fails or is skipped yet");
   }
 }

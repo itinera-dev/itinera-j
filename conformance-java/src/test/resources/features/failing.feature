@@ -1,4 +1,4 @@
-Feature: Scenarios that fail before itinera runs
+Feature: Scenarios that fail the run
 
   @undefined
   Scenario: A sentence the runner does not define
@@ -13,3 +13,22 @@ Feature: Scenarios that fail before itinera runs
       | step   |
       | charge |
     And step "refund" succeeds
+
+  @unmet
+  Scenario: A journey that did not do what the case expects
+    Given a workflow "orders" with the steps:
+      | step   |
+      | charge |
+    When the workflow runs
+    Then the journey failed
+
+  @not-run-yet
+  Scenario: A step whose attempt fails, which the runner cannot run yet
+    Given a workflow "orders" with the steps:
+      | step   |
+      | charge |
+    And step "charge" attempts:
+      | attempt | outcome | code     |
+      | 1       | failure | declined |
+    When the workflow runs
+    Then the journey failed
