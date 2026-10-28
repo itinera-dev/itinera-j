@@ -39,7 +39,7 @@ The row for a copy that fails while a value is read:
 
 A copy for each receiver: "each receiver gets a copy of its own" in `ValuesTest.kt`, "each receiver gets a data class of its own" in `KotlinDataClassesTest.kt`, `eachReceiverGetsACopyOfItsOwn` in `JavaValuesTest.java`, and "a reader may change its copy without changing the data bag" in `DataBagTest.kt`.
 
-Stage 3 adds the test that `run` refuses initial data whose copy fails, listing the key, and stage 5 those of requests and adapters' reads.
+`itinera/src/test/kotlin/org/itineradev/itinera/engine/StartTest.kt`: "initial data whose copy fails is refused, listing the key and carrying the error". Stage 5 adds those of requests and adapters' reads.
 
 ## Dependencies
 

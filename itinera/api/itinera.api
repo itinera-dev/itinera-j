@@ -21,6 +21,18 @@ public final class org/itineradev/itinera/engine/Captured : org/itineradev/itine
 	public final fun getValue ()Ljava/lang/Object;
 }
 
+public final class org/itineradev/itinera/engine/Checked : org/itineradev/itinera/workflow/WorkflowDescriptor {
+	public static final field Companion Lorg/itineradev/itinera/engine/Checked$Companion;
+	public fun getIdGenerator ()Lorg/itineradev/itinera/workflow/JourneyIdGenerator;
+	public fun getMode ()Lorg/itineradev/itinera/workflow/Mode;
+	public fun getName ()Lorg/itineradev/itinera/workflow/WorkflowName;
+	public fun getSteps ()Ljava/util/List;
+}
+
+public final class org/itineradev/itinera/engine/Checked$Companion {
+	public final fun of (Lorg/itineradev/itinera/workflow/WorkflowName;Lorg/itineradev/itinera/workflow/Mode;Ljava/util/List;Lorg/itineradev/itinera/workflow/JourneyIdGenerator;)Lorg/itineradev/itinera/engine/Checked;
+}
+
 public final class org/itineradev/itinera/engine/ClassType : org/itineradev/itinera/engine/ValueType {
 	public fun <init> (Ljava/lang/Class;Ljava/util/List;Z)V
 	public final fun component1 ()Ljava/lang/Class;
@@ -58,20 +70,82 @@ public final class org/itineradev/itinera/engine/DataObject : org/itineradev/iti
 	public final fun getComponents ()Ljava/util/List;
 }
 
+public abstract interface class org/itineradev/itinera/engine/Delivery {
+	public abstract synthetic fun add (Lorg/itineradev/itinera/report/ReporterOf;Lorg/itineradev/itinera/engine/Guard;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract synthetic fun dispatch (Lorg/itineradev/itinera/event/Event;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract synthetic fun setGlobalMetadata (Ljava/lang/String;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
 public final class org/itineradev/itinera/engine/DeliveryKt {
 	public static final fun caught (Ljava/lang/Object;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public static final fun deliverToEveryone (Ljava/util/List;Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class org/itineradev/itinera/engine/Described {
+	public static final field INSTANCE Lorg/itineradev/itinera/engine/Described;
+	public final fun read (Ljava/lang/Class;Lorg/itineradev/itinera/workflow/Mode;Lorg/itineradev/itinera/engine/StepFactories;)Lorg/itineradev/itinera/workflow/WorkflowDescriptor;
+	public final fun synchronous (Ljava/lang/Class;)Lorg/itineradev/itinera/workflow/WorkflowDescriptor;
+}
+
+public final class org/itineradev/itinera/engine/Draft {
+	public fun <init> (Lorg/itineradev/itinera/workflow/WorkflowDescriptor;Ljava/lang/Object;)V
+	public final fun create ()Lorg/itineradev/itinera/instance/WorkflowInstance;
+	public final fun data (Ljava/lang/String;Ljava/lang/Object;)V
+	public final fun metadata (Ljava/lang/String;Ljava/lang/Object;)V
+	public final fun reporter (Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class org/itineradev/itinera/engine/DrivenKt {
+	public static final fun driven (Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+}
+
+public final class org/itineradev/itinera/engine/Engine {
+	public fun <init> (Lorg/itineradev/itinera/engine/Parts;Ljava/time/Clock;)V
+	public synthetic fun <init> (Lorg/itineradev/itinera/engine/Parts;Ljava/time/Clock;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final synthetic fun run (Lorg/itineradev/itinera/instance/WorkflowInstance;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class org/itineradev/itinera/engine/ErrorsKt {
 	public static final fun rethrowError (Ljava/lang/Throwable;)V
 }
 
+public final class org/itineradev/itinera/engine/Failures {
+	public final fun getFirst ()Ljava/lang/Throwable;
+	public final fun record (Ljava/lang/Throwable;)V
+}
+
+public final class org/itineradev/itinera/engine/Guard {
+	public final fun fail (Ljava/lang/Throwable;)V
+	public final fun getFailed ()Z
+	public final fun getFailures ()Lorg/itineradev/itinera/engine/Failures;
+	public final fun recording (Lkotlin/jvm/functions/Function0;)V
+	public final fun report (Lorg/itineradev/itinera/event/EventKind;Lkotlin/jvm/functions/Function0;)V
+	public final fun setFailed (Z)V
+	public final fun setGlobalMetadata (Lkotlin/jvm/functions/Function0;)V
+}
+
 public abstract interface class org/itineradev/itinera/engine/KotlinClasses {
+	public abstract fun functionOf (Ljava/lang/reflect/Method;)Lorg/itineradev/itinera/engine/KotlinFunction;
 	public abstract fun shapeOf (Ljava/lang/Class;)Lorg/itineradev/itinera/engine/KotlinShape;
 }
 
+public final class org/itineradev/itinera/engine/KotlinFunction {
+	public static final field Companion Lorg/itineradev/itinera/engine/KotlinFunction$Companion;
+	public fun <init> (ZLjava/lang/Class;Z)V
+	public final fun getReturnType ()Ljava/lang/Class;
+	public final fun getReturnsNullable ()Z
+	public final fun isSuspend ()Z
+}
+
+public final class org/itineradev/itinera/engine/KotlinFunction$Companion {
+	public final fun ofJava (Ljava/lang/reflect/Method;)Lorg/itineradev/itinera/engine/KotlinFunction;
+}
+
 public abstract interface class org/itineradev/itinera/engine/KotlinShape {
+}
+
+public final class org/itineradev/itinera/engine/MessagesKt {
+	public static final fun messageOf (Ljava/lang/Throwable;)Ljava/lang/String;
 }
 
 public final class org/itineradev/itinera/engine/NotAValue : org/itineradev/itinera/engine/Capture {
@@ -85,6 +159,10 @@ public final class org/itineradev/itinera/engine/NotData : org/itineradev/itiner
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class org/itineradev/itinera/engine/NullableKt {
+	public static final fun nullable (Ljava/lang/Object;)Ljava/lang/Object;
+}
+
 public final class org/itineradev/itinera/engine/Nullness : java/lang/Enum {
 	public static final field NON_NULL Lorg/itineradev/itinera/engine/Nullness;
 	public static final field NULLABLE Lorg/itineradev/itinera/engine/Nullness;
@@ -94,11 +172,45 @@ public final class org/itineradev/itinera/engine/Nullness : java/lang/Enum {
 	public static fun values ()[Lorg/itineradev/itinera/engine/Nullness;
 }
 
+public abstract interface class org/itineradev/itinera/engine/Parts {
+	public abstract fun accepts (Lorg/itineradev/itinera/report/ReporterOf;)Z
+	public abstract fun accepts (Lorg/itineradev/itinera/step/StepFactory;)Z
+	public abstract synthetic fun build (Lorg/itineradev/itinera/step/StepFactory;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract synthetic fun dispatcher (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract synthetic fun ensureActive (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getMode ()Lorg/itineradev/itinera/workflow/Mode;
+}
+
 public abstract interface class org/itineradev/itinera/engine/Receipt {
 }
 
 public final class org/itineradev/itinera/engine/Received : org/itineradev/itinera/engine/Receipt {
 	public final fun getValue ()Ljava/lang/Object;
+}
+
+public final class org/itineradev/itinera/engine/ReflectionKt {
+	public static final fun constructed (Ljava/lang/reflect/Constructor;[Ljava/lang/Object;)Ljava/lang/Object;
+	public static final fun invoked (Ljava/lang/reflect/Method;Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
+	public static final fun returned (Ljava/lang/Object;)Ljava/lang/Object;
+}
+
+public abstract interface class org/itineradev/itinera/engine/Running {
+	public abstract synthetic fun run (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class org/itineradev/itinera/engine/StepFactories {
+	public abstract fun of (Ljava/lang/reflect/Constructor;Ljava/lang/reflect/Method;)Lorg/itineradev/itinera/step/StepFactory;
+}
+
+public final class org/itineradev/itinera/engine/SyncParts : org/itineradev/itinera/engine/Parts {
+	public fun <init> (Lorg/itineradev/itinera/report/DispatcherFactory;)V
+	public fun accepts (Lorg/itineradev/itinera/report/ReporterOf;)Z
+	public fun accepts (Lorg/itineradev/itinera/step/StepFactory;)Z
+	public synthetic fun build (Lorg/itineradev/itinera/step/StepFactory;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun dispatcher (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun ensureActive (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun getMode ()Lorg/itineradev/itinera/workflow/Mode;
+	public fun getMode ()Lorg/itineradev/itinera/workflow/Sync;
 }
 
 public abstract interface class org/itineradev/itinera/engine/ValueType {
@@ -1714,6 +1826,158 @@ public final class org/itineradev/itinera/event/WrongType : java/lang/Record, or
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class org/itineradev/itinera/executor/LocalExecutor {
+	public fun <init> ()V
+	public fun <init> (Lorg/itineradev/itinera/report/DispatcherFactory;)V
+	public synthetic fun <init> (Lorg/itineradev/itinera/report/DispatcherFactory;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun run (Lorg/itineradev/itinera/instance/WorkflowInstance;)Lorg/itineradev/itinera/journey/JourneyResult;
+}
+
+public final class org/itineradev/itinera/executor/Refusal : java/lang/Exception {
+	public fun <init> (Lorg/itineradev/itinera/executor/Refused;)V
+	public final fun getRefused ()Lorg/itineradev/itinera/executor/Refused;
+}
+
+public abstract interface class org/itineradev/itinera/executor/Refused {
+	public abstract fun getError ()Ljava/lang/Throwable;
+	public abstract fun getMessage ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/executor/Refused$DispatcherFactoryFailed : java/lang/Record, org/itineradev/itinera/executor/Refused {
+	public fun <init> (Ljava/lang/Throwable;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/Throwable;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/Throwable;Ljava/lang/String;)Lorg/itineradev/itinera/executor/Refused$DispatcherFactoryFailed;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/executor/Refused$DispatcherFactoryFailed;Ljava/lang/Throwable;Ljava/lang/String;ILjava/lang/Object;)Lorg/itineradev/itinera/executor/Refused$DispatcherFactoryFailed;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun error ()Ljava/lang/Throwable;
+	public final fun errorMessage ()Ljava/lang/String;
+	public synthetic fun getError ()Ljava/lang/Throwable;
+	public synthetic fun getMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun message ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/executor/Refused$DispatcherFactoryReturnedNull : org/itineradev/itinera/executor/Refused {
+	public static final field INSTANCE Lorg/itineradev/itinera/executor/Refused$DispatcherFactoryReturnedNull;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getError ()Ljava/lang/Throwable;
+	public fun getMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/executor/Refused$DispatcherFailed : java/lang/Record, org/itineradev/itinera/executor/Refused {
+	public fun <init> (Ljava/lang/Throwable;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/Throwable;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/Throwable;Ljava/lang/String;)Lorg/itineradev/itinera/executor/Refused$DispatcherFailed;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/executor/Refused$DispatcherFailed;Ljava/lang/Throwable;Ljava/lang/String;ILjava/lang/Object;)Lorg/itineradev/itinera/executor/Refused$DispatcherFailed;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun error ()Ljava/lang/Throwable;
+	public final fun errorMessage ()Ljava/lang/String;
+	public synthetic fun getError ()Ljava/lang/Throwable;
+	public synthetic fun getMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun message ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/executor/Refused$GlobalMetadataNotSet : java/lang/Record, org/itineradev/itinera/executor/Refused {
+	public fun <init> (Ljava/lang/Throwable;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/Throwable;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/Throwable;Ljava/lang/String;)Lorg/itineradev/itinera/executor/Refused$GlobalMetadataNotSet;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/executor/Refused$GlobalMetadataNotSet;Ljava/lang/Throwable;Ljava/lang/String;ILjava/lang/Object;)Lorg/itineradev/itinera/executor/Refused$GlobalMetadataNotSet;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun error ()Ljava/lang/Throwable;
+	public final fun errorMessage ()Ljava/lang/String;
+	public synthetic fun getError ()Ljava/lang/Throwable;
+	public synthetic fun getMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun message ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/executor/Refused$Inadmissible : java/lang/Record, org/itineradev/itinera/executor/Refused {
+	public fun <init> (Ljava/util/List;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;)Lorg/itineradev/itinera/executor/Refused$Inadmissible;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/executor/Refused$Inadmissible;Ljava/util/List;ILjava/lang/Object;)Lorg/itineradev/itinera/executor/Refused$Inadmissible;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun error ()Ljava/lang/Throwable;
+	public synthetic fun getError ()Ljava/lang/Throwable;
+	public synthetic fun getMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun message ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+	public final fun violations ()Ljava/util/List;
+}
+
+public final class org/itineradev/itinera/executor/Refused$InstanceRan : org/itineradev/itinera/executor/Refused {
+	public static final field INSTANCE Lorg/itineradev/itinera/executor/Refused$InstanceRan;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getError ()Ljava/lang/Throwable;
+	public fun getMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/executor/Refused$JourneyRunning : org/itineradev/itinera/executor/Refused {
+	public static final field INSTANCE Lorg/itineradev/itinera/executor/Refused$JourneyRunning;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getError ()Ljava/lang/Throwable;
+	public fun getMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/instance/InstanceBuilder {
+	public static final field Companion Lorg/itineradev/itinera/instance/InstanceBuilder$Companion;
+	public final fun create ()Lorg/itineradev/itinera/instance/WorkflowInstance;
+	public final fun data (Ljava/lang/String;Ljava/lang/Object;)Lorg/itineradev/itinera/instance/InstanceBuilder;
+	public final fun initialData (Ljava/util/Map;)Lorg/itineradev/itinera/instance/InstanceBuilder;
+	public static final fun of (Lorg/itineradev/itinera/workflow/WorkflowDescriptor;Ljava/lang/Object;)Lorg/itineradev/itinera/instance/InstanceBuilder;
+	public final fun reporter (Lorg/itineradev/itinera/report/Reporter;)Lorg/itineradev/itinera/instance/InstanceBuilder;
+	public final fun reporterFor (Lorg/itineradev/itinera/report/ReporterFactory;)Lorg/itineradev/itinera/instance/InstanceBuilder;
+	public final fun reportersGlobalMetadata (Ljava/lang/String;Ljava/lang/Object;)Lorg/itineradev/itinera/instance/InstanceBuilder;
+}
+
+public final class org/itineradev/itinera/instance/InstanceBuilder$Companion {
+	public final fun of (Lorg/itineradev/itinera/workflow/WorkflowDescriptor;Ljava/lang/Object;)Lorg/itineradev/itinera/instance/InstanceBuilder;
+}
+
+public final class org/itineradev/itinera/instance/InstanceBuilderKt {
+	public static final synthetic fun instance (Lorg/itineradev/itinera/workflow/WorkflowDescriptor;Ljava/lang/Object;)Lorg/itineradev/itinera/instance/InstanceBuilder;
+}
+
+public abstract interface class org/itineradev/itinera/instance/WorkflowInstance {
+	public abstract fun claim ()Z
+	public abstract fun getDescriptor ()Lorg/itineradev/itinera/workflow/WorkflowDescriptor;
+	public abstract fun getInitialData ()Ljava/util/Map;
+	public abstract fun getInitialGlobalMetadata ()Ljava/util/Map;
+	public abstract fun getJourneyId ()Lorg/itineradev/itinera/journey/JourneyId;
+	public abstract fun getReporters ()Ljava/util/List;
+	public abstract fun getWorkflow ()Ljava/lang/Object;
+}
+
+public final class org/itineradev/itinera/journey/Abort : java/lang/Record {
+	public fun <init> (Lorg/itineradev/itinera/event/JourneyAbort;Ljava/lang/Throwable;)V
+	public final fun component1 ()Lorg/itineradev/itinera/event/JourneyAbort;
+	public final fun component2 ()Ljava/lang/Throwable;
+	public final fun copy (Lorg/itineradev/itinera/event/JourneyAbort;Ljava/lang/Throwable;)Lorg/itineradev/itinera/journey/Abort;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/journey/Abort;Lorg/itineradev/itinera/event/JourneyAbort;Ljava/lang/Throwable;ILjava/lang/Object;)Lorg/itineradev/itinera/journey/Abort;
+	public final fun details ()Lorg/itineradev/itinera/event/JourneyAbort;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun error ()Ljava/lang/Throwable;
+	public final fun errorMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public final fun reason ()Lorg/itineradev/itinera/journey/AbortReason;
+	public final fun step ()Lorg/itineradev/itinera/step/StepName;
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class org/itineradev/itinera/journey/AbortReason : java/lang/Enum {
 	public static final field HOOK_FAILED Lorg/itineradev/itinera/journey/AbortReason;
 	public static final field INVALID_LIFECYCLE Lorg/itineradev/itinera/journey/AbortReason;
@@ -1739,6 +2003,22 @@ public final class org/itineradev/itinera/journey/DataBag {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class org/itineradev/itinera/journey/Failure : java/lang/Record {
+	public fun <init> (Lorg/itineradev/itinera/event/JourneyFailure;Ljava/lang/Throwable;)V
+	public final fun cause ()Lorg/itineradev/itinera/journey/FailureCause;
+	public final fun component1 ()Lorg/itineradev/itinera/event/JourneyFailure;
+	public final fun component2 ()Ljava/lang/Throwable;
+	public final fun copy (Lorg/itineradev/itinera/event/JourneyFailure;Ljava/lang/Throwable;)Lorg/itineradev/itinera/journey/Failure;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/journey/Failure;Lorg/itineradev/itinera/event/JourneyFailure;Ljava/lang/Throwable;ILjava/lang/Object;)Lorg/itineradev/itinera/journey/Failure;
+	public final fun details ()Lorg/itineradev/itinera/event/JourneyFailure;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun error ()Ljava/lang/Throwable;
+	public final fun errorMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public final fun reason ()Lorg/itineradev/itinera/step/Reason;
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class org/itineradev/itinera/journey/FailureCause : java/lang/Enum {
 	public static final field ABNORMAL_TERMINATION Lorg/itineradev/itinera/journey/FailureCause;
 	public static final field FAILURE Lorg/itineradev/itinera/journey/FailureCause;
@@ -1760,6 +2040,62 @@ public final class org/itineradev/itinera/journey/JourneyId {
 
 public final class org/itineradev/itinera/journey/JourneyId$Companion {
 	public final fun of (Ljava/lang/String;)Lorg/itineradev/itinera/journey/JourneyId;
+}
+
+public final class org/itineradev/itinera/journey/JourneyResult : java/lang/Record {
+	public fun <init> (Lorg/itineradev/itinera/journey/JourneyId;Lorg/itineradev/itinera/journey/JourneyStatus;)V
+	public final fun abort ()Lorg/itineradev/itinera/journey/Abort;
+	public final fun component1 ()Lorg/itineradev/itinera/journey/JourneyId;
+	public final fun component2 ()Lorg/itineradev/itinera/journey/JourneyStatus;
+	public final fun copy (Lorg/itineradev/itinera/journey/JourneyId;Lorg/itineradev/itinera/journey/JourneyStatus;)Lorg/itineradev/itinera/journey/JourneyResult;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/journey/JourneyResult;Lorg/itineradev/itinera/journey/JourneyId;Lorg/itineradev/itinera/journey/JourneyStatus;ILjava/lang/Object;)Lorg/itineradev/itinera/journey/JourneyResult;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun failure ()Lorg/itineradev/itinera/journey/Failure;
+	public fun hashCode ()I
+	public final fun isAborted ()Z
+	public final fun isFailed ()Z
+	public final fun isSucceeded ()Z
+	public final fun journeyId ()Lorg/itineradev/itinera/journey/JourneyId;
+	public final fun status ()Lorg/itineradev/itinera/journey/JourneyStatus;
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class org/itineradev/itinera/journey/JourneyStatus {
+}
+
+public final class org/itineradev/itinera/journey/JourneyStatus$Aborted : java/lang/Record, org/itineradev/itinera/journey/JourneyStatus {
+	public fun <init> (Lorg/itineradev/itinera/journey/Abort;)V
+	public final fun abort ()Lorg/itineradev/itinera/journey/Abort;
+	public final fun component1 ()Lorg/itineradev/itinera/journey/Abort;
+	public final fun copy (Lorg/itineradev/itinera/journey/Abort;)Lorg/itineradev/itinera/journey/JourneyStatus$Aborted;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/journey/JourneyStatus$Aborted;Lorg/itineradev/itinera/journey/Abort;ILjava/lang/Object;)Lorg/itineradev/itinera/journey/JourneyStatus$Aborted;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/journey/JourneyStatus$Failed : java/lang/Record, org/itineradev/itinera/journey/JourneyStatus {
+	public fun <init> (Lorg/itineradev/itinera/journey/Failure;Lorg/itineradev/itinera/journey/DataBag;)V
+	public final fun component1 ()Lorg/itineradev/itinera/journey/Failure;
+	public final fun component2 ()Lorg/itineradev/itinera/journey/DataBag;
+	public final fun copy (Lorg/itineradev/itinera/journey/Failure;Lorg/itineradev/itinera/journey/DataBag;)Lorg/itineradev/itinera/journey/JourneyStatus$Failed;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/journey/JourneyStatus$Failed;Lorg/itineradev/itinera/journey/Failure;Lorg/itineradev/itinera/journey/DataBag;ILjava/lang/Object;)Lorg/itineradev/itinera/journey/JourneyStatus$Failed;
+	public final fun dataBag ()Lorg/itineradev/itinera/journey/DataBag;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun failure ()Lorg/itineradev/itinera/journey/Failure;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/journey/JourneyStatus$Succeeded : java/lang/Record, org/itineradev/itinera/journey/JourneyStatus {
+	public fun <init> (Lorg/itineradev/itinera/journey/DataBag;)V
+	public final fun component1 ()Lorg/itineradev/itinera/journey/DataBag;
+	public final fun copy (Lorg/itineradev/itinera/journey/DataBag;)Lorg/itineradev/itinera/journey/JourneyStatus$Succeeded;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/journey/JourneyStatus$Succeeded;Lorg/itineradev/itinera/journey/DataBag;ILjava/lang/Object;)Lorg/itineradev/itinera/journey/JourneyStatus$Succeeded;
+	public final fun dataBag ()Lorg/itineradev/itinera/journey/DataBag;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public abstract interface class org/itineradev/itinera/journey/Read {
@@ -1882,9 +2218,16 @@ public abstract interface class org/itineradev/itinera/report/DispatcherFactory 
 	public abstract fun create ()Lorg/itineradev/itinera/report/Dispatcher;
 }
 
-public abstract interface class org/itineradev/itinera/report/Reporter {
+public abstract interface class org/itineradev/itinera/report/Reporter : org/itineradev/itinera/report/ReporterOf {
 	public abstract fun report (Lorg/itineradev/itinera/event/Event;)V
 	public fun setGlobalMetadata (Ljava/lang/String;Ljava/lang/Object;)V
+}
+
+public abstract interface class org/itineradev/itinera/report/ReporterFactory {
+	public abstract fun create (Lorg/itineradev/itinera/journey/JourneyId;)Lorg/itineradev/itinera/report/Reporter;
+}
+
+public abstract interface class org/itineradev/itinera/report/ReporterOf {
 }
 
 public final class org/itineradev/itinera/service/ProviderName : org/itineradev/itinera/Name {
@@ -1912,6 +2255,26 @@ public final class org/itineradev/itinera/step/Attempt$Companion {
 	public final fun of (I)Lorg/itineradev/itinera/step/Attempt;
 }
 
+public abstract interface class org/itineradev/itinera/step/ItineraStep {
+	public fun succeed ()Lorg/itineradev/itinera/step/Outcome;
+}
+
+public abstract interface class org/itineradev/itinera/step/Outcome {
+	public static final field Companion Lorg/itineradev/itinera/step/Outcome$Companion;
+	public static fun success ()Lorg/itineradev/itinera/step/Outcome;
+}
+
+public final class org/itineradev/itinera/step/Outcome$Companion {
+	public final fun success ()Lorg/itineradev/itinera/step/Outcome;
+}
+
+public final class org/itineradev/itinera/step/Outcome$Success : org/itineradev/itinera/step/Outcome {
+	public static final field INSTANCE Lorg/itineradev/itinera/step/Outcome$Success;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class org/itineradev/itinera/step/Reason : java/lang/Record {
 	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
@@ -1930,6 +2293,9 @@ public final class org/itineradev/itinera/step/Reason : java/lang/Record {
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract interface class org/itineradev/itinera/step/StepFactory {
+}
+
 public final class org/itineradev/itinera/step/StepName : org/itineradev/itinera/Name {
 	public static final field Companion Lorg/itineradev/itinera/step/StepName$Companion;
 	public static final fun of (Ljava/lang/String;)Lorg/itineradev/itinera/step/StepName;
@@ -1937,6 +2303,14 @@ public final class org/itineradev/itinera/step/StepName : org/itineradev/itinera
 
 public final class org/itineradev/itinera/step/StepName$Companion {
 	public final fun of (Ljava/lang/String;)Lorg/itineradev/itinera/step/StepName;
+}
+
+public abstract interface class org/itineradev/itinera/step/SyncStepFactory : org/itineradev/itinera/step/StepFactory {
+	public abstract fun build ()Lorg/itineradev/itinera/step/SyncStepRun;
+}
+
+public abstract interface class org/itineradev/itinera/step/SyncStepRun {
+	public abstract fun run ()Lorg/itineradev/itinera/step/Outcome;
 }
 
 public abstract class org/itineradev/itinera/value/TypeToken {
@@ -1961,6 +2335,174 @@ public final class org/itineradev/itinera/workflow/AdapterName : org/itineradev/
 
 public final class org/itineradev/itinera/workflow/AdapterName$Companion {
 	public final fun of (Ljava/lang/String;)Lorg/itineradev/itinera/workflow/AdapterName;
+}
+
+public final class org/itineradev/itinera/workflow/Async : org/itineradev/itinera/workflow/Mode {
+	public static final field INSTANCE Lorg/itineradev/itinera/workflow/Async;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface annotation class org/itineradev/itinera/workflow/IdGenerator : java/lang/annotation/Annotation {
+}
+
+public abstract interface class org/itineradev/itinera/workflow/ItineraWorkflow {
+	public fun instance ()Lorg/itineradev/itinera/instance/InstanceBuilder;
+}
+
+public abstract interface class org/itineradev/itinera/workflow/JourneyIdGenerator {
+	public abstract fun generate (Ljava/lang/Object;Lorg/itineradev/itinera/journey/DataBag;)Ljava/lang/String;
+}
+
+public abstract interface class org/itineradev/itinera/workflow/Mode {
+}
+
+public final class org/itineradev/itinera/workflow/StepBuilder {
+	public final fun build ()Lorg/itineradev/itinera/workflow/StepDescriptor;
+	public final fun noRetryOnAbnormalTermination ()Lorg/itineradev/itinera/workflow/StepBuilder;
+	public final fun retryBudget (I)Lorg/itineradev/itinera/workflow/StepBuilder;
+}
+
+public abstract interface class org/itineradev/itinera/workflow/StepDescriptor {
+	public static final field Companion Lorg/itineradev/itinera/workflow/StepDescriptor$Companion;
+	public static fun builder (Ljava/lang/String;Lorg/itineradev/itinera/step/SyncStepFactory;)Lorg/itineradev/itinera/workflow/StepBuilder;
+	public abstract fun getFactory ()Lorg/itineradev/itinera/step/StepFactory;
+	public abstract fun getName ()Lorg/itineradev/itinera/step/StepName;
+	public abstract fun getRetryBudget ()I
+	public abstract fun getRetryOnAbnormalTermination ()Z
+}
+
+public final class org/itineradev/itinera/workflow/StepDescriptor$Companion {
+	public final fun builder (Ljava/lang/String;Lorg/itineradev/itinera/step/SyncStepFactory;)Lorg/itineradev/itinera/workflow/StepBuilder;
+}
+
+public final class org/itineradev/itinera/workflow/Sync : org/itineradev/itinera/workflow/Mode {
+	public static final field INSTANCE Lorg/itineradev/itinera/workflow/Sync;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class org/itineradev/itinera/workflow/Violation {
+	public abstract fun getNamed ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/workflow/Violation$DuplicateStepName : java/lang/Record, org/itineradev/itinera/workflow/Violation {
+	public fun <init> (Lorg/itineradev/itinera/step/StepName;)V
+	public final fun component1 ()Lorg/itineradev/itinera/step/StepName;
+	public final fun copy (Lorg/itineradev/itinera/step/StepName;)Lorg/itineradev/itinera/workflow/Violation$DuplicateStepName;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/workflow/Violation$DuplicateStepName;Lorg/itineradev/itinera/step/StepName;ILjava/lang/Object;)Lorg/itineradev/itinera/workflow/Violation$DuplicateStepName;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getNamed ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun named ()Ljava/lang/String;
+	public final fun step ()Lorg/itineradev/itinera/step/StepName;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/workflow/Violation$Held : java/lang/Enum {
+	public static final field INITIAL_DATA Lorg/itineradev/itinera/workflow/Violation$Held;
+	public static final field INITIAL_GLOBAL_METADATA Lorg/itineradev/itinera/workflow/Violation$Held;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/itineradev/itinera/workflow/Violation$Held;
+	public static fun values ()[Lorg/itineradev/itinera/workflow/Violation$Held;
+}
+
+public final class org/itineradev/itinera/workflow/Violation$Misdeclared : java/lang/Record, org/itineradev/itinera/workflow/Violation {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lorg/itineradev/itinera/workflow/Violation$Misdeclared;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/workflow/Violation$Misdeclared;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/itineradev/itinera/workflow/Violation$Misdeclared;
+	public final fun declaration ()Ljava/lang/String;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getNamed ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun named ()Ljava/lang/String;
+	public final fun problem ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/workflow/Violation$ModeNotAccepted : java/lang/Record, org/itineradev/itinera/workflow/Violation {
+	public fun <init> (Ljava/lang/String;Lorg/itineradev/itinera/workflow/Mode;)V
+	public final fun accepted ()Lorg/itineradev/itinera/workflow/Mode;
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lorg/itineradev/itinera/workflow/Mode;
+	public final fun copy (Ljava/lang/String;Lorg/itineradev/itinera/workflow/Mode;)Lorg/itineradev/itinera/workflow/Violation$ModeNotAccepted;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/workflow/Violation$ModeNotAccepted;Ljava/lang/String;Lorg/itineradev/itinera/workflow/Mode;ILjava/lang/Object;)Lorg/itineradev/itinera/workflow/Violation$ModeNotAccepted;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getNamed ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun named ()Ljava/lang/String;
+	public final fun part ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/workflow/Violation$NotAValue : java/lang/Record, org/itineradev/itinera/workflow/Violation {
+	public fun <init> (Lorg/itineradev/itinera/workflow/Violation$Held;Ljava/lang/String;Ljava/lang/Throwable;)V
+	public final fun component1 ()Lorg/itineradev/itinera/workflow/Violation$Held;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/Throwable;
+	public final fun copy (Lorg/itineradev/itinera/workflow/Violation$Held;Ljava/lang/String;Ljava/lang/Throwable;)Lorg/itineradev/itinera/workflow/Violation$NotAValue;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/workflow/Violation$NotAValue;Lorg/itineradev/itinera/workflow/Violation$Held;Ljava/lang/String;Ljava/lang/Throwable;ILjava/lang/Object;)Lorg/itineradev/itinera/workflow/Violation$NotAValue;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun error ()Ljava/lang/Throwable;
+	public synthetic fun getNamed ()Ljava/lang/String;
+	public fun hashCode ()I
+	public final fun held ()Lorg/itineradev/itinera/workflow/Violation$Held;
+	public final fun key ()Ljava/lang/String;
+	public fun named ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/workflow/Violation$ReservedMetadataKey : org/itineradev/itinera/workflow/Violation {
+	public static final field INSTANCE Lorg/itineradev/itinera/workflow/Violation$ReservedMetadataKey;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getNamed ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/workflow/Violations : java/lang/IllegalArgumentException {
+	public fun <init> (Ljava/util/List;)V
+	public final fun getViolations ()Ljava/util/List;
+}
+
+public abstract interface annotation class org/itineradev/itinera/workflow/WithStep : java/lang/annotation/Annotation {
+	public abstract fun name ()Ljava/lang/String;
+	public abstract fun noRetryOnAbnormalTermination ()Z
+	public abstract fun retryBudget ()I
+	public abstract fun step ()Ljava/lang/Class;
+}
+
+public abstract interface annotation class org/itineradev/itinera/workflow/WithStep$Container : java/lang/annotation/Annotation {
+	public abstract fun value ()[Lorg/itineradev/itinera/workflow/WithStep;
+}
+
+public abstract interface annotation class org/itineradev/itinera/workflow/Workflow : java/lang/annotation/Annotation {
+	public abstract fun name ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/workflow/WorkflowBuilder {
+	public final fun build ()Lorg/itineradev/itinera/workflow/WorkflowDescriptor;
+	public final fun idGenerator (Lorg/itineradev/itinera/workflow/JourneyIdGenerator;)Lorg/itineradev/itinera/workflow/WorkflowBuilder;
+	public final fun step (Lorg/itineradev/itinera/workflow/StepDescriptor;)Lorg/itineradev/itinera/workflow/WorkflowBuilder;
+}
+
+public abstract interface class org/itineradev/itinera/workflow/WorkflowDescriptor {
+	public static final field Companion Lorg/itineradev/itinera/workflow/WorkflowDescriptor$Companion;
+	public static fun builder (Ljava/lang/Class;Ljava/lang/String;)Lorg/itineradev/itinera/workflow/WorkflowBuilder;
+	public abstract fun getIdGenerator ()Lorg/itineradev/itinera/workflow/JourneyIdGenerator;
+	public abstract fun getMode ()Lorg/itineradev/itinera/workflow/Mode;
+	public abstract fun getName ()Lorg/itineradev/itinera/workflow/WorkflowName;
+	public abstract fun getSteps ()Ljava/util/List;
+	public static fun of (Ljava/lang/Class;)Lorg/itineradev/itinera/workflow/WorkflowDescriptor;
+}
+
+public final class org/itineradev/itinera/workflow/WorkflowDescriptor$Companion {
+	public final fun builder (Ljava/lang/Class;Ljava/lang/String;)Lorg/itineradev/itinera/workflow/WorkflowBuilder;
+	public final fun of (Ljava/lang/Class;)Lorg/itineradev/itinera/workflow/WorkflowDescriptor;
 }
 
 public final class org/itineradev/itinera/workflow/WorkflowName : org/itineradev/itinera/Name {

@@ -2,7 +2,7 @@
 
 Tech spec for [proposal 0056](https://github.com/itinera-dev/spec/blob/main/proposals/0056-data-bag-values.md), implemented in [#18](https://github.com/itinera-dev/itinera-j/issues/18). The [tier 1 plan](../tier-1-plan.md) holds what crosses proposals, section 2 above all, and [0121](0121-read-only-copies.md) when itinera copies a value.
 
-Status: started. Stage 1 added the check and copy of a value, type tokens, the data bag and its `Read`. Later stages capture what enters a journey through the same function: initial data in stage 3, contributions, adapters' values and reasons' details in stage 5, providers' data in stage 8.
+Status: started. Stage 1 added the check and copy of a value, type tokens, the data bag and its `Read`. Stage 3 captures the initial data and the initial global metadata when the instance is created, and `run` refuses the keys whose values are not values ([0042](0042-configuration-errors-before-the-journey.md)). Later stages capture what enters a journey through the same function: contributions, adapters' values and reasons' details in stage 5, providers' data in stage 8.
 
 ## API
 
