@@ -8,6 +8,9 @@ import org.itineradev.itinera.engine.Parts
 import org.itineradev.itinera.engine.Running
 import org.itineradev.itinera.engine.nullable
 import org.itineradev.itinera.event.Event
+import org.itineradev.itinera.policy.HookCall
+import org.itineradev.itinera.policy.async.AsyncHook
+import org.itineradev.itinera.policy.async.AsyncWorkflowHook
 import org.itineradev.itinera.report.ReporterOf
 import org.itineradev.itinera.report.async.AsyncDispatcher
 import org.itineradev.itinera.report.async.AsyncDispatcherFactory
@@ -26,7 +29,11 @@ internal class AsyncParts(private val factory: AsyncDispatcherFactory) : Parts<A
 
     override fun accepts(factory: StepFactory<*>?): Boolean = factory is AsyncStepFactory
 
-    override fun accepts(reporter: ReporterOf<*>?): Boolean = reporter is AsyncReporter
+    override fun accepts(hook: HookCall<*, *, *, *>?): Boolean =
+        (hook is AsyncHook<*, *, *> || hook is AsyncWorkflowHook<*, *>) && writtenInKotlin(hook)
+
+    override fun accepts(reporter: ReporterOf<*>?): Boolean =
+        reporter is AsyncReporter && writtenInKotlin(reporter)
 
     @JvmSynthetic
     override suspend fun dispatcher(): Delivery? = nullable(factory.create())?.let(::AsyncDelivery)
@@ -40,6 +47,14 @@ internal class AsyncParts(private val factory: AsyncDispatcherFactory) : Parts<A
         currentCoroutineContext().ensureActive()
     }
 }
+
+/**
+ * Whether [part] was written in Kotlin, or is a lambda: javac lets a Java class implement an
+ * asynchronous interface without writing its `suspend` operations, which it cannot see, so such a
+ * class is a part of the other mode.
+ */
+internal fun writtenInKotlin(part: Any): Boolean =
+    part.javaClass.isHidden || part.javaClass.isAnnotationPresent(Metadata::class.java)
 
 private fun running(run: AsyncStepRun): Running = Running { run.run() }
 

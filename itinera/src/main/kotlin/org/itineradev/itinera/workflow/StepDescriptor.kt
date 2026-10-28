@@ -1,6 +1,7 @@
 package org.itineradev.itinera.workflow
 
 import org.itineradev.itinera.ExperimentalItineraApi
+import org.itineradev.itinera.policy.StepPolicyDescriptor
 import org.itineradev.itinera.request.Request
 import org.itineradev.itinera.request.StepKind
 import org.itineradev.itinera.step.StepFactory
@@ -9,8 +10,9 @@ import org.itineradev.itinera.step.SyncStepFactory
 
 /**
  * How one step of a workflow of mode [M] is declared: its name, what it requests, how it is built
- * for each attempt, and how its failed attempts are retried. Every step states its own retry budget
- * and whether it retries abnormal terminations, so the declaration shows everything.
+ * for each attempt, how its failed attempts are retried, and the policies attached to it. Every
+ * step states its own retry budget and whether it retries abnormal terminations, so the declaration
+ * shows everything.
  *
  * [builder] makes one for a synchronous workflow, `asyncStep` from `itinera-kotlin` for an
  * asynchronous one, and annotated workflows get theirs from `@WithStep`. Any other implementation
@@ -39,6 +41,9 @@ public interface StepDescriptor<M : Mode> {
     /** Whether an abnormal termination is retried while the retry budget lasts. */
     public val retryOnAbnormalTermination: Boolean
 
+    /** The step policies attached to the step, in the order their hooks are called. */
+    public val policies: List<StepPolicyDescriptor<*, M>>
+
     /** Makes step descriptors. */
     public companion object {
         /**
@@ -66,6 +71,7 @@ public interface StepDescriptor<M : Mode> {
 public class StepBuilder<M : Mode>
 internal constructor(private val name: StepName, private val factory: StepFactory<M>) {
     private val requests = mutableListOf<Request<StepKind<M>, *>>()
+    private val policies = mutableListOf<StepPolicyDescriptor<*, M>>()
     private var retryBudget = 0
     private var retryOnAbnormalTermination = true
 
@@ -76,6 +82,15 @@ internal constructor(private val name: StepName, private val factory: StepFactor
      */
     public fun request(request: Request<StepKind<M>, *>): StepBuilder<M> = apply {
         requests += request
+    }
+
+    /**
+     * Attaches a step policy after those already attached, whose hooks are called in that order.
+     *
+     * @sample org.itineradev.itinera.policy.samples.policies
+     */
+    public fun policy(policy: StepPolicyDescriptor<*, M>): StepBuilder<M> = apply {
+        policies += policy
     }
 
     /**
@@ -105,7 +120,14 @@ internal constructor(private val name: StepName, private val factory: StepFactor
      * @sample org.itineradev.itinera.workflow.samples.steps
      */
     public fun build(): StepDescriptor<M> =
-        Described(name, requests.toList(), factory, retryBudget, retryOnAbnormalTermination)
+        Described(
+            name,
+            requests.toList(),
+            factory,
+            retryBudget,
+            retryOnAbnormalTermination,
+            policies.toList(),
+        )
 
     private class Described<M : Mode>(
         override val name: StepName,
@@ -113,5 +135,6 @@ internal constructor(private val name: StepName, private val factory: StepFactor
         override val factory: StepFactory<M>,
         override val retryBudget: Int,
         override val retryOnAbnormalTermination: Boolean,
+        override val policies: List<StepPolicyDescriptor<*, M>>,
     ) : StepDescriptor<M>
 }

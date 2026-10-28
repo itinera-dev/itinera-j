@@ -12,7 +12,8 @@ import org.itineradev.itinera.workflow.WorkflowDescriptor
 internal fun violationsOf(descriptor: WorkflowDescriptor<*, *>): List<Violation> =
     duplicateStepNames(descriptor.steps.map(StepDescriptor<*>::name)) +
         descriptor.steps.filter(::overdrawn).map(::overdrawnBudget) +
-        descriptor.steps.flatMap(::serviceViolations)
+        descriptor.steps.flatMap(::serviceViolations) +
+        policyViolations(descriptor)
 
 /** A `duplicate step name` for each name shared by several of [names]. */
 internal fun duplicateStepNames(names: List<StepName>): List<Violation> =
@@ -48,6 +49,7 @@ internal fun <M : Mode> admission(
     initial: Initial,
 ): List<Violation> =
     unchecked(instance.descriptor) +
+        unprovided(instance) +
         Modes(parts).of(instance) +
         initial.data.refused +
         initial.metadata.refused +
@@ -55,6 +57,17 @@ internal fun <M : Mode> admission(
 
 private fun unchecked(descriptor: WorkflowDescriptor<*, *>): List<Violation> =
     if (descriptor is Checked) emptyList() else violationsOf(descriptor)
+
+private fun unprovided(instance: WorkflowInstance<*>): List<Violation> =
+    instance.descriptor.roles
+        .filterNot { role -> role.isInstance(instance.workflow) }
+        .map { role -> unprovided(instance.descriptor, role) }
+
+private fun unprovided(descriptor: WorkflowDescriptor<*, *>, role: Class<*>): Violation =
+    Violation.Misdeclared(
+        "workflow ${descriptor.name}",
+        "provides role ${role.name}, which its workflow object does not implement",
+    )
 
 private fun reserved(initial: Initial): List<Violation> =
     if (JOURNEY_ID_KEY in initial.metadata.values) listOf(Violation.ReservedMetadataKey)
@@ -65,6 +78,7 @@ private class Modes<M : Mode>(private val parts: Parts<M>) {
     fun of(instance: WorkflowInstance<M>): List<Violation> =
         workflow(instance.descriptor) +
             instance.descriptor.steps.filterNot(::accepts).map(::step) +
+            hooksOf(instance.descriptor).filterNot(::accepts).map(::hook) +
             instance.reporters.withIndex().filterNot(::accepts).map(::reporter)
 
     private fun workflow(descriptor: WorkflowDescriptor<*, *>): List<Violation> =
@@ -73,11 +87,16 @@ private class Modes<M : Mode>(private val parts: Parts<M>) {
 
     private fun accepts(step: StepDescriptor<*>): Boolean = parts.accepts(step.factory)
 
+    private fun accepts(hook: DefinedHook<*>): Boolean = parts.accepts(hook.definition.call)
+
     private fun accepts(reporter: IndexedValue<ReporterOf<*>?>): Boolean =
         parts.accepts(reporter.value)
 
     private fun step(step: StepDescriptor<*>): Violation =
         Violation.ModeNotAccepted("step ${step.name}", parts.mode)
+
+    private fun hook(hook: DefinedHook<*>): Violation =
+        Violation.ModeNotAccepted(hook.toString(), parts.mode)
 
     private fun reporter(reporter: IndexedValue<ReporterOf<*>?>): Violation =
         Violation.ModeNotAccepted("reporter ${reporter.index + 1}", parts.mode)

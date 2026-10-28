@@ -10,6 +10,7 @@ module org.itineradev.itinera.kotlin {
   exports org.itineradev.itinera.executor.async;
   exports org.itineradev.itinera.instance.async;
   exports org.itineradev.itinera.journey.kotlin;
+  exports org.itineradev.itinera.policy.async;
   exports org.itineradev.itinera.report.async;
   exports org.itineradev.itinera.request.async;
   exports org.itineradev.itinera.request.kotlin;
