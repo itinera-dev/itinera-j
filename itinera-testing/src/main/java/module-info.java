@@ -4,4 +4,5 @@ module org.itineradev.itinera.testing {
   requires static org.itineradev.itinera.kotlin;
 
   exports org.itineradev.itinera.report.testing;
+  exports org.itineradev.itinera.step.testing;
 }
