@@ -69,6 +69,11 @@ private fun rescueOf(script: StepScript): RescueStepDescriptor<Sync> {
 }
 
 private fun adapterOf(adapter: AdapterModel): InputAdapterDescriptor<Scenario, Sync> {
+    if (adapter.isAsynchronous) {
+        throw ModelException(
+            "Kotlin hands no asynchronous input adapter to LocalExecutor: its types refuse it"
+        )
+    }
     val builder =
         InputAdapterDescriptor.builder<Scenario>(adapter.name, adapter.steps.first()) { _, _ ->
             throw NotRunYet("input adapters")

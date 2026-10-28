@@ -10,6 +10,7 @@ import org.itineradev.itinera.workflow.InputAdapterBuilder
 import org.itineradev.itinera.workflow.InputAdapterDescriptor
 import org.itineradev.itinera.workflow.Mode
 import org.itineradev.itinera.workflow.Supplied
+import org.itineradev.itinera.workflow.Violation
 
 /**
  * Reads the input adapters of a workflow class in [mode], its [markedMethods] marked
@@ -29,14 +30,15 @@ internal class AdapterMethods<M : Mode>(
     private fun adapter(method: Method): InputAdapterDescriptor<Any?, M>? {
         val marked = method.getAnnotation(InputAdapter::class.java)
         val function = functionOf(method)
+        val name = marked.name.ifEmpty { function.name }
         val inMode = function.isSuspend == (mode == Async)
-        if (!inMode) problems.misdeclared(method.toString(), modeProblem(function.isSuspend))
+        if (!inMode) problems += Violation.ModeNotAccepted("input adapter $name", mode)
         val stepsNamed = stepsNamed(method, marked)
         val asks = requests.of(method, function)
         val returns = problems.returns(method, function, Supplied::class.java)
         val opened = problems.opened(method.declaringClass, method)
         val usable = inMode && returns && opened && stepsNamed
-        return if (usable && asks != null) described(method, function, marked, asks) else null
+        return if (usable && asks != null) described(method, name, marked, asks) else null
     }
 
     private fun stepsNamed(method: Method, marked: InputAdapter): Boolean {
@@ -47,18 +49,14 @@ internal class AdapterMethods<M : Mode>(
 
     private fun described(
         method: Method,
-        function: KotlinFunction,
+        name: String,
         marked: InputAdapter,
         asks: List<Request<InputAdapterKind, *>>,
     ): InputAdapterDescriptor<Any?, M> {
-        val name = AdapterName.of(marked.name.ifEmpty { function.name })
-        val builder = InputAdapterBuilder(name, calls.of(AdapterMethod(method, asks)))
+        val builder =
+            InputAdapterBuilder(AdapterName.of(name), calls.of(AdapterMethod(method, asks)))
         marked.steps.forEach(builder::step)
         asks.forEach(builder::request)
         return builder.build()
     }
 }
-
-private fun modeProblem(suspending: Boolean): String =
-    if (suspending) "is suspend, though an input adapter of a synchronous workflow is not"
-    else "is not suspend, though an input adapter of an asynchronous workflow is"

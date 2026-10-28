@@ -256,10 +256,7 @@ class StartTest {
                 listOf(
                     Violation.Misdeclared("input adapter discounts", "is attached to no step"),
                     Violation.InputAdapterForUnknownStep(pricing.name, StepName.of("ship")),
-                    Violation.Misdeclared(
-                        "input adapter pricing",
-                        "is not of the mode Sync, which the executor runs",
-                    ),
+                    Violation.ModeNotAccepted("input adapter pricing", Sync),
                 )
             ),
             refused,
