@@ -36,10 +36,12 @@ Each published artifact is a Java module named after it, such as `org.itineradev
 
 What the modules share lives in `build-logic`, a build included by `settings.gradle.kts`, as convention plugins:
 
-- `itinera.kotlin-library`, applied by every published library: Kotlin on the JDK 25 toolchain, compiled for JVM 17 with `apiVersion` one release behind the compiler and the matching standard library, explicit API mode, warnings as errors in Kotlin and javac, the module descriptor, JUnit, Spotless, detekt, Dokka, the ABI dump, the licence check and dependency locking;
+- `itinera.kotlin-jvm`, what every Kotlin project shares, published or not: Kotlin on the JDK 25 toolchain, compiled for JVM 17 with `apiVersion` one release behind the compiler and the matching standard library, warnings as errors in Kotlin and javac, JUnit, Spotless, detekt and dependency locking;
+- `itinera.kotlin-library`, applied by every published library on top of `itinera.kotlin-jvm`: explicit API mode, the module descriptor, Dokka, the ABI dump and the licence check;
+- `itinera.conformance-runner`, applied by the Kotlin runner on top of `itinera.kotlin-jvm`: the `application` plugin, the opt-in to `@ExperimentalItineraApi`, and `run` started from the repository's root, so the paths a runner reads are relative to where the command runs;
 - `itinera.published`, applied by every published artifact: Maven Central through the `com.vanniktech.maven.publish` plugin, the POM Central requires, signing when a key is given, and the `Package` repository under `build/package`;
 - `itinera.bom`, applied by `itinera-bom`;
-- `itinera.raised-dependencies`, applied by `itinera.kotlin-library`, `itinera.bom` and `itinera.root`: `RaiseGuava`, which raises Guava wherever it is resolved, as "Dependencies" says;
+- `itinera.raised-dependencies`, applied by `itinera.kotlin-jvm`, `itinera.bom` and `itinera.root`: `RaiseGuava`, which raises Guava wherever it is resolved, as "Dependencies" says;
 - `itinera.root`, applied by the root project: the formatting of the build's own files and the check that the two manifests agree, `CheckManifests` over `ManifestAgreement`, which `build-logic`'s own tests check.
 
 `gradle/libs.versions.toml` holds every version: Kotlin, the standard library applications get, and every plugin and library, but for two that Gradle reads before the catalogue exists: the toolchain resolver plugin in `settings.gradle.kts`, and Gradle itself in `gradle/wrapper/gradle-wrapper.properties`.
