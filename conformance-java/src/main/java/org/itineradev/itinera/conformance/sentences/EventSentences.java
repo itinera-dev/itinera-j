@@ -17,6 +17,7 @@ import org.itineradev.itinera.conformance.trace.Line;
 import org.itineradev.itinera.conformance.trace.Matching;
 import org.itineradev.itinera.conformance.trace.Table;
 import org.itineradev.itinera.conformance.trace.Writing;
+import org.itineradev.itinera.event.ContributionCommitted;
 import org.itineradev.itinera.event.Event;
 import org.itineradev.itinera.event.JourneyAborted;
 import org.itineradev.itinera.event.JourneyStarted;
@@ -67,6 +68,15 @@ public final class EventSentences {
     holdsOfStream(
         events.stream().map(Writing::lineOf).noneMatch(line -> carries(line, message)),
         "no event to carry \"" + message + "\"",
+        events);
+  }
+
+  @Then("no contribution of {string} was committed")
+  public void noContributionWasCommitted(String key) {
+    var events = world.stream();
+    holdsOfStream(
+        events.stream().noneMatch(event -> commits(event, key)),
+        "no contribution_committed of \"" + key + "\"",
         events);
   }
 
@@ -137,5 +147,9 @@ public final class EventSentences {
   /** Whether {@code line} carries {@code message} in a cell or in what no column shows. */
   private static boolean carries(Line line, String message) {
     return line.cells().containsValue(message) || line.carried().contains(message);
+  }
+
+  private static boolean commits(Event event, String key) {
+    return event instanceof ContributionCommitted committed && committed.key().equals(key);
   }
 }

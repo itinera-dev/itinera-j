@@ -10,6 +10,7 @@ import org.itineradev.itinera.report.testing.RecordingReporter
 import org.itineradev.itinera.report.testing.complete
 import org.itineradev.itinera.request.Answers
 import org.itineradev.itinera.step.Outcome
+import org.itineradev.itinera.step.Reason
 import org.itineradev.itinera.step.testing.samples.Shop
 import org.itineradev.itinera.step.testing.samples.asyncFailingToBuild
 import org.itineradev.itinera.step.testing.samples.asyncMocks
@@ -23,6 +24,9 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotSame
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments.argumentSet
+import org.junit.jupiter.params.provider.FieldSource
 
 @OptIn(ExperimentalItineraApi::class)
 class StepMockTest {
@@ -89,10 +93,24 @@ class StepMockTest {
         assertEquals(Outcome.success(), outcomes())
     }
 
+    @ParameterizedTest
+    @FieldSource("endingsAndOutcomes")
+    fun `a failure and a skip give the outcome they stand for`(ending: Ending, expected: Outcome) {
+        assertEquals(expected, ending.outcome())
+    }
+
     @Test
     fun `the samples run their journeys`() {
         assertEquals(
-            listOf(Ending.Success, Ending.AbnormalTermination("the gateway timed out")),
+            listOf(
+                Ending.Success,
+                Ending.Failure(Reason("declined", "The card was declined.")),
+                Ending.Failure(Reason("declined")),
+                Ending.Skipped(null),
+                Ending.Skipped(Reason("no discount", "The order has no discount.")),
+                Ending.Skipped(Reason("no discount")),
+                Ending.AbnormalTermination("the gateway timed out"),
+            ),
             endings(),
         )
         assertTrue(mocks().isSucceeded)
@@ -115,5 +133,19 @@ class StepMockTest {
                 .step(StepDescriptor.builder("charge", charge).retryBudget(retryBudget).build())
                 .build()
         return LocalExecutor().run(orders.instance(Shop()).reporter(reporter).create())
+    }
+
+    companion object {
+        @JvmField
+        val endingsAndOutcomes =
+            listOf(
+                argumentSet(
+                    "a failure",
+                    Ending.failure(Reason("declined", "No.")),
+                    Outcome.failure(Reason("declined", "No.")),
+                ),
+                argumentSet("a skip with no reason", Ending.skipped(), Outcome.skipped()),
+                argumentSet("a skip for a code", Ending.skipped("none"), Outcome.skipped("none")),
+            )
     }
 }

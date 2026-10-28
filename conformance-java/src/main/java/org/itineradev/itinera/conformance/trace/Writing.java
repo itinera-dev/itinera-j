@@ -9,7 +9,9 @@ import java.util.Objects;
 import java.util.stream.Stream;
 import org.itineradev.itinera.conformance.run.NotRunYet;
 import org.itineradev.itinera.event.AttemptStarted;
+import org.itineradev.itinera.event.ContributionCommitted;
 import org.itineradev.itinera.event.ContributionsDiscarded;
+import org.itineradev.itinera.event.DataOverwritten;
 import org.itineradev.itinera.event.DecidedBy;
 import org.itineradev.itinera.event.DecidingHook;
 import org.itineradev.itinera.event.Event;
@@ -72,6 +74,10 @@ public final class Writing {
       attempt(succeeded.step(), succeeded.attempt());
     } else if (event instanceof ContributionsDiscarded discarded) {
       attempt(discarded.step(), discarded.attempt());
+    } else if (event instanceof ContributionCommitted committed) {
+      EventCells.contributedCells(committed.key(), committed.source()).forEach(this::set);
+    } else if (event instanceof DataOverwritten overwritten) {
+      EventCells.contributedCells(overwritten.key(), overwritten.source()).forEach(this::set);
     } else if (event instanceof StepFailed failed) {
       attempted(failed.step(), failed.attempt(), failed.reason());
     } else if (event instanceof StepSkipped skipped) {
