@@ -9,7 +9,6 @@ import org.itineradev.itinera.engine.Journeys.shop
 import org.itineradev.itinera.engine.Journeys.succeeding
 import org.itineradev.itinera.journey.JourneyId
 import org.itineradev.itinera.report.Reporter
-import org.itineradev.itinera.report.WorkflowReporter
 import org.itineradev.itinera.value.TypeToken
 import org.itineradev.itinera.workflow.JourneyIdGenerator
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -72,8 +71,7 @@ class DraftTest {
 
     @Test
     fun `each instance makes its own reporters the workflow lists, before those it is given`() {
-        val listing =
-            shop().step(succeeding("pack").build()).reporter(WorkflowReporter.of { Log() }).build()
+        val listing = shop().step(succeeding("pack").build()).reporter { Log() }.build()
         val given = Log()
         val first = instanceOf(listing).reporter(given).create()
         val second = instanceOf(listing).create()

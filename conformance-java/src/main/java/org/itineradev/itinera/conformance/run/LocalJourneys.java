@@ -17,7 +17,6 @@ import org.itineradev.itinera.executor.LocalExecutor;
 import org.itineradev.itinera.executor.Refusal;
 import org.itineradev.itinera.instance.InstanceBuilder;
 import org.itineradev.itinera.instance.WorkflowInstance;
-import org.itineradev.itinera.report.WorkflowReporter;
 import org.itineradev.itinera.service.ProviderDescriptor;
 import org.itineradev.itinera.step.SyncStepFactory;
 import org.itineradev.itinera.workflow.InputAdapterBuilder;
@@ -65,7 +64,7 @@ public final class LocalJourneys implements Journeys {
     }
     var reporters = workflow.reporters();
     for (var name : reporters == null ? List.<String>of() : reporters) {
-      builder.reporter(WorkflowReporter.of(journeyId -> recorders.make(name)));
+      builder.reporter(journeyId -> recorders.make(name));
     }
     if (workflow.idGenerator() instanceof IdGenerator.Returns generator) {
       builder.idGenerator((scenario, data) -> generator.id());

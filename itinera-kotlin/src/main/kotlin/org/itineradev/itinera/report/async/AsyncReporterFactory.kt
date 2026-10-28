@@ -2,6 +2,8 @@ package org.itineradev.itinera.report.async
 
 import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.JourneyId
+import org.itineradev.itinera.report.ReporterFactoryOf
+import org.itineradev.itinera.workflow.Async
 
 /**
  * Makes a reporter for one instance of an asynchronous workflow, with the instance's journey ID,
@@ -11,11 +13,11 @@ import org.itineradev.itinera.journey.JourneyId
  * @sample org.itineradev.itinera.instance.async.samples.asyncPerJourney
  */
 @ExperimentalItineraApi
-public fun interface AsyncReporterFactory {
+public fun interface AsyncReporterFactory : ReporterFactoryOf<Async> {
     /**
      * Makes the reporter of the journey with this ID.
      *
      * @sample org.itineradev.itinera.instance.async.samples.asyncPerJourney
      */
-    public fun create(journeyId: JourneyId): AsyncReporter
+    override fun create(journeyId: JourneyId): AsyncReporter
 }

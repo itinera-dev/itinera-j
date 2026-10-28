@@ -4,7 +4,7 @@ import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Described
 import org.itineradev.itinera.engine.listingOf
 import org.itineradev.itinera.policy.WorkflowPolicyDescriptor
-import org.itineradev.itinera.report.WorkflowReporter
+import org.itineradev.itinera.report.ReporterFactoryOf
 import org.itineradev.itinera.service.ProviderDescriptor
 
 /**
@@ -48,10 +48,10 @@ public interface WorkflowDescriptor<W, M : Mode> {
     public val providers: List<ProviderDescriptor<W, M>>
 
     /**
-     * The reporters the workflow lists, of which each instance makes its own, in this order, before
-     * the reporters it is given itself.
+     * The factories of the reporters the workflow lists, with which each instance makes its own, in
+     * this order, before the reporters it is given itself.
      */
-    public val reporters: List<WorkflowReporter<M>>
+    public val reporters: List<ReporterFactoryOf<M>>
 
     /** How each instance's journey ID is produced; `null` for a UUID version 4. */
     public val idGenerator: JourneyIdGenerator<W>?

@@ -4,8 +4,8 @@ import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
 import org.itineradev.itinera.instance.WorkflowInstance
 import org.itineradev.itinera.journey.JourneyId
+import org.itineradev.itinera.report.ReporterFactoryOf
 import org.itineradev.itinera.report.ReporterOf
-import org.itineradev.itinera.report.WorkflowReporter
 import org.itineradev.itinera.workflow.Mode
 import org.itineradev.itinera.workflow.WorkflowDescriptor
 
@@ -59,7 +59,7 @@ public class Draft<W, M : Mode>(
     }
 
     private fun factories(): List<(JourneyId) -> ReporterOf<M>?> =
-        descriptor.reporters.map(WorkflowReporter<M>::make) + reporters
+        descriptor.reporters.map(::making) + reporters
 
     private fun journeyId(initial: Initial): JourneyId {
         val generator = descriptor.idGenerator ?: return JourneyId.of(UUID.randomUUID().toString())
@@ -75,6 +75,9 @@ public class Draft<W, M : Mode>(
         return JourneyId.of(id)
     }
 }
+
+private fun <M : Mode> making(factory: ReporterFactoryOf<M>): (JourneyId) -> ReporterOf<M>? =
+    factory::create
 
 private fun <M : Mode> made(
     factory: (JourneyId) -> ReporterOf<M>?,

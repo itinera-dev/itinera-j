@@ -40,7 +40,6 @@ public final class org/itineradev/itinera/engine/Builders {
 	public final fun inputAdapter (Ljava/lang/String;Lorg/itineradev/itinera/workflow/InputAdapterCall;)Lorg/itineradev/itinera/workflow/InputAdapterBuilder;
 	public final fun perAttemptProvider (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Class;Lorg/itineradev/itinera/service/ProviderCall;)Lorg/itineradev/itinera/service/ProviderBuilder;
 	public final fun provider (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Class;Lorg/itineradev/itinera/service/ProviderCall;)Lorg/itineradev/itinera/service/ProviderBuilder;
-	public final fun reporter (Lkotlin/jvm/functions/Function1;)Lorg/itineradev/itinera/report/WorkflowReporter;
 	public final fun rescueStep (Lorg/itineradev/itinera/step/RescueFactory;)Lorg/itineradev/itinera/workflow/RescueStepBuilder;
 	public final fun step (Ljava/lang/String;Lorg/itineradev/itinera/step/StepFactory;)Lorg/itineradev/itinera/workflow/StepBuilder;
 	public final fun workflow (Ljava/lang/String;Lorg/itineradev/itinera/workflow/Mode;)Lorg/itineradev/itinera/workflow/WorkflowBuilder;
@@ -2545,20 +2544,16 @@ public abstract interface class org/itineradev/itinera/report/Reporter : org/iti
 	public fun setGlobalMetadata (Ljava/lang/String;Ljava/lang/Object;)V
 }
 
-public abstract interface class org/itineradev/itinera/report/ReporterFactory {
+public abstract interface class org/itineradev/itinera/report/ReporterFactory : org/itineradev/itinera/report/ReporterFactoryOf {
 	public abstract fun create (Lorg/itineradev/itinera/journey/JourneyId;)Lorg/itineradev/itinera/report/Reporter;
+	public synthetic fun create (Lorg/itineradev/itinera/journey/JourneyId;)Lorg/itineradev/itinera/report/ReporterOf;
+}
+
+public abstract interface class org/itineradev/itinera/report/ReporterFactoryOf {
+	public abstract fun create (Lorg/itineradev/itinera/journey/JourneyId;)Lorg/itineradev/itinera/report/ReporterOf;
 }
 
 public abstract interface class org/itineradev/itinera/report/ReporterOf {
-}
-
-public final class org/itineradev/itinera/report/WorkflowReporter {
-	public static final field Companion Lorg/itineradev/itinera/report/WorkflowReporter$Companion;
-	public static final fun of (Lorg/itineradev/itinera/report/ReporterFactory;)Lorg/itineradev/itinera/report/WorkflowReporter;
-}
-
-public final class org/itineradev/itinera/report/WorkflowReporter$Companion {
-	public final fun of (Lorg/itineradev/itinera/report/ReporterFactory;)Lorg/itineradev/itinera/report/WorkflowReporter;
 }
 
 public abstract interface class org/itineradev/itinera/request/AttemptKind {
@@ -3447,7 +3442,7 @@ public final class org/itineradev/itinera/workflow/WorkflowBuilder {
 	public final fun inputAdapter (Lorg/itineradev/itinera/workflow/InputAdapterDescriptor;)Lorg/itineradev/itinera/workflow/WorkflowBuilder;
 	public final fun policy (Lorg/itineradev/itinera/policy/WorkflowPolicyDescriptor;)Lorg/itineradev/itinera/workflow/WorkflowBuilder;
 	public final fun provider (Lorg/itineradev/itinera/service/ProviderDescriptor;)Lorg/itineradev/itinera/workflow/WorkflowBuilder;
-	public final fun reporter (Lorg/itineradev/itinera/report/WorkflowReporter;)Lorg/itineradev/itinera/workflow/WorkflowBuilder;
+	public final fun reporter (Lorg/itineradev/itinera/report/ReporterFactoryOf;)Lorg/itineradev/itinera/workflow/WorkflowBuilder;
 	public final fun role (Ljava/lang/Class;)Lorg/itineradev/itinera/workflow/WorkflowBuilder;
 	public final fun step (Lorg/itineradev/itinera/workflow/StepDescriptor;)Lorg/itineradev/itinera/workflow/WorkflowBuilder;
 }

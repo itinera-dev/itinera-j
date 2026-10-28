@@ -1,7 +1,7 @@
 package org.itineradev.itinera.engine
 
 import org.itineradev.itinera.policy.WorkflowPolicyDescriptor
-import org.itineradev.itinera.report.WorkflowReporter
+import org.itineradev.itinera.report.ReporterFactoryOf
 import org.itineradev.itinera.service.ProviderDescriptor
 import org.itineradev.itinera.workflow.InputAdapterDescriptor
 import org.itineradev.itinera.workflow.JourneyIdGenerator
@@ -26,7 +26,7 @@ private constructor(
     override val roles: List<Class<in W>>,
     override val inputAdapters: List<InputAdapterDescriptor<W, M>>,
     override val providers: List<ProviderDescriptor<W, M>>,
-    override val reporters: List<WorkflowReporter<M>>,
+    override val reporters: List<ReporterFactoryOf<M>>,
     override val idGenerator: JourneyIdGenerator<W>?,
 ) : WorkflowDescriptor<W, M> {
     /** Makes checked descriptors. */
@@ -44,7 +44,7 @@ private constructor(
             roles: List<Class<in W>>,
             inputAdapters: List<InputAdapterDescriptor<W, M>>,
             providers: List<ProviderDescriptor<W, M>>,
-            reporters: List<WorkflowReporter<M>>,
+            reporters: List<ReporterFactoryOf<M>>,
             idGenerator: JourneyIdGenerator<W>?,
         ): Checked<W, M> {
             val described =
