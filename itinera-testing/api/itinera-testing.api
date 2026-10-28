@@ -16,3 +16,57 @@ public final class org/itineradev/itinera/report/testing/RecordingReporter : org
 	public fun setGlobalMetadata (Ljava/lang/String;Ljava/lang/Object;)V
 }
 
+public final class org/itineradev/itinera/step/testing/AsyncStepMock : org/itineradev/itinera/step/async/AsyncStepFactory {
+	public static final field Companion Lorg/itineradev/itinera/step/testing/AsyncStepMock$Companion;
+	public fun build ()Lorg/itineradev/itinera/step/async/AsyncStepRun;
+	public final fun getBuilds ()I
+}
+
+public final class org/itineradev/itinera/step/testing/AsyncStepMock$Companion {
+	public final fun failingToBuild (Ljava/lang/String;)Lorg/itineradev/itinera/step/testing/AsyncStepMock;
+	public final fun playing (Lorg/itineradev/itinera/step/testing/Ending;[Lorg/itineradev/itinera/step/testing/Ending;)Lorg/itineradev/itinera/step/testing/AsyncStepMock;
+}
+
+public abstract interface class org/itineradev/itinera/step/testing/Ending {
+	public static final field Companion Lorg/itineradev/itinera/step/testing/Ending$Companion;
+	public static fun abnormalTermination (Ljava/lang/String;)Lorg/itineradev/itinera/step/testing/Ending;
+	public fun outcome ()Lorg/itineradev/itinera/step/Outcome;
+	public static fun success ()Lorg/itineradev/itinera/step/testing/Ending;
+}
+
+public final class org/itineradev/itinera/step/testing/Ending$AbnormalTermination : java/lang/Record, org/itineradev/itinera/step/testing/Ending {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lorg/itineradev/itinera/step/testing/Ending$AbnormalTermination;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/step/testing/Ending$AbnormalTermination;Ljava/lang/String;ILjava/lang/Object;)Lorg/itineradev/itinera/step/testing/Ending$AbnormalTermination;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun errorMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/step/testing/Ending$Companion {
+	public final fun abnormalTermination (Ljava/lang/String;)Lorg/itineradev/itinera/step/testing/Ending;
+	public final fun success ()Lorg/itineradev/itinera/step/testing/Ending;
+}
+
+public final class org/itineradev/itinera/step/testing/Ending$Success : org/itineradev/itinera/step/testing/Ending {
+	public static final field INSTANCE Lorg/itineradev/itinera/step/testing/Ending$Success;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/step/testing/StepMock : org/itineradev/itinera/step/SyncStepFactory {
+	public static final field Companion Lorg/itineradev/itinera/step/testing/StepMock$Companion;
+	public fun build ()Lorg/itineradev/itinera/step/SyncStepRun;
+	public static final fun failingToBuild (Ljava/lang/String;)Lorg/itineradev/itinera/step/testing/StepMock;
+	public final fun getBuilds ()I
+	public static final fun playing (Lorg/itineradev/itinera/step/testing/Ending;[Lorg/itineradev/itinera/step/testing/Ending;)Lorg/itineradev/itinera/step/testing/StepMock;
+}
+
+public final class org/itineradev/itinera/step/testing/StepMock$Companion {
+	public final fun failingToBuild (Ljava/lang/String;)Lorg/itineradev/itinera/step/testing/StepMock;
+	public final fun playing (Lorg/itineradev/itinera/step/testing/Ending;[Lorg/itineradev/itinera/step/testing/Ending;)Lorg/itineradev/itinera/step/testing/StepMock;
+}
+
