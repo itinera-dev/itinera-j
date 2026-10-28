@@ -7,11 +7,23 @@ public abstract class org/itineradev/itinera/Name {
 	public final fun toString ()Ljava/lang/String;
 }
 
+public abstract interface class org/itineradev/itinera/engine/Answer {
+	public static final field Companion Lorg/itineradev/itinera/engine/Answer$Companion;
+	public abstract fun of (Ljava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class org/itineradev/itinera/engine/Answer$Companion {
+	public final fun getITSELF ()Lorg/itineradev/itinera/engine/Answer;
+}
+
 public final class org/itineradev/itinera/engine/AnyValueType : org/itineradev/itinera/engine/ValueType {
 	public static final field INSTANCE Lorg/itineradev/itinera/engine/AnyValueType;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class org/itineradev/itinera/engine/Asked {
 }
 
 public final class org/itineradev/itinera/engine/Builders {
@@ -76,6 +88,17 @@ public final class org/itineradev/itinera/engine/DataObject : org/itineradev/iti
 	public final fun getComponents ()Ljava/util/List;
 }
 
+public final class org/itineradev/itinera/engine/DeclaredParameter {
+	public static final field Companion Lorg/itineradev/itinera/engine/DeclaredParameter$Companion;
+	public fun <init> (Ljava/lang/reflect/Parameter;Ljava/lang/String;Lorg/itineradev/itinera/engine/ValueType;)V
+	public final fun getName ()Ljava/lang/String;
+	public final fun getParameter ()Ljava/lang/reflect/Parameter;
+	public final fun getType ()Lorg/itineradev/itinera/engine/ValueType;
+}
+
+public final class org/itineradev/itinera/engine/DeclaredParameter$Companion {
+}
+
 public abstract interface class org/itineradev/itinera/engine/Delivery {
 	public abstract synthetic fun add (Lorg/itineradev/itinera/report/ReporterOf;Lorg/itineradev/itinera/engine/Guard;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract synthetic fun dispatch (Lorg/itineradev/itinera/event/Event;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -130,21 +153,37 @@ public final class org/itineradev/itinera/engine/Guard {
 	public final fun setGlobalMetadata (Lkotlin/jvm/functions/Function0;)V
 }
 
+public final class org/itineradev/itinera/engine/Handle : java/lang/Enum, org/itineradev/itinera/engine/Asked {
+	public static final field ASYNC_STEP_REPORTER Lorg/itineradev/itinera/engine/Handle;
+	public static final field CONTRIBUTOR Lorg/itineradev/itinera/engine/Handle;
+	public static final field STEP_REPORTER Lorg/itineradev/itinera/engine/Handle;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public fun toString ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/itineradev/itinera/engine/Handle;
+	public static fun values ()[Lorg/itineradev/itinera/engine/Handle;
+}
+
+public abstract interface class org/itineradev/itinera/engine/JavaForms {
+	public abstract fun getOptional ()Lorg/itineradev/itinera/engine/Answer;
+}
+
 public abstract interface class org/itineradev/itinera/engine/KotlinClasses {
+	public abstract fun functionOf (Ljava/lang/reflect/Constructor;)Lorg/itineradev/itinera/engine/KotlinFunction;
 	public abstract fun functionOf (Ljava/lang/reflect/Method;)Lorg/itineradev/itinera/engine/KotlinFunction;
 	public abstract fun shapeOf (Ljava/lang/Class;)Lorg/itineradev/itinera/engine/KotlinShape;
 }
 
 public final class org/itineradev/itinera/engine/KotlinFunction {
 	public static final field Companion Lorg/itineradev/itinera/engine/KotlinFunction$Companion;
-	public fun <init> (ZLjava/lang/Class;Z)V
+	public fun <init> (ZLjava/lang/Class;ZLjava/util/List;)V
+	public final fun getParameters ()Ljava/util/List;
 	public final fun getReturnType ()Ljava/lang/Class;
 	public final fun getReturnsNullable ()Z
 	public final fun isSuspend ()Z
 }
 
 public final class org/itineradev/itinera/engine/KotlinFunction$Companion {
-	public final fun ofJava (Ljava/lang/reflect/Method;)Lorg/itineradev/itinera/engine/KotlinFunction;
+	public final fun ofJava (Ljava/lang/reflect/Executable;)Lorg/itineradev/itinera/engine/KotlinFunction;
 }
 
 public abstract interface class org/itineradev/itinera/engine/KotlinShape {
@@ -181,7 +220,7 @@ public final class org/itineradev/itinera/engine/Nullness : java/lang/Enum {
 public abstract interface class org/itineradev/itinera/engine/Parts {
 	public abstract fun accepts (Lorg/itineradev/itinera/report/ReporterOf;)Z
 	public abstract fun accepts (Lorg/itineradev/itinera/step/StepFactory;)Z
-	public abstract synthetic fun build (Lorg/itineradev/itinera/step/StepFactory;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract synthetic fun build (Lorg/itineradev/itinera/step/StepFactory;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract synthetic fun dispatcher (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract synthetic fun ensureActive (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun getMode ()Lorg/itineradev/itinera/workflow/Mode;
@@ -200,19 +239,32 @@ public final class org/itineradev/itinera/engine/ReflectionKt {
 	public static final fun returned (Ljava/lang/Object;)Ljava/lang/Object;
 }
 
+public final class org/itineradev/itinera/engine/RequestedKt {
+	public static final fun excludingNull (Lorg/itineradev/itinera/request/Request;Lorg/itineradev/itinera/engine/Answer;)Lorg/itineradev/itinera/request/Request;
+	public static final fun requestOf (Lorg/itineradev/itinera/engine/Asked;Lorg/itineradev/itinera/engine/Answer;)Lorg/itineradev/itinera/request/Request;
+}
+
 public abstract interface class org/itineradev/itinera/engine/Running {
 	public abstract synthetic fun run (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
+public final class org/itineradev/itinera/engine/StepClass {
+	public final fun arguments (Lorg/itineradev/itinera/request/Got;)[Ljava/lang/Object;
+	public final fun built (Lorg/itineradev/itinera/request/Got;)Ljava/lang/Object;
+	public final fun getRun ()Ljava/lang/reflect/Method;
+}
+
 public abstract interface class org/itineradev/itinera/engine/StepFactories {
-	public abstract fun of (Ljava/lang/reflect/Constructor;Ljava/lang/reflect/Method;)Lorg/itineradev/itinera/step/StepFactory;
+	public abstract fun getHandles ()Ljava/util/Map;
+	public abstract fun getOtherModes ()Ljava/util/Map;
+	public abstract fun of (Lorg/itineradev/itinera/engine/StepClass;)Lorg/itineradev/itinera/step/StepFactory;
 }
 
 public final class org/itineradev/itinera/engine/SyncParts : org/itineradev/itinera/engine/Parts {
 	public fun <init> (Lorg/itineradev/itinera/report/DispatcherFactory;)V
 	public fun accepts (Lorg/itineradev/itinera/report/ReporterOf;)Z
 	public fun accepts (Lorg/itineradev/itinera/step/StepFactory;)Z
-	public synthetic fun build (Lorg/itineradev/itinera/step/StepFactory;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public synthetic fun build (Lorg/itineradev/itinera/step/StepFactory;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public synthetic fun dispatcher (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public synthetic fun ensureActive (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public synthetic fun getMode ()Lorg/itineradev/itinera/workflow/Mode;
@@ -2002,6 +2054,10 @@ public final class org/itineradev/itinera/journey/AbortReason : java/lang/Enum {
 	public static fun values ()[Lorg/itineradev/itinera/journey/AbortReason;
 }
 
+public abstract interface class org/itineradev/itinera/journey/Contributor {
+	public abstract fun contribute (Ljava/lang/String;Ljava/lang/Object;)V
+}
+
 public final class org/itineradev/itinera/journey/DataBag {
 	public final fun contains (Ljava/lang/String;)Z
 	public final fun getKeys ()Ljava/util/Set;
@@ -2236,6 +2292,41 @@ public abstract interface class org/itineradev/itinera/report/ReporterFactory {
 public abstract interface class org/itineradev/itinera/report/ReporterOf {
 }
 
+public abstract interface class org/itineradev/itinera/request/BuildKind {
+}
+
+public abstract interface class org/itineradev/itinera/request/ContributorKind {
+}
+
+public abstract interface class org/itineradev/itinera/request/Got {
+	public abstract fun get (Lorg/itineradev/itinera/request/Request;)Ljava/lang/Object;
+}
+
+public abstract class org/itineradev/itinera/request/Request {
+	public synthetic fun <init> (Lorg/itineradev/itinera/engine/Asked;Lorg/itineradev/itinera/engine/Answer;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/request/Requests {
+	public static final field INSTANCE Lorg/itineradev/itinera/request/Requests;
+	public static final fun contributor ()Lorg/itineradev/itinera/request/Request;
+	public static final fun input (Ljava/lang/String;Lorg/itineradev/itinera/value/TypeToken;)Lorg/itineradev/itinera/request/Request;
+	public static final fun optionalInput (Ljava/lang/String;Lorg/itineradev/itinera/value/TypeToken;)Lorg/itineradev/itinera/request/Request;
+	public static final fun service (Ljava/lang/String;Ljava/lang/Class;)Lorg/itineradev/itinera/request/ServiceRequest;
+	public static final fun stepReporter ()Lorg/itineradev/itinera/request/Request;
+}
+
+public final class org/itineradev/itinera/request/ServiceRequest : org/itineradev/itinera/request/Request {
+	public final fun getKey ()Ljava/lang/String;
+	public final fun getType ()Ljava/lang/Class;
+}
+
+public abstract interface class org/itineradev/itinera/request/StepKind : org/itineradev/itinera/request/BuildKind, org/itineradev/itinera/request/ContributorKind, org/itineradev/itinera/request/StepReporterKind {
+}
+
+public abstract interface class org/itineradev/itinera/request/StepReporterKind {
+}
+
 public final class org/itineradev/itinera/service/ProviderName : org/itineradev/itinera/Name {
 	public static final field Companion Lorg/itineradev/itinera/service/ProviderName$Companion;
 	public static final fun of (Ljava/lang/String;)Lorg/itineradev/itinera/service/ProviderName;
@@ -2243,6 +2334,10 @@ public final class org/itineradev/itinera/service/ProviderName : org/itineradev/
 
 public final class org/itineradev/itinera/service/ProviderName$Companion {
 	public final fun of (Ljava/lang/String;)Lorg/itineradev/itinera/service/ProviderName;
+}
+
+public abstract interface annotation class org/itineradev/itinera/service/Service : java/lang/annotation/Annotation {
+	public abstract fun value ()Ljava/lang/String;
 }
 
 public final class org/itineradev/itinera/step/Attempt : java/lang/Comparable {
@@ -2259,6 +2354,11 @@ public final class org/itineradev/itinera/step/Attempt : java/lang/Comparable {
 
 public final class org/itineradev/itinera/step/Attempt$Companion {
 	public final fun of (I)Lorg/itineradev/itinera/step/Attempt;
+}
+
+public abstract interface annotation class org/itineradev/itinera/step/Input : java/lang/annotation/Annotation {
+	public abstract fun required ()Z
+	public abstract fun value ()Ljava/lang/String;
 }
 
 public abstract interface class org/itineradev/itinera/step/ItineraStep {
@@ -2299,6 +2399,9 @@ public final class org/itineradev/itinera/step/Reason : java/lang/Record {
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract interface annotation class org/itineradev/itinera/step/Step : java/lang/annotation/Annotation {
+}
+
 public abstract interface class org/itineradev/itinera/step/StepFactory {
 }
 
@@ -2311,8 +2414,18 @@ public final class org/itineradev/itinera/step/StepName$Companion {
 	public final fun of (Ljava/lang/String;)Lorg/itineradev/itinera/step/StepName;
 }
 
+public abstract interface class org/itineradev/itinera/step/StepReporter {
+	public abstract fun error (Ljava/lang/String;)V
+	public abstract fun error (Ljava/lang/String;Ljava/lang/Object;)V
+	public abstract fun info (Ljava/lang/String;)V
+	public abstract fun info (Ljava/lang/String;Ljava/lang/Object;)V
+	public abstract fun setGlobalMetadata (Ljava/lang/String;Ljava/lang/Object;)V
+	public abstract fun warning (Ljava/lang/String;)V
+	public abstract fun warning (Ljava/lang/String;Ljava/lang/Object;)V
+}
+
 public abstract interface class org/itineradev/itinera/step/SyncStepFactory : org/itineradev/itinera/step/StepFactory {
-	public abstract fun build ()Lorg/itineradev/itinera/step/SyncStepRun;
+	public abstract fun build (Lorg/itineradev/itinera/request/Got;)Lorg/itineradev/itinera/step/SyncStepRun;
 }
 
 public abstract interface class org/itineradev/itinera/step/SyncStepRun {
@@ -2367,6 +2480,7 @@ public abstract interface class org/itineradev/itinera/workflow/Mode {
 public final class org/itineradev/itinera/workflow/StepBuilder {
 	public final fun build ()Lorg/itineradev/itinera/workflow/StepDescriptor;
 	public final fun noRetryOnAbnormalTermination ()Lorg/itineradev/itinera/workflow/StepBuilder;
+	public final fun request (Lorg/itineradev/itinera/request/Request;)Lorg/itineradev/itinera/workflow/StepBuilder;
 	public final fun retryBudget (I)Lorg/itineradev/itinera/workflow/StepBuilder;
 }
 
@@ -2375,6 +2489,7 @@ public abstract interface class org/itineradev/itinera/workflow/StepDescriptor {
 	public static fun builder (Ljava/lang/String;Lorg/itineradev/itinera/step/SyncStepFactory;)Lorg/itineradev/itinera/workflow/StepBuilder;
 	public abstract fun getFactory ()Lorg/itineradev/itinera/step/StepFactory;
 	public abstract fun getName ()Lorg/itineradev/itinera/step/StepName;
+	public abstract fun getRequests ()Ljava/util/List;
 	public abstract fun getRetryBudget ()I
 	public abstract fun getRetryOnAbnormalTermination ()Z
 }
@@ -2467,6 +2582,36 @@ public final class org/itineradev/itinera/workflow/Violation$ReservedMetadataKey
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getNamed ()Ljava/lang/String;
 	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/workflow/Violation$ServiceNotProvided : java/lang/Record, org/itineradev/itinera/workflow/Violation {
+	public fun <init> (Lorg/itineradev/itinera/step/StepName;Ljava/lang/String;)V
+	public final fun component1 ()Lorg/itineradev/itinera/step/StepName;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Lorg/itineradev/itinera/step/StepName;Ljava/lang/String;)Lorg/itineradev/itinera/workflow/Violation$ServiceNotProvided;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/workflow/Violation$ServiceNotProvided;Lorg/itineradev/itinera/step/StepName;Ljava/lang/String;ILjava/lang/Object;)Lorg/itineradev/itinera/workflow/Violation$ServiceNotProvided;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getNamed ()Ljava/lang/String;
+	public fun hashCode ()I
+	public final fun key ()Ljava/lang/String;
+	public fun named ()Ljava/lang/String;
+	public final fun step ()Lorg/itineradev/itinera/step/StepName;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/workflow/Violation$ServiceRequestedTwice : java/lang/Record, org/itineradev/itinera/workflow/Violation {
+	public fun <init> (Lorg/itineradev/itinera/step/StepName;Ljava/lang/String;)V
+	public final fun component1 ()Lorg/itineradev/itinera/step/StepName;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Lorg/itineradev/itinera/step/StepName;Ljava/lang/String;)Lorg/itineradev/itinera/workflow/Violation$ServiceRequestedTwice;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/workflow/Violation$ServiceRequestedTwice;Lorg/itineradev/itinera/step/StepName;Ljava/lang/String;ILjava/lang/Object;)Lorg/itineradev/itinera/workflow/Violation$ServiceRequestedTwice;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getNamed ()Ljava/lang/String;
+	public fun hashCode ()I
+	public final fun key ()Ljava/lang/String;
+	public fun named ()Ljava/lang/String;
+	public final fun step ()Lorg/itineradev/itinera/step/StepName;
 	public fun toString ()Ljava/lang/String;
 }
 

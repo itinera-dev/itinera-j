@@ -40,7 +40,7 @@ final class JavaExecutorTest {
     var kinds = new ArrayList<String>();
     Reporter reporter = event -> kinds.add(event.getKind().toString());
     var result =
-        new LocalExecutor().run(oneStep(() -> Outcome::success).reporter(reporter).create());
+        new LocalExecutor().run(oneStep(got -> Outcome::success).reporter(reporter).create());
     assertTrue(result.isSucceeded());
     assertInstanceOf(JourneyStatus.Succeeded.class, result.status());
     assertEquals(
@@ -56,7 +56,7 @@ final class JavaExecutorTest {
         new LocalExecutor()
             .run(
                 oneStep(
-                        () ->
+                        got ->
                             () -> {
                               throw error;
                             })
@@ -69,7 +69,7 @@ final class JavaExecutorTest {
 
   @Test
   void aFactoryReturningNullAbortsTheJourneyWithAnUnexpectedResult() throws Refusal {
-    var result = new LocalExecutor().run(oneStep(() -> null).create());
+    var result = new LocalExecutor().run(oneStep(got -> null).create());
     assertEquals(AbortReason.UNEXPECTED_RESULT, result.abort().reason());
     assertEquals(
         new UnexpectedResult(
@@ -79,7 +79,7 @@ final class JavaExecutorTest {
 
   @Test
   void aRunReturningNullAbortsTheJourneyWithAnUnexpectedResult() throws Refusal {
-    var result = new LocalExecutor().run(oneStep(() -> () -> null).create());
+    var result = new LocalExecutor().run(oneStep(got -> () -> null).create());
     assertEquals(
         new UnexpectedResult(
             StepName.of("pack"), ByStep.INSTANCE, "the step's run returned null, not an outcome"),
@@ -91,7 +91,7 @@ final class JavaExecutorTest {
     var refusal =
         assertThrows(
             Refusal.class,
-            () -> new LocalExecutor(() -> null).run(oneStep(() -> Outcome::success).create()));
+            () -> new LocalExecutor(() -> null).run(oneStep(got -> Outcome::success).create()));
     assertEquals(Refused.DispatcherFactoryReturnedNull.INSTANCE, refusal.getRefused());
   }
 
@@ -99,7 +99,7 @@ final class JavaExecutorTest {
   void anIdGeneratorReturningNullMakesCreateThrow() {
     var descriptor =
         shop()
-            .step(StepDescriptor.builder("pack", () -> Outcome::success).build())
+            .step(StepDescriptor.builder("pack", got -> Outcome::success).build())
             .idGenerator((shop, data) -> null)
             .build();
     var thrown =
@@ -113,6 +113,6 @@ final class JavaExecutorTest {
   void aReporterFactoryReturningNullMakesCreateThrow() {
     assertThrows(
         IllegalStateException.class,
-        () -> oneStep(() -> Outcome::success).reporterFor(id -> null).create());
+        () -> oneStep(got -> Outcome::success).reporterFor(id -> null).create());
   }
 }

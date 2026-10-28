@@ -1,8 +1,11 @@
 package org.itineradev.itinera.step.testing
 
 import org.itineradev.itinera.ExperimentalItineraApi
+import org.itineradev.itinera.request.Got
+import org.itineradev.itinera.request.StepKind
 import org.itineradev.itinera.step.SyncStepFactory
 import org.itineradev.itinera.step.SyncStepRun
+import org.itineradev.itinera.workflow.Sync
 
 /**
  * A synchronous step for tests: the factory of a step that ends each attempt as its script says,
@@ -24,12 +27,13 @@ public class StepMock private constructor(private val script: Script) : SyncStep
         get() = script.builds
 
     /**
-     * Builds a new step, which ends its attempt with the next ending of the script.
+     * Builds a new step, which ends its attempt with the next ending of the script and reads
+     * nothing it [got].
      *
      * @throws RuntimeException carrying the message of the script's build failure, when it has one.
      * @sample org.itineradev.itinera.step.testing.samples.mocks
      */
-    override fun build(): SyncStepRun = SyncStepRun(script.build()::outcome)
+    override fun build(got: Got<StepKind<Sync>>): SyncStepRun = SyncStepRun(script.build()::outcome)
 
     /** Makes step mocks. */
     public companion object {

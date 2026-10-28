@@ -1,17 +1,23 @@
 package org.itineradev.itinera.workflow.async
 
-import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
 import kotlin.reflect.KClass
 import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Builders
 import org.itineradev.itinera.engine.Described
-import org.itineradev.itinera.engine.constructed
+import org.itineradev.itinera.engine.StepClass
+import org.itineradev.itinera.engine.StepFactories
 import org.itineradev.itinera.engine.invoked
 import org.itineradev.itinera.engine.returned
+import org.itineradev.itinera.request.Request
+import org.itineradev.itinera.request.Requests
+import org.itineradev.itinera.request.StepKind
+import org.itineradev.itinera.request.async.asyncStepReporter
 import org.itineradev.itinera.step.StepFactory
+import org.itineradev.itinera.step.StepReporter
 import org.itineradev.itinera.step.async.AsyncStepFactory
+import org.itineradev.itinera.step.async.AsyncStepReporter
 import org.itineradev.itinera.step.async.AsyncStepRun
 import org.itineradev.itinera.workflow.Async
 import org.itineradev.itinera.workflow.StepBuilder
@@ -56,21 +62,32 @@ public fun <W : ItineraAsyncWorkflow> asyncDescriptorOf(
 private val asynchronous =
     object : ClassValue<WorkflowDescriptor<*, Async>>() {
         override fun computeValue(type: Class<*>): WorkflowDescriptor<*, Async> =
-            Described.read<Any?, Async>(type, Async, ::asynchronousStep)
+            Described.read<Any?, Async>(type, Async, AsynchronousSteps)
     }
 
-private fun asynchronousStep(constructor: Constructor<*>, run: Method): StepFactory<Async> =
-    AsyncStepFactory {
-        val step = constructed(constructor)
-        AsyncStepRun { returned(suspended(run, step)) }
+private object AsynchronousSteps : StepFactories<Async> {
+    override val handles: Map<Class<*>, Request<StepKind<Async>, *>> =
+        mapOf(AsyncStepReporter::class.java to Requests.asyncStepReporter())
+
+    override val otherModes: Map<String, String> =
+        mapOf(
+            StepReporter::class.java.name to
+                "requests StepReporter, which only a synchronous step can"
+        )
+
+    override fun of(step: StepClass<Async>): StepFactory<Async> = AsyncStepFactory { got ->
+        val built = step.built(got)
+        val arguments = step.arguments(got)
+        AsyncStepRun { returned(suspended(step.run, built, arguments)) }
     }
+}
 
 /**
- * Calls the `suspend` method [method] of [target] and awaits what it returns, throwing what the
- * method itself threw.
+ * Calls the `suspend` method [method] of [target] with [arguments] and awaits what it returns,
+ * throwing what the method itself threw.
  */
 @JvmSynthetic
-private suspend fun suspended(method: Method, target: Any): Any? =
+private suspend fun suspended(method: Method, target: Any, arguments: Array<Any?>): Any? =
     suspendCoroutineUninterceptedOrReturn { continuation ->
-        invoked(method, target, continuation)
+        invoked(method, target, *arguments, continuation)
     }

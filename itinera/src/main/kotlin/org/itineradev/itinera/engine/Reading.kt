@@ -1,6 +1,5 @@
 package org.itineradev.itinera.engine
 
-import org.itineradev.itinera.step.StepFactory
 import org.itineradev.itinera.step.StepName
 import org.itineradev.itinera.workflow.Mode
 import org.itineradev.itinera.workflow.StepBuilder
@@ -15,7 +14,7 @@ import org.itineradev.itinera.workflow.WorkflowName
 internal class Reading<M : Mode>(
     private val type: Class<*>,
     private val mode: M,
-    factories: StepFactories<M>,
+    private val factories: StepFactories<M>,
 ) {
     private val problems = Problems()
     private val steps = StepClasses(mode, factories, problems)
@@ -43,19 +42,19 @@ internal class Reading<M : Mode>(
         val budgeted = declared.retryBudget >= 0
         if (!budgeted)
             problems.misdeclared(type.name, "gives step ${declared.name} a retry budget below 0")
-        val factory = name?.let { stepName -> steps.factory(stepName, declared.step.java) }
+        val step = name?.let { stepName -> steps.read(stepName, declared.step.java) }
         val descriptor =
-            if (name == null || factory == null || !budgeted) null
-            else described(name, factory, declared)
+            if (name == null || step == null || !budgeted) null else described(name, step, declared)
         return Declared(name, descriptor)
     }
 
     private fun described(
         name: StepName,
-        factory: StepFactory<M>,
+        step: StepClass<M>,
         declared: WithStep,
     ): StepDescriptor<M> {
-        val builder = StepBuilder(name, factory).retryBudget(declared.retryBudget)
+        val builder = StepBuilder(name, factories.of(step)).retryBudget(declared.retryBudget)
+        step.requests.forEach(builder::request)
         if (declared.noRetryOnAbnormalTermination) builder.noRetryOnAbnormalTermination()
         return builder.build()
     }

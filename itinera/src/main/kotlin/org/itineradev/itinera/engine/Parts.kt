@@ -2,6 +2,8 @@ package org.itineradev.itinera.engine
 
 import org.itineradev.itinera.event.Event
 import org.itineradev.itinera.report.ReporterOf
+import org.itineradev.itinera.request.Got
+import org.itineradev.itinera.request.StepKind
 import org.itineradev.itinera.step.Outcome
 import org.itineradev.itinera.step.StepFactory
 import org.itineradev.itinera.workflow.Mode
@@ -30,10 +32,10 @@ public interface Parts<M : Mode> {
     @JvmSynthetic public suspend fun dispatcher(): Delivery?
 
     /**
-     * Builds the step for one attempt with [factory]: `null` when the factory returned `null`,
-     * which only Java code can. What the factory throws is thrown.
+     * Builds the step for one attempt with [factory], from what it [got]: `null` when the factory
+     * returned `null`, which only Java code can. What the factory throws is thrown.
      */
-    @JvmSynthetic public suspend fun build(factory: StepFactory<M>): Running?
+    @JvmSynthetic public suspend fun build(factory: StepFactory<M>, got: Got<StepKind<M>>): Running?
 
     /**
      * Throws a `CancellationException` when the coroutine running the journey was cancelled, and

@@ -6,16 +6,17 @@ Every diagram is followed by a numbered list that says everything it shows, and 
 
 ## Tier 1
 
-Tier 1 runs a journey in one process, with steps, retries, rescue steps, policies and their hooks, roles, input adapters, services, events and reporters. So far, a journey runs steps that take no requests and succeed or terminate abnormally, retries them while their retry budget lasts, gives them up, aborts when a step cannot be built, a reporter fails or custom code returns `null`, and ends with a result.
+Tier 1 runs a journey in one process, with steps, retries, rescue steps, policies and their hooks, roles, input adapters, services, events and reporters. So far, steps declare what they request, and admission refuses a service no provider gives, though nothing resolves a request yet; a journey runs steps that read no request and succeed or terminate abnormally, retries them while their retry budget lasts, gives them up, aborts when a step cannot be built, a reporter fails or custom code returns `null`, and ends with a result.
 
 ### The artifacts
 
 ```mermaid
 flowchart LR
     accTitle: The artifacts of itinera-j
-    accDescr: A Java application depends on itinera-java, which depends on itinera. A Kotlin application depends on itinera-kotlin, which depends on itinera and provides it the reader of Kotlin classes through ServiceLoader. itinera-testing depends on itinera, and on itinera-kotlin only optionally. The Kotlin conformance runner depends on itinera-kotlin and itinera-testing, the Java conformance runner on itinera-java and itinera-testing, and both read the conformance cases.
+    accDescr: A Java application depends on itinera-java, which depends on itinera and provides it JavaForms through ServiceLoader. A Kotlin application depends on itinera-kotlin, which depends on itinera and provides it the reader of Kotlin classes through ServiceLoader. itinera-testing depends on itinera, and on itinera-kotlin only optionally. The Kotlin conformance runner depends on itinera-kotlin and itinera-testing, the Java conformance runner on itinera-java and itinera-testing, and both read the conformance cases.
     java["Java application"] --> jv["itinera-java"]
     jv --> core["itinera"]
+    jv -.->|"provides JavaForms, through ServiceLoader"| core
     kotlin["Kotlin application"] --> kt["itinera-kotlin"]
     kt --> core
     kt -.->|"provides KotlinClasses, through ServiceLoader"| core
@@ -29,14 +30,14 @@ flowchart LR
     cases --> jrunner
 ```
 
-1. A Java application depends on `itinera-java`, the Java face, which depends on `itinera`, the core, and brings Kotlin's standard library only. The Java face holds nothing of its own yet; it grows with what Java finds awkward in the core.
+1. A Java application depends on `itinera-java`, the Java face, which depends on `itinera`, the core, and brings Kotlin's standard library only. The Java face holds what Java finds awkward in the core: so far, `JavaRequests.optionalInput`, whose answer is an `Optional`, and `JavaForms`, which it provides the core through `java.util.ServiceLoader`, so that a Java step's `Optional` parameter is read as an optional input. Without it, such a parameter is refused.
 2. A Kotlin application depends on `itinera-kotlin`, which depends on the core and brings kotlin-reflect and kotlinx.coroutines.
-3. `itinera-kotlin` provides the core with `KotlinClasses`, through `java.util.ServiceLoader`: the reader of Kotlin data classes, and of what a method of an annotated Kotlin class declares, such as `suspend` and return types admitting `null`. Without it, no Kotlin class is data, and no annotated Kotlin class is read.
+3. `itinera-kotlin` provides the core with `KotlinClasses`, through `java.util.ServiceLoader`: the reader of Kotlin data classes, and of what a method or constructor of an annotated Kotlin class declares, such as `suspend`, return types admitting `null`, and each parameter's Kotlin type and name. Without it, no Kotlin class is data, and no annotated Kotlin class is read.
 4. `itinera-testing`, test support, depends on the core, and on `itinera-kotlin` only as an optional dependency.
 5. `conformance`, which is never published, runs the conformance cases of [itinera-dev/conformance](https://github.com/itinera-dev/conformance) in two columns, synchronous and asynchronous, through the public API of the core, `itinera-kotlin` and `itinera-testing`.
 6. `conformance-java`, never published either and written wholly in Java, runs the synchronous cases through the public API of `itinera-java` and `itinera-testing`, without `itinera-kotlin`.
 
-Each artifact is a Java module whose packages are its own, named after concepts. The core's packages are `org.itineradev.itinera` itself, which holds `ExperimentalItineraApi`, and `event`, `executor`, `instance`, `journey`, `policy`, `report`, `service`, `step`, `value` and `workflow`, under `org.itineradev.itinera`, and `engine`, which the core's module descriptor exports only to `itinera-kotlin`.
+Each artifact is a Java module whose packages are its own, named after concepts. The core's packages are `org.itineradev.itinera` itself, which holds `ExperimentalItineraApi`, and `event`, `executor`, `instance`, `journey`, `policy`, `report`, `request`, `service`, `step`, `value` and `workflow`, under `org.itineradev.itinera`, and `engine`, which the core's module descriptor exports only to `itinera-kotlin` and `itinera-java`.
 
 Where it lives: the Gradle projects `itinera`, `itinera-kotlin`, `itinera-java`, `itinera-testing`, `itinera-bom`, `conformance` and `conformance-java`, each module descriptor in its `src/main/java/module-info.java`.
 
@@ -45,23 +46,23 @@ Where it lives: the Gradle projects `itinera`, `itinera-kotlin`, `itinera-java`,
 ```mermaid
 flowchart TD
     accTitle: What a workflow descriptor and an instance hold
-    accDescr: A workflow descriptor holds its name, its mode, its step descriptors in order and its journey ID generator. A step descriptor holds the step's name, its factory, its retry budget and whether it retries an abnormal termination. The builder of each mode, and the annotation reader of each mode through the same checks, make a checked descriptor. An instance holds the descriptor beside the workflow object, its journey ID, its reporters, its initial data and its initial global metadata. The executor of the instance's mode, LocalExecutor or AsyncLocalExecutor, runs it.
+    accDescr: A workflow descriptor holds its name, its mode, its step descriptors in order and its journey ID generator. A step descriptor holds the step's name, its requests in order, its factory, its retry budget and whether it retries an abnormal termination. Its factory reads each request's answer from the Got it is given. The builder of each mode, and the annotation reader of each mode through the same checks, make a checked descriptor. An instance holds the descriptor beside the workflow object, its journey ID, its reporters, its initial data and its initial global metadata. The executor of the instance's mode, LocalExecutor or AsyncLocalExecutor, runs it.
     builder["WorkflowDescriptor.builder, or asyncBuilder"] --> checked["Checked descriptor"]
     annotated["WorkflowDescriptor.of, or asyncDescriptorOf, reading the annotations"] --> checked
     checked --> descriptor["WorkflowDescriptor: name, mode, steps, ID generator"]
-    descriptor --> step["StepDescriptor: name, factory, retry budget, retry on abnormal termination"]
+    descriptor --> step["StepDescriptor: name, requests, factory, retry budget, retry on abnormal termination"]
     descriptor --> instance["WorkflowInstance: descriptor, workflow object, journey ID, reporters, initial data, initial global metadata"]
     instance --> executor["LocalExecutor.run, or AsyncLocalExecutor.run"]
 ```
 
 1. A `WorkflowDescriptor<W, M>` holds the workflow's name, its mode `M`, `Sync` or `Async`, its step descriptors in the order they run, and its `JourneyIdGenerator`, if it has one.
-2. A `StepDescriptor<M>` holds the step's name, the `StepFactory<M>` that builds it for each attempt, its retry budget, and whether it retries an abnormal termination.
+2. A `StepDescriptor<M>` holds the step's name, its requests in the order declared, the `StepFactory<M>` that builds it for each attempt, its retry budget, and whether it retries an abnormal termination. A request is a typed token, made by `Requests`, such as `Requests.input("amount", token)`, `Requests.service(key, type)` or `Requests.contributor()`, and declared with the step builder's `request`. The factory receives a `Got<StepKind<M>>` and reads each answer as `got[request]`, of the request's own type. Until stage 5 resolves requests, the engine gives factories a `Got` whose every read throws, saying so.
 3. `WorkflowDescriptor.builder(type, name)`, or `builder<W>(name)` in Kotlin, makes a checked synchronous descriptor, refusing every violation at once with `Violations`. `asyncBuilder<W>(name)` and `asyncStep(name, factory)`, in `itinera-kotlin`, make asynchronous ones, whose steps' runs are `suspend` functions.
-4. `WorkflowDescriptor.of(type)` reads a class's `@Workflow`, `@WithStep` and `@IdGenerator` annotations through the same checks, once per class. A step class's factory builds it with its constructor and calls its method `run` by reflection. `asyncDescriptorOf(type)`, in `itinera-kotlin`, reads a class implementing `ItineraAsyncWorkflow` the same way, and calls its `suspend` method `run` with the caller's continuation.
+4. `WorkflowDescriptor.of(type)` reads a class's `@Workflow`, `@WithStep` and `@IdGenerator` annotations through the same checks, once per class. Each step class, marked `@Step`, is read into a `StepClass`: its constructor's parameters, marked `@Input`, are its inputs, and its method `run`'s parameters are its services, marked `@Service`, and its handles, recognised by their types, each turned into a request by `StepRequests`. A step class's factory builds it with its constructor, passing the answers to its inputs, and calls its method `run` by reflection with the answers to its services and handles. `asyncDescriptorOf(type)`, in `itinera-kotlin`, reads a class implementing `ItineraAsyncWorkflow` the same way, and calls its `suspend` method `run` with the caller's continuation.
 5. A `WorkflowInstance<M>` holds the descriptor beside the application's workflow object, the journey ID, the reporters, the initial data and the initial global metadata. `instance()` on a workflow object, `InstanceBuilder.of(descriptor, workflow)`, or `AsyncInstanceBuilder.of(descriptor, workflow)` in `itinera-kotlin`, creates one.
 6. `LocalExecutor.run` takes only a `WorkflowInstance<Sync>`, and `AsyncLocalExecutor.run` only a `WorkflowInstance<Async>`.
 
-Where it lives: `workflow/` for descriptors, builders, annotations and violations, `step/` for steps and their factories, `instance/` for instances and their builder, `engine/Checked.kt`, `engine/Described.kt`, `engine/Reading.kt`, `engine/StepClasses.kt`, `engine/IdGenerators.kt`, `engine/Problems.kt` and `engine/Reflection.kt` for the checks and the reader, `engine/Draft.kt` and `engine/Initial.kt` for creating an instance, `engine/Builders.kt` for the builders `itinera-kotlin` starts; in `itinera-kotlin`, `workflow/kotlin/KotlinFunctions.kt` and `value/kotlin/KotlinDataClasses.kt`, which reads Kotlin methods for the core, `workflow/kotlin/Builders.kt` for the reified builder, `workflow/async/` for `ItineraAsyncWorkflow`, the asynchronous builder and reader, `step/async/` for asynchronous steps and `instance/async/` for their instances.
+Where it lives: `workflow/` for descriptors, builders, annotations and violations, `step/` for steps, their factories, `@Input` and `StepReporter`, `request/` for requests, their kinds and `Got`, `journey/Contributor.kt`, `service/Service.kt`, `instance/` for instances and their builder, `engine/Checked.kt`, `engine/Described.kt`, `engine/Reading.kt`, `engine/StepClasses.kt`, `engine/StepRequests.kt`, `engine/DeclaredParameter.kt`, `engine/Asked.kt`, `engine/Requested.kt`, `engine/JavaForms.kt`, `engine/IdGenerators.kt`, `engine/Problems.kt` and `engine/Reflection.kt` for the checks and the reader, `engine/Draft.kt` and `engine/Initial.kt` for creating an instance, `engine/Builders.kt` for the builders `itinera-kotlin` starts; in `itinera-kotlin`, `workflow/kotlin/KotlinFunctions.kt` and `value/kotlin/KotlinDataClasses.kt`, which reads Kotlin methods for the core, `workflow/kotlin/Builders.kt` for the reified builder, `workflow/async/` for `ItineraAsyncWorkflow`, the asynchronous builder and reader, `step/async/` for asynchronous steps and their reporter, `request/kotlin/` and `request/async/` for the reified requests and the asynchronous reporter's, and `instance/async/` for their instances; in `itinera-java`, `request/java/`.
 
 ### How a journey runs
 
@@ -89,16 +90,16 @@ sequenceDiagram
 ```
 
 1. The application calls `run` with an instance. The executor refuses a call while it runs a journey, with `Refused.JourneyRunning`. `AsyncLocalExecutor` runs the same steps in the caller's coroutine, awaiting each part; the diagram shows `LocalExecutor`.
-2. The engine, driven on the caller's thread, refuses an instance that ran, then admits it with one check that finds every violation: those of a descriptor the builder did not make, every part of another mode, initial values that are not values, and `journey_id` in the initial global metadata.
+2. The engine, driven on the caller's thread, refuses an instance that ran, then admits it with one check that finds every violation: those of a descriptor the builder did not make, a service a step requests twice or that no provider gives, every part of another mode, initial values that are not values, and `journey_id` in the initial global metadata.
 3. It makes the dispatcher with the executor's factory, and adds a guard for each reporter. It sets `journey_id`, then the initial global metadata. Any failure so far is a `Refusal`, with no event.
-4. It emits `journey_started`, then attempts each step in order: `attempt_started`, then the step is built with its factory and run.
+4. It emits `journey_started`, then attempts each step in order: `attempt_started`, then the step is built with its factory, given what the step requested, and run.
 5. A success emits `step_succeeded`, and the next step follows. An abnormal termination emits `step_abnormal_termination`, then `step_retrying` and another attempt while `retry on abnormal termination` is on and the retry budget lasts, or `step_given_up`, then `journey_failed`.
 6. Once every step succeeded, it emits `journey_succeeded`.
 7. A step that cannot be built, a reporter that fails, or `null` where a result is owed aborts the journey: the abort is recorded, the first one standing, and `journey_aborted` is the last event.
 8. `run` returns the `JourneyResult`: succeeded or failed with the data bag, or aborted.
 9. In the asynchronous mode, when custom code throws and the coroutine running `run` was cancelled, the journey is abandoned with no further event, and the cancellation reaches the caller. The engine asks again once `journey_aborted` is delivered.
 
-Where it lives: `executor/LocalExecutor.kt` and `executor/Refusal.kt`, and `executor/async/AsyncLocalExecutor.kt` in `itinera-kotlin`; in `engine/`, `Driven.kt` drives the engine, `Engine.kt` runs the journey, `Start.kt` and `Admission.kt` do what comes before it, `Attempts.kt` and `Decision.kt` attempt each step and decide what follows an abnormal termination, `Journey.kt` and `Emitter.kt` make and deliver events and record the abort; the result in `journey/JourneyResult.kt`, `journey/Failure.kt` and `journey/Abort.kt`.
+Where it lives: `executor/LocalExecutor.kt` and `executor/Refusal.kt`, and `executor/async/AsyncLocalExecutor.kt` in `itinera-kotlin`; in `engine/`, `Driven.kt` drives the engine, `Engine.kt` runs the journey, `Start.kt`, `Admission.kt` and `Services.kt` do what comes before it, `Attempts.kt` and `Decision.kt` attempt each step and decide what follows an abnormal termination, `Journey.kt` and `Emitter.kt` make and deliver events and record the abort; the result in `journey/JourneyResult.kt`, `journey/Failure.kt` and `journey/Abort.kt`.
 
 ### The engine's seams
 

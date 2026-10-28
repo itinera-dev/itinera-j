@@ -27,7 +27,7 @@ public final class Witness {
    * counted as it runs.
    */
   SyncStepFactory watching(String step, SyncStepFactory factory) {
-    return () -> watched(step, factory.build());
+    return got -> watched(step, factory.build(got));
   }
 
   private SyncStepRun watched(String step, SyncStepRun run) {

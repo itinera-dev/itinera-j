@@ -1,7 +1,11 @@
 package org.itineradev.itinera.workflow
 
 import org.itineradev.itinera.ExperimentalItineraApi
+import org.itineradev.itinera.request.Requests
+import org.itineradev.itinera.request.samples.PaymentGateway
+import org.itineradev.itinera.request.samples.requests
 import org.itineradev.itinera.step.StepName
+import org.itineradev.itinera.workflow.samples.Orders
 import org.itineradev.itinera.workflow.samples.building
 import org.itineradev.itinera.workflow.samples.ids
 import org.itineradev.itinera.workflow.samples.modes
@@ -19,6 +23,35 @@ class WorkflowBuilderTest {
     @Test
     fun `two steps with one name are refused when the workflow is built`() {
         assertEquals(listOf(Violation.DuplicateStepName(StepName.of("charge"))), violations())
+    }
+
+    @Test
+    fun `a step requesting a service no provider serves is refused when the workflow is built`() {
+        val refused =
+            assertThrows<Violations> {
+                WorkflowDescriptor.builder(Orders::class.java, "orders").step(requests()).build()
+            }
+        assertEquals(
+            listOf(Violation.ServiceNotProvided(StepName.of("charge"), "payments")),
+            refused.violations,
+        )
+    }
+
+    @Test
+    fun `a step requesting one key twice among its services is refused once for the key`() {
+        val charge =
+            StepDescriptor.builder("charge") { error("never built") }
+                .request(Requests.service("payments", PaymentGateway::class.java))
+                .request(Requests.service("payments", String::class.java))
+                .build()
+        val refused =
+            assertThrows<Violations> {
+                WorkflowDescriptor.builder(Orders::class.java, "orders").step(charge).build()
+            }
+        assertEquals(
+            listOf("service requested twice", "service not provided"),
+            refused.violations.map(Violation::named),
+        )
     }
 
     @Test

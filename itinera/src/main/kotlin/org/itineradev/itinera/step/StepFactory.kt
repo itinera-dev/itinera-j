@@ -1,6 +1,8 @@
 package org.itineradev.itinera.step
 
 import org.itineradev.itinera.ExperimentalItineraApi
+import org.itineradev.itinera.request.Got
+import org.itineradev.itinera.request.StepKind
 import org.itineradev.itinera.workflow.Mode
 import org.itineradev.itinera.workflow.Sync
 
@@ -17,18 +19,19 @@ import org.itineradev.itinera.workflow.Sync
 
 /**
  * Builds a synchronous step for one attempt, as a class's constructor does: what it throws aborts
- * the journey with `step could not be built`. It returns the run the executor then calls once.
+ * the journey with `step could not be built`. It reads what the step requested from `got`, and
+ * returns the run the executor then calls once.
  *
  * @sample org.itineradev.itinera.step.samples.factories
  */
 @ExperimentalItineraApi
 public fun interface SyncStepFactory : StepFactory<Sync> {
     /**
-     * Builds the step for one attempt.
+     * Builds the step for one attempt, from the answers to the requests its descriptor declares.
      *
      * @sample org.itineradev.itinera.step.samples.factories
      */
-    public fun build(): SyncStepRun
+    public fun build(got: Got<StepKind<Sync>>): SyncStepRun
 }
 
 /**
