@@ -18,6 +18,10 @@ internal class Problems {
     val found: Boolean
         get() = recorded.isNotEmpty()
 
+    /** How many mistakes are recorded so far, to tell whether a later read finds any. */
+    val count: Int
+        get() = recorded.size
+
     operator fun plusAssign(violations: Iterable<Violation>) {
         recorded += violations
     }

@@ -44,7 +44,5 @@ private fun <W> generator(method: Method, takesData: Boolean): JourneyIdGenerato
         JourneyIdGenerator { workflow, data -> returned(invoked(method, workflow, data)) }
     else JourneyIdGenerator { workflow, _ -> returned(invoked(method, workflow)) }
 
-private fun declaredMethods(type: Class<*>): Sequence<Method> = type.declaredMethods.asSequence()
-
 private fun isIdGenerator(method: Method): Boolean =
     method.isAnnotationPresent(IdGenerator::class.java)
