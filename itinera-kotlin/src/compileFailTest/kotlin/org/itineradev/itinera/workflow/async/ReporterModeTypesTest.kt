@@ -13,8 +13,8 @@ private const val REPORTERS =
 
     class Shop
 
-    val printer = WorkflowReporter.of { Reporter {} }
-    val asyncPrinter = asyncWorkflowReporter { AsyncReporter {} }
+    val printer = ReporterFactory { Reporter {} }
+    val asyncPrinter = AsyncReporterFactory { AsyncReporter {} }
     """
 
 class ReporterModeTypesTest {
