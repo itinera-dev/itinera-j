@@ -61,6 +61,11 @@ public final class WorkflowSentences {
     model().step(step).attempts(step, attempts.asMaps().stream().map(Tables::attemptOf).toList());
   }
 
+  @Given("step {string} cannot be built because its constructor fails with {string}")
+  public void cannotBeBuilt(String step, String message) {
+    model().step(step).cannotBeBuilt(step, message);
+  }
+
   @Given("step {string} does not retry abnormal terminations")
   public void doesNotRetryAbnormalTerminations(String step) {
     model().step(step).doesNotRetryAbnormalTerminations();
