@@ -53,7 +53,8 @@ public constructor(private val parts: Parts<M>, private val clock: Clock = Clock
     private suspend fun ran(journey: Journey, instance: WorkflowInstance<M>): JourneyStatus {
         val keys = journey.data.keys
         journey.emit { JourneyStarted(sequence, timestamp, journeyId, workflow, keys) }
-        val attempts = Attempts(journey, parts, Building(journey, parts, instance))
+        val attempts =
+            Attempts(journey, Attempting(journey, parts, Building(journey, parts, instance)))
         for (step in instance.descriptor.steps) {
             val givenUp = attempts.of(step) ?: continue
             journey.emit {

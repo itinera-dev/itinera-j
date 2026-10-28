@@ -11,6 +11,7 @@ import org.itineradev.itinera.conformance.trace.areExactly
 import org.itineradev.itinera.conformance.trace.expectedLine
 import org.itineradev.itinera.conformance.trace.includesInOrder
 import org.itineradev.itinera.conformance.trace.lineOf
+import org.itineradev.itinera.event.ContributionCommitted
 import org.itineradev.itinera.event.Event
 import org.itineradev.itinera.event.JourneyAborted
 import org.itineradev.itinera.event.JourneyStarted
@@ -53,6 +54,16 @@ internal class EventSentences(private val world: World) {
         holdsOfStream(
             events.map(::lineOf).none { carries(it, message) },
             "no event to carry \"$message\"",
+            events,
+        )
+    }
+
+    @Then("no contribution of {string} was committed")
+    fun noContributionWasCommitted(key: String) {
+        val events = world.stream()
+        holdsOfStream(
+            events.filterIsInstance<ContributionCommitted>().none { commits(it, key) },
+            "no contribution_committed of \"$key\"",
             events,
         )
     }
@@ -117,3 +128,5 @@ private fun inSequence(pair: Pair<Event, Event>): Boolean =
 /** Whether [line] carries [message] in a cell or in what no column shows. */
 private fun carries(line: Line, message: String): Boolean =
     message in line.cells.values || message in line.carried
+
+private fun commits(event: ContributionCommitted, key: String): Boolean = event.key == key

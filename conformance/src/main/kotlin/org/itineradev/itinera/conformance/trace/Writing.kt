@@ -104,8 +104,8 @@ private class Writing {
             is StepInfo -> emitted(event.step, event.attempt, event.message, event.data)
             is StepWarning -> emitted(event.step, event.attempt, event.message, event.data)
             is StepError -> emitted(event.step, event.attempt, event.message, event.data)
-            is ContributionCommitted,
-            is DataOverwritten,
+            is ContributionCommitted -> contributedCells(event.key, event.source).forEach(::set)
+            is DataOverwritten -> contributedCells(event.key, event.source).forEach(::set)
             is GlobalMetadataSet,
             is StepHookCalled,
             is WorkflowHookCalled,
