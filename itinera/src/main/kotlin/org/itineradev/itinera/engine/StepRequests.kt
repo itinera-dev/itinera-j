@@ -4,14 +4,17 @@ import java.lang.reflect.Executable
 import org.itineradev.itinera.journey.Contributor
 import org.itineradev.itinera.request.Request
 import org.itineradev.itinera.request.Requests
+import org.itineradev.itinera.request.RescueKind
 import org.itineradev.itinera.request.StepKind
 import org.itineradev.itinera.service.Service
+import org.itineradev.itinera.step.FromRescuedStep
 import org.itineradev.itinera.step.Input
 import org.itineradev.itinera.workflow.Mode
 
 /**
- * Reads what a step class requests from its parameters, recording each mistake in [problems]:
- * inputs from its constructor's, and services and handles from its run's.
+ * Reads what a step class or a rescue step class requests from its parameters, recording each
+ * mistake in [problems]: inputs from its constructor's, with what a rescue step requests from the
+ * step it rescues, and services and handles from its run's.
  */
 internal class StepRequests<M : Mode>(
     private val factories: StepFactories<M>,
@@ -22,6 +25,13 @@ internal class StepRequests<M : Mode>(
     /** The inputs [constructor] requests, or `null` when one of them has a mistake. */
     fun inputs(constructor: Executable): List<Request<StepKind<M>, *>>? =
         parametersOf(constructor)?.map { parameter -> input(constructor, parameter) }?.let(::all)
+
+    /**
+     * The inputs and the data from the step it rescues that a rescue step's [constructor] requests,
+     * or `null` when one of them has a mistake.
+     */
+    fun ofRescue(constructor: Executable): List<Request<RescueKind<M>, *>>? =
+        parametersOf(constructor)?.map { parameter -> ofRescue(constructor, parameter) }?.let(::all)
 
     /** The services and handles [run] requests, or `null` when one of them has a mistake. */
     fun ofRun(run: Executable): List<Request<StepKind<M>, *>>? =
@@ -51,6 +61,39 @@ internal class StepRequests<M : Mode>(
                         "constructor takes only inputs, marked @Input",
                 )
         return data.data(constructor, parameter, input.value, input.required, ::InputAsked)
+    }
+
+    private fun ofRescue(
+        constructor: Executable,
+        parameter: DeclaredParameter,
+    ): Request<RescueKind<M>, *>? {
+        val input = parameter.parameter.getAnnotation(Input::class.java)
+        val rescued = parameter.parameter.getAnnotation(FromRescuedStep::class.java)
+        return when {
+            input != null ->
+                data.data(constructor, parameter, input.value, input.required, ::InputAsked)
+            rescued != null ->
+                data.data(constructor, parameter, rescued.value, rescued.required, ::FromStepAsked)
+            else -> byType(constructor, parameter)
+        }
+    }
+
+    /** The failure's reason or error that [parameter] requests by its type, optional or not. */
+    private fun byType(
+        constructor: Executable,
+        parameter: DeclaredParameter,
+    ): Request<RescueKind<M>, *>? {
+        val form = WrittenRequest(parameter.type, false, isKotlin(constructor.declaringClass))
+        val failed =
+            failedBy(form)
+                ?: return data.refused(
+                    constructor,
+                    "has a parameter that requests nothing, ${nameOf(parameter)}: a rescue " +
+                        "step's constructor takes inputs, marked @Input, data from the step it " +
+                        "rescues, marked @FromRescuedStep, and the failure's Reason and error by " +
+                        "their types",
+                )
+        return data.failed(constructor, form, failed)
     }
 
     private fun ofRun(run: Executable, parameter: DeclaredParameter): Request<StepKind<M>, *>? {

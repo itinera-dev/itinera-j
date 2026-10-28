@@ -13,7 +13,6 @@ import org.itineradev.itinera.request.Requests
 import org.itineradev.itinera.service.Service
 import org.itineradev.itinera.step.Attempt
 import org.itineradev.itinera.step.Input
-import org.itineradev.itinera.step.Reason
 import org.itineradev.itinera.step.StepName
 import org.itineradev.itinera.workflow.Mode
 
@@ -103,7 +102,7 @@ internal class HookRequests<M : Mode>(
         val type = parameter.parameter.type
         val form = WrittenRequest(parameter.type, false, isKotlin(method.declaringClass))
         val given = givenByType[type]
-        val failed = (form.type() as? ClassType)?.raw?.let(failedByType::get)
+        val failed = failedBy(form)
         return when {
             given != null -> given(hook, method, given)
             failed != null -> failed(hook, method, form, failed)
@@ -129,15 +128,9 @@ internal class HookRequests<M : Mode>(
         method: Method,
         form: WrittenRequest,
         failed: Failed,
-    ): Request<*, *>? {
-        val answer = form.answer()
-        return when {
-            !hook.ofStep ->
-                data.refused<Any?>(method, "requests ${failed.what}, which only a step hook can")
-            answer == null -> data.javaOptional<Any?>(method)
-            else -> requestOf<Any?, Any?>(failed.asked(form.required()), answer)
-        }
-    }
+    ): Request<*, *>? =
+        if (hook.ofStep) data.failed<Any?>(method, form, failed)
+        else data.refused<Any?>(method, "requests ${failed.what}, which only a step hook can")
 }
 
 /** A request a hook makes by its parameter's type, [what] it is, and the [hooks] that may. */
@@ -146,9 +139,6 @@ private class Given(val request: Request<*, *>, val what: String, val hooks: Set
     val who: String
         get() = hooks.singleOrNull()?.hook ?: "a step hook"
 }
-
-/** What a step's failing attempt left, which a step hook requests by its type, optional or not. */
-private class Failed(val what: String, val asked: (Boolean) -> Asked)
 
 private val everyHook = HookAnnotation.entries.toSet()
 
@@ -172,10 +162,4 @@ private val givenByType: Map<Class<*>, Given> =
                 "why the step is retried",
                 setOf(HookAnnotation.ON_STEP_RETRY),
             ),
-    )
-
-private val failedByType: Map<Class<*>, Failed> =
-    mapOf(
-        Reason::class.java to Failed("the failure's reason", ::ReasonAsked),
-        Throwable::class.java to Failed("the error", ::ErrorAsked),
     )

@@ -3,8 +3,11 @@ package org.itineradev.itinera.engine
 import kotlin.reflect.KClass
 import org.itineradev.itinera.policy.StepPolicyDescriptor
 import org.itineradev.itinera.policy.WorkflowPolicyDescriptor
+import org.itineradev.itinera.step.ItineraRescueStep
 import org.itineradev.itinera.step.StepName
 import org.itineradev.itinera.workflow.Mode
+import org.itineradev.itinera.workflow.RescueStepBuilder
+import org.itineradev.itinera.workflow.RescueStepDescriptor
 import org.itineradev.itinera.workflow.StepBuilder
 import org.itineradev.itinera.workflow.StepDescriptor
 import org.itineradev.itinera.workflow.Violations
@@ -24,6 +27,7 @@ internal class Reading<M : Mode>(
 ) {
     private val problems = Problems()
     private val steps = StepClasses(mode, factories, problems)
+    private val rescues = RescueClasses(mode, factories, problems)
     private val policies = PolicyClasses(mode, hooks, problems)
 
     /** @throws Violations with every mistake found. */
@@ -70,10 +74,31 @@ internal class Reading<M : Mode>(
             problems.misdeclared(type.name, "gives step ${declared.name} a retry budget below 0")
         val step = name?.let { stepName -> steps.read(stepName, declared.step.java) }
         val attached = all(declared.policies.map(::stepPolicy))
+        val rescue = name?.let { stepName -> rescue(stepName, declared) }
         val descriptor =
-            if (name == null || step == null || !budgeted) null
-            else attached?.let { policies -> described(name, step, policies, declared) }
+            when {
+                name == null || !budgeted -> null
+                step == null || rescue == null -> null
+                else ->
+                    attached?.let { policies -> described(name, step, policies, declared, rescue) }
+            }
         return Declared(name, descriptor)
+    }
+
+    /**
+     * The rescue step [declared] gives the step [name]: none, when it names [ItineraRescueStep]
+     * itself, or `null` when its class has a mistake.
+     */
+    private fun rescue(name: StepName, declared: WithStep): DeclaredRescue<M>? {
+        val rescue = declared.rescue.java
+        return if (rescue == ItineraRescueStep::class.java) DeclaredRescue(null)
+        else rescues.read(name, rescue)?.let(::rescueStep)?.let(::DeclaredRescue)
+    }
+
+    private fun rescueStep(rescue: RescueClass<M>): RescueStepDescriptor<M> {
+        val builder = RescueStepBuilder(factories.of(rescue))
+        rescue.requests.forEach(builder::request)
+        return builder.build()
     }
 
     private fun described(
@@ -81,14 +106,19 @@ internal class Reading<M : Mode>(
         step: StepClass<M>,
         attached: List<StepPolicyDescriptor<Any, M>>,
         declared: WithStep,
+        rescue: DeclaredRescue<M>,
     ): StepDescriptor<M> {
         val builder = StepBuilder(name, factories.of(step)).retryBudget(declared.retryBudget)
         step.requests.forEach(builder::request)
         attached.forEach(builder::policy)
         if (declared.noRetryOnAbnormalTermination) builder.noRetryOnAbnormalTermination()
+        rescue.rescue?.let(builder::rescue)
         return builder.build()
     }
 }
+
+/** The rescue step a workflow class's `@WithStep` gives its step, if any. */
+private class DeclaredRescue<M : Mode>(val rescue: RescueStepDescriptor<M>?)
 
 /** A step a workflow class declares: its name and descriptor, when each could be read. */
 private class Declared<M : Mode>(val name: StepName?, val descriptor: StepDescriptor<M>?)
