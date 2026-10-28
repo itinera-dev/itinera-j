@@ -1,6 +1,5 @@
 package org.itineradev.itinera.executor
 
-import org.itineradev.itinera.compiling.assertCompiles
 import org.itineradev.itinera.compiling.assertDoesNotCompile
 import org.junit.jupiter.api.Test
 
@@ -17,9 +16,6 @@ class ExecutorTypesTest {
         assertDoesNotCompile(
             "$RUN fun run(instance: WorkflowInstance<Async>) = LocalExecutor().run(instance)",
             "'WorkflowInstance<Async>', but 'WorkflowInstance<Sync>' was expected",
-        )
-        assertCompiles(
-            "$RUN fun run(instance: WorkflowInstance<Sync>) = LocalExecutor().run(instance)"
         )
     }
 }

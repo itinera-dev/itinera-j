@@ -34,7 +34,5 @@ final class JavaRequestTypesTest {
     var refused = javac.compile(SNIPPET.formatted("String read = got.get(amount);"));
     assertFalse(refused.compiled(), refused.messages());
     assertTrue(refused.messages().contains("incompatible types"), refused.messages());
-    var twin = javac.compile(SNIPPET.formatted("Long read = got.get(amount);"));
-    assertTrue(twin.compiled(), twin.messages());
   }
 }

@@ -1,6 +1,5 @@
 package org.itineradev.itinera.event
 
-import org.itineradev.itinera.compiling.assertCompiles
 import org.itineradev.itinera.compiling.assertDoesNotCompile
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -32,10 +31,6 @@ class EventTypesTest {
                 "AdapterSource(AdapterName.of(\"amount\"), pack, first))",
             "'AdapterSource', but 'ContributionSource' was expected",
         )
-        assertCompiles(
-            "$JOURNEY val event = ContributionCommitted(1, at, id, orders, \"k\", " +
-                "StepSource(pack, first))"
-        )
     }
 
     @Test
@@ -43,11 +38,6 @@ class EventTypesTest {
         assertDoesNotCompile(
             "$JOURNEY val event = JourneyInfo(1, at, id, orders, StepSource(pack, first), \"m\", null)",
             "'StepSource', but 'EmitterSource' was expected",
-        )
-        assertCompiles(
-            "$JOURNEY val event = JourneyInfo(1, at, id, orders, " +
-                "StepHookSource(PolicyName.of(\"audit\"), StepHook.ON_STEP_FAILURE, pack, first), " +
-                "\"m\", null)"
         )
     }
 
@@ -58,7 +48,6 @@ class EventTypesTest {
             "$JOURNEY val event = $event, decidedBy = hook)",
             "No parameter with name 'decidedBy'",
         )
-        assertCompiles("$JOURNEY val event = $event)")
     }
 
     companion object {

@@ -29,8 +29,8 @@ None.
 ## Tests
 
 - `itinera/src/test/java/org/itineradev/itinera/executor/JavaExecutorTest.java`: a step factory and a run returning `null`, a dispatcher factory returning `null`, an ID generator and a reporter factory returning `null`.
-- `itinera/src/compileFailTest/kotlin/org/itineradev/itinera/workflow/BuilderTypesTest.kt`: compile-fail tests, each beside a twin that compiles: Kotlin cannot write a step factory or a run returning `null`, nor an ID generator returning `null` or a number.
-- `itinera/src/compileFailTest/kotlin/org/itineradev/itinera/report/ReportTypesTest.kt` and `itinera-kotlin/src/compileFailTest/kotlin/org/itineradev/itinera/report/async/AsyncReportTypesTest.kt`: compile-fail tests, each beside a twin that compiles: no reporter factory or dispatcher factory, of either mode, returns `null`.
+- `itinera/src/compileFailTest/kotlin/org/itineradev/itinera/workflow/BuilderTypesTest.kt`: compile-fail tests, each beside a twin that compiles in the matching `Twins` file: Kotlin cannot write a step factory or a run returning `null`, nor an ID generator returning `null` or a number.
+- `itinera/src/compileFailTest/kotlin/org/itineradev/itinera/report/ReportTypesTest.kt` and `itinera-kotlin/src/compileFailTest/kotlin/org/itineradev/itinera/report/async/AsyncReportTypesTest.kt`: compile-fail tests, each beside a twin that compiles in the matching `Twins` file: no reporter factory or dispatcher factory, of either mode, returns `null`.
 - `itinera-kotlin/src/compileFailTest/kotlin/org/itineradev/itinera/step/async/AsyncStepTypesTest.kt`: the same for an asynchronous step's factory and run.
 
 ## Done when

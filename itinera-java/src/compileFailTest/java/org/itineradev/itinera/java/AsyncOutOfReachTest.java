@@ -12,14 +12,12 @@ import org.junit.jupiter.api.io.TempDir;
 final class AsyncOutOfReachTest {
   private static final String SNIPPET =
       """
-      import org.itineradev.itinera.executor.LocalExecutor;
       import org.itineradev.itinera.executor.async.AsyncLocalExecutor;
       import org.itineradev.itinera.instance.WorkflowInstance;
       import org.itineradev.itinera.workflow.Async;
-      import org.itineradev.itinera.workflow.Sync;
 
       final class Snippet {
-        void run(WorkflowInstance<Sync> sync, WorkflowInstance<Async> async) throws Exception {
+        void run(WorkflowInstance<Async> async) throws Exception {
           %s;
         }
       }
@@ -34,7 +32,5 @@ final class AsyncOutOfReachTest {
     assertFalse(refused.compiled(), refused.messages());
     assertTrue(refused.messages().contains("cannot find symbol"), refused.messages());
     assertTrue(refused.messages().contains("method run"), refused.messages());
-    var twin = javac.compile(SNIPPET.formatted("new LocalExecutor().run(sync)"));
-    assertTrue(twin.compiled(), twin.messages());
   }
 }
