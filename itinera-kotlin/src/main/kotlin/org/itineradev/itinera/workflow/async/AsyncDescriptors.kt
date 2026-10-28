@@ -21,6 +21,7 @@ import org.itineradev.itinera.policy.HookReporter
 import org.itineradev.itinera.policy.async.AsyncHook
 import org.itineradev.itinera.policy.async.AsyncHookReporter
 import org.itineradev.itinera.policy.async.AsyncWorkflowHook
+import org.itineradev.itinera.report.async.AsyncReporter
 import org.itineradev.itinera.request.HookReporterKind
 import org.itineradev.itinera.request.ProviderReporterKind
 import org.itineradev.itinera.request.Request
@@ -117,6 +118,7 @@ private val asynchronous =
                 AsynchronousHooks,
                 ::asynchronous,
                 AsynchronousProviders,
+                AsyncReporter::class.java,
             )
     }
 

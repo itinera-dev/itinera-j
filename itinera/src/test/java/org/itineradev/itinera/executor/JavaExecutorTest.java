@@ -14,6 +14,7 @@ import org.itineradev.itinera.journey.AbortReason;
 import org.itineradev.itinera.journey.FailureCause;
 import org.itineradev.itinera.journey.JourneyStatus;
 import org.itineradev.itinera.report.Reporter;
+import org.itineradev.itinera.report.WorkflowReporter;
 import org.itineradev.itinera.step.Outcome;
 import org.itineradev.itinera.step.StepName;
 import org.itineradev.itinera.step.SyncStepFactory;
@@ -30,9 +31,12 @@ final class JavaExecutorTest {
     return WorkflowDescriptor.builder(Shop.class, "shop");
   }
 
+  private static WorkflowBuilder<Shop, Sync> packing(SyncStepFactory factory) {
+    return shop().step(StepDescriptor.builder("pack", factory).build());
+  }
+
   private static InstanceBuilder oneStep(SyncStepFactory factory) {
-    return InstanceBuilder.of(
-        shop().step(StepDescriptor.builder("pack", factory).build()).build(), new Shop());
+    return InstanceBuilder.of(packing(factory).build(), new Shop());
   }
 
   @Test
@@ -114,5 +118,25 @@ final class JavaExecutorTest {
     assertThrows(
         IllegalStateException.class,
         () -> oneStep(got -> Outcome::success).reporterFor(id -> null).create());
+  }
+
+  @Test
+  void aReporterTheWorkflowListsIsMadeForEachInstanceFromJava() throws Refusal {
+    var kinds = new ArrayList<String>();
+    var listing =
+        packing(got -> Outcome::success)
+            .reporter(WorkflowReporter.of(id -> event -> kinds.add(id + " " + event.getKind())))
+            .build();
+    var instance = InstanceBuilder.of(listing, new Shop()).create();
+    new LocalExecutor().run(instance);
+    assertEquals(instance.getJourneyId() + " journey_started", kinds.get(0));
+  }
+
+  @Test
+  void aListedReporterFactoryReturningNullMakesCreateThrow() {
+    var listing =
+        packing(got -> Outcome::success).reporter(WorkflowReporter.of(id -> null)).build();
+    assertThrows(
+        IllegalStateException.class, () -> InstanceBuilder.of(listing, new Shop()).create());
   }
 }

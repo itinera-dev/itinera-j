@@ -1,9 +1,11 @@
 package org.itineradev.itinera.workflow;
 
+import org.itineradev.itinera.event.Event;
 import org.itineradev.itinera.policy.ItineraStepPolicy;
 import org.itineradev.itinera.policy.ItineraWorkflowPolicy;
 import org.itineradev.itinera.policy.StepPolicy;
 import org.itineradev.itinera.policy.WorkflowPolicy;
+import org.itineradev.itinera.report.Reporter;
 import org.itineradev.itinera.step.ItineraRescueStep;
 import org.itineradev.itinera.step.ItineraStep;
 import org.itineradev.itinera.step.Outcome;
@@ -33,7 +35,12 @@ final class JavaAnnotationTypesTwins {
     }
   }
 
-  @Workflow(name = "shop", policies = Tell.class)
+  public static final class Printer implements Reporter {
+    @Override
+    public void report(Event event) {}
+  }
+
+  @Workflow(name = "shop", policies = Tell.class, reporters = Printer.class)
   @WithStep(step = Charge.class, name = "charge", policies = Audit.class, rescue = Renew.class)
   public static final class Shop implements ItineraWorkflow {}
 }

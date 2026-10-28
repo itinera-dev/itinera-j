@@ -14,6 +14,7 @@ import org.itineradev.itinera.conformance.record.failingDispatchers
 import org.itineradev.itinera.executor.LocalExecutor
 import org.itineradev.itinera.instance.WorkflowInstance
 import org.itineradev.itinera.instance.instance
+import org.itineradev.itinera.report.WorkflowReporter
 import org.itineradev.itinera.service.ProviderDescriptor
 import org.itineradev.itinera.step.SyncStepFactory
 import org.itineradev.itinera.workflow.InputAdapterDescriptor
@@ -37,6 +38,9 @@ internal fun localJourneys(model: Model, recorders: Recorders, witness: Witness)
     for (step in workflow.steps) builder.step(stepOf(step, model, witness))
     for (adapter in workflow.adapters) builder.inputAdapter(adapterOf(adapter))
     for (provider in workflow.providers) builder.provider(providerOf(provider))
+    for (name in workflow.reporters.orEmpty()) {
+        builder.reporter(WorkflowReporter.of { recorders.make(name) })
+    }
     val generator = workflow.idGenerator
     if (generator is IdGenerator.Returns) builder.idGenerator { _, _ -> generator.id }
     return LocalJourneys(builder.build(), model, recorders)
@@ -117,7 +121,6 @@ private class LocalJourneys(
         for ((key, value) in model.initialGlobalMetadata) {
             builder.reportersGlobalMetadata(key, value)
         }
-        for (name in model.workflow.reporters.orEmpty()) builder.reporter(recorders.make(name))
         return builder.create()
     }
 }

@@ -2,7 +2,6 @@ package org.itineradev.itinera.engine
 
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
-import java.lang.reflect.Modifier
 import org.itineradev.itinera.policy.PolicyFactory
 import org.itineradev.itinera.policy.PolicyName
 import org.itineradev.itinera.policy.StepPolicy
@@ -61,26 +60,13 @@ internal class PolicyClasses<M : Mode>(
         else PolicyDraft(PolicyName.of(name), factory)
     }
 
-    private fun factoryOf(type: Class<*>): PolicyFactory<Any>? {
-        if (Modifier.isAbstract(type.modifiers)) {
-            problems.misdeclared(type.name, "cannot be built: it is abstract")
-            return null
-        }
-        val constructor = type.declaredConstructors.find(::takesNothing)
-        if (constructor == null)
-            problems.misdeclared(
-                type.name,
-                "has no constructor that takes nothing, which a policy is built with",
-            )
-        return constructor?.takeIf { taking -> problems.opened(type, taking) }?.let(::factory)
-    }
+    private fun factoryOf(type: Class<*>): PolicyFactory<Any>? =
+        problems.builtWithNothing(type, "policy")?.let(::factory)
 }
 
 /** How the policy [type] marked with the name [named] is named in a violation. */
 private fun labelOf(type: Class<*>, named: String?): String =
     named.orEmpty().ifEmpty { type.simpleName }
-
-private fun takesNothing(constructor: Constructor<*>): Boolean = constructor.parameterCount == 0
 
 private fun factory(constructor: Constructor<*>): PolicyFactory<Any> = PolicyFactory {
     constructed(constructor)

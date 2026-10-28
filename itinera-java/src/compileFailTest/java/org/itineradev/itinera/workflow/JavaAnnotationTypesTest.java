@@ -72,6 +72,22 @@ final class JavaAnnotationTypesTest {
         failing.messages());
   }
 
+  @Test
+  void javaListsOnlyReporterClassesAsAWorkflowsReporters() throws IOException {
+    var failing =
+        new Javac(directory)
+            .compile(
+                SNIPPET.formatted(
+                    "@Workflow(name = \"shop\", reporters = Charge.class) "
+                        + "@WithStep(step = Charge.class, name = \"charge\")"));
+    assertFalse(failing.compiled(), failing.messages());
+    assertTrue(
+        failing
+            .messages()
+            .contains("Class<Charge> cannot be converted to Class<? extends ReporterOf<?>>"),
+        failing.messages());
+  }
+
   static Stream<Arguments> misattached() {
     return Stream.of(
         Arguments.argumentSet(

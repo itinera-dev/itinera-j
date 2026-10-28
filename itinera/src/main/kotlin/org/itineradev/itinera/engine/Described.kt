@@ -4,6 +4,8 @@ import org.itineradev.itinera.policy.HookCall
 import org.itineradev.itinera.policy.HookReporter
 import org.itineradev.itinera.policy.SyncHook
 import org.itineradev.itinera.policy.SyncWorkflowHook
+import org.itineradev.itinera.report.Reporter
+import org.itineradev.itinera.report.ReporterOf
 import org.itineradev.itinera.request.HookReporterKind
 import org.itineradev.itinera.request.ProviderReporterKind
 import org.itineradev.itinera.request.Request
@@ -43,6 +45,7 @@ public object Described {
                     SynchronousHooks,
                     ::synchronous,
                     SynchronousProviders,
+                    Reporter::class.java,
                 )
         }
 
@@ -56,8 +59,8 @@ public object Described {
 
     /**
      * Reads the workflow [type] declares in [mode], whose steps [steps] makes factories for, whose
-     * policies' hooks [hooks] calls, whose input adapters [adapters] calls, and whose service
-     * providers [providers] calls.
+     * policies' hooks [hooks] calls, whose input adapters [adapters] calls, whose service providers
+     * [providers] calls, and whose reporters implement [reporters].
      *
      * @throws Violations with every mistake in its declaration.
      */
@@ -68,8 +71,9 @@ public object Described {
         hooks: HookCalls<M>,
         adapters: AdapterCalls<M>,
         providers: ProviderCalls<M>,
+        reporters: Class<out ReporterOf<M>>,
     ): WorkflowDescriptor<W, M> =
-        Reading(type, mode, steps, hooks, adapters, providers).descriptor()
+        Reading(type, mode, steps, hooks, adapters, providers, reporters).descriptor()
 }
 
 /**
