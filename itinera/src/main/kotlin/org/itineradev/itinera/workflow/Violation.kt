@@ -244,7 +244,7 @@ public sealed interface Violation {
      * descriptor written by hand, which an unchecked cast hands over, or an annotated class has
      * one.
      *
-     * @sample org.itineradev.itinera.service.samples.misprovided
+     * @sample org.itineradev.itinera.workflow.annotated.samples.misscoped
      */
     @JvmRecord
     public data class AttemptRequestInJourneyScope(

@@ -4,6 +4,9 @@ import java.lang.reflect.Constructor
 import java.lang.reflect.Executable
 import java.lang.reflect.Field
 import java.lang.reflect.Method
+import java.lang.reflect.ParameterizedType
+import java.lang.reflect.Type
+import org.itineradev.itinera.value.genericType
 
 /**
  * Reads Kotlin classes, which plain Java reflection cannot: `itinera-kotlin` provides it through
@@ -40,6 +43,12 @@ public class KotlinFunction(
     /** Whether its return type admits `null`, such as `Outcome?`. */
     public val returnsNullable: Boolean,
     /**
+     * The classes of its declared return type's type arguments, in order, such as `PaymentGateway`
+     * for `Provided<PaymentGateway>`, each `null` when it is not a class, such as a type variable
+     * or a wildcard.
+     */
+    public val returnArguments: List<Class<*>?>,
+    /**
      * Its parameters as its declaration writes them, without those the compiler adds, such as a
      * `suspend` function's continuation.
      */
@@ -57,10 +66,19 @@ public class KotlinFunction(
                 isSuspend = false,
                 returnType = (executable as? Method)?.returnType ?: Void.TYPE,
                 returnsNullable = false,
+                returnArguments = javaReturnArguments(executable),
                 parameters = DeclaredParameter.ofJava(executable, isSuspend = false),
             )
     }
 }
+
+private fun javaReturnArguments(executable: Executable): List<Class<*>?> =
+    ((executable as? Method)?.genericReturnType as? ParameterizedType)
+        ?.actualTypeArguments
+        .orEmpty()
+        .map(::classOf)
+
+private fun classOf(type: Type): Class<*>? = (genericType(type) as? ClassType)?.raw
 
 /** What a Kotlin class is as data. */
 public sealed interface KotlinShape

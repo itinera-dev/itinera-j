@@ -129,7 +129,7 @@ public final class org/itineradev/itinera/engine/DeliveryKt {
 
 public final class org/itineradev/itinera/engine/Described {
 	public static final field INSTANCE Lorg/itineradev/itinera/engine/Described;
-	public final fun read (Ljava/lang/Class;Lorg/itineradev/itinera/workflow/Mode;Lorg/itineradev/itinera/engine/StepFactories;Lorg/itineradev/itinera/engine/HookCalls;Lorg/itineradev/itinera/engine/AdapterCalls;)Lorg/itineradev/itinera/workflow/WorkflowDescriptor;
+	public final fun read (Ljava/lang/Class;Lorg/itineradev/itinera/workflow/Mode;Lorg/itineradev/itinera/engine/StepFactories;Lorg/itineradev/itinera/engine/HookCalls;Lorg/itineradev/itinera/engine/AdapterCalls;Lorg/itineradev/itinera/engine/ProviderCalls;)Lorg/itineradev/itinera/workflow/WorkflowDescriptor;
 	public final fun synchronous (Ljava/lang/Class;)Lorg/itineradev/itinera/workflow/WorkflowDescriptor;
 }
 
@@ -209,9 +209,10 @@ public abstract interface class org/itineradev/itinera/engine/KotlinClasses {
 
 public final class org/itineradev/itinera/engine/KotlinFunction {
 	public static final field Companion Lorg/itineradev/itinera/engine/KotlinFunction$Companion;
-	public fun <init> (Ljava/lang/String;ZLjava/lang/Class;ZLjava/util/List;)V
+	public fun <init> (Ljava/lang/String;ZLjava/lang/Class;ZLjava/util/List;Ljava/util/List;)V
 	public final fun getName ()Ljava/lang/String;
 	public final fun getParameters ()Ljava/util/List;
+	public final fun getReturnArguments ()Ljava/util/List;
 	public final fun getReturnType ()Ljava/lang/Class;
 	public final fun getReturnsNullable ()Z
 	public final fun isSuspend ()Z
@@ -274,6 +275,17 @@ public final class org/itineradev/itinera/engine/PolicyDraft {
 	public final fun onWorkflowSuccess (Ljava/util/List;Lorg/itineradev/itinera/policy/HookCall;)V
 	public final fun stepPolicy ()Lorg/itineradev/itinera/policy/StepPolicyDescriptor;
 	public final fun workflowPolicy ()Lorg/itineradev/itinera/policy/WorkflowPolicyDescriptor;
+}
+
+public abstract interface class org/itineradev/itinera/engine/ProviderCalls {
+	public abstract fun getHandles ()Ljava/util/Map;
+	public abstract fun getOtherModes ()Ljava/util/Map;
+	public abstract fun of (Lorg/itineradev/itinera/engine/ProviderMethod;)Lorg/itineradev/itinera/service/ProviderCall;
+}
+
+public final class org/itineradev/itinera/engine/ProviderMethod {
+	public final fun arguments (Lorg/itineradev/itinera/request/Got;)[Ljava/lang/Object;
+	public final fun getMethod ()Ljava/lang/reflect/Method;
 }
 
 public abstract interface class org/itineradev/itinera/engine/Receipt {
@@ -2687,6 +2699,13 @@ public final class org/itineradev/itinera/service/Provided$NoInstance : org/itin
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract interface annotation class org/itineradev/itinera/service/Provider : java/lang/annotation/Annotation {
+	public abstract fun key ()Ljava/lang/String;
+	public abstract fun name ()Ljava/lang/String;
+	public abstract fun perAttempt ()Z
+	public abstract fun steps ()[Ljava/lang/String;
+}
+
 public final class org/itineradev/itinera/service/ProviderBuilder {
 	public final fun build ()Lorg/itineradev/itinera/service/ProviderDescriptor;
 	public final fun request (Lorg/itineradev/itinera/request/Request;)Lorg/itineradev/itinera/service/ProviderBuilder;
@@ -2894,6 +2913,9 @@ public final class org/itineradev/itinera/workflow/InputAdapterDescriptor$Compan
 public abstract interface class org/itineradev/itinera/workflow/ItineraWorkflow {
 	public fun fromDataBag ()Lorg/itineradev/itinera/workflow/Supplied;
 	public fun instance ()Lorg/itineradev/itinera/instance/InstanceBuilder;
+	public fun noInstance ()Lorg/itineradev/itinera/service/Provided;
+	public fun provide (Ljava/lang/Object;)Lorg/itineradev/itinera/service/Provided;
+	public fun provide (Ljava/lang/Object;Ljava/lang/Object;)Lorg/itineradev/itinera/service/Provided;
 	public fun supply (Ljava/lang/Object;)Lorg/itineradev/itinera/workflow/Supplied;
 }
 
