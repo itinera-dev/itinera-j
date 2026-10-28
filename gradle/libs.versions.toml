@@ -14,6 +14,9 @@ maven-publish = "0.37.0"
 license-report = "3.1.4"
 junit = "6.1.3"
 jspecify = "1.0.0"
+cucumber = "8.0.4"
+# The conformance runners read the cases' JSON with it.
+jackson-runners = "3.2.3"
 # Dokka 2.2.0 brings releases of these, and ktfmt and google-java-format one
 # of Guava, with known advisories; these releases fix them, each the newest of
 # its line.
@@ -35,5 +38,10 @@ junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 jackson-bom = { module = "com.fasterxml.jackson:jackson-bom", version.ref = "jackson" }
+cucumber-bom = { module = "io.cucumber:cucumber-bom", version.ref = "cucumber" }
+cucumber-java = { module = "io.cucumber:cucumber-java" }
+cucumber-picocontainer = { module = "io.cucumber:cucumber-picocontainer" }
+cucumber-tag-expressions = { module = "io.cucumber:tag-expressions" }
+jackson-runners-databind = { module = "tools.jackson.core:jackson-databind", version.ref = "jackson-runners" }
 freemarker = { module = "org.freemarker:freemarker", version.ref = "freemarker" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
