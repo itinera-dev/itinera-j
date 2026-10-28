@@ -12,6 +12,16 @@
           "file": "itinera-java/src/compileFailTest/java/org/itineradev/itinera/workflow/JavaAdapterTypesTest.java"
         }
       }
+    ],
+    "journey-scope-request": [
+      {
+        "feature": "cases/tier-1/0095-services-provided-to-steps/admission.feature",
+        "scenario": "A provider of journey scope requesting the attempt number is refused",
+        "proof": {
+          "test": "aJavaProviderOfJourneyScopeCannotDeclareARequestOfTheAttempt",
+          "file": "itinera-java/src/compileFailTest/java/org/itineradev/itinera/service/JavaProviderTypesTest.java"
+        }
+      }
     ]
   }
 }

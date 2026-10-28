@@ -17,6 +17,8 @@ import org.itineradev.itinera.report.async.AsyncDispatcherFactory
 import org.itineradev.itinera.report.async.AsyncReporter
 import org.itineradev.itinera.request.Got
 import org.itineradev.itinera.request.StepKind
+import org.itineradev.itinera.service.ProviderCall
+import org.itineradev.itinera.service.async.AsyncProvider
 import org.itineradev.itinera.step.StepFactory
 import org.itineradev.itinera.step.async.AsyncStepFactory
 import org.itineradev.itinera.step.async.AsyncStepRun
@@ -36,6 +38,9 @@ internal class AsyncParts(private val factory: AsyncDispatcherFactory) : Parts<A
 
     override fun accepts(adapter: InputAdapterCall<*, *>?): Boolean =
         adapter is AsyncInputAdapter && writtenInKotlin(adapter)
+
+    override fun accepts(provider: ProviderCall<*, *, *, *>?): Boolean =
+        provider is AsyncProvider<*, *, *> && writtenInKotlin(provider)
 
     override fun accepts(reporter: ReporterOf<*>?): Boolean =
         reporter is AsyncReporter && writtenInKotlin(reporter)

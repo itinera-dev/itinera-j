@@ -17,6 +17,7 @@ import org.itineradev.itinera.journey.FailureCause
 import org.itineradev.itinera.journey.JourneyId
 import org.itineradev.itinera.policy.HookReporter
 import org.itineradev.itinera.policy.RetryCause
+import org.itineradev.itinera.service.ProviderReporter
 import org.itineradev.itinera.step.Attempt
 import org.itineradev.itinera.step.Reason
 import org.itineradev.itinera.step.StepName
@@ -231,6 +232,16 @@ public object Requests {
     @JvmStatic
     public fun hookReporter(): Request<HookReporterKind<Sync>, HookReporter> =
         Asking(Handle.HOOK_REPORTER, Answer.ITSELF)
+
+    /**
+     * A synchronous service provider's reporter, for its own events and for setting global
+     * metadata.
+     *
+     * @sample org.itineradev.itinera.service.samples.providers
+     */
+    @JvmStatic
+    public fun providerReporter(): Request<ProviderReporterKind<Sync>, ProviderReporter> =
+        Asking(Handle.PROVIDER_REPORTER, Answer.ITSELF)
 
     /**
      * The role [type], an interface marked `@Role`, which the workflow provides: an object

@@ -4,6 +4,7 @@ import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Checked
 import org.itineradev.itinera.engine.isRole
 import org.itineradev.itinera.policy.WorkflowPolicyDescriptor
+import org.itineradev.itinera.service.ProviderDescriptor
 
 /**
  * Builds a [WorkflowDescriptor] of mode [M], whose parts it takes only in that mode.
@@ -19,6 +20,7 @@ internal constructor(private val name: WorkflowName, private val mode: M) {
     private val policies = mutableListOf<WorkflowPolicyDescriptor<*, M>>()
     private val roles = mutableListOf<Class<in W>>()
     private val inputAdapters = mutableListOf<InputAdapterDescriptor<W, M>>()
+    private val providers = mutableListOf<ProviderDescriptor<W, M>>()
     private var idGenerator: JourneyIdGenerator<W>? = null
 
     /**
@@ -61,6 +63,16 @@ internal constructor(private val name: WorkflowName, private val mode: M) {
     }
 
     /**
+     * Adds a service provider after those already added, which supplies its service to the steps it
+     * serves.
+     *
+     * @sample org.itineradev.itinera.service.samples.providers
+     */
+    public fun provider(provider: ProviderDescriptor<W, M>): WorkflowBuilder<W, M> = apply {
+        providers += provider
+    }
+
+    /**
      * Produces each instance's journey ID with this generator, in place of a UUID version 4.
      *
      * @sample org.itineradev.itinera.workflow.samples.ids
@@ -76,5 +88,5 @@ internal constructor(private val name: WorkflowName, private val mode: M) {
      * @sample org.itineradev.itinera.workflow.samples.building
      */
     public fun build(): WorkflowDescriptor<W, M> =
-        Checked.of(name, mode, steps, policies, roles, inputAdapters, idGenerator)
+        Checked.of(name, mode, steps, policies, roles, inputAdapters, providers, idGenerator)
 }

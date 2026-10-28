@@ -5,6 +5,7 @@ import org.itineradev.itinera.policy.HookCall
 import org.itineradev.itinera.report.ReporterOf
 import org.itineradev.itinera.request.Got
 import org.itineradev.itinera.request.StepKind
+import org.itineradev.itinera.service.ProviderCall
 import org.itineradev.itinera.step.Outcome
 import org.itineradev.itinera.step.StepFactory
 import org.itineradev.itinera.workflow.InputAdapterCall
@@ -29,6 +30,9 @@ public interface Parts<M : Mode> {
 
     /** Whether [adapter] is an input adapter of this mode. */
     public fun accepts(adapter: InputAdapterCall<*, *>?): Boolean
+
+    /** Whether [provider] is a service provider of this mode. */
+    public fun accepts(provider: ProviderCall<*, *, *, *>?): Boolean
 
     /** Whether [reporter] is a reporter of this mode. */
     public fun accepts(reporter: ReporterOf<*>?): Boolean

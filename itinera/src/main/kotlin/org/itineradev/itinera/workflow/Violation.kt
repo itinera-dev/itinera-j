@@ -4,6 +4,7 @@ import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.policy.PolicyName
 import org.itineradev.itinera.policy.StepHook
 import org.itineradev.itinera.policy.WorkflowHook
+import org.itineradev.itinera.service.ProviderName
 import org.itineradev.itinera.step.StepName
 
 /**
@@ -166,6 +167,92 @@ public sealed interface Violation {
     ) : Violation {
         override val named: String
             get() = "service not provided"
+    }
+
+    /**
+     * Several attachments of providers of this key serve one step: two providers attached to it, or
+     * one attached to it twice, or, when [step] is `null`, two providers attached to no step.
+     *
+     * @sample org.itineradev.itinera.service.samples.misprovided
+     */
+    @JvmRecord
+    public data class ServiceProvidedTwice(
+        /** The key of the service they supply. */
+        val key: String,
+        /** The step they are attached to, or `null` when none of them is attached to a step. */
+        val step: StepName?,
+        /**
+         * The provider of each attachment, in the order declared, so one attached twice is twice.
+         */
+        val providers: List<ProviderName>,
+    ) : Violation {
+        override val named: String
+            get() = "service provided twice"
+    }
+
+    /**
+     * Two service providers of the workflow have this name.
+     *
+     * @sample org.itineradev.itinera.service.samples.misprovided
+     */
+    @JvmRecord
+    public data class DuplicateProviderName(
+        /** The name the providers share. */
+        val provider: ProviderName
+    ) : Violation {
+        override val named: String
+            get() = "duplicate provider name"
+    }
+
+    /**
+     * A service provider is attached to a step the workflow does not have.
+     *
+     * @sample org.itineradev.itinera.service.samples.misprovided
+     */
+    @JvmRecord
+    public data class ServiceProviderForUnknownStep(
+        /** The provider. */
+        val provider: ProviderName,
+        /** The name it gives for a step, which no step of the workflow has. */
+        val step: StepName,
+    ) : Violation {
+        override val named: String
+            get() = "service provider for unknown step"
+    }
+
+    /**
+     * The provider serving a step supplies another type than the step requests under this key.
+     *
+     * @sample org.itineradev.itinera.service.samples.misprovided
+     */
+    @JvmRecord
+    public data class WrongServiceType(
+        /** The step. */
+        val step: StepName,
+        /** The key of the service it requests. */
+        val key: String,
+        /** The provider that serves it. */
+        val provider: ProviderName,
+    ) : Violation {
+        override val named: String
+            get() = "wrong service type"
+    }
+
+    /**
+     * A service provider of journey scope requests the name of the step being built or the attempt,
+     * which only one of attempt scope receives. The builders cannot make such a provider, so only a
+     * descriptor written by hand, which an unchecked cast hands over, or an annotated class has
+     * one.
+     *
+     * @sample org.itineradev.itinera.service.samples.misprovided
+     */
+    @JvmRecord
+    public data class AttemptRequestInJourneyScope(
+        /** The provider. */
+        val provider: ProviderName
+    ) : Violation {
+        override val named: String
+            get() = "attempt request in journey scope"
     }
 
     /**

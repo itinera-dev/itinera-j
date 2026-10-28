@@ -122,7 +122,13 @@ public enum class Handle : Asked {
     ASYNC_HOOK_REPORTER,
 
     /** An input adapter's read access to the data bag. */
-    DATA_BAG_ACCESS;
+    DATA_BAG_ACCESS,
+
+    /** A synchronous service provider's reporter, for its own events. */
+    PROVIDER_REPORTER,
+
+    /** An asynchronous service provider's reporter, for its own events. */
+    ASYNC_PROVIDER_REPORTER;
 
     override fun toString(): String = name.lowercase().replace('_', ' ')
 }

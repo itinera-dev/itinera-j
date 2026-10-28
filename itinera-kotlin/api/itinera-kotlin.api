@@ -106,7 +106,27 @@ public abstract interface class org/itineradev/itinera/report/async/AsyncReporte
 
 public final class org/itineradev/itinera/request/async/AsyncRequestsKt {
 	public static final fun asyncHookReporter (Lorg/itineradev/itinera/request/Requests;)Lorg/itineradev/itinera/request/Request;
+	public static final fun asyncProviderReporter (Lorg/itineradev/itinera/request/Requests;)Lorg/itineradev/itinera/request/Request;
 	public static final fun asyncStepReporter (Lorg/itineradev/itinera/request/Requests;)Lorg/itineradev/itinera/request/Request;
+}
+
+public abstract interface class org/itineradev/itinera/service/async/AsyncProvider : org/itineradev/itinera/service/ProviderCall {
+	public abstract synthetic fun provide (Ljava/lang/Object;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class org/itineradev/itinera/service/async/AsyncProviderReporter {
+	public abstract synthetic fun error (Ljava/lang/String;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract synthetic fun error (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract synthetic fun info (Ljava/lang/String;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract synthetic fun info (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract synthetic fun setGlobalMetadata (Ljava/lang/String;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract synthetic fun warning (Ljava/lang/String;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract synthetic fun warning (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/itineradev/itinera/service/async/AsyncProvidersKt {
+	public static final fun asyncPerAttemptProvider (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Class;Lorg/itineradev/itinera/service/async/AsyncProvider;)Lorg/itineradev/itinera/service/ProviderBuilder;
+	public static final fun asyncProvider (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Class;Lorg/itineradev/itinera/service/async/AsyncProvider;)Lorg/itineradev/itinera/service/ProviderBuilder;
 }
 
 public abstract interface class org/itineradev/itinera/step/async/AsyncStepFactory : org/itineradev/itinera/step/StepFactory {
