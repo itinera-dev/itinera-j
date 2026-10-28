@@ -143,6 +143,8 @@ public abstract interface class org/itineradev/itinera/workflow/async/AsyncInput
 }
 
 public abstract interface class org/itineradev/itinera/workflow/async/ItineraAsyncWorkflow {
+	public fun fromDataBag ()Lorg/itineradev/itinera/workflow/Supplied;
 	public fun instance ()Lorg/itineradev/itinera/instance/async/AsyncInstanceBuilder;
+	public fun supply (Ljava/lang/Object;)Lorg/itineradev/itinera/workflow/Supplied;
 }
 

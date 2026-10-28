@@ -25,6 +25,11 @@ public interface KotlinClasses {
 
 /** What a method or a constructor of a Kotlin class declares that Java reflection cannot read. */
 public class KotlinFunction(
+    /**
+     * Its name as its declaration writes it, which Java reflection reads with a suffix for an
+     * `internal` method or one taking a value class.
+     */
+    public val name: String,
     /** Whether it is a `suspend` function. */
     public val isSuspend: Boolean,
     /**
@@ -48,6 +53,7 @@ public class KotlinFunction(
          */
         public fun ofJava(executable: Executable): KotlinFunction =
             KotlinFunction(
+                name = executable.name,
                 isSuspend = false,
                 returnType = (executable as? Method)?.returnType ?: Void.TYPE,
                 returnsNullable = false,

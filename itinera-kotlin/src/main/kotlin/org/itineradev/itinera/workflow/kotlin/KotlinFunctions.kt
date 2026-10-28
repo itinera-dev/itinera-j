@@ -34,6 +34,7 @@ private fun declared(executable: Executable, function: KFunction<*>): KotlinFunc
     val java =
         executable.parameters.dropLast(if (function.isSuspend) 1 else 0).takeLast(values.size)
     return KotlinFunction(
+        name = function.name,
         isSuspend = function.isSuspend,
         returnType =
             (function.returnType.classifier as? KClass<*>)?.javaObjectType ?: Any::class.java,
