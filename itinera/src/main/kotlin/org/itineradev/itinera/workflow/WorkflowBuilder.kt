@@ -76,7 +76,9 @@ internal constructor(private val name: WorkflowName, private val mode: M) {
 
     /**
      * Lists the reporter [factory] makes, after those already listed. Each instance makes its own
-     * with it, given its journey ID, before the reporters it is given itself.
+     * with it, given its journey ID, before the reporters it is given itself. From Java, a factory
+     * whose reporter is itself a lambda is written as a `ReporterFactory`, such as `ReporterFactory
+     * printing = id -> event -> …`.
      *
      * @sample org.itineradev.itinera.report.samples.listed
      */

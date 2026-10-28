@@ -57,7 +57,7 @@ public class AsyncInstanceBuilder internal constructor(private val draft: Draft<
      * @sample org.itineradev.itinera.instance.async.samples.asyncPerJourney
      */
     public fun reporterFor(factory: AsyncReporterFactory): AsyncInstanceBuilder = apply {
-        draft.reporter(factory::create)
+        draft.reporter(factory)
     }
 
     /**

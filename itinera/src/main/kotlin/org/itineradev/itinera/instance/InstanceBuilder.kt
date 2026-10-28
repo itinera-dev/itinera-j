@@ -53,7 +53,7 @@ public class InstanceBuilder internal constructor(private val draft: Draft<*, Sy
      * @sample org.itineradev.itinera.report.samples.perJourney
      */
     public fun reporterFor(factory: ReporterFactory): InstanceBuilder = apply {
-        draft.reporter(factory::create)
+        draft.reporter(factory)
     }
 
     /**
