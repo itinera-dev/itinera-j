@@ -26,7 +26,7 @@ flowchart LR
 ```
 
 1. A Java application depends on `itinera`, the core, which brings Kotlin's standard library only.
-2. A Kotlin application depends on `itinera-kotlin`, which depends on the core and brings kotlin-reflect.
+2. A Kotlin application depends on `itinera-kotlin`, which depends on the core and brings kotlin-reflect and kotlinx.coroutines.
 3. `itinera-kotlin` provides the core with `KotlinClasses`, through `java.util.ServiceLoader`: the reader of Kotlin data classes, and of what a method of an annotated Kotlin class declares, such as `suspend` and return types admitting `null`. Without it, no Kotlin class is data, and no annotated Kotlin class is read.
 4. `itinera-testing`, test support, depends on the core, and on `itinera-kotlin` only as an optional dependency.
 5. `conformance`, which is never published, runs the conformance cases of [itinera-dev/conformance](https://github.com/itinera-dev/conformance) in two columns, synchronous and asynchronous, through the public API of the three artifacts.
@@ -40,23 +40,23 @@ Where it lives: the Gradle projects `itinera`, `itinera-kotlin`, `itinera-testin
 ```mermaid
 flowchart TD
     accTitle: What a workflow descriptor and an instance hold
-    accDescr: A workflow descriptor holds its name, its mode, its step descriptors in order and its journey ID generator. A step descriptor holds the step's name, its factory, its retry budget and whether it retries an abnormal termination. The builder, and the annotation reader through the same checks, make a checked descriptor. An instance holds the descriptor beside the workflow object, its journey ID, its reporters, its initial data and its initial global metadata. The executor of the instance's mode runs it.
-    builder["WorkflowDescriptor.builder"] --> checked["Checked descriptor"]
-    annotated["WorkflowDescriptor.of, reading the annotations"] --> checked
+    accDescr: A workflow descriptor holds its name, its mode, its step descriptors in order and its journey ID generator. A step descriptor holds the step's name, its factory, its retry budget and whether it retries an abnormal termination. The builder of each mode, and the annotation reader of each mode through the same checks, make a checked descriptor. An instance holds the descriptor beside the workflow object, its journey ID, its reporters, its initial data and its initial global metadata. The executor of the instance's mode, LocalExecutor or AsyncLocalExecutor, runs it.
+    builder["WorkflowDescriptor.builder, or asyncBuilder"] --> checked["Checked descriptor"]
+    annotated["WorkflowDescriptor.of, or asyncDescriptorOf, reading the annotations"] --> checked
     checked --> descriptor["WorkflowDescriptor: name, mode, steps, ID generator"]
     descriptor --> step["StepDescriptor: name, factory, retry budget, retry on abnormal termination"]
     descriptor --> instance["WorkflowInstance: descriptor, workflow object, journey ID, reporters, initial data, initial global metadata"]
-    instance --> executor["LocalExecutor.run"]
+    instance --> executor["LocalExecutor.run, or AsyncLocalExecutor.run"]
 ```
 
 1. A `WorkflowDescriptor<W, M>` holds the workflow's name, its mode `M`, `Sync` or `Async`, its step descriptors in the order they run, and its `JourneyIdGenerator`, if it has one.
 2. A `StepDescriptor<M>` holds the step's name, the `StepFactory<M>` that builds it for each attempt, its retry budget, and whether it retries an abnormal termination.
-3. `WorkflowDescriptor.builder(type, name)` makes a checked descriptor, refusing every violation at once with `Violations`.
-4. `WorkflowDescriptor.of(type)` reads a class's `@Workflow`, `@WithStep` and `@IdGenerator` annotations through the same checks, once per class. A step class's factory builds it with its constructor and calls its method `run` by reflection.
-5. A `WorkflowInstance<M>` holds the descriptor beside the application's workflow object, the journey ID, the reporters, the initial data and the initial global metadata. `instance()` on a workflow object, or `InstanceBuilder.of(descriptor, workflow)`, creates one.
-6. `LocalExecutor.run` takes only a `WorkflowInstance<Sync>`.
+3. `WorkflowDescriptor.builder(type, name)`, or `builder<W>(name)` in Kotlin, makes a checked synchronous descriptor, refusing every violation at once with `Violations`. `asyncBuilder<W>(name)` and `asyncStep(name, factory)`, in `itinera-kotlin`, make asynchronous ones, whose steps' runs are `suspend` functions.
+4. `WorkflowDescriptor.of(type)` reads a class's `@Workflow`, `@WithStep` and `@IdGenerator` annotations through the same checks, once per class. A step class's factory builds it with its constructor and calls its method `run` by reflection. `asyncDescriptorOf(type)`, in `itinera-kotlin`, reads a class implementing `ItineraAsyncWorkflow` the same way, and calls its `suspend` method `run` with the caller's continuation.
+5. A `WorkflowInstance<M>` holds the descriptor beside the application's workflow object, the journey ID, the reporters, the initial data and the initial global metadata. `instance()` on a workflow object, `InstanceBuilder.of(descriptor, workflow)`, or `AsyncInstanceBuilder.of(descriptor, workflow)` in `itinera-kotlin`, creates one.
+6. `LocalExecutor.run` takes only a `WorkflowInstance<Sync>`, and `AsyncLocalExecutor.run` only a `WorkflowInstance<Async>`.
 
-Where it lives: `workflow/` for descriptors, builders, annotations and violations, `step/` for steps and their factories, `instance/` for instances and their builder, `engine/Checked.kt`, `engine/Described.kt`, `engine/Reading.kt`, `engine/StepClasses.kt`, `engine/IdGenerators.kt`, `engine/Problems.kt` and `engine/Reflection.kt` for the checks and the reader, `engine/Draft.kt` and `engine/Initial.kt` for creating an instance; in `itinera-kotlin`, `workflow/kotlin/KotlinFunctions.kt` and `value/kotlin/KotlinDataClasses.kt`, which reads Kotlin methods for the core.
+Where it lives: `workflow/` for descriptors, builders, annotations and violations, `step/` for steps and their factories, `instance/` for instances and their builder, `engine/Checked.kt`, `engine/Described.kt`, `engine/Reading.kt`, `engine/StepClasses.kt`, `engine/IdGenerators.kt`, `engine/Problems.kt` and `engine/Reflection.kt` for the checks and the reader, `engine/Draft.kt` and `engine/Initial.kt` for creating an instance, `engine/Builders.kt` for the builders `itinera-kotlin` starts; in `itinera-kotlin`, `workflow/kotlin/KotlinFunctions.kt` and `value/kotlin/KotlinDataClasses.kt`, which reads Kotlin methods for the core, `workflow/kotlin/Builders.kt` for the reified builder, `workflow/async/` for `ItineraAsyncWorkflow`, the asynchronous builder and reader, `step/async/` for asynchronous steps and `instance/async/` for their instances.
 
 ### How a journey runs
 
@@ -83,7 +83,7 @@ sequenceDiagram
     Eng-->>App: the JourneyResult, or a Refusal before any event
 ```
 
-1. The application calls `run` with an instance. The executor refuses a call while it runs a journey, with `Refused.JourneyRunning`.
+1. The application calls `run` with an instance. The executor refuses a call while it runs a journey, with `Refused.JourneyRunning`. `AsyncLocalExecutor` runs the same steps in the caller's coroutine, awaiting each part; the diagram shows `LocalExecutor`.
 2. The engine, driven on the caller's thread, refuses an instance that ran, then admits it with one check that finds every violation: those of a descriptor the builder did not make, every part of another mode, initial values that are not values, and `journey_id` in the initial global metadata.
 3. It makes the dispatcher with the executor's factory, and adds a guard for each reporter. It sets `journey_id`, then the initial global metadata. Any failure so far is a `Refusal`, with no event.
 4. It emits `journey_started`, then attempts each step in order: `attempt_started`, then the step is built with its factory and run.
@@ -91,25 +91,26 @@ sequenceDiagram
 6. Once every step succeeded, it emits `journey_succeeded`.
 7. A step that cannot be built, a reporter that fails, or `null` where a result is owed aborts the journey: the abort is recorded, the first one standing, and `journey_aborted` is the last event.
 8. `run` returns the `JourneyResult`: succeeded or failed with the data bag, or aborted.
+9. In the asynchronous mode, when custom code throws and the coroutine running `run` was cancelled, the journey is abandoned with no further event, and the cancellation reaches the caller. The engine asks again once `journey_aborted` is delivered.
 
-Where it lives: `executor/LocalExecutor.kt` and `executor/Refusal.kt`; in `engine/`, `Driven.kt` drives the engine, `Engine.kt` runs the journey, `Start.kt` and `Admission.kt` do what comes before it, `Attempts.kt` and `Decision.kt` attempt each step and decide what follows an abnormal termination, `Journey.kt` and `Emitter.kt` make and deliver events and record the abort; the result in `journey/JourneyResult.kt`, `journey/Failure.kt` and `journey/Abort.kt`.
+Where it lives: `executor/LocalExecutor.kt` and `executor/Refusal.kt`, and `executor/async/AsyncLocalExecutor.kt` in `itinera-kotlin`; in `engine/`, `Driven.kt` drives the engine, `Engine.kt` runs the journey, `Start.kt` and `Admission.kt` do what comes before it, `Attempts.kt` and `Decision.kt` attempt each step and decide what follows an abnormal termination, `Journey.kt` and `Emitter.kt` make and deliver events and record the abort; the result in `journey/JourneyResult.kt`, `journey/Failure.kt` and `journey/Abort.kt`.
 
 ### The engine's seams
 
 ```mermaid
 flowchart LR
     accTitle: How the one engine serves each mode
-    accDescr: The engine, written once as suspend functions, calls the workflow's parts through Parts. SyncParts serves the synchronous mode: it accepts synchronous steps and reporters, makes the dispatcher and builds steps. The engine delivers events through Delivery, which wraps the dispatcher, and every reporter added to the dispatcher is wrapped in a Guard, which shares the journey's record of failures.
-    engine["Engine"] --> parts["Parts of the mode: SyncParts"]
+    accDescr: The engine, written once as suspend functions, calls the workflow's parts through Parts. SyncParts serves the synchronous mode and AsyncParts, in itinera-kotlin, the asynchronous one: each accepts steps and reporters of its mode, makes the dispatcher, builds steps and says whether the journey was cancelled. The engine delivers events through Delivery, which wraps the dispatcher, and every reporter added to the dispatcher is wrapped in a Guard, which shares the journey's record of failures.
+    engine["Engine"] --> parts["Parts of the mode: SyncParts or AsyncParts"]
     parts --> delivery["Delivery, around the dispatcher"]
     delivery --> guard["Guard around each reporter"]
     guard --> failures["Failures, shared by the journey's guards"]
     engine --> failures
 ```
 
-1. The `Engine` is written once, as `suspend` functions, and calls a workflow's parts through `Parts`, one implementation per mode. `SyncParts` serves the synchronous mode: it says which steps and reporters it accepts, makes the dispatcher with the executor's factory, builds steps, and never suspends.
+1. The `Engine` is written once, as `suspend` functions, and calls a workflow's parts through `Parts`, one implementation per mode. `SyncParts` serves the synchronous mode: it says which steps and reporters it accepts, makes the dispatcher with the executor's factory, builds steps, and never suspends. `AsyncParts`, in `itinera-kotlin`, serves the asynchronous mode the same way, and fills `ensureActive()` from the caller's coroutine context.
 2. The engine delivers events and global metadata through `Delivery`, which wraps the journey's dispatcher.
 3. Every reporter added to the dispatcher is wrapped in a `Guard`. Once any reporter failed, the guards let nothing through but `journey_aborted`, and nothing at all to the reporter that failed; a failure on `journey_aborted` is ignored.
 4. The guards share the journey's `Failures`, which the engine reads after each delivery, so a dispatcher that swallows a reporter's failure still aborts the journey with `reporter failed`.
 
-Where it lives: `engine/Parts.kt`, `engine/SyncParts.kt`, `engine/Guard.kt`.
+Where it lives: `engine/Parts.kt`, `engine/SyncParts.kt`, `engine/Guard.kt`, and `executor/async/AsyncParts.kt` in `itinera-kotlin`.

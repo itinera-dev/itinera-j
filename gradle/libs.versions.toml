@@ -14,6 +14,8 @@ maven-publish = "0.37.0"
 license-report = "3.1.4"
 junit = "6.1.3"
 jspecify = "1.0.0"
+# AsyncLocalExecutor asks its coroutine whether it was cancelled.
+kotlinx-coroutines = "1.11.0"
 cucumber = "8.0.4"
 # The conformance runners read the cases' JSON with it.
 jackson-runners = "3.2.3"
@@ -28,6 +30,7 @@ guava = "33.7.2-jre"
 [libraries]
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin-stdlib" }
 jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 dokka-gradle-plugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 detekt-gradle-plugin = { module = "dev.detekt:detekt-gradle-plugin", version.ref = "detekt" }

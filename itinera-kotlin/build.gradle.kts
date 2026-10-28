@@ -6,4 +6,5 @@ description =
 dependencies {
     api(project(":itinera"))
     implementation(libs.kotlin.reflect)
+    implementation(libs.kotlinx.coroutines.core)
 }
