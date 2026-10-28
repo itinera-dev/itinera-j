@@ -47,6 +47,10 @@ internal class StepScript {
     var retriesAbnormalTerminations = true
         private set
 
+    /** The message the step's build fails with, once stated. */
+    var buildFailure: String? = null
+        private set
+
     var hasRescueStep = false
     var isRescueStep = false
     var isAsynchronous = false
@@ -66,6 +70,13 @@ internal class StepScript {
         if (retries != null) throw ModelException("the retry budget of \"$name\" is stated twice")
         if (budget < 0) throw ModelException("\"$name\" cannot allow $budget retries")
         retries = budget
+    }
+
+    /** Says that building the step fails with [message], once. */
+    fun cannotBeBuilt(name: String, message: String) {
+        if (buildFailure != null)
+            throw ModelException("how \"$name\" fails to build is stated twice")
+        buildFailure = message
     }
 
     /** Turns `retry on abnormal termination` off. */
