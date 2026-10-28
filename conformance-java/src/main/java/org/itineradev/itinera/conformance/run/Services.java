@@ -1,5 +1,6 @@
 package org.itineradev.itinera.conformance.run;
 
+import org.itineradev.itinera.conformance.model.Implementation;
 import org.itineradev.itinera.conformance.model.ProviderModel;
 import org.itineradev.itinera.conformance.model.RequestedService;
 import org.itineradev.itinera.conformance.model.ServiceType;
@@ -9,7 +10,7 @@ import org.itineradev.itinera.service.ProviderBuilder;
 import org.itineradev.itinera.workflow.Mode;
 
 /** The services of the cases, their requests and the steps their providers serve. */
-final class Services {
+public final class Services {
   private Services() {}
 
   /** The interface a service of {@code type} has in the runner. */
@@ -30,5 +31,41 @@ final class Services {
       ProviderBuilder<W, M, K> builder, ProviderModel provider) {
     provider.steps().forEach(builder::step);
     return builder;
+  }
+
+  /** The instance {@code provider} makes, labelled {@code label}. */
+  static Object madeBy(ProviderModel provider, String label) {
+    return switch (provider.type()) {
+      case LABELLER -> labellerOf(provider.implementation(), label, provider.servicesFail());
+      case METER -> (Meter) () -> 0;
+    };
+  }
+
+  private static Labeller labellerOf(Implementation implementation, String label, String failure) {
+    return switch (implementation) {
+      case FIRST -> new MadeLabeller.First(label, failure);
+      case SECOND -> new MadeLabeller.Second(label, failure);
+    };
+  }
+
+  /** How a case writes the implementation {@code service_provided} names. */
+  public static String writtenImplementation(String implementation) {
+    if (implementation.equals(MadeLabeller.First.class.getName())) {
+      return Implementation.FIRST.written();
+    }
+    if (implementation.equals(MadeLabeller.Second.class.getName())) {
+      return Implementation.SECOND.written();
+    }
+    return implementation;
+  }
+
+  /** Uses {@code service} once, as a step does when it runs; its failure escapes. */
+  static void use(Object service) {
+    if (service instanceof Labeller labeller) {
+      labeller.label();
+    }
+    if (service instanceof Meter meter) {
+      meter.reading();
+    }
   }
 }

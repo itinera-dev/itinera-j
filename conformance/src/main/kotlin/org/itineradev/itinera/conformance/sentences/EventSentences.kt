@@ -12,6 +12,7 @@ import org.itineradev.itinera.conformance.trace.expectedLine
 import org.itineradev.itinera.conformance.trace.includesInOrder
 import org.itineradev.itinera.conformance.trace.lineOf
 import org.itineradev.itinera.event.Event
+import org.itineradev.itinera.event.JourneyAborted
 import org.itineradev.itinera.event.JourneyStarted
 
 /** The sentences that compare the event stream with an event table, and read what it carries. */
@@ -62,6 +63,17 @@ internal class EventSentences(private val world: World) {
         holdsOfStream(events.isEmpty(), "no event", events)
     }
 
+    @Then("journey_aborted names no adapter")
+    fun abortedNamesNoAdapter() {
+        val events = world.stream()
+        val aborted = events.filterIsInstance<JourneyAborted>().map(::lineOf)
+        holdsOfStream(
+            aborted.isNotEmpty() && aborted.none(::namesAnAdapter),
+            "journey_aborted naming no adapter",
+            events,
+        )
+    }
+
     @Then("the last event is {string}")
     fun lastEvent(event: String) {
         val events = world.stream()
@@ -96,6 +108,8 @@ internal class EventSentences(private val world: World) {
 
 private fun belongsTo(event: Event, id: String, workflow: String): Boolean =
     event.journeyId.toString() == id && event.workflow.toString() == workflow
+
+private fun namesAnAdapter(line: Line): Boolean = "adapter" in line.cells
 
 private fun inSequence(pair: Pair<Event, Event>): Boolean =
     pair.first.sequence < pair.second.sequence

@@ -20,6 +20,8 @@ import org.itineradev.itinera.event.JourneyAborted;
 import org.itineradev.itinera.event.JourneyFailed;
 import org.itineradev.itinera.event.JourneyStarted;
 import org.itineradev.itinera.event.JourneySucceeded;
+import org.itineradev.itinera.event.OptionalInputAbsent;
+import org.itineradev.itinera.event.ServiceProvided;
 import org.itineradev.itinera.event.ServiceProviderFailed;
 import org.itineradev.itinera.event.StepAbnormalTermination;
 import org.itineradev.itinera.event.StepError;
@@ -86,9 +88,12 @@ public final class Writing {
       set("key", failed.key());
       set("provider", failed.provider());
     } else if (event instanceof JourneyAborted aborted) {
-      set("code", aborted.abort().getReason());
-      set("step", aborted.abort().getStep());
-      set("error", aborted.abort().getErrorMessage());
+      EventCells.cellsOf(aborted).forEach(this::set);
+    } else if (event instanceof OptionalInputAbsent absent) {
+      EventCells.cellsOf(absent).forEach(this::set);
+    } else if (event instanceof ServiceProvided provided) {
+      EventCells.cellsOf(provided).forEach(this::set);
+      data = provided.data() == null ? new Data.None() : new Data.Is(provided.data());
     } else {
       return false;
     }
@@ -134,6 +139,10 @@ public final class Writing {
       return false;
     }
     return true;
+  }
+
+  private void set(Cell cell) {
+    set(cell.column(), cell.value());
   }
 
   private void set(String column, Object cell) {

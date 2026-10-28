@@ -82,6 +82,12 @@ final class RunTest {
   }
 
   @Test
+  void everyScenarioThatBuildsStepsFromInputsAndServicesPasses() {
+    assertTrue(runs("@building"), errors().toString());
+    assertEquals(9, scenarios().size());
+  }
+
+  @Test
   void aJourneyThatDidNotDoWhatTheCaseExpectsFailsAsUnmet() {
     assertFalse(runs("@unmet"));
     assertTrue(errors().stream().allMatch(RunTest::isUnmet), errors().toString());
@@ -91,9 +97,7 @@ final class RunTest {
   void aScriptTheRunnerCannotRunYetFailsSayingSo() {
     assertFalse(runs("@not-run-yet"));
     assertEquals(
-        List.of(
-            "the runner cannot run input adapters yet",
-            "the runner cannot run an attempt that fails or is skipped yet"),
+        List.of("the runner cannot run an attempt that fails or is skipped yet"),
         errors().stream().map(RunTest::notRunYet).toList(),
         errors().toString());
   }

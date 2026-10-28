@@ -37,6 +37,11 @@ internal class WorkflowSentences(private val world: World) {
         model.step(step).contributions += key to value(written)
     }
 
+    @Given("""^step "([^"]*)" changes its input "([^"]*)" to (.+)$""")
+    fun changesItsInput(step: String, key: String, written: String) {
+        model.step(step).inputChanges[key] = value(written)
+    }
+
     @Given("step {string} succeeds")
     fun succeeds(step: String) {
         model.step(step).attempts(step, listOf(ScriptedAttempt(1, Ending.SUCCESS)))

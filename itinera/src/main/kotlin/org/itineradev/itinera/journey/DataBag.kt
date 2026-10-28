@@ -45,12 +45,15 @@ public class DataBag internal constructor() {
      * @sample org.itineradev.itinera.journey.samples.reads
      */
     public fun <T> read(key: String, type: TypeToken<T>): Read<T> {
-        val stored = values[key] ?: return Read.Absent
+        val stored = stored(key) ?: return Read.Absent
         return when (val receipt = Values.receive(stored, type)) {
             is Received -> Read.Present(receipt.value)
             is WrongType -> Read.OtherType
         }
     }
+
+    /** The captured value under a key, which only itinera holds, or `null` when it holds none. */
+    internal fun stored(key: String): Captured? = values[key]
 
     /** Puts a captured value under a key, keeping the key's place when it replaces one. */
     internal fun put(key: String, value: Captured) {
