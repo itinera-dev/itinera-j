@@ -100,12 +100,9 @@ public abstract interface class org/itineradev/itinera/report/async/AsyncReporte
 	public synthetic fun setGlobalMetadata (Ljava/lang/String;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
-public abstract interface class org/itineradev/itinera/report/async/AsyncReporterFactory {
+public abstract interface class org/itineradev/itinera/report/async/AsyncReporterFactory : org/itineradev/itinera/report/ReporterFactoryOf {
+	public synthetic fun create (Lorg/itineradev/itinera/journey/JourneyId;)Lorg/itineradev/itinera/report/ReporterOf;
 	public abstract fun create (Lorg/itineradev/itinera/journey/JourneyId;)Lorg/itineradev/itinera/report/async/AsyncReporter;
-}
-
-public final class org/itineradev/itinera/report/async/AsyncWorkflowReporterKt {
-	public static final fun asyncWorkflowReporter (Lorg/itineradev/itinera/report/async/AsyncReporterFactory;)Lorg/itineradev/itinera/report/WorkflowReporter;
 }
 
 public final class org/itineradev/itinera/request/async/AsyncRequestsKt {

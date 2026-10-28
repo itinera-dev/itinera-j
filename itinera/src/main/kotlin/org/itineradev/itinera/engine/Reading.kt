@@ -3,8 +3,8 @@ package org.itineradev.itinera.engine
 import kotlin.reflect.KClass
 import org.itineradev.itinera.policy.StepPolicyDescriptor
 import org.itineradev.itinera.policy.WorkflowPolicyDescriptor
+import org.itineradev.itinera.report.ReporterFactoryOf
 import org.itineradev.itinera.report.ReporterOf
-import org.itineradev.itinera.report.WorkflowReporter
 import org.itineradev.itinera.step.ItineraRescueStep
 import org.itineradev.itinera.step.StepName
 import org.itineradev.itinera.workflow.Mode
@@ -66,7 +66,7 @@ internal class Reading<M : Mode>(
     private fun workflowPolicy(policy: KClass<*>): WorkflowPolicyDescriptor<Any, M>? =
         policies.workflowPolicy(policy.java)
 
-    private fun reporter(reporter: KClass<*>): WorkflowReporter<M>? = reporters.read(reporter.java)
+    private fun reporter(reporter: KClass<*>): ReporterFactoryOf<M>? = reporters.read(reporter.java)
 
     private fun stepPolicy(policy: KClass<*>): StepPolicyDescriptor<Any, M>? =
         policies.stepPolicy(policy.java)

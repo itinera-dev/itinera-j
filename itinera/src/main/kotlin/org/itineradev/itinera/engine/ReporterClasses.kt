@@ -1,8 +1,8 @@
 package org.itineradev.itinera.engine
 
 import java.lang.reflect.Constructor
+import org.itineradev.itinera.report.ReporterFactoryOf
 import org.itineradev.itinera.report.ReporterOf
-import org.itineradev.itinera.report.WorkflowReporter
 import org.itineradev.itinera.workflow.Mode
 import org.itineradev.itinera.workflow.Violation
 
@@ -15,8 +15,11 @@ internal class ReporterClasses<M : Mode>(
     private val type: Class<out ReporterOf<M>>,
     private val problems: Problems,
 ) {
-    /** The reporter each instance builds of [listed], or `null` when the class has a mistake. */
-    fun read(listed: Class<*>): WorkflowReporter<M>? =
+    /**
+     * The factory with which each instance builds a reporter of [listed], or `null` when the class
+     * has a mistake.
+     */
+    fun read(listed: Class<*>): ReporterFactoryOf<M>? =
         if (type.isAssignableFrom(listed))
             problems.builtWithNothing(listed, "reporter")?.let(::reporter)
         else {
@@ -24,7 +27,7 @@ internal class ReporterClasses<M : Mode>(
             null
         }
 
-    private fun reporter(constructor: Constructor<*>): WorkflowReporter<M> = WorkflowReporter {
+    private fun reporter(constructor: Constructor<*>): ReporterFactoryOf<M> = ReporterFactoryOf {
         type.cast(constructed(constructor))
     }
 }
