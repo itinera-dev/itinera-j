@@ -2,5 +2,16 @@
   "cases": "v0.1.0-rc.18",
   "proposals": [121],
   "capabilities": ["sync"],
-  "impossible": {}
+  "impossible": {
+    "bag-write": [
+      {
+        "feature": "cases/tier-1/0060-input-adapters-attached-to-steps/data-bag-access.feature",
+        "scenario": "An adapter that writes through its access leaves the data bag unchanged",
+        "proof": {
+          "test": "aJavaAdaptersAccessToTheDataBagHasNoMethodThatWrites",
+          "file": "itinera-java/src/compileFailTest/java/org/itineradev/itinera/workflow/JavaAdapterTypesTest.java"
+        }
+      }
+    ]
+  }
 }

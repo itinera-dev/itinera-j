@@ -89,6 +89,9 @@ internal enum class Known(private val text: String) : Asked {
     /** The name of the step the part acts on. */
     STEP_NAME("step name"),
 
+    /** The key of the input an input adapter is asked for. */
+    KEY("key"),
+
     /** The attempt the part acts on. */
     ATTEMPT("attempt"),
 
@@ -116,7 +119,10 @@ public enum class Handle : Asked {
     HOOK_REPORTER,
 
     /** An asynchronous hook's reporter, for its own events. */
-    ASYNC_HOOK_REPORTER;
+    ASYNC_HOOK_REPORTER,
+
+    /** An input adapter's read access to the data bag. */
+    DATA_BAG_ACCESS;
 
     override fun toString(): String = name.lowercase().replace('_', ' ')
 }

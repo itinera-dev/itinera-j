@@ -56,14 +56,14 @@ public interface StepFailureKind<M : Mode> : StepHookKind<M>, FailureCauseKind
 
 /**
  * The kinds of part that may request data from the workflow, read from the data bag and never
- * through an input adapter: hooks.
+ * through an input adapter: hooks and input adapters.
  *
  * @sample org.itineradev.itinera.request.samples.hookRequests
  */
 @ExperimentalItineraApi public interface WorkflowDataKind
 
 /**
- * The kinds of part that may request the journey ID: hooks.
+ * The kinds of part that may request the journey ID: hooks and input adapters.
  *
  * @sample org.itineradev.itinera.request.samples.hookRequests
  */
@@ -93,7 +93,8 @@ public interface StepFailureKind<M : Mode> : StepHookKind<M>, FailureCauseKind
 @ExperimentalItineraApi public interface FromStepKind
 
 /**
- * The kinds of part that may request the name of the step they act on: step hooks.
+ * The kinds of part that may request the name of the step they act on: step hooks, and input
+ * adapters, of the step being built.
  *
  * @sample org.itineradev.itinera.request.samples.hookRequests
  */

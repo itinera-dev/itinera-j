@@ -89,6 +89,54 @@ public sealed interface Violation {
     }
 
     /**
+     * Two input adapters of the workflow have this name, whether or not they are attached to the
+     * same steps.
+     *
+     * @sample org.itineradev.itinera.workflow.samples.misadapted
+     */
+    @JvmRecord
+    public data class DuplicateAdapterName(
+        /** The name the adapters share. */
+        val adapter: AdapterName
+    ) : Violation {
+        override val named: String
+            get() = "duplicate adapter name"
+    }
+
+    /**
+     * A step has several input adapters: two adapters are attached to it, or one adapter is
+     * attached to it more than once.
+     *
+     * @sample org.itineradev.itinera.workflow.samples.misadapted
+     */
+    @JvmRecord
+    public data class StepAdaptedTwice(
+        /** The step. */
+        val step: StepName,
+        /** The adapters attached to it, once for each time they are, in the order declared. */
+        val adapters: List<AdapterName>,
+    ) : Violation {
+        override val named: String
+            get() = "step adapted twice"
+    }
+
+    /**
+     * An input adapter is attached to a step the workflow does not have.
+     *
+     * @sample org.itineradev.itinera.workflow.samples.misadapted
+     */
+    @JvmRecord
+    public data class InputAdapterForUnknownStep(
+        /** The adapter. */
+        val adapter: AdapterName,
+        /** The step it names, which the workflow does not have. */
+        val step: StepName,
+    ) : Violation {
+        override val named: String
+            get() = "input adapter for unknown step"
+    }
+
+    /**
      * A step requests this key twice among its services.
      *
      * @sample org.itineradev.itinera.workflow.samples.violations

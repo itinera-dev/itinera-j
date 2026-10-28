@@ -18,6 +18,7 @@ internal constructor(private val name: WorkflowName, private val mode: M) {
     private val steps = mutableListOf<StepDescriptor<M>>()
     private val policies = mutableListOf<WorkflowPolicyDescriptor<*, M>>()
     private val roles = mutableListOf<Class<in W>>()
+    private val inputAdapters = mutableListOf<InputAdapterDescriptor<W, M>>()
     private var idGenerator: JourneyIdGenerator<W>? = null
 
     /**
@@ -50,6 +51,16 @@ internal constructor(private val name: WorkflowName, private val mode: M) {
     }
 
     /**
+     * Adds an input adapter after those already added, which supplies the inputs of the steps it is
+     * attached to.
+     *
+     * @sample org.itineradev.itinera.workflow.samples.adapters
+     */
+    public fun inputAdapter(adapter: InputAdapterDescriptor<W, M>): WorkflowBuilder<W, M> = apply {
+        inputAdapters += adapter
+    }
+
+    /**
      * Produces each instance's journey ID with this generator, in place of a UUID version 4.
      *
      * @sample org.itineradev.itinera.workflow.samples.ids
@@ -65,5 +76,5 @@ internal constructor(private val name: WorkflowName, private val mode: M) {
      * @sample org.itineradev.itinera.workflow.samples.building
      */
     public fun build(): WorkflowDescriptor<W, M> =
-        Checked.of(name, mode, steps, policies, roles, idGenerator)
+        Checked.of(name, mode, steps, policies, roles, inputAdapters, idGenerator)
 }

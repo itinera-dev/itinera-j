@@ -29,6 +29,7 @@ import org.itineradev.itinera.step.async.AsyncStepFactory
 import org.itineradev.itinera.step.async.AsyncStepReporter
 import org.itineradev.itinera.step.async.AsyncStepRun
 import org.itineradev.itinera.workflow.Async
+import org.itineradev.itinera.workflow.InputAdapterBuilder
 import org.itineradev.itinera.workflow.StepBuilder
 import org.itineradev.itinera.workflow.Violations
 import org.itineradev.itinera.workflow.WorkflowBuilder
@@ -55,6 +56,20 @@ public fun <W> asyncBuilder(name: String): WorkflowBuilder<W, Async> =
 @ExperimentalItineraApi
 public fun asyncStep(name: String, factory: AsyncStepFactory): StepBuilder<Async> =
     Builders.step(name, factory)
+
+/**
+ * Starts the descriptor of an asynchronous input adapter named [name], attached to the step named
+ * [step], to which the builder may attach others.
+ *
+ * @throws IllegalArgumentException when [name] or [step] is empty.
+ * @sample org.itineradev.itinera.workflow.async.samples.asyncAdapters
+ */
+@ExperimentalItineraApi
+public fun <W> asyncInputAdapter(
+    name: String,
+    step: String,
+    adapter: AsyncInputAdapter<W>,
+): InputAdapterBuilder<W, Async> = Builders.inputAdapter(name, adapter).step(step)
 
 /**
  * The descriptor of an asynchronous workflow written as an annotated class, read once and then

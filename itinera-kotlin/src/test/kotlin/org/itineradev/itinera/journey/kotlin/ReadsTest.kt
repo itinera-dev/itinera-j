@@ -1,7 +1,9 @@
 package org.itineradev.itinera.journey.kotlin
 
 import org.itineradev.itinera.ExperimentalItineraApi
+import org.itineradev.itinera.engine.DataBags
 import org.itineradev.itinera.journey.kotlin.samples.Parcel
+import org.itineradev.itinera.journey.kotlin.samples.accessReads
 import org.itineradev.itinera.journey.kotlin.samples.reads
 import org.itineradev.itinera.value.kotlin.bagOf
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -20,5 +22,14 @@ class ReadsTest {
     fun `the sample reads a parcel's weight`() {
         assertEquals(1200L, reads(bagOf("parcel", Parcel(1200L, listOf("book")))))
         assertEquals(0L, reads(bagOf("parcel", "not a parcel")))
+    }
+
+    @Test
+    fun `a reified read through an adapter's access reads as the data bag does`() {
+        assertEquals(
+            listOf("fragile"),
+            accessReads(DataBags.access(bagOf("notes", listOf("fragile")))),
+        )
+        assertEquals(emptyList<String>(), accessReads(DataBags.access(bagOf("notes", 3L))))
     }
 }
