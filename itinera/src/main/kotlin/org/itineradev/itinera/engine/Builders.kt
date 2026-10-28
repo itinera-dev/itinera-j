@@ -1,5 +1,8 @@
 package org.itineradev.itinera.engine
 
+import org.itineradev.itinera.journey.JourneyId
+import org.itineradev.itinera.report.ReporterOf
+import org.itineradev.itinera.report.WorkflowReporter
 import org.itineradev.itinera.request.AttemptProviderKind
 import org.itineradev.itinera.request.JourneyProviderKind
 import org.itineradev.itinera.service.ProviderBuilder
@@ -17,7 +20,8 @@ import org.itineradev.itinera.workflow.WorkflowBuilder
 import org.itineradev.itinera.workflow.WorkflowName
 
 /**
- * Starts builders of any mode, which only the core can construct.
+ * Starts builders, and makes the reporters workflows list, of any mode, which only the core can
+ * construct.
  *
  * Part of itinera's engine, not of its API.
  */
@@ -69,6 +73,10 @@ public object Builders {
         call: ProviderCall<M, W, AttemptProviderKind<M>, T>,
     ): ProviderBuilder<W, M, AttemptProviderKind<M>> =
         ProviderBuilder.attempt(name, key, type, call)
+
+    /** The reporter [make] makes, of its mode, for each instance of a workflow that lists it. */
+    public fun <M : Mode> reporter(make: (JourneyId) -> ReporterOf<M>?): WorkflowReporter<M> =
+        WorkflowReporter(make)
 
     /**
      * Starts the descriptor of a workflow of [mode].

@@ -4,6 +4,7 @@ import java.lang.reflect.AccessibleObject
 import java.lang.reflect.Constructor
 import java.lang.reflect.Executable
 import java.lang.reflect.Method
+import java.lang.reflect.Modifier
 import java.lang.reflect.Parameter
 import org.itineradev.itinera.value.kotlinClasses
 import org.itineradev.itinera.workflow.Violation
@@ -66,7 +67,27 @@ internal class Problems {
             )
         return opened
     }
+
+    /**
+     * The constructor that takes nothing, with which itinera builds the [part] [type], or `null`,
+     * recording why, when [type] is abstract, has none, or is not open to itinera.
+     */
+    fun builtWithNothing(type: Class<*>, part: String): Constructor<*>? {
+        if (Modifier.isAbstract(type.modifiers)) {
+            misdeclared(type.name, "cannot be built: it is abstract")
+            return null
+        }
+        val constructor = type.declaredConstructors.find(::takesNothing)
+        if (constructor == null)
+            misdeclared(
+                type.name,
+                "has no constructor that takes nothing, which a $part is built with",
+            )
+        return constructor?.takeIf { taking -> opened(type, taking) }
+    }
 }
+
+private fun takesNothing(constructor: Constructor<*>): Boolean = constructor.parameterCount == 0
 
 internal fun isKotlin(type: Class<*>): Boolean = type.isAnnotationPresent(Metadata::class.java)
 

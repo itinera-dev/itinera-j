@@ -2,16 +2,20 @@ package org.itineradev.itinera.workflow;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.stream.Stream;
+import org.itineradev.itinera.event.Event;
 import org.itineradev.itinera.executor.LocalExecutor;
 import org.itineradev.itinera.executor.Refusal;
 import org.itineradev.itinera.journey.DataBag;
 import org.itineradev.itinera.journey.JourneyId;
+import org.itineradev.itinera.report.Reporter;
+import org.itineradev.itinera.report.ReporterOf;
 import org.itineradev.itinera.step.ItineraStep;
 import org.itineradev.itinera.step.Outcome;
 import org.itineradev.itinera.step.Step;
@@ -56,6 +60,15 @@ final class JavaAnnotatedWorkflowsTest {
   @WithStep(step = Pack.class, name = "pack")
   public static final class Unnamed implements ItineraWorkflow {}
 
+  public static final class Printer implements Reporter {
+    @Override
+    public void report(Event event) {}
+  }
+
+  @Workflow(name = "printed", reporters = Printer.class)
+  @WithStep(step = Pack.class, name = "pack")
+  public static final class Printed implements ItineraWorkflow {}
+
   @Test
   void anAnnotatedJavaWorkflowRunsItsStepsInTheOrderWritten() throws Refusal {
     var instance = new Shipping("north").instance().data("parcel", "7").create();
@@ -84,6 +97,18 @@ final class JavaAnnotatedWorkflowsTest {
   @Test
   void aWorkflowWithoutANameIsNamedAfterItsClass() {
     assertEquals(WorkflowName.of("Unnamed"), WorkflowDescriptor.of(Unnamed.class).getName());
+  }
+
+  @Test
+  void eachInstanceBuildsItsOwnReporterOfEachClassTheWorkflowListsBeforeThoseItIsGiven() {
+    var given = new Printer();
+    var first = new Printed().instance().reporter(given).create();
+    var second = new Printed().instance().create();
+    assertEquals(
+        List.of(Printer.class, Printer.class),
+        first.getReporters().stream().map(Object::getClass).toList());
+    assertSame(given, first.getReporters().get(1));
+    assertNotSame(first.getReporters().get(0), second.getReporters().get(0));
   }
 
   @ParameterizedTest
@@ -144,6 +169,18 @@ final class JavaAnnotatedWorkflowsTest {
             "an ID generator taking what it cannot",
             NumberedIds.class,
             List.of("takes what an ID generator cannot: it takes nothing or a DataBag")),
+        Arguments.argumentSet(
+            "an abstract reporter class",
+            AbstractReporting.class,
+            List.of("cannot be built: it is abstract")),
+        Arguments.argumentSet(
+            "a reporter class whose constructor takes something",
+            ConstructedReporting.class,
+            List.of("has no constructor that takes nothing, which a reporter is built with")),
+        Arguments.argumentSet(
+            "a reporter class of the other mode",
+            AsyncReporting.class,
+            List.of("mode not accepted")),
         Arguments.argumentSet(
             "a Kotlin step without itinera-kotlin",
             KotlinStep.class,
@@ -257,4 +294,24 @@ final class JavaAnnotatedWorkflowsTest {
 
   @WithStep(step = org.itineradev.itinera.step.samples.Ship.class, name = "ship")
   public static final class KotlinStep implements ItineraWorkflow {}
+
+  public abstract static class AbstractReporter implements Reporter {}
+
+  public static final class ConstructedReporter implements Reporter {
+    ConstructedReporter(String prefix) {}
+
+    @Override
+    public void report(Event event) {}
+  }
+
+  public static final class AsyncPrinter implements ReporterOf<Async> {}
+
+  @Workflow(name = "reporting", reporters = AbstractReporter.class)
+  public static final class AbstractReporting implements ItineraWorkflow {}
+
+  @Workflow(name = "reporting", reporters = ConstructedReporter.class)
+  public static final class ConstructedReporting implements ItineraWorkflow {}
+
+  @Workflow(name = "reporting", reporters = AsyncPrinter.class)
+  public static final class AsyncReporting implements ItineraWorkflow {}
 }

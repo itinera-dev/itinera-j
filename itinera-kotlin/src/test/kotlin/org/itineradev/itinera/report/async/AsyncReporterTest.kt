@@ -3,10 +3,14 @@ package org.itineradev.itinera.report.async
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 import org.itineradev.itinera.ExperimentalItineraApi
+import org.itineradev.itinera.executor.async.AsyncLocalExecutor
+import org.itineradev.itinera.instance.async.instance
 import org.itineradev.itinera.report.async.Fixtures.started
 import org.itineradev.itinera.report.async.samples.asyncDebugging
+import org.itineradev.itinera.report.async.samples.asyncListed
 import org.itineradev.itinera.report.async.samples.asyncPrinter
 import org.itineradev.itinera.report.async.samples.asyncTenants
+import org.itineradev.itinera.workflow.async.samples.AsyncOrders
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
@@ -40,5 +44,13 @@ class AsyncReporterTest {
                 asyncDebugging()
             }
         }
+    }
+
+    @Test
+    fun `a reporter the workflow lists is made for each instance, given its journey ID`() {
+        val lines = mutableListOf<String>()
+        val instance = asyncListed(lines).instance(AsyncOrders("corner")).create()
+        complete { AsyncLocalExecutor().run(instance) }
+        assertEquals("${instance.journeyId} journey_started", lines.first())
     }
 }
