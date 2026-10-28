@@ -1,6 +1,5 @@
 package org.itineradev.itinera.value.kotlin
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.NotAValue
 import org.itineradev.itinera.engine.Received
 import org.itineradev.itinera.engine.Values
@@ -17,7 +16,6 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments.argumentSet
 import org.junit.jupiter.params.provider.FieldSource
 
-@OptIn(ExperimentalItineraApi::class)
 class KotlinDataClassesTest {
     @AfterEach
     fun rebuildAgain() {

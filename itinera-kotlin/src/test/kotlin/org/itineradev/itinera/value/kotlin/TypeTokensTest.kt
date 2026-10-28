@@ -1,7 +1,6 @@
 package org.itineradev.itinera.value.kotlin
 
 import java.util.LinkedList
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.Read
 import org.itineradev.itinera.value.TypeToken
 import org.itineradev.itinera.value.kotlin.samples.typeTokens
@@ -12,7 +11,6 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments.argumentSet
 import org.junit.jupiter.params.provider.FieldSource
 
-@OptIn(ExperimentalItineraApi::class)
 class TypeTokensTest {
     @ParameterizedTest
     @FieldSource("ofTheType")
