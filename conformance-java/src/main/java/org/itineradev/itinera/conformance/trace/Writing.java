@@ -16,6 +16,7 @@ import org.itineradev.itinera.event.DecidedBy;
 import org.itineradev.itinera.event.DecidingHook;
 import org.itineradev.itinera.event.Event;
 import org.itineradev.itinera.event.GiveUpCause;
+import org.itineradev.itinera.event.GlobalMetadataSet;
 import org.itineradev.itinera.event.InputAdapterFailed;
 import org.itineradev.itinera.event.InputAdapterSupplied;
 import org.itineradev.itinera.event.JourneyAborted;
@@ -78,6 +79,8 @@ public final class Writing {
       EventCells.contributedCells(committed.key(), committed.source()).forEach(this::set);
     } else if (event instanceof DataOverwritten overwritten) {
       EventCells.contributedCells(overwritten.key(), overwritten.source()).forEach(this::set);
+    } else if (event instanceof GlobalMetadataSet set) {
+      EventCells.metadataCells(set.key(), set.source()).forEach(this::set);
     } else if (event instanceof StepFailed failed) {
       attempted(failed.step(), failed.attempt(), failed.reason());
     } else if (event instanceof StepSkipped skipped) {

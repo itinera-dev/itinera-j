@@ -49,7 +49,7 @@ internal class BuiltSentences(private val world: World) {
         )
     }
 
-    private fun received(step: String, attempt: Int): Received =
+    private fun received(step: String, attempt: Int): Received<*> =
         world.witness.built(step).getOrNull(attempt - 1)?.received
             ?: throw Unmet("expected \"$step\" built for attempt $attempt; it was not")
 }
