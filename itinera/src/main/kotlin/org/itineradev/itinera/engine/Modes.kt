@@ -14,6 +14,9 @@ internal class Modes<M : Mode>(private val parts: Parts<M>) {
     fun of(instance: WorkflowInstance<M>): List<Violation> =
         workflow(instance.descriptor) +
             instance.descriptor.steps.filterNot(::accepts).map { step -> step(step, parts.mode) } +
+            instance.descriptor.steps.filter(::isRescuedInAnotherMode).map { step ->
+                rescue(step, parts.mode)
+            } +
             hooksOf(instance.descriptor).filterNot(::accepts).map { hook ->
                 hook(hook, parts.mode)
             } +
@@ -33,6 +36,11 @@ internal class Modes<M : Mode>(private val parts: Parts<M>) {
 
     private fun accepts(step: StepDescriptor<*>): Boolean = parts.accepts(step.factory)
 
+    private fun isRescuedInAnotherMode(step: StepDescriptor<*>): Boolean {
+        val rescue = step.rescue
+        return rescue != null && !parts.accepts(rescue.factory)
+    }
+
     private fun accepts(hook: DefinedHook<*>): Boolean = parts.accepts(hook.definition.call)
 
     private fun accepts(adapter: InputAdapterDescriptor<*, *>): Boolean =
@@ -47,6 +55,9 @@ internal class Modes<M : Mode>(private val parts: Parts<M>) {
 
 private fun step(step: StepDescriptor<*>, mode: Mode): Violation =
     Violation.ModeNotAccepted("step ${step.name}", mode)
+
+private fun rescue(step: StepDescriptor<*>, mode: Mode): Violation =
+    Violation.ModeNotAccepted("rescue step ${rescueOf(step.name)}", mode)
 
 private fun hook(hook: DefinedHook<*>, mode: Mode): Violation =
     Violation.ModeNotAccepted(hook.toString(), mode)

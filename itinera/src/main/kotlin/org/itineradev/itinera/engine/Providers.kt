@@ -6,7 +6,6 @@ import org.itineradev.itinera.service.ProviderCall
 import org.itineradev.itinera.service.ProviderDescriptor
 import org.itineradev.itinera.service.ProviderName
 import org.itineradev.itinera.step.StepName
-import org.itineradev.itinera.workflow.StepDescriptor
 import org.itineradev.itinera.workflow.Violation
 import org.itineradev.itinera.workflow.WorkflowDescriptor
 
@@ -17,7 +16,7 @@ import org.itineradev.itinera.workflow.WorkflowDescriptor
  * step's name or the attempt.
  */
 internal fun providerViolations(descriptor: WorkflowDescriptor<*, *>): List<Violation> {
-    val steps = descriptor.steps.map(StepDescriptor<*>::name).toSet()
+    val steps = stepNamesOf(descriptor).toSet()
     return shared(descriptor.providers.map(ProviderDescriptor<*, *>::name))
         .map(Violation::DuplicateProviderName) +
         providedTwice(descriptor.providers, steps) +

@@ -19,7 +19,9 @@ import org.itineradev.itinera.request.Got
 import org.itineradev.itinera.request.StepKind
 import org.itineradev.itinera.service.ProviderCall
 import org.itineradev.itinera.service.async.AsyncProvider
+import org.itineradev.itinera.step.RescueFactory
 import org.itineradev.itinera.step.StepFactory
+import org.itineradev.itinera.step.async.AsyncRescueFactory
 import org.itineradev.itinera.step.async.AsyncStepFactory
 import org.itineradev.itinera.step.async.AsyncStepRun
 import org.itineradev.itinera.workflow.Async
@@ -32,6 +34,8 @@ internal class AsyncParts(private val factory: AsyncDispatcherFactory) : Parts<A
         get() = Async
 
     override fun accepts(factory: StepFactory<*>?): Boolean = factory is AsyncStepFactory
+
+    override fun accepts(rescue: RescueFactory<*>?): Boolean = rescue is AsyncRescueFactory
 
     override fun accepts(hook: HookCall<*, *, *, *>?): Boolean =
         (hook is AsyncHook<*, *, *> || hook is AsyncWorkflowHook<*, *>) && writtenInKotlin(hook)
