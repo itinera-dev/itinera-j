@@ -2,7 +2,7 @@
 
 Tech spec for [proposal 0011](https://github.com/itinera-dev/spec/blob/main/proposals/0011-events.md), implemented in [#7](https://github.com/itinera-dev/itinera-j/issues/7). The [tier 1 plan](../tier-1-plan.md), section 12, holds what crosses proposals; [0040](0040-events-facts-and-decisions.md) covers decisions and [0064](0064-event-data-values.md) the data events carry.
 
-Status: started. Stage 1 added the events and what they carry, and reporters, dispatchers and their factories in both modes. From stage 3 the engine emits them, numbered from 1 and stamped by its clock, and its guard around each reporter keeps the rules of chapter 2, 2.3 whatever the dispatcher ([0081](0081-reporter-failure-stops-delivery.md)).
+Status: started. Stage 1 added the events and what they carry, and reporters, dispatchers and their factories in both modes. From stage 3 the engine emits them, numbered from 1 and stamped by its clock, and its guard around each reporter keeps the rules of chapter 2, 2.3 whatever the dispatcher ([0081](0081-reporter-failure-stops-delivery.md)). From stage 5 steps emit their own events through their step reporter ([0008](0008-steps.md)).
 
 This tech spec covers every type of chapter 2 as amended, including the event types that belong to other proposals: the rescue's events and causes (0003), what failures and aborts carry (0083), the service events (0095 and 0104), `global_metadata_set` and `reserved metadata key` (0102), and `unexpected result` (0122). Each of those proposals gets its own tech spec in the stage that builds its behaviour.
 
