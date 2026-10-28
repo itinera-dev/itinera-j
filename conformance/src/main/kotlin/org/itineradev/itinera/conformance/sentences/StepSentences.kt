@@ -4,6 +4,7 @@ import io.cucumber.java.en.Then
 import java.util.Collections
 import java.util.IdentityHashMap
 import org.itineradev.itinera.conformance.World
+import org.itineradev.itinera.conformance.run.Built
 import org.itineradev.itinera.conformance.run.holds
 import org.itineradev.itinera.conformance.run.holdsOfStream
 import org.itineradev.itinera.conformance.trace.Status
@@ -34,7 +35,7 @@ internal class StepSentences(private val world: World) {
 
     @Then("step {string} was built {int} times, each time as a new instance")
     fun wasBuilt(step: String, times: Int) {
-        val built = world.witness.built(step)
+        val built = world.witness.built(step).map(Built::step)
         val distinct = built.toCollection(Collections.newSetFromMap(IdentityHashMap())).size
         holds(
             built.size == times && distinct == times,

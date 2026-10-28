@@ -38,6 +38,9 @@ internal class StepScript {
     val services = mutableListOf<RequestedService>()
     val contributions = mutableListOf<Pair<String, Any?>>()
 
+    /** What the step changes each input it received to, in place, by key. */
+    val inputChanges = linkedMapOf<String, Any?>()
+
     /** Each attempt in order; attempts after the last repeat it. `null` until stated. */
     var attempts: List<ScriptedAttempt>? = null
         private set

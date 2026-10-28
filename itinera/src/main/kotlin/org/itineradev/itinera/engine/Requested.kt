@@ -1,7 +1,6 @@
 package org.itineradev.itinera.engine
 
 import org.itineradev.itinera.request.Asking
-import org.itineradev.itinera.request.Got
 import org.itineradev.itinera.request.Request
 
 /**
@@ -13,15 +12,6 @@ public fun <K, T> requestOf(asked: Asked, answer: Answer): Request<K, T> = Askin
 
 /** What [request] asks for. */
 internal fun askedBy(request: Request<*, *>): Asked = request.asked
-
-/**
- * What a part is given until itinera resolves requests: every read throws, so only a part that
- * reads nothing can be built.
- */
-internal class Unresolved<K> : Got<K> {
-    override fun <T> get(request: Request<K, T>): T =
-        throw IllegalStateException("This version of itinera does not resolve $request yet.")
-}
 
 /**
  * A request asking what [request] asks, though only a value that is not `null` is of its type,

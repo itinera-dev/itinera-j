@@ -95,10 +95,11 @@ private class Writing {
                 set("error", event.failure.errorMessage)
                 decidedBy(event.decidedBy)
             }
-            is JourneyAborted -> {
-                set("code", event.abort.reason)
-                set("step", event.abort.step)
-                set("error", event.abort.errorMessage)
+            is JourneyAborted -> cellsOf(event).forEach(::set)
+            is OptionalInputAbsent -> cellsOf(event).forEach(::set)
+            is ServiceProvided -> {
+                cellsOf(event).forEach(::set)
+                data = if (event.data == null) Data.None else Data.Is(event.data)
             }
             is StepInfo -> emitted(event.step, event.attempt, event.message, event.data)
             is StepWarning -> emitted(event.step, event.attempt, event.message, event.data)
@@ -106,14 +107,16 @@ private class Writing {
             is ContributionCommitted,
             is DataOverwritten,
             is GlobalMetadataSet,
-            is OptionalInputAbsent,
-            is ServiceProvided,
             is StepHookCalled,
             is WorkflowHookCalled,
             is JourneyInfo,
             is JourneyWarning,
             is JourneyError -> throw NotRunYet("reading ${event.kind} in an event table")
         }
+    }
+
+    private fun set(cell: Cell) {
+        set(cell.first, cell.second)
     }
 
     private fun set(column: String, cell: Any?) {

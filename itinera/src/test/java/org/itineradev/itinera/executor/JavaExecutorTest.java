@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import org.itineradev.itinera.event.ByAdapterForKey;
+import org.itineradev.itinera.event.ByProviderForKey;
 import org.itineradev.itinera.event.ByStep;
 import org.itineradev.itinera.event.UnexpectedResult;
 import org.itineradev.itinera.instance.InstanceBuilder;
@@ -15,9 +17,15 @@ import org.itineradev.itinera.journey.FailureCause;
 import org.itineradev.itinera.journey.JourneyStatus;
 import org.itineradev.itinera.report.Reporter;
 import org.itineradev.itinera.report.ReporterFactory;
+import org.itineradev.itinera.request.Requests;
+import org.itineradev.itinera.service.ProviderDescriptor;
+import org.itineradev.itinera.service.ProviderName;
 import org.itineradev.itinera.step.Outcome;
 import org.itineradev.itinera.step.StepName;
 import org.itineradev.itinera.step.SyncStepFactory;
+import org.itineradev.itinera.value.TypeToken;
+import org.itineradev.itinera.workflow.AdapterName;
+import org.itineradev.itinera.workflow.InputAdapterDescriptor;
 import org.itineradev.itinera.workflow.StepDescriptor;
 import org.itineradev.itinera.workflow.Sync;
 import org.itineradev.itinera.workflow.WorkflowBuilder;
@@ -87,6 +95,38 @@ final class JavaExecutorTest {
     assertEquals(
         new UnexpectedResult(
             StepName.of("pack"), ByStep.INSTANCE, "the step's run returned null, not an outcome"),
+        result.abort().details());
+  }
+
+  @Test
+  void anInputAdapterReturningNullAbortsTheJourneyWithAnUnexpectedResult() throws Refusal {
+    var order = Requests.input("order", TypeToken.of(String.class));
+    var step = StepDescriptor.builder("pack", got -> Outcome::success).request(order).build();
+    var adapter = InputAdapterDescriptor.<Shop>builder("pricing", "pack", (shop, got) -> null);
+    var descriptor = shop().step(step).inputAdapter(adapter.build()).build();
+    var result = new LocalExecutor().run(InstanceBuilder.of(descriptor, new Shop()).create());
+    assertEquals(
+        new UnexpectedResult(
+            StepName.of("pack"),
+            new ByAdapterForKey(AdapterName.of("pricing"), "order"),
+            "the input adapter returned null, not what it supplies"),
+        result.abort().details());
+  }
+
+  @Test
+  void aServiceProviderReturningNullAbortsTheJourneyWithAnUnexpectedResult() throws Refusal {
+    var gateway = Requests.service("gateway", Runnable.class);
+    var step = StepDescriptor.builder("pack", got -> Outcome::success).request(gateway).build();
+    var provider =
+        ProviderDescriptor.<Shop, Runnable>builder(
+            "payments", "gateway", Runnable.class, (shop, got) -> null);
+    var descriptor = shop().step(step).provider(provider.build()).build();
+    var result = new LocalExecutor().run(InstanceBuilder.of(descriptor, new Shop()).create());
+    assertEquals(
+        new UnexpectedResult(
+            StepName.of("pack"),
+            new ByProviderForKey(ProviderName.of("payments"), "gateway"),
+            "the service provider returned null, not what it provides"),
         result.abort().details());
   }
 

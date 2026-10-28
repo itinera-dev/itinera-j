@@ -2,7 +2,7 @@
 
 Tech spec for [proposal 0064](https://github.com/itinera-dev/spec/blob/main/proposals/0064-event-data-values.md), implemented in [#25](https://github.com/itinera-dev/itinera-j/issues/25). [0056](0056-data-bag-values.md) says what a value is, and [0011](0011-events.md) describes the events.
 
-Status: started. Stage 1 typed event data and reason details as values. Stage 5 captures what steps emit and the details of their reasons, and stages 7 and 8 what hooks and service providers emit.
+Status: started. Stage 1 typed event data and reason details as values. Stage 5 captures the data a service provider supplies with an instance, then what steps emit and the details of their reasons, and stages 7 and 8 what hooks and service providers emit.
 
 ## API
 
@@ -16,6 +16,8 @@ Status: started. Stage 1 typed event data and reason details as values. Stage 5 
 None.
 
 ## Tests
+
+- `itinera/src/test/kotlin/org/itineradev/itinera/engine/LendingTest.kt`: "data a provider gives that is not a value aborts the journey".
 
 Stage 5 adds the tests of capture at emission, since steps emit from there.
 
