@@ -140,7 +140,7 @@ public final class org/itineradev/itinera/engine/Draft {
 	public final fun create ()Lorg/itineradev/itinera/instance/WorkflowInstance;
 	public final fun data (Ljava/lang/String;Ljava/lang/Object;)V
 	public final fun metadata (Ljava/lang/String;Ljava/lang/Object;)V
-	public final fun reporter (Lkotlin/jvm/functions/Function1;)V
+	public final fun reporter (Lorg/itineradev/itinera/report/ReporterFactoryOf;)V
 }
 
 public final class org/itineradev/itinera/engine/DrivenKt {

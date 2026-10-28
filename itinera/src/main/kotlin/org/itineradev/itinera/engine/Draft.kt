@@ -20,7 +20,7 @@ public class Draft<W, M : Mode>(
 ) {
     private val data = LinkedHashMap<String, Any?>()
     private val metadata = LinkedHashMap<String, Any?>()
-    private val reporters = mutableListOf<(JourneyId) -> ReporterOf<M>?>()
+    private val reporters = mutableListOf<ReporterFactoryOf<M>>()
 
     /** Puts [value] in the initial data under [key]. */
     public fun data(key: String, value: Any?) {
@@ -33,7 +33,7 @@ public class Draft<W, M : Mode>(
     }
 
     /** Adds the reporter [factory] makes for the journey's ID. */
-    public fun reporter(factory: (JourneyId) -> ReporterOf<M>?) {
+    public fun reporter(factory: ReporterFactoryOf<M>) {
         reporters += factory
     }
 
@@ -51,15 +51,12 @@ public class Draft<W, M : Mode>(
             descriptor,
             workflow,
             journeyId,
-            factories().map { factory -> made(factory, journeyId) },
+            (descriptor.reporters + reporters).map { factory -> made(factory, journeyId) },
             data.toMap(),
             metadata.toMap(),
             initial,
         )
     }
-
-    private fun factories(): List<(JourneyId) -> ReporterOf<M>?> =
-        descriptor.reporters.map(::making) + reporters
 
     private fun journeyId(initial: Initial): JourneyId {
         val generator = descriptor.idGenerator ?: return JourneyId.of(UUID.randomUUID().toString())
@@ -76,14 +73,11 @@ public class Draft<W, M : Mode>(
     }
 }
 
-private fun <M : Mode> making(factory: ReporterFactoryOf<M>): (JourneyId) -> ReporterOf<M>? =
-    factory::create
-
 private fun <M : Mode> made(
-    factory: (JourneyId) -> ReporterOf<M>?,
+    factory: ReporterFactoryOf<M>,
     journeyId: JourneyId,
 ): ReporterOf<M> =
-    runCatching { factory(journeyId) }
+    runCatching { nullable(factory.create(journeyId)) }
         .onFailure(::rethrowError)
         .getOrElse { thrown -> throw failed("A reporter factory", thrown) }
         ?: throw IllegalStateException("A reporter factory returned null, not a reporter.")
