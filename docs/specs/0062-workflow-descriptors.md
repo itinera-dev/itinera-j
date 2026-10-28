@@ -29,6 +29,8 @@ None of its own: kotlin-reflect, which reads Kotlin methods, belongs to [0056](0
 ## Tests
 
 - `itinera/src/test/kotlin/org/itineradev/itinera/workflow/WorkflowBuilderTest.kt`: what a built workflow and step keep, `duplicate step name`, and a retry budget below 0.
+- `itinera/src/compileFailTest/kotlin/org/itineradev/itinera/workflow/BuilderTypesTest.kt`: compile-fail tests, each beside a twin that compiles: a step factory always builds a step, a step's run always gives an outcome, an ID generator gives a string, never a number or `null`, and never suspends, and a workflow takes only the steps of its own mode.
+- `itinera-kotlin/src/compileFailTest/kotlin/org/itineradev/itinera/step/async/AsyncStepTypesTest.kt`: compile-fail tests, each beside a twin that compiles: an asynchronous step factory always builds a step, and its run always gives an outcome.
 - `itinera/src/test/java/org/itineradev/itinera/workflow/JavaAnnotatedWorkflowsTest.java`: an annotated Java workflow runs, its steps state what their annotations say, its descriptor is shared, it is named after its class without `@Workflow`, and every mistake is refused when described, one named case per mistake.
 - `itinera-kotlin/src/test/kotlin/org/itineradev/itinera/workflow/async/AsyncWorkflowsTest.kt`: the samples' asynchronous workflows are built, read and run, a descriptor is shared, a `run` without `suspend` is `mode not accepted`, and what a `suspend` run throws before or after it suspends is its own error.
 - `itinera-kotlin/src/test/kotlin/org/itineradev/itinera/workflow/kotlin/BuildersTest.kt`: the reified builder.

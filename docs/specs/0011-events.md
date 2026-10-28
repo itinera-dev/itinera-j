@@ -39,7 +39,7 @@ Every call into a reporter or a dispatcher is void, `Unit` in Kotlin and `void` 
 
 From Java, a record's components are read with the record's accessors, such as `failed.step()`. Properties an event shares with the interface `Event` are also read through the interface's getters, such as `event.getKind()`, since Kotlin compiles an interface property to a getter. Each record has both forms, and the Java tests in `JavaEventsTest` use them.
 
-The types refuse a source a kind does not allow, and any decider but the default for `step_retrying`, `step_rescuing` and `step_rescued`. These refusals get compile-fail tests in stage 3, when the build gains kctfork for the refusals of the builders and executors (section 16 of the plan).
+The types refuse a source a kind does not allow, and any decider but the default for `step_retrying`, `step_rescuing` and `step_rescued`, and a compile-fail test shows each refusal.
 
 ## Dependencies
 
@@ -54,6 +54,7 @@ None.
 - `SourcesTest.kt`: what the sample of sources says of each.
 - `NameTest.kt`, `JourneyIdTest.kt`, `AttemptTest.kt`, `ReasonTest.kt`, `HooksTest.kt`, `AbortReasonTest.kt` and `FailureCauseTest.kt`: names are never empty, equality, and how each closed set prints.
 - `itinera/src/test/java/org/itineradev/itinera/event/JavaEventsTest.java`: events, names, decisions and aborts written and read in Java.
+- `itinera/src/compileFailTest/kotlin/org/itineradev/itinera/event/EventTypesTest.kt`: compile-fail tests, each beside a twin that compiles: a contribution never comes from an input adapter, a journey-level event never from a step, and no decider but the default is given for a retry or a rescue.
 - `itinera/src/test/kotlin/org/itineradev/itinera/report/DefaultDispatcherTest.kt` and `itinera-kotlin/src/test/kotlin/org/itineradev/itinera/report/async/AsyncDefaultDispatcherTest.kt`: the order of delivery, a reporter that throws, `journey_aborted` reaching everyone, an `Error` never caught, and a dispatcher of its own for each journey.
 - `ReporterTest.kt` and `AsyncReporterTest.kt`: a reporter that accepts global metadata without overriding it, and what the debug reporter prints.
 - `itinera/src/test/java/org/itineradev/itinera/report/JavaReportersTest.java`: reporters and a dispatcher factory written in Java.

@@ -13,3 +13,8 @@ style:
         reason: 'The code holds no TODO comments: open an issue instead.'
       - value: 'FIXME'
         reason: 'The code holds no FIXME comments: open an issue instead.'
+
+naming:
+  # Test names are sentences in backticks, in the compile-fail tests too.
+  FunctionNaming:
+    excludes: ['**/test/**', '**/compileFailTest/**']

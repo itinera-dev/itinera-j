@@ -48,7 +48,7 @@ A proposal is added to `proposals` in both manifests only by the pull request th
 - Nothing in the core, `itinera`, uses kotlin-reflect or kotlinx.coroutines; they belong to `itinera-kotlin`. The core brings Kotlin's standard library only.
 - Reuse before writing. Look first at the JDK and Kotlin's standard library, then at libraries the build already depends on, then at well-known libraries. Write it ourselves only when none fits, or when a library would replace only a couple of lines. Judge a library by what it will replace across the project, not only by its first use. Every runtime dependency has a stated reason in the tech spec that adds it.
 - Types hold every constraint of the specification and the plan that Kotlin can express: name classes such as `StepName`, an `Attempt` counted from 1 with `isFirst`, sealed interfaces for closed sets of cases, a mode in the instance's type, `val` and read-only collections everywhere. A documentation comment stating a constraint that the type could enforce means the type is wrong.
-- Whatever the types can refuse does not compile, and a compile-fail test shows it, beside a twin that compiles: in Kotlin with kotlin-compile-testing, in its fork `dev.zacsweers.kctfork`, and in Java with `javax.tools`. A rule that types cannot hold is checked when the workflow is described or built, or at run time.
+- Whatever the types can refuse does not compile, and a compile-fail test shows it, beside a twin that compiles: in Kotlin with kotlin-compile-testing, in its fork `dev.zacsweers.kctfork`, and in Java with `javax.tools`. Compile-fail tests live in the module's `src/compileFailTest`, a test suite of their own, in the package of the code whose types refuse the snippet. A rule that types cannot hold is checked when the workflow is described or built, or at run time.
 - Closed sets of names, such as hook kinds and statuses, are enums. Data that varies by case is a sealed interface, matched with an exhaustive `when` that has no `else`.
 - Annotations on plain classes implementing itinera's interfaces are the main way an application declares. The public builder is the core they are read into, and the conformance runners use it.
 - Annotations take the names of Rust's macros, since they are the API applications write: `@Workflow`, `@Step`, `@RescueStep`, `@StepPolicy`, `@WorkflowPolicy`, `@Role` and the others. An interface whose name such an annotation needs carries the `Itinera` prefix, such as `ItineraWorkflow`, `ItineraAsyncWorkflow`, `ItineraStep`, `ItineraRescueStep`, `ItineraStepPolicy` and `ItineraWorkflowPolicy`; every other interface keeps its plain name, such as `Reporter` or `Event`. A role interface is marked `@Role`, never by extending a marker interface.
@@ -79,6 +79,7 @@ Each of these is a required CI check, and every one must pass before pushing:
 - `./gradlew detekt`
 - `./gradlew assemble`
 - `./gradlew test`, which CI runs on JDK 17, 21 and 25, each with `-Pitinera.test-jdk=N`
+- `./gradlew compileFailTest`
 - `./gradlew checkKotlinAbi`
 - `./gradlew dokkaGenerate`
 - `./gradlew publishAllPublicationsToPackageRepository`

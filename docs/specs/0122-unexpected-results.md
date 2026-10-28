@@ -20,6 +20,8 @@ The ID generator and the reporter factories are called while the instance is cre
 
 An unexpected result is neither an outcome nor an abnormal termination, so it is never retried, and the abort carries no error.
 
+In Kotlin, compile-fail tests show that none of these calls, nor their asynchronous twins, can return `null`, and that an ID generator cannot return anything but a string. The Kotlin manifest lists `non-string-journey-id` under `impossible`, proven by `BuilderTypesTest.kt`, since the ID generator is its only scenario's subject. It lists `unexpected-result` once every call that returns a result, such as a hook's or an input adapter's, has its proofs, in the stage that lists 122.
+
 ## Dependencies
 
 None.
@@ -27,6 +29,9 @@ None.
 ## Tests
 
 - `itinera/src/test/java/org/itineradev/itinera/executor/JavaExecutorTest.java`: a step factory and a run returning `null`, a dispatcher factory returning `null`, an ID generator and a reporter factory returning `null`.
+- `itinera/src/compileFailTest/kotlin/org/itineradev/itinera/workflow/BuilderTypesTest.kt`: compile-fail tests, each beside a twin that compiles: Kotlin cannot write a step factory or a run returning `null`, nor an ID generator returning `null` or a number.
+- `itinera/src/compileFailTest/kotlin/org/itineradev/itinera/report/ReportTypesTest.kt` and `itinera-kotlin/src/compileFailTest/kotlin/org/itineradev/itinera/report/async/AsyncReportTypesTest.kt`: compile-fail tests, each beside a twin that compiles: no reporter factory or dispatcher factory, of either mode, returns `null`.
+- `itinera-kotlin/src/compileFailTest/kotlin/org/itineradev/itinera/step/async/AsyncStepTypesTest.kt`: the same for an asynchronous step's factory and run.
 
 ## Done when
 

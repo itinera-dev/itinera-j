@@ -2,5 +2,16 @@
   "cases": "v0.1.0-rc.18",
   "proposals": [121],
   "capabilities": ["sync", "async"],
-  "impossible": {}
+  "impossible": {
+    "non-string-journey-id": [
+      {
+        "feature": "cases/tier-1/0061-instance-carries-journey-id-and-reporters/journey-id-values.feature",
+        "scenario": "An ID generator that returns something that is not a string fails the instance",
+        "proof": {
+          "test": "an ID generator gives the journey ID as a string",
+          "file": "itinera/src/compileFailTest/kotlin/org/itineradev/itinera/workflow/BuilderTypesTest.kt"
+        }
+      }
+    ]
+  }
 }
