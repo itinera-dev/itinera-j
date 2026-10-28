@@ -1,6 +1,7 @@
 package org.itineradev.itinera.engine
 
 import org.itineradev.itinera.policy.WorkflowPolicyDescriptor
+import org.itineradev.itinera.service.ProviderDescriptor
 import org.itineradev.itinera.workflow.InputAdapterDescriptor
 import org.itineradev.itinera.workflow.JourneyIdGenerator
 import org.itineradev.itinera.workflow.Mode
@@ -23,6 +24,7 @@ private constructor(
     override val policies: List<WorkflowPolicyDescriptor<*, M>>,
     override val roles: List<Class<in W>>,
     override val inputAdapters: List<InputAdapterDescriptor<W, M>>,
+    override val providers: List<ProviderDescriptor<W, M>>,
     override val idGenerator: JourneyIdGenerator<W>?,
 ) : WorkflowDescriptor<W, M> {
     /** Makes checked descriptors. */
@@ -39,6 +41,7 @@ private constructor(
             policies: List<WorkflowPolicyDescriptor<*, M>>,
             roles: List<Class<in W>>,
             inputAdapters: List<InputAdapterDescriptor<W, M>>,
+            providers: List<ProviderDescriptor<W, M>>,
             idGenerator: JourneyIdGenerator<W>?,
         ): Checked<W, M> {
             val described =
@@ -49,6 +52,7 @@ private constructor(
                     policies.toList(),
                     roles.toList(),
                     inputAdapters.toList(),
+                    providers.toList(),
                     idGenerator,
                 )
             val violations = violationsOf(described)

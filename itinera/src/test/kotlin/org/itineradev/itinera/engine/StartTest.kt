@@ -22,9 +22,14 @@ import org.itineradev.itinera.report.Dispatcher
 import org.itineradev.itinera.report.DispatcherFactory
 import org.itineradev.itinera.report.Reporter
 import org.itineradev.itinera.report.ReporterOf
+import org.itineradev.itinera.request.AttemptProviderKind
 import org.itineradev.itinera.request.InputAdapterKind
 import org.itineradev.itinera.request.Request
 import org.itineradev.itinera.request.StepHookKind
+import org.itineradev.itinera.service.AttemptProviderDescriptor
+import org.itineradev.itinera.service.ProviderCall
+import org.itineradev.itinera.service.ProviderDescriptor
+import org.itineradev.itinera.service.ProviderName
 import org.itineradev.itinera.step.StepFactory
 import org.itineradev.itinera.step.StepName
 import org.itineradev.itinera.value.Fragile
@@ -241,6 +246,33 @@ class StartTest {
     }
 
     @Test
+    fun `a hand-written descriptor's service providers are checked before the journey`() {
+        val gateway =
+            object : AttemptProviderDescriptor<Shop, Sync> {
+                override val name: ProviderName = ProviderName.of("gateway")
+                override val key: String = "payments"
+                override val type: Class<*> = String::class.java
+                override val steps: List<StepName> = listOf(StepName.of("ship"))
+                override val requests: List<Request<AttemptProviderKind<Sync>, *>> = emptyList()
+                override val call: ProviderCall<Sync, Shop, AttemptProviderKind<Sync>, *> =
+                    object : ProviderCall<Sync, Shop, AttemptProviderKind<Sync>, String> {}
+            }
+        val pack = succeeding("pack").build()
+        val refused = refused {
+            ran(HandWritten(Written(listOf(pack), providers = listOf(gateway)), emptyList()))
+        }
+        assertEquals(
+            Refused.Inadmissible(
+                listOf(
+                    Violation.ServiceProviderForUnknownStep(gateway.name, StepName.of("ship")),
+                    Violation.ModeNotAccepted("service provider gateway", Sync),
+                )
+            ),
+            refused,
+        )
+    }
+
+    @Test
     fun `a workflow of another mode is refused with mode not accepted`() {
         val asynchronous: WorkflowDescriptor<Shop, Sync> = returned(Asynchronous())
         val refused = refused { ran(HandWritten(asynchronous, emptyList())) }
@@ -295,6 +327,7 @@ private class Written(
     override val steps: List<StepDescriptor<Sync>>,
     override val roles: List<Class<in Shop>> = emptyList(),
     override val inputAdapters: List<InputAdapterDescriptor<Shop, Sync>> = emptyList(),
+    override val providers: List<ProviderDescriptor<Shop, Sync>> = emptyList(),
 ) : WorkflowDescriptor<Shop, Sync> {
     override val name: WorkflowName = WorkflowName.of("written")
     override val mode: Sync = Sync
@@ -310,6 +343,7 @@ private class Asynchronous : WorkflowDescriptor<Shop, Async> {
     override val steps: List<StepDescriptor<Async>> = emptyList()
     override val policies: List<WorkflowPolicyDescriptor<*, Async>> = emptyList()
     override val inputAdapters: List<InputAdapterDescriptor<Shop, Async>> = emptyList()
+    override val providers: List<ProviderDescriptor<Shop, Async>> = emptyList()
     override val roles: List<Class<in Shop>> = emptyList()
     override val idGenerator: JourneyIdGenerator<Shop>? = null
 }

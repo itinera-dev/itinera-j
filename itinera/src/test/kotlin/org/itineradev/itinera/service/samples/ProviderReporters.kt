@@ -1,0 +1,16 @@
+@file:OptIn(ExperimentalItineraApi::class)
+
+package org.itineradev.itinera.service.samples
+
+import org.itineradev.itinera.ExperimentalItineraApi
+import org.itineradev.itinera.service.ProviderReporter
+
+fun providerReporters(reporter: ProviderReporter) {
+    reporter.info("gateway opened")
+    reporter.info("gateway opened", mapOf("region" to "eu"))
+    reporter.warning("the gateway is slow")
+    reporter.warning("the gateway is slow", mapOf("milliseconds" to 900L))
+    reporter.error("the gateway refused the credentials")
+    reporter.error("the gateway refused the credentials", mapOf("attempts" to 3L))
+    reporter.setGlobalMetadata("gateway", "eu")
+}

@@ -10,6 +10,8 @@ import org.itineradev.itinera.report.Reporter
 import org.itineradev.itinera.report.ReporterOf
 import org.itineradev.itinera.request.Got
 import org.itineradev.itinera.request.StepKind
+import org.itineradev.itinera.service.ProviderCall
+import org.itineradev.itinera.service.SyncProvider
 import org.itineradev.itinera.step.StepFactory
 import org.itineradev.itinera.step.SyncStepFactory
 import org.itineradev.itinera.workflow.InputAdapterCall
@@ -31,6 +33,9 @@ public class SyncParts(private val factory: DispatcherFactory) : Parts<Sync> {
         hook is SyncHook<*, *, *> || hook is SyncWorkflowHook<*, *>
 
     override fun accepts(adapter: InputAdapterCall<*, *>?): Boolean = adapter is SyncInputAdapter
+
+    override fun accepts(provider: ProviderCall<*, *, *, *>?): Boolean =
+        provider is SyncProvider<*, *, *>
 
     override fun accepts(reporter: ReporterOf<*>?): Boolean = reporter is Reporter
 

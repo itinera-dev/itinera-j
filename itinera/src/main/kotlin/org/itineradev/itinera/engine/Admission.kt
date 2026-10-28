@@ -1,9 +1,7 @@
 package org.itineradev.itinera.engine
 
 import org.itineradev.itinera.instance.WorkflowInstance
-import org.itineradev.itinera.report.ReporterOf
 import org.itineradev.itinera.step.StepName
-import org.itineradev.itinera.workflow.InputAdapterDescriptor
 import org.itineradev.itinera.workflow.Mode
 import org.itineradev.itinera.workflow.StepDescriptor
 import org.itineradev.itinera.workflow.Violation
@@ -13,7 +11,8 @@ import org.itineradev.itinera.workflow.WorkflowDescriptor
 internal fun violationsOf(descriptor: WorkflowDescriptor<*, *>): List<Violation> =
     duplicateStepNames(descriptor.steps.map(StepDescriptor<*>::name)) +
         descriptor.steps.filter(::overdrawn).map(::overdrawnBudget) +
-        descriptor.steps.flatMap(::serviceViolations) +
+        serviceViolations(descriptor) +
+        providerViolations(descriptor) +
         policyViolations(descriptor) +
         adapterViolations(descriptor)
 
@@ -63,42 +62,3 @@ private fun unprovided(descriptor: WorkflowDescriptor<*, *>, role: Class<*>): Vi
 private fun reserved(initial: Initial): List<Violation> =
     if (JOURNEY_ID_KEY in initial.metadata.values) listOf(Violation.ReservedMetadataKey)
     else emptyList()
-
-/** Finds every part of an instance in a mode the executor of [parts] does not accept. */
-private class Modes<M : Mode>(private val parts: Parts<M>) {
-    fun of(instance: WorkflowInstance<M>): List<Violation> =
-        workflow(instance.descriptor) +
-            instance.descriptor.steps.filterNot(::accepts).map(::step) +
-            hooksOf(instance.descriptor).filterNot(::accepts).map(::hook) +
-            instance.descriptor.inputAdapters.filterNot(::accepts).map(::adapter) +
-            instance.reporters.withIndex().filterNot(::accepts).map(::reporter)
-
-    private fun workflow(descriptor: WorkflowDescriptor<*, *>): List<Violation> =
-        if (descriptor.mode == parts.mode) emptyList()
-        else listOf(Violation.ModeNotAccepted("workflow ${descriptor.name}", parts.mode))
-
-    private fun accepts(step: StepDescriptor<*>): Boolean = parts.accepts(step.factory)
-
-    private fun accepts(hook: DefinedHook<*>): Boolean = parts.accepts(hook.definition.call)
-
-    private fun accepts(adapter: InputAdapterDescriptor<*, *>): Boolean =
-        parts.accepts(adapter.call)
-
-    private fun accepts(reporter: IndexedValue<ReporterOf<*>?>): Boolean =
-        parts.accepts(reporter.value)
-
-    private fun step(step: StepDescriptor<*>): Violation =
-        Violation.ModeNotAccepted("step ${step.name}", parts.mode)
-
-    private fun hook(hook: DefinedHook<*>): Violation =
-        Violation.ModeNotAccepted(hook.toString(), parts.mode)
-
-    private fun adapter(adapter: InputAdapterDescriptor<*, *>): Violation =
-        Violation.Misdeclared(
-            "input adapter ${adapter.name}",
-            "is not of the mode ${parts.mode}, which the executor runs",
-        )
-
-    private fun reporter(reporter: IndexedValue<ReporterOf<*>?>): Violation =
-        Violation.ModeNotAccepted("reporter ${reporter.index + 1}", parts.mode)
-}

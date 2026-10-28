@@ -43,6 +43,7 @@ internal class Reading<M : Mode>(
             attached.filterNotNull(),
             rolesOf<W>(type),
             adapted,
+            emptyList(),
             generator,
         )
     }

@@ -1,5 +1,9 @@
 package org.itineradev.itinera.engine
 
+import org.itineradev.itinera.request.AttemptProviderKind
+import org.itineradev.itinera.request.JourneyProviderKind
+import org.itineradev.itinera.service.ProviderBuilder
+import org.itineradev.itinera.service.ProviderCall
 import org.itineradev.itinera.step.StepFactory
 import org.itineradev.itinera.step.StepName
 import org.itineradev.itinera.workflow.AdapterName
@@ -33,6 +37,32 @@ public object Builders {
         name: String,
         call: InputAdapterCall<W, M>,
     ): InputAdapterBuilder<W, M> = InputAdapterBuilder(AdapterName.of(name), call)
+
+    /**
+     * Starts the descriptor of a service provider of journey scope that [call] calls in its mode.
+     *
+     * @throws IllegalArgumentException when [name] is empty.
+     */
+    public fun <W, M : Mode, T : Any> provider(
+        name: String,
+        key: String,
+        type: Class<T>,
+        call: ProviderCall<M, W, JourneyProviderKind<M>, T>,
+    ): ProviderBuilder<W, M, JourneyProviderKind<M>> =
+        ProviderBuilder.journey(name, key, type, call)
+
+    /**
+     * Starts the descriptor of a service provider of attempt scope that [call] calls in its mode.
+     *
+     * @throws IllegalArgumentException when [name] is empty.
+     */
+    public fun <W, M : Mode, T : Any> perAttemptProvider(
+        name: String,
+        key: String,
+        type: Class<T>,
+        call: ProviderCall<M, W, AttemptProviderKind<M>, T>,
+    ): ProviderBuilder<W, M, AttemptProviderKind<M>> =
+        ProviderBuilder.attempt(name, key, type, call)
 
     /**
      * Starts the descriptor of a workflow of [mode].
