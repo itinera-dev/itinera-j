@@ -1,0 +1,60 @@
+package org.itineradev.itinera.engine
+
+import org.itineradev.itinera.event.Event
+import org.itineradev.itinera.report.Dispatcher
+import org.itineradev.itinera.report.DispatcherFactory
+import org.itineradev.itinera.report.Reporter
+import org.itineradev.itinera.report.ReporterOf
+import org.itineradev.itinera.step.StepFactory
+import org.itineradev.itinera.step.SyncStepFactory
+import org.itineradev.itinera.workflow.Sync
+
+/**
+ * The synchronous mode's parts, whose dispatchers [factory] makes.
+ *
+ * Part of itinera's engine, not of its API.
+ */
+public class SyncParts(private val factory: DispatcherFactory) : Parts<Sync> {
+    override val mode: Sync
+        get() = Sync
+
+    override fun accepts(factory: StepFactory<*>?): Boolean = factory is SyncStepFactory
+
+    override fun accepts(reporter: ReporterOf<*>?): Boolean = reporter is Reporter
+
+    @JvmSynthetic
+    override suspend fun dispatcher(): Delivery? = nullable(factory.create())?.let(::SyncDelivery)
+
+    @JvmSynthetic
+    override suspend fun build(factory: StepFactory<Sync>): Running? =
+        nullable((factory as SyncStepFactory).build())?.let { run -> Running(run::run) }
+
+    @JvmSynthetic override suspend fun ensureActive(): Unit = Unit
+}
+
+private class SyncDelivery(private val dispatcher: Dispatcher) : Delivery {
+    @JvmSynthetic
+    override suspend fun add(reporter: ReporterOf<*>, guard: Guard) {
+        dispatcher.add(Guarded(reporter as Reporter, guard))
+    }
+
+    @JvmSynthetic
+    override suspend fun dispatch(event: Event) {
+        dispatcher.dispatch(event)
+    }
+
+    @JvmSynthetic
+    override suspend fun setGlobalMetadata(key: String, value: Any?) {
+        dispatcher.setGlobalMetadata(key, value)
+    }
+}
+
+private class Guarded(private val reporter: Reporter, private val guard: Guard) : Reporter {
+    override fun report(event: Event) {
+        guard.report(event.kind) { reporter.report(event) }
+    }
+
+    override fun setGlobalMetadata(key: String, value: Any?) {
+        guard.setGlobalMetadata { reporter.setGlobalMetadata(key, value) }
+    }
+}

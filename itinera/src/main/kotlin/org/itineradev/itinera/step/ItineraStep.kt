@@ -1,0 +1,24 @@
+package org.itineradev.itinera.step
+
+import org.itineradev.itinera.ExperimentalItineraApi
+
+/**
+ * A step written as a class: one unit of a workflow's business logic, which a workflow names among
+ * its steps. The class has one method named `run`, which returns an [Outcome]: an ordinary method
+ * in a synchronous workflow, and a `suspend` one in an asynchronous workflow. The executor builds
+ * the class anew for every attempt, with its constructor, then calls `run` once; anything either
+ * throws ends the attempt, and the step never keeps anything from one attempt to the next.
+ *
+ * The interface's methods make the outcomes `run` returns.
+ *
+ * @sample org.itineradev.itinera.workflow.annotated.samples.shipping
+ */
+@ExperimentalItineraApi
+public interface ItineraStep {
+    /**
+     * The outcome of an attempt that succeeded.
+     *
+     * @sample org.itineradev.itinera.workflow.annotated.samples.shipping
+     */
+    public fun succeed(): Outcome = Outcome.success()
+}

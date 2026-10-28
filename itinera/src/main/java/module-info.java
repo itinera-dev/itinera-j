@@ -7,6 +7,8 @@ module org.itineradev.itinera {
 
   exports org.itineradev.itinera;
   exports org.itineradev.itinera.event;
+  exports org.itineradev.itinera.executor;
+  exports org.itineradev.itinera.instance;
   exports org.itineradev.itinera.journey;
   exports org.itineradev.itinera.policy;
   exports org.itineradev.itinera.report;

@@ -2,6 +2,7 @@ package org.itineradev.itinera.report
 
 import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.event.Event
+import org.itineradev.itinera.workflow.Sync
 
 /**
  * Receives the events of a synchronous workflow's journeys and the entries of their global
@@ -18,7 +19,7 @@ import org.itineradev.itinera.event.Event
  * @sample org.itineradev.itinera.report.samples.printer
  */
 @ExperimentalItineraApi
-public fun interface Reporter {
+public fun interface Reporter : ReporterOf<Sync> {
     /**
      * Receives one event of the journey, in sequence order.
      *

@@ -2,16 +2,48 @@ package org.itineradev.itinera.engine
 
 import java.lang.reflect.Constructor
 import java.lang.reflect.Field
+import java.lang.reflect.Method
 
 /**
  * Reads Kotlin classes, which plain Java reflection cannot: `itinera-kotlin` provides it through
- * `java.util.ServiceLoader`, and without it no Kotlin class is data.
+ * `java.util.ServiceLoader`, and without it no Kotlin class is data, and no annotated Kotlin class
+ * is read.
  *
  * Part of itinera's engine, not of its API.
  */
 public interface KotlinClasses {
     /** What a Kotlin class is as data. */
     public fun shapeOf(type: Class<*>): KotlinShape
+
+    /** What a method of a Kotlin class declares that Java reflection cannot read. */
+    public fun functionOf(method: Method): KotlinFunction
+}
+
+/** What a method of a Kotlin class declares that Java reflection cannot read. */
+public class KotlinFunction(
+    /** Whether it is a `suspend` function. */
+    public val isSuspend: Boolean,
+    /**
+     * The class of its declared return type, which Java reflection reads as `Object` for a
+     * `suspend` function.
+     */
+    public val returnType: Class<*>,
+    /** Whether its return type admits `null`, such as `Outcome?`. */
+    public val returnsNullable: Boolean,
+) {
+    /** Reads functions. */
+    public companion object {
+        /**
+         * [method] as Java reflection reads it: never `suspend`, and returning its return type,
+         * which is taken not to admit `null`.
+         */
+        public fun ofJava(method: Method): KotlinFunction =
+            KotlinFunction(
+                isSuspend = false,
+                returnType = method.returnType,
+                returnsNullable = false,
+            )
+    }
 }
 
 /** What a Kotlin class is as data. */
