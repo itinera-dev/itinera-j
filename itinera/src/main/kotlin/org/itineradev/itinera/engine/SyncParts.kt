@@ -12,7 +12,9 @@ import org.itineradev.itinera.request.Got
 import org.itineradev.itinera.request.StepKind
 import org.itineradev.itinera.service.ProviderCall
 import org.itineradev.itinera.service.SyncProvider
+import org.itineradev.itinera.step.RescueFactory
 import org.itineradev.itinera.step.StepFactory
+import org.itineradev.itinera.step.SyncRescueFactory
 import org.itineradev.itinera.step.SyncStepFactory
 import org.itineradev.itinera.workflow.InputAdapterCall
 import org.itineradev.itinera.workflow.Sync
@@ -28,6 +30,8 @@ public class SyncParts(private val factory: DispatcherFactory) : Parts<Sync> {
         get() = Sync
 
     override fun accepts(factory: StepFactory<*>?): Boolean = factory is SyncStepFactory
+
+    override fun accepts(rescue: RescueFactory<*>?): Boolean = rescue is SyncRescueFactory
 
     override fun accepts(hook: HookCall<*, *, *, *>?): Boolean =
         hook is SyncHook<*, *, *> || hook is SyncWorkflowHook<*, *>

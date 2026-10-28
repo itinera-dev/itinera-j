@@ -84,8 +84,9 @@ public object Requests {
         Asking(Handle.STEP_REPORTER, Answer.ITSELF)
 
     /**
-     * Data the step a hook acts on contributed under [key], committed or not, read as [type]. A
-     * missing value aborts the journey with `required data missing`.
+     * Data contributed under [key] by the step a hook acts on, committed or not, or by the failed
+     * attempt of the step a rescue step rescues, read as [type]. A missing value aborts the journey
+     * with `required data missing`.
      *
      * @sample org.itineradev.itinera.request.samples.hookRequests
      */
@@ -94,8 +95,9 @@ public object Requests {
         Asking(FromStepAsked(key, type.type, required = true), Answer.ITSELF)
 
     /**
-     * Data the step a hook acts on contributed under [key], read as [type], whose answer is `null`
-     * when the step contributed nothing under the key.
+     * Data contributed under [key] by the step a hook acts on, or by the failed attempt of the step
+     * a rescue step rescues, read as [type], whose answer is `null` when the step contributed
+     * nothing under the key.
      *
      * @sample org.itineradev.itinera.request.samples.hookRequests
      */

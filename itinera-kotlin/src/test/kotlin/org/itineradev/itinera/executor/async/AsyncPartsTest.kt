@@ -19,8 +19,11 @@ import org.itineradev.itinera.policy.async.asyncStepPolicy
 import org.itineradev.itinera.service.Provided
 import org.itineradev.itinera.service.ProviderDescriptor
 import org.itineradev.itinera.service.async.asyncProvider
+import org.itineradev.itinera.step.RescueOutcome
+import org.itineradev.itinera.step.SyncRescueRun
 import org.itineradev.itinera.workflow.Async
 import org.itineradev.itinera.workflow.InputAdapterDescriptor
+import org.itineradev.itinera.workflow.RescueStepDescriptor
 import org.itineradev.itinera.workflow.Supplied
 import org.itineradev.itinera.workflow.Violation
 import org.itineradev.itinera.workflow.async.asyncBuilder
@@ -123,6 +126,21 @@ class AsyncPartsTest {
                         Violation.ModeNotAccepted("service provider labels", Async),
                         Violation.ModeNotAccepted("service provider gateway", Async),
                     )
+                ),
+                refused { AsyncLocalExecutor().run(instance) },
+            )
+        }
+
+    @Test
+    fun `a synchronous rescue step is a part of the other mode`() =
+        runBlocking<Unit> {
+            val renewal =
+                RescueStepDescriptor.builder { SyncRescueRun { RescueOutcome.success() } }.build()
+            val foreign: RescueStepDescriptor<Async> = returned(renewal)
+            val instance = journeyOf(succeeding("pack").rescue(foreign)).create()
+            assertEquals(
+                Refused.Inadmissible(
+                    listOf(Violation.ModeNotAccepted("rescue step pack_rescue", Async))
                 ),
                 refused { AsyncLocalExecutor().run(instance) },
             )
