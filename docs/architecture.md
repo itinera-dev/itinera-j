@@ -13,8 +13,9 @@ Tier 1 runs a journey in one process, with steps, retries, rescue steps, policie
 ```mermaid
 flowchart LR
     accTitle: The artifacts of itinera-j
-    accDescr: A Java application depends on itinera. A Kotlin application depends on itinera-kotlin, which depends on itinera and provides it the reader of Kotlin classes through ServiceLoader. itinera-testing depends on itinera, and on itinera-kotlin only optionally. The conformance runner depends on itinera, itinera-kotlin and itinera-testing, and reads the conformance cases.
-    java["Java application"] --> core["itinera"]
+    accDescr: A Java application depends on itinera-java, which depends on itinera. A Kotlin application depends on itinera-kotlin, which depends on itinera and provides it the reader of Kotlin classes through ServiceLoader. itinera-testing depends on itinera, and on itinera-kotlin only optionally. The Kotlin conformance runner depends on itinera-kotlin and itinera-testing, the Java conformance runner on itinera-java and itinera-testing, and both read the conformance cases.
+    java["Java application"] --> jv["itinera-java"]
+    jv --> core["itinera"]
     kotlin["Kotlin application"] --> kt["itinera-kotlin"]
     kt --> core
     kt -.->|"provides KotlinClasses, through ServiceLoader"| core
@@ -22,18 +23,22 @@ flowchart LR
     testing -.->|"optional"| kt
     runner["conformance, the Kotlin runner"] --> kt
     runner --> testing
+    jrunner["conformance-java, the Java runner"] --> jv
+    jrunner --> testing
     cases["Conformance cases, from itinera-dev/conformance"] --> runner
+    cases --> jrunner
 ```
 
-1. A Java application depends on `itinera`, the core, which brings Kotlin's standard library only.
+1. A Java application depends on `itinera-java`, the Java face, which depends on `itinera`, the core, and brings Kotlin's standard library only. The Java face holds nothing of its own yet; it grows with what Java finds awkward in the core.
 2. A Kotlin application depends on `itinera-kotlin`, which depends on the core and brings kotlin-reflect and kotlinx.coroutines.
 3. `itinera-kotlin` provides the core with `KotlinClasses`, through `java.util.ServiceLoader`: the reader of Kotlin data classes, and of what a method of an annotated Kotlin class declares, such as `suspend` and return types admitting `null`. Without it, no Kotlin class is data, and no annotated Kotlin class is read.
 4. `itinera-testing`, test support, depends on the core, and on `itinera-kotlin` only as an optional dependency.
-5. `conformance`, which is never published, runs the conformance cases of [itinera-dev/conformance](https://github.com/itinera-dev/conformance) in two columns, synchronous and asynchronous, through the public API of the three artifacts.
+5. `conformance`, which is never published, runs the conformance cases of [itinera-dev/conformance](https://github.com/itinera-dev/conformance) in two columns, synchronous and asynchronous, through the public API of the core, `itinera-kotlin` and `itinera-testing`.
+6. `conformance-java`, never published either and written wholly in Java, runs the synchronous cases through the public API of `itinera-java` and `itinera-testing`, without `itinera-kotlin`.
 
 Each artifact is a Java module whose packages are its own, named after concepts. The core's packages are `org.itineradev.itinera` itself, which holds `ExperimentalItineraApi`, and `event`, `executor`, `instance`, `journey`, `policy`, `report`, `service`, `step`, `value` and `workflow`, under `org.itineradev.itinera`, and `engine`, which the core's module descriptor exports only to `itinera-kotlin`.
 
-Where it lives: the Gradle projects `itinera`, `itinera-kotlin`, `itinera-testing`, `itinera-bom` and `conformance`, each module descriptor in its `src/main/java/module-info.java`.
+Where it lives: the Gradle projects `itinera`, `itinera-kotlin`, `itinera-java`, `itinera-testing`, `itinera-bom`, `conformance` and `conformance-java`, each module descriptor in its `src/main/java/module-info.java`.
 
 ### What a workflow is made of
 

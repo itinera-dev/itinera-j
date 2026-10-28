@@ -2,7 +2,7 @@
 
 Tech spec for [proposal 0108](https://github.com/itinera-dev/spec/blob/main/proposals/0108-test-support.md), implemented in [#36](https://github.com/itinera-dev/itinera-j/issues/36). Chapter 8 of the specification describes test support, and the [tier 1 plan](../tier-1-plan.md), section 14, holds what crosses proposals.
 
-Status: started. Stage 2 added the recording reporters, which the Kotlin conformance runner's dispatchers hold. Stage 3 adds the step mock that both runners build their workflows from, and stage 10 completes test support and claims `testing` in both manifests.
+Status: started. Stage 2 added the recording reporters, which both conformance runners' dispatchers hold. Stage 3 adds the step mock that both runners build their workflows from, and stage 10 completes test support and claims `testing` in both manifests.
 
 ## Where it lives
 
