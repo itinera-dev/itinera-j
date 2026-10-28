@@ -7,6 +7,7 @@ import org.itineradev.itinera.journey.DataBag
 import org.itineradev.itinera.journey.JourneyId
 import org.itineradev.itinera.step.ItineraStep
 import org.itineradev.itinera.step.Outcome
+import org.itineradev.itinera.step.Step
 import org.itineradev.itinera.step.StepName
 import org.itineradev.itinera.workflow.IdGenerator
 import org.itineradev.itinera.workflow.ItineraWorkflow
@@ -66,10 +67,12 @@ class KotlinFunctionsTest {
     private fun problem(violation: Violation): String = (violation as Violation.Misdeclared).problem
 }
 
+@Step
 class Pausing : ItineraStep {
     suspend fun run(): Outcome = succeed()
 }
 
+@Step
 class Nullable : ItineraStep {
     fun run(): Outcome? = succeed()
 }

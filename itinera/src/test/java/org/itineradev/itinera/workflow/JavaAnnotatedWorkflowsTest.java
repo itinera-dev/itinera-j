@@ -14,6 +14,7 @@ import org.itineradev.itinera.journey.DataBag;
 import org.itineradev.itinera.journey.JourneyId;
 import org.itineradev.itinera.step.ItineraStep;
 import org.itineradev.itinera.step.Outcome;
+import org.itineradev.itinera.step.Step;
 import org.itineradev.itinera.step.StepName;
 import org.itineradev.itinera.value.TypeToken;
 import org.junit.jupiter.api.Test;
@@ -22,12 +23,14 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 final class JavaAnnotatedWorkflowsTest {
+  @Step
   public static final class Pack implements ItineraStep {
     public Outcome run() {
       return succeed();
     }
   }
 
+  @Step
   public static final class Ship implements ItineraStep {
     public Outcome run() {
       return Outcome.success();
@@ -108,11 +111,15 @@ final class JavaAnnotatedWorkflowsTest {
         Arguments.argumentSet(
             "a run with a parameter",
             Requesting.class,
-            List.of("has a parameter that requests nothing")),
+            List.of(
+                "has a parameter that requests nothing, arg0: mark a service @Service, and "
+                    + "request a handle by its type")),
         Arguments.argumentSet(
-            "a step class with no constructor that takes nothing",
+            "a step class whose constructor takes what is not an input",
             Constructed.class,
-            List.of("has no constructor that takes nothing")),
+            List.of(
+                "has a parameter that is not an input, arg0: a step's constructor takes only "
+                    + "inputs, marked @Input")),
         Arguments.argumentSet(
             "an abstract step class",
             AbstractStep.class,
@@ -149,6 +156,7 @@ final class JavaAnnotatedWorkflowsTest {
         : violation.getNamed();
   }
 
+  @Step
   public static final class TwoRunsStep implements ItineraStep {
     public Outcome run() {
       return succeed();
@@ -159,18 +167,21 @@ final class JavaAnnotatedWorkflowsTest {
     }
   }
 
+  @Step
   public static final class StringStep implements ItineraStep {
     public String run() {
       return "done";
     }
   }
 
+  @Step
   public static final class RequestingStep implements ItineraStep {
     public Outcome run(String parcel) {
       return succeed();
     }
   }
 
+  @Step
   public static final class ConstructedStep implements ItineraStep {
     ConstructedStep(String parcel) {}
 
@@ -179,12 +190,14 @@ final class JavaAnnotatedWorkflowsTest {
     }
   }
 
+  @Step
   public abstract static class Abstract implements ItineraStep {
     public Outcome run() {
       return succeed();
     }
   }
 
+  @Step
   public static final class Nothing implements ItineraStep {}
 
   @WithStep(step = Nothing.class, name = "pack")

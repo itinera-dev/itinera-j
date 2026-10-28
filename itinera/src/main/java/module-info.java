@@ -12,12 +12,15 @@ module org.itineradev.itinera {
   exports org.itineradev.itinera.journey;
   exports org.itineradev.itinera.policy;
   exports org.itineradev.itinera.report;
+  exports org.itineradev.itinera.request;
   exports org.itineradev.itinera.service;
   exports org.itineradev.itinera.step;
   exports org.itineradev.itinera.value;
   exports org.itineradev.itinera.workflow;
   exports org.itineradev.itinera.engine to
-      org.itineradev.itinera.kotlin;
+      org.itineradev.itinera.kotlin,
+      org.itineradev.itinera.java;
 
   uses org.itineradev.itinera.engine.KotlinClasses;
+  uses org.itineradev.itinera.engine.JavaForms;
 }

@@ -20,14 +20,14 @@ internal class Witness {
      * A factory building with [factory], each step kept under [step] as it is built and counted as
      * it runs.
      */
-    fun watching(step: String, factory: SyncStepFactory): SyncStepFactory = SyncStepFactory {
-        watched(step, factory.build())
+    fun watching(step: String, factory: SyncStepFactory): SyncStepFactory = SyncStepFactory { got ->
+        watched(step, factory.build(got))
     }
 
     /** The asynchronous twin of [watching]. */
     fun watchingAsync(step: String, factory: AsyncStepFactory): AsyncStepFactory =
-        AsyncStepFactory {
-            watchedAsync(step, factory.build())
+        AsyncStepFactory { got ->
+            watchedAsync(step, factory.build(got))
         }
 
     private fun watched(step: String, run: SyncStepRun): SyncStepRun {

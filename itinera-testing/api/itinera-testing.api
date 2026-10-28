@@ -18,7 +18,7 @@ public final class org/itineradev/itinera/report/testing/RecordingReporter : org
 
 public final class org/itineradev/itinera/step/testing/AsyncStepMock : org/itineradev/itinera/step/async/AsyncStepFactory {
 	public static final field Companion Lorg/itineradev/itinera/step/testing/AsyncStepMock$Companion;
-	public fun build ()Lorg/itineradev/itinera/step/async/AsyncStepRun;
+	public fun build (Lorg/itineradev/itinera/request/Got;)Lorg/itineradev/itinera/step/async/AsyncStepRun;
 	public final fun getBuilds ()I
 }
 
@@ -59,7 +59,7 @@ public final class org/itineradev/itinera/step/testing/Ending$Success : org/itin
 
 public final class org/itineradev/itinera/step/testing/StepMock : org/itineradev/itinera/step/SyncStepFactory {
 	public static final field Companion Lorg/itineradev/itinera/step/testing/StepMock$Companion;
-	public fun build ()Lorg/itineradev/itinera/step/SyncStepRun;
+	public fun build (Lorg/itineradev/itinera/request/Got;)Lorg/itineradev/itinera/step/SyncStepRun;
 	public static final fun failingToBuild (Ljava/lang/String;)Lorg/itineradev/itinera/step/testing/StepMock;
 	public final fun getBuilds ()I
 	public static final fun playing (Lorg/itineradev/itinera/step/testing/Ending;[Lorg/itineradev/itinera/step/testing/Ending;)Lorg/itineradev/itinera/step/testing/StepMock;

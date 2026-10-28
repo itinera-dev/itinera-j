@@ -4,4 +4,9 @@
  */
 module org.itineradev.itinera.java {
   requires transitive org.itineradev.itinera;
+
+  exports org.itineradev.itinera.request.java;
+
+  provides org.itineradev.itinera.engine.JavaForms with
+      org.itineradev.itinera.request.java.OptionalForms;
 }

@@ -12,6 +12,8 @@ import org.itineradev.itinera.report.ReporterOf
 import org.itineradev.itinera.report.async.AsyncDispatcher
 import org.itineradev.itinera.report.async.AsyncDispatcherFactory
 import org.itineradev.itinera.report.async.AsyncReporter
+import org.itineradev.itinera.request.Got
+import org.itineradev.itinera.request.StepKind
 import org.itineradev.itinera.step.StepFactory
 import org.itineradev.itinera.step.async.AsyncStepFactory
 import org.itineradev.itinera.step.async.AsyncStepRun
@@ -30,8 +32,8 @@ internal class AsyncParts(private val factory: AsyncDispatcherFactory) : Parts<A
     override suspend fun dispatcher(): Delivery? = nullable(factory.create())?.let(::AsyncDelivery)
 
     @JvmSynthetic
-    override suspend fun build(factory: StepFactory<Async>): Running? =
-        nullable((factory as AsyncStepFactory).build())?.let(::running)
+    override suspend fun build(factory: StepFactory<Async>, got: Got<StepKind<Async>>): Running? =
+        nullable((factory as AsyncStepFactory).build(got))?.let(::running)
 
     @JvmSynthetic
     override suspend fun ensureActive() {

@@ -22,7 +22,7 @@ internal class IdGenerators(private val problems: Problems) {
         val function = functionOf(method)
         if (function.isSuspend)
             problems.misdeclared(method.toString(), "is suspend, which an ID generator never is")
-        val parameters = declaredParameters(method, function)
+        val parameters = parameterClasses(function)
         val takesData = parameters == listOf(DataBag::class.java)
         val takes = parameters.isEmpty() || takesData
         if (!takes)

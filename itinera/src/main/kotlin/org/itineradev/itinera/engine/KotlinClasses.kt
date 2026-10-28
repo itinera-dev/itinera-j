@@ -1,6 +1,7 @@
 package org.itineradev.itinera.engine
 
 import java.lang.reflect.Constructor
+import java.lang.reflect.Executable
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 
@@ -17,9 +18,12 @@ public interface KotlinClasses {
 
     /** What a method of a Kotlin class declares that Java reflection cannot read. */
     public fun functionOf(method: Method): KotlinFunction
+
+    /** What a constructor of a Kotlin class declares that Java reflection cannot read. */
+    public fun functionOf(constructor: Constructor<*>): KotlinFunction
 }
 
-/** What a method of a Kotlin class declares that Java reflection cannot read. */
+/** What a method or a constructor of a Kotlin class declares that Java reflection cannot read. */
 public class KotlinFunction(
     /** Whether it is a `suspend` function. */
     public val isSuspend: Boolean,
@@ -30,18 +34,24 @@ public class KotlinFunction(
     public val returnType: Class<*>,
     /** Whether its return type admits `null`, such as `Outcome?`. */
     public val returnsNullable: Boolean,
+    /**
+     * Its parameters as its declaration writes them, without those the compiler adds, such as a
+     * `suspend` function's continuation.
+     */
+    public val parameters: List<DeclaredParameter>,
 ) {
     /** Reads functions. */
     public companion object {
         /**
-         * [method] as Java reflection reads it: never `suspend`, and returning its return type,
-         * which is taken not to admit `null`.
+         * [executable] as Java reflection reads it: never `suspend`, and returning its return type,
+         * which is taken not to admit `null`, or nothing for a constructor.
          */
-        public fun ofJava(method: Method): KotlinFunction =
+        public fun ofJava(executable: Executable): KotlinFunction =
             KotlinFunction(
                 isSuspend = false,
-                returnType = method.returnType,
+                returnType = (executable as? Method)?.returnType ?: Void.TYPE,
                 returnsNullable = false,
+                parameters = DeclaredParameter.ofJava(executable, isSuspend = false),
             )
     }
 }

@@ -17,8 +17,12 @@ import org.itineradev.itinera.event.StepCouldNotBeBuilt
 import org.itineradev.itinera.journey.AbortReason
 import org.itineradev.itinera.journey.FailureCause
 import org.itineradev.itinera.journey.JourneyStatus
+import org.itineradev.itinera.request.Requests
+import org.itineradev.itinera.step.Outcome
 import org.itineradev.itinera.step.StepName
 import org.itineradev.itinera.step.SyncStepFactory
+import org.itineradev.itinera.step.SyncStepRun
+import org.itineradev.itinera.value.TypeToken
 import org.itineradev.itinera.workflow.WorkflowName
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertSame
@@ -162,6 +166,25 @@ class EngineTest {
         )
         assertEquals(AbortReason.STEP_COULD_NOT_BE_BUILT, result.abort?.reason)
         assertSame(error, result.abort?.error)
+    }
+
+    @Test
+    fun `a step whose factory reads a request cannot be built until itinera resolves requests`() {
+        val note = Requests.input("note", TypeToken.of(String::class.java))
+        val ship =
+            building("ship") { got ->
+                check(got[note].isNotEmpty())
+                SyncStepRun { Outcome.success() }
+            }
+        val result = ran(journeyOf(ship).create())
+        assertEquals(
+            StepCouldNotBeBuilt(
+                StepName.of("ship"),
+                ByStep,
+                "This version of itinera does not resolve input note: String yet.",
+            ),
+            result.abort?.details,
+        )
     }
 
     @Test
