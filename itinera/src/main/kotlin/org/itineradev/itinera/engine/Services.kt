@@ -2,6 +2,7 @@ package org.itineradev.itinera.engine
 
 import org.itineradev.itinera.service.ProviderDescriptor
 import org.itineradev.itinera.step.StepName
+import org.itineradev.itinera.value.boxed
 import org.itineradev.itinera.workflow.StepDescriptor
 import org.itineradev.itinera.workflow.Violation
 import org.itineradev.itinera.workflow.WorkflowDescriptor
@@ -33,7 +34,7 @@ private fun unserved(
     val provider = servingOf(step, service.key, providers)
     return when {
         provider == null -> Violation.ServiceNotProvided(step, service.key)
-        provider.type != service.type ->
+        boxed(provider.type) != boxed(service.type) ->
             Violation.WrongServiceType(step, service.key, provider.name)
         else -> null
     }
