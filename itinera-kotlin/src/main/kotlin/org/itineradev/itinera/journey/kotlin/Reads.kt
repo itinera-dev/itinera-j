@@ -12,7 +12,6 @@ import org.itineradev.itinera.value.kotlin.typeToken
  *
  * @sample org.itineradev.itinera.journey.kotlin.samples.reads
  */
-@ExperimentalItineraApi
 public inline fun <reified T> DataBag.read(key: String): Read<T> = read(key, typeToken<T>())
 
 /**
