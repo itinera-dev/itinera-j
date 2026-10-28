@@ -2,9 +2,11 @@ package org.itineradev.itinera.conformance.run;
 
 import java.util.List;
 import java.util.Objects;
+import org.itineradev.itinera.conformance.model.ModelException;
 import org.itineradev.itinera.conformance.model.ScriptedAttempt;
 import org.itineradev.itinera.conformance.model.StepScript;
 import org.itineradev.itinera.conformance.model.WorkflowModel;
+import org.itineradev.itinera.step.Reason;
 import org.itineradev.itinera.step.testing.Ending;
 import org.itineradev.itinera.step.testing.StepMock;
 import org.itineradev.itinera.workflow.StepBuilder;
@@ -61,40 +63,32 @@ public final class Scripts {
 
   /** What {@code script} asks for that the runner cannot run yet, or {@code null} when it can. */
   static String notRunYetIn(StepScript script) {
-    if (!script.contributions().isEmpty()) {
-      return "contributions";
-    }
     if (script.hasRescueStep() || script.isRescueStep()) {
       return "rescue steps";
     }
-    var attempts = script.attempts() == null ? List.<ScriptedAttempt>of() : script.attempts();
-    if (attempts.stream().anyMatch(Scripts::contributes)) {
-      return "contributions";
-    }
-    if (attempts.stream().anyMatch(Scripts::failsOrSkips)) {
-      return "an attempt that fails or is skipped";
-    }
     return null;
-  }
-
-  private static boolean contributes(ScriptedAttempt attempt) {
-    return !attempt.contributes().isEmpty();
-  }
-
-  private static boolean failsOrSkips(ScriptedAttempt attempt) {
-    return switch (attempt.ending()) {
-      case SUCCESS, ERROR -> false;
-      case FAILURE, SKIPPED -> true;
-    };
   }
 
   private static Ending endingOf(ScriptedAttempt attempt) {
     return switch (attempt.ending()) {
       case SUCCESS -> Ending.success();
+      case FAILURE -> Ending.failure(failureReasonOf(attempt));
+      case SKIPPED ->
+          new Ending.Skipped(attempt.code() == null ? null : reasonOf(attempt, attempt.code()));
       case ERROR ->
           Ending.abnormalTermination(
               attempt.message() == null ? UNWRITTEN_MESSAGE : attempt.message());
-      case FAILURE, SKIPPED -> throw new NotRunYet("an attempt that fails or is skipped");
     };
+  }
+
+  private static Reason failureReasonOf(ScriptedAttempt attempt) {
+    if (attempt.code() == null) {
+      throw new ModelException("attempt " + attempt.number() + " fails with no code");
+    }
+    return reasonOf(attempt, attempt.code());
+  }
+
+  private static Reason reasonOf(ScriptedAttempt attempt, String code) {
+    return new Reason(code, attempt.message(), attempt.details());
   }
 }

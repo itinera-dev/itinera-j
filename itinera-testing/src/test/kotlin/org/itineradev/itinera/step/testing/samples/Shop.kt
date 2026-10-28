@@ -10,6 +10,7 @@ import org.itineradev.itinera.instance.instance
 import org.itineradev.itinera.journey.AbortReason
 import org.itineradev.itinera.journey.JourneyResult
 import org.itineradev.itinera.step.Outcome
+import org.itineradev.itinera.step.Reason
 import org.itineradev.itinera.step.testing.AsyncStepMock
 import org.itineradev.itinera.step.testing.Ending
 import org.itineradev.itinera.step.testing.StepMock
@@ -22,7 +23,15 @@ import org.itineradev.itinera.workflow.async.asyncStep
 class Shop
 
 fun endings(): List<Ending> =
-    listOf(Ending.success(), Ending.abnormalTermination("the gateway timed out"))
+    listOf(
+        Ending.success(),
+        Ending.failure(Reason("declined", "The card was declined.")),
+        Ending.failure("declined"),
+        Ending.skipped(),
+        Ending.skipped(Reason("no discount", "The order has no discount.")),
+        Ending.skipped("no discount"),
+        Ending.abnormalTermination("the gateway timed out"),
+    )
 
 fun outcomes(): Outcome {
     val timedOut =

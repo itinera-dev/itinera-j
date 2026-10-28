@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
 import org.itineradev.itinera.event.ByAdapterForKey;
 import org.itineradev.itinera.event.ByProviderForKey;
 import org.itineradev.itinera.event.ByStep;
@@ -21,6 +23,7 @@ import org.itineradev.itinera.request.Requests;
 import org.itineradev.itinera.service.ProviderDescriptor;
 import org.itineradev.itinera.service.ProviderName;
 import org.itineradev.itinera.step.Outcome;
+import org.itineradev.itinera.step.Reason;
 import org.itineradev.itinera.step.StepName;
 import org.itineradev.itinera.step.SyncStepFactory;
 import org.itineradev.itinera.value.TypeToken;
@@ -77,6 +80,32 @@ final class JavaExecutorTest {
     assertEquals(FailureCause.ABNORMAL_TERMINATION, result.failure().cause());
     assertEquals(error, result.failure().error());
     assertNull(result.abort());
+  }
+
+  @Test
+  void aJavaStepFailsWithAReasonAndItsContributionsAreNeverCommitted() throws Refusal {
+    var contributor = Requests.contributor();
+    var charging =
+        StepDescriptor.builder(
+                "charge",
+                got ->
+                    () -> {
+                      got.get(contributor).contribute("draft", "D-1");
+                      return Outcome.failure(new Reason("declined", "No.", Map.of("bank", "05")));
+                    })
+            .request(contributor);
+    var result =
+        new LocalExecutor()
+            .run(InstanceBuilder.of(shop().step(charging.build()).build(), new Shop()).create());
+    assertEquals(FailureCause.FAILURE, result.failure().cause());
+    assertEquals(new Reason("declined", "No.", Map.of("bank", "05")), result.failure().reason());
+    assertEquals(Set.of(), ((JourneyStatus.Failed) result.status()).dataBag().getKeys());
+  }
+
+  @Test
+  void aJavaStepThatSkipsLetsTheJourneyGoOn() throws Refusal {
+    var result = new LocalExecutor().run(oneStep(got -> () -> Outcome.skipped("none")).create());
+    assertTrue(result.isSucceeded());
   }
 
   @Test

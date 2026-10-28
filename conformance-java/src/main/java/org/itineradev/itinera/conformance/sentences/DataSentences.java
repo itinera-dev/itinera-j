@@ -8,6 +8,7 @@ import io.cucumber.java.en.Given;
 import org.itineradev.itinera.conformance.World;
 import org.itineradev.itinera.conformance.model.IdGenerator;
 import org.itineradev.itinera.conformance.model.Model;
+import org.itineradev.itinera.conformance.run.NotAValue;
 
 /**
  * The sentences that declare what the workflow instance is created with: its initial data, where
@@ -35,6 +36,11 @@ public final class DataSentences {
     for (var row : data.asMaps()) {
       model().contains(cell(row, "key"), value(cell(row, "value")));
     }
+  }
+
+  @Given("the data bag contains a non-value as {string}")
+  public void theDataBagContainsANonValue(String key) {
+    model().contains(key, NotAValue.INSTANCE);
   }
 
   @Given("the workflow has no ID generator")

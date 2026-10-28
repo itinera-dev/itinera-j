@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 import org.itineradev.itinera.conformance.run.Services;
 import org.itineradev.itinera.event.AdapterSource;
 import org.itineradev.itinera.event.ByWorkflowHook;
+import org.itineradev.itinera.event.ContributionSource;
 import org.itineradev.itinera.event.JourneyAborted;
 import org.itineradev.itinera.event.OptionalInputAbsent;
 import org.itineradev.itinera.event.ProviderSource;
@@ -46,6 +47,28 @@ final class EventCells {
     return Stream.concat(
             Stream.of(new Cell("key", event.key())), cellsOf(event.requester()).stream())
         .toList();
+  }
+
+  /** The cells of a contribution under {@code key}: the key, and who made it. */
+  static List<Cell> contributedCells(String key, ContributionSource source) {
+    return Stream.concat(Stream.of(new Cell("key", key)), cellsOf(source).stream()).toList();
+  }
+
+  private static List<Cell> cellsOf(ContributionSource source) {
+    if (source instanceof StepSource step) {
+      return List.of(
+          new Cell("step", step.step()),
+          new Cell("attempt", step.attempt()),
+          new Cell("source", step.step()));
+    }
+    if (source instanceof StepHookSource hook) {
+      return List.of(
+          new Cell("step", hook.step()),
+          new Cell("attempt", hook.attempt()),
+          new Cell("source", hook.policy() + ", " + hook.hook()));
+    }
+    var hook = (ByWorkflowHook) source;
+    return List.of(new Cell("source", hook.policy() + ", " + hook.hook()));
   }
 
   private static List<Cell> cellsOf(RequestSource source) {
