@@ -1,30 +1,24 @@
 package org.itineradev.itinera.conformance.run;
 
 import java.util.List;
+import java.util.Objects;
 import org.itineradev.itinera.conformance.model.ScriptedAttempt;
 import org.itineradev.itinera.conformance.model.StepScript;
+import org.itineradev.itinera.conformance.model.WorkflowModel;
 import org.itineradev.itinera.step.testing.Ending;
 import org.itineradev.itinera.step.testing.StepMock;
 import org.itineradev.itinera.workflow.StepBuilder;
 import org.itineradev.itinera.workflow.Sync;
 
 /** The step mocks that play each step's script. */
-final class Scripts {
+public final class Scripts {
   /** The message of an abnormal termination the case scripts with none. */
   private static final String UNWRITTEN_MESSAGE = "the scripted step terminated abnormally";
 
   private Scripts() {}
 
-  /**
-   * The step mock playing the step's script.
-   *
-   * @throws NotRunYet when the script asks for what the runner cannot run yet
-   */
+  /** The step mock playing the step's script, one the runner can run. */
   static StepMock mockOf(StepScript script) {
-    var what = notRunYetIn(script);
-    if (what != null) {
-      throw new NotRunYet(what);
-    }
     if (script.buildFailure() != null) {
       return StepMock.failingToBuild(script.buildFailure());
     }
@@ -52,9 +46,32 @@ final class Scripts {
     return script.attempts().stream().map(Scripts::endingOf).toList();
   }
 
-  private static String notRunYetIn(StepScript script) {
+  /**
+   * What {@code model} scripts that the runner cannot run yet, or {@code null} when it can run all
+   * of it. A workflow that holds any of it is still built, so its admission and its listing are
+   * checked, with each such part a call that throws {@link NotRunYet}, which no journey reaches.
+   */
+  public static String notRunYetIn(WorkflowModel model) {
+    if (!model.adapters().isEmpty()) {
+      return "input adapters";
+    }
+    if (!model.providers().isEmpty()) {
+      return "service providers";
+    }
+    return model.scripts().values().stream()
+        .map(Scripts::notRunYetIn)
+        .filter(Objects::nonNull)
+        .findFirst()
+        .orElse(null);
+  }
+
+  /** What {@code script} asks for that the runner cannot run yet, or {@code null} when it can. */
+  static String notRunYetIn(StepScript script) {
     if (!script.inputs().isEmpty()) {
       return "inputs";
+    }
+    if (!script.services().isEmpty()) {
+      return "services";
     }
     if (!script.contributions().isEmpty()) {
       return "contributions";
@@ -62,13 +79,28 @@ final class Scripts {
     if (script.hasRescueStep() || script.isRescueStep()) {
       return "rescue steps";
     }
+    var attempts = script.attempts() == null ? List.<ScriptedAttempt>of() : script.attempts();
+    if (attempts.stream().anyMatch(Scripts::contributes)) {
+      return "contributions";
+    }
+    if (attempts.stream().anyMatch(Scripts::failsOrSkips)) {
+      return "an attempt that fails or is skipped";
+    }
     return null;
   }
 
+  private static boolean contributes(ScriptedAttempt attempt) {
+    return !attempt.contributes().isEmpty();
+  }
+
+  private static boolean failsOrSkips(ScriptedAttempt attempt) {
+    return switch (attempt.ending()) {
+      case SUCCESS, ERROR -> false;
+      case FAILURE, SKIPPED -> true;
+    };
+  }
+
   private static Ending endingOf(ScriptedAttempt attempt) {
-    if (!attempt.contributes().isEmpty()) {
-      throw new NotRunYet("contributions");
-    }
     return switch (attempt.ending()) {
       case SUCCESS -> Ending.success();
       case ERROR ->

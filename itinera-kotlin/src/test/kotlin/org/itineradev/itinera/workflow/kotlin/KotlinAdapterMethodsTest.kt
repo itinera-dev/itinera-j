@@ -156,6 +156,20 @@ class KotlinAdapterMethodsTest {
     }
 
     @Test
+    fun `an annotated input adapter naming a step twice is attached to it twice`() {
+        val refused = assertThrows<Violations> { WorkflowDescriptor.of(TwiceNamed::class.java) }
+        assertEquals(
+            listOf(
+                Violation.StepAdaptedTwice(
+                    StepName.of("charge"),
+                    listOf(AdapterName.of("pricing"), AdapterName.of("pricing")),
+                )
+            ),
+            refused.violations,
+        )
+    }
+
+    @Test
     fun `every mistake of one input adapter is refused at once`() {
         val refused = assertThrows<Violations> { WorkflowDescriptor.of(TwoMistakes::class.java) }
         assertEquals(
@@ -323,6 +337,11 @@ class SharedAdapters : ItineraWorkflow {
     @InputAdapter(steps = ["charge"], name = "pricing") fun byAmount(): Supplied = fromDataBag()
 
     @InputAdapter(steps = ["charge"], name = "pricing") fun byWeight(): Supplied = fromDataBag()
+}
+
+@WithStep(Charging::class, name = "charge")
+class TwiceNamed : ItineraWorkflow {
+    @InputAdapter(steps = ["charge", "charge"]) fun pricing(): Supplied = fromDataBag()
 }
 
 @WithStep(Charging::class, name = "charge")

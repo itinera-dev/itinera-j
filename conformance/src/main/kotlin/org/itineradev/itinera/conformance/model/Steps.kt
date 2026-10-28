@@ -35,6 +35,7 @@ internal data class Input(val key: String, val type: ValueType, val optional: Bo
 /** What a scenario scripts for one step, a rescue step included, filled in as it is written. */
 internal class StepScript {
     val inputs = mutableListOf<Input>()
+    val services = mutableListOf<RequestedService>()
     val contributions = mutableListOf<Pair<String, Any?>>()
 
     /** Each attempt in order; attempts after the last repeat it. `null` until stated. */
@@ -98,7 +99,32 @@ internal class WorkflowModel(val name: String, val steps: List<String>) {
 
     /** Where journey IDs come from, once stated. */
     var idGenerator: IdGenerator? = null
+
+    /** The input adapters, in the order declared, two of one name among them. */
+    val adapters = mutableListOf<AdapterModel>()
+
+    /** The service providers, in the order declared, two of one name among them. */
+    val providers = mutableListOf<ProviderModel>()
+
+    /** Declares an input adapter attached to [steps], after those already declared. */
+    fun adapt(name: String, steps: List<String>) {
+        adapters += AdapterModel(name, steps)
+    }
+
+    /** Declares a service provider, after those already declared. */
+    fun provide(name: String, key: String, type: ServiceType, scope: ProviderScope) {
+        providers += ProviderModel(name, key, type, scope)
+    }
+
+    /** The one provider the workflow declares under [name]. */
+    fun provider(name: String): ProviderModel =
+        providers.filter { provider -> isNamed(provider, name) }.singleOrNull()
+            ?: throw ModelException(
+                "the workflow declares no provider, or several, named \"$name\""
+            )
 }
+
+private fun isNamed(provider: ProviderModel, name: String): Boolean = provider.name == name
 
 /** Where a workflow instance's journey ID comes from. */
 internal sealed interface IdGenerator {

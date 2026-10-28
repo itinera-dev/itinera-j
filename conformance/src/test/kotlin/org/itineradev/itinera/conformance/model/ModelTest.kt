@@ -47,6 +47,32 @@ internal class ModelTest {
     }
 
     @Test
+    fun `a sentence about a provider needs exactly one of its name declared`() {
+        val model =
+            orders().apply {
+                workflow.provide("stock", "stock", ServiceType.LABELLER, ProviderScope.JOURNEY)
+            }
+        assertThrows<ModelException> { model.workflow.provider("payments") }
+        model.workflow.provide("stock", "labels", ServiceType.LABELLER, ProviderScope.ATTEMPT)
+        assertThrows<ModelException> { model.workflow.provider("stock") }
+    }
+
+    @Test
+    fun `the steps a provider serves are stated once`() {
+        val model =
+            orders().apply {
+                workflow.provide("stock", "stock", ServiceType.LABELLER, ProviderScope.JOURNEY)
+            }
+        model.workflow.provider("stock").servesOnly(listOf("charge"))
+        assertThrows<ModelException> { model.workflow.provider("stock").servesOnly(listOf("ship")) }
+    }
+
+    @Test
+    fun `a case names only the service types of the cases`() {
+        assertThrows<ModelException> { ServiceType.named("printer") }
+    }
+
+    @Test
     fun `initial data holds each key once`() {
         val model = orders().apply { contains("amount", 10L) }
         assertThrows<ModelException> { model.contains("amount", 20L) }
