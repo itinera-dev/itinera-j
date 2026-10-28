@@ -18,6 +18,10 @@ internal fun serviceViolations(descriptor: WorkflowDescriptor<*, *>): List<Viola
         serviceViolations(step, descriptor.providers)
     }
 
+/** The services [requests] ask for, in order. */
+internal fun servicesAskedBy(requests: List<Request<*, *>>): List<ServiceAsked> =
+    requests.map(::askedBy).filterIsInstance<ServiceAsked>()
+
 /** A step, or a rescue step, by its name and what it requests. */
 private class Requesting(val name: StepName, val requests: List<Request<*, *>>)
 
@@ -32,7 +36,7 @@ private fun serviceViolations(
     step: Requesting,
     providers: List<ProviderDescriptor<*, *>>,
 ): List<Violation> {
-    val services = step.requests.map(::askedBy).filterIsInstance<ServiceAsked>()
+    val services = servicesAskedBy(step.requests)
     return shared(services.map(ServiceAsked::key)).map { key -> requestedTwice(step.name, key) } +
         services.distinctBy(ServiceAsked::key).mapNotNull { service ->
             unserved(step.name, service, providers)
