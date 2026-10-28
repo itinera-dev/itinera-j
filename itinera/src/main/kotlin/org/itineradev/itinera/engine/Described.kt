@@ -12,8 +12,11 @@ import org.itineradev.itinera.request.StepKind
 import org.itineradev.itinera.service.ProviderCall
 import org.itineradev.itinera.service.ProviderReporter
 import org.itineradev.itinera.service.SyncProvider
+import org.itineradev.itinera.step.RescueFactory
 import org.itineradev.itinera.step.StepFactory
 import org.itineradev.itinera.step.StepReporter
+import org.itineradev.itinera.step.SyncRescueFactory
+import org.itineradev.itinera.step.SyncRescueRun
 import org.itineradev.itinera.step.SyncStepFactory
 import org.itineradev.itinera.step.SyncStepRun
 import org.itineradev.itinera.workflow.InputAdapterCall
@@ -71,8 +74,8 @@ public object Described {
 
 /**
  * What reading step classes takes in one mode: the handles of that mode a step's `run` requests by
- * their types, and the factory of each step class, which builds the step with its constructor and
- * runs it with its method `run`.
+ * their types, and the factory of each step class and rescue step class, which builds the step with
+ * its constructor and runs it with its method `run`.
  *
  * Part of itinera's engine, not of its API.
  */
@@ -90,6 +93,9 @@ public interface StepFactories<M : Mode> {
 
     /** The factory of [step]. */
     public fun of(step: StepClass<M>): StepFactory<M>
+
+    /** The factory of [rescue]. */
+    public fun of(rescue: RescueClass<M>): RescueFactory<M>
 }
 
 private object SynchronousSteps : StepFactories<Sync> {
@@ -106,6 +112,12 @@ private object SynchronousSteps : StepFactories<Sync> {
         val built = step.built(got)
         val arguments = step.arguments(got)
         SyncStepRun { returned(invoked(step.run, built, *arguments)) }
+    }
+
+    override fun of(rescue: RescueClass<Sync>): RescueFactory<Sync> = SyncRescueFactory { got ->
+        val built = rescue.built(got)
+        val arguments = rescue.arguments(got)
+        SyncRescueRun { returned(invoked(rescue.run, built, *arguments)) }
     }
 }
 

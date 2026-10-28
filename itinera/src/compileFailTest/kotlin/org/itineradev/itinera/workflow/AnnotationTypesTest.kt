@@ -1,6 +1,7 @@
 package org.itineradev.itinera.workflow
 
 import org.itineradev.itinera.compiling.assertDoesNotCompile
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments.argumentSet
 import org.junit.jupiter.params.provider.FieldSource
@@ -35,6 +36,16 @@ class AnnotationTypesTest {
             "$ANNOTATED $annotation class Shop : ItineraWorkflow",
             "actual type is 'Array<KClass<$refused>>', but 'Array<KClass<out $expected>>' was " +
                 "expected",
+        )
+    }
+
+    @Test
+    fun `a step takes as its rescue step only a rescue step class`() {
+        assertDoesNotCompile(
+            "$ANNOTATED @Workflow(name = \"shop\") " +
+                "@WithStep(Charge::class, name = \"charge\", rescue = Charge::class) " +
+                "class Shop : ItineraWorkflow",
+            "actual type is 'KClass<Charge>', but 'KClass<out ItineraRescueStep>' was expected",
         )
     }
 

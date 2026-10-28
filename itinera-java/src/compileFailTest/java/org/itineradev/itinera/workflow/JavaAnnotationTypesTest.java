@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 import org.itineradev.itinera.compiling.Javac;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -54,6 +55,21 @@ final class JavaAnnotationTypesTest {
     var failing = new Javac(directory).compile(SNIPPET.formatted(annotation));
     assertFalse(failing.compiled(), failing.messages());
     assertTrue(failing.messages().contains(message), failing.messages());
+  }
+
+  @Test
+  void javaGivesAStepOnlyARescueStepClassAsItsRescueStep() throws IOException {
+    var failing =
+        new Javac(directory)
+            .compile(
+                SNIPPET.formatted(
+                    "@WithStep(step = Charge.class, name = \"charge\", rescue = Charge.class)"));
+    assertFalse(failing.compiled(), failing.messages());
+    assertTrue(
+        failing
+            .messages()
+            .contains("Class<Charge> cannot be converted to Class<? extends ItineraRescueStep>"),
+        failing.messages());
   }
 
   static Stream<Arguments> misattached() {
