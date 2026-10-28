@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 import org.itineradev.itinera.instance.WorkflowInstance
 import org.itineradev.itinera.journey.JourneyId
 import org.itineradev.itinera.report.ReporterOf
+import org.itineradev.itinera.report.WorkflowReporter
 import org.itineradev.itinera.workflow.Mode
 import org.itineradev.itinera.workflow.WorkflowDescriptor
 
@@ -38,7 +39,7 @@ public class Draft<W, M : Mode>(
 
     /**
      * The instance: captures the initial data, then produces the journey ID, then makes the
-     * reporters.
+     * reporters, those the workflow lists first.
      *
      * @throws IllegalStateException when the ID generator or a reporter factory throws or returns
      *   what it may not.
@@ -50,12 +51,15 @@ public class Draft<W, M : Mode>(
             descriptor,
             workflow,
             journeyId,
-            reporters.map { factory -> made(factory, journeyId) },
+            factories().map { factory -> made(factory, journeyId) },
             data.toMap(),
             metadata.toMap(),
             initial,
         )
     }
+
+    private fun factories(): List<(JourneyId) -> ReporterOf<M>?> =
+        descriptor.reporters.map(WorkflowReporter<M>::make) + reporters
 
     private fun journeyId(initial: Initial): JourneyId {
         val generator = descriptor.idGenerator ?: return JourneyId.of(UUID.randomUUID().toString())

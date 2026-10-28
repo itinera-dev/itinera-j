@@ -104,6 +104,10 @@ public abstract interface class org/itineradev/itinera/report/async/AsyncReporte
 	public abstract fun create (Lorg/itineradev/itinera/journey/JourneyId;)Lorg/itineradev/itinera/report/async/AsyncReporter;
 }
 
+public final class org/itineradev/itinera/report/async/AsyncWorkflowReporterKt {
+	public static final fun asyncWorkflowReporter (Lorg/itineradev/itinera/report/async/AsyncReporterFactory;)Lorg/itineradev/itinera/report/WorkflowReporter;
+}
+
 public final class org/itineradev/itinera/request/async/AsyncRequestsKt {
 	public static final fun asyncHookReporter (Lorg/itineradev/itinera/request/Requests;)Lorg/itineradev/itinera/request/Request;
 	public static final fun asyncProviderReporter (Lorg/itineradev/itinera/request/Requests;)Lorg/itineradev/itinera/request/Request;

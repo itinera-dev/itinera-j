@@ -49,6 +49,16 @@ class AnnotationTypesTest {
         )
     }
 
+    @Test
+    fun `a workflow lists as its reporters only reporter classes`() {
+        assertDoesNotCompile(
+            "$ANNOTATED @Workflow(name = \"shop\", reporters = [Charge::class]) " +
+                "@WithStep(Charge::class, name = \"charge\") class Shop : ItineraWorkflow",
+            "actual type is 'Array<KClass<Charge>>', but 'Array<KClass<out ReporterOf<*>>>' was " +
+                "expected",
+        )
+    }
+
     companion object {
         @JvmField
         val misattached =

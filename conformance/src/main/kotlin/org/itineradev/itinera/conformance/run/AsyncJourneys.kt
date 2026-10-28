@@ -15,6 +15,7 @@ import org.itineradev.itinera.conformance.record.failingAsyncDispatchers
 import org.itineradev.itinera.executor.async.AsyncLocalExecutor
 import org.itineradev.itinera.instance.WorkflowInstance
 import org.itineradev.itinera.instance.async.instance
+import org.itineradev.itinera.report.async.asyncWorkflowReporter
 import org.itineradev.itinera.service.ProviderDescriptor
 import org.itineradev.itinera.service.async.asyncPerAttemptProvider
 import org.itineradev.itinera.service.async.asyncProvider
@@ -48,6 +49,9 @@ internal fun asyncJourneys(model: Model, recorders: Recorders, witness: Witness)
     for (step in workflow.steps) builder.step(asyncStepOf(step, model, witness))
     for (adapter in workflow.adapters) builder.inputAdapter(asyncAdapterOf(adapter))
     for (provider in workflow.providers) builder.provider(asyncProviderOf(provider))
+    for (name in workflow.reporters.orEmpty()) {
+        builder.reporter(asyncWorkflowReporter { AsyncScenarioReporter(recorders.make(name)) })
+    }
     val generator = workflow.idGenerator
     if (generator is IdGenerator.Returns) builder.idGenerator { _, _ -> generator.id }
     return AsyncJourneys(builder.build(), model, recorders)
@@ -125,9 +129,6 @@ private class AsyncJourneys(
         val builder = descriptor.instance(Scenario).initialData(model.initialData)
         for ((key, value) in model.initialGlobalMetadata) {
             builder.reportersGlobalMetadata(key, value)
-        }
-        for (name in model.workflow.reporters.orEmpty()) {
-            builder.reporter(AsyncScenarioReporter(recorders.make(name)))
         }
         return builder.create()
     }
