@@ -47,6 +47,11 @@ internal class WorkflowSentences(private val world: World) {
         model.step(step).attempts(step, attempts.asMaps().map(::attemptOf))
     }
 
+    @Given("step {string} cannot be built because its constructor fails with {string}")
+    fun cannotBeBuilt(step: String, message: String) {
+        model.step(step).cannotBeBuilt(step, message)
+    }
+
     @Given("step {string} does not retry abnormal terminations")
     fun doesNotRetryAbnormalTerminations(step: String) {
         model.step(step).doesNotRetryAbnormalTerminations()
