@@ -1,7 +1,6 @@
 package org.itineradev.itinera.value
 
 import java.lang.reflect.AnnotatedParameterizedType
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.ClassType
 import org.itineradev.itinera.engine.ValueType
 
@@ -26,7 +25,6 @@ import org.itineradev.itinera.engine.ValueType
  * @param T the type the value is read as.
  * @sample org.itineradev.itinera.value.samples.typeTokens
  */
-@ExperimentalItineraApi
 public abstract class TypeToken<T> {
     internal val type: ValueType
 

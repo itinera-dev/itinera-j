@@ -1,9 +1,7 @@
 package org.itineradev.itinera.value.samples
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.value.TypeToken
 
-@OptIn(ExperimentalItineraApi::class)
 fun typeTokens() {
     val amount = TypeToken.of(Long::class.java)
     val note = TypeToken.ofNullable(String::class.java)
@@ -14,7 +12,6 @@ fun typeTokens() {
     check(amount != note)
 }
 
-@OptIn(ExperimentalItineraApi::class)
 fun genericTypeTokens(): TypeToken<List<Long>> {
     val amounts = object : TypeToken<List<Long>>() {}
     check(amounts.toString() == "List<Long?>?")

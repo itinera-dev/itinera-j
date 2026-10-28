@@ -1,7 +1,5 @@
 package org.itineradev.itinera.journey
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * What reading the data bag under a key as a type found: [Present], with the reader's own copy of
  * the value, [Absent] when the key holds nothing, or [OtherType] when it holds a value of another
@@ -12,7 +10,6 @@ import org.itineradev.itinera.ExperimentalItineraApi
  * @param T the type the value was read as.
  * @sample org.itineradev.itinera.journey.samples.reads
  */
-@ExperimentalItineraApi
 public sealed interface Read<out T> {
     /**
      * The value, when one of the type asked for was found; `null` when the key holds nothing or a
