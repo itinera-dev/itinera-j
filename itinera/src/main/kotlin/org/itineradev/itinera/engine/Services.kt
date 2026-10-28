@@ -10,8 +10,7 @@ import org.itineradev.itinera.workflow.Violation
  */
 internal fun serviceViolations(step: StepDescriptor<*>): List<Violation> {
     val keys = step.requests.map(::askedBy).filterIsInstance<ServiceAsked>().map(ServiceAsked::key)
-    val twice = keys.groupingBy(::itself).eachCount().filterValues(::isShared).keys
-    return twice.map { key -> requestedTwice(step.name, key) } +
+    return shared(keys).map { key -> requestedTwice(step.name, key) } +
         keys.distinct().map { key -> notProvided(step.name, key) }
 }
 

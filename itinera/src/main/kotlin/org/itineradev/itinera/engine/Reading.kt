@@ -40,6 +40,7 @@ internal class Reading<M : Mode>(
             declared.mapNotNull(Declared<M>::descriptor),
             attached.filterNotNull(),
             rolesOf<W>(type),
+            emptyList(),
             generator,
         )
     }

@@ -3,6 +3,16 @@
   "proposals": [121],
   "capabilities": ["sync", "async"],
   "impossible": {
+    "bag-write": [
+      {
+        "feature": "cases/tier-1/0060-input-adapters-attached-to-steps/data-bag-access.feature",
+        "scenario": "An adapter that writes through its access leaves the data bag unchanged",
+        "proof": {
+          "test": "an adapter's access to the data bag has no method that writes",
+          "file": "itinera/src/compileFailTest/kotlin/org/itineradev/itinera/workflow/AdapterTypesTest.kt"
+        }
+      }
+    ],
     "non-string-journey-id": [
       {
         "feature": "cases/tier-1/0061-instance-carries-journey-id-and-reporters/journey-id-values.feature",

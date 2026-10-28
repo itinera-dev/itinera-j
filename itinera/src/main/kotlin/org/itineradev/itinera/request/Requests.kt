@@ -12,6 +12,7 @@ import org.itineradev.itinera.engine.ReasonAsked
 import org.itineradev.itinera.engine.RoleAsked
 import org.itineradev.itinera.engine.isRole
 import org.itineradev.itinera.journey.Contributor
+import org.itineradev.itinera.journey.DataBagAccess
 import org.itineradev.itinera.journey.FailureCause
 import org.itineradev.itinera.journey.JourneyId
 import org.itineradev.itinera.policy.HookReporter
@@ -134,12 +135,28 @@ public object Requests {
         Asking(Known.JOURNEY_ID, Answer.ITSELF)
 
     /**
-     * The name of the step a hook acts on.
+     * The name of the step a hook acts on, or of the step an input adapter's call builds.
      *
      * @sample org.itineradev.itinera.request.samples.hookRequests
      */
     @JvmStatic
     public fun stepName(): Request<StepNameKind, StepName> = Asking(Known.STEP_NAME, Answer.ITSELF)
+
+    /**
+     * The key of the input an input adapter is asked for.
+     *
+     * @sample org.itineradev.itinera.workflow.samples.adapters
+     */
+    @JvmStatic public fun key(): Request<KeyKind, String> = Asking(Known.KEY, Answer.ITSELF)
+
+    /**
+     * An input adapter's read access to the data bag, valid only during its call.
+     *
+     * @sample org.itineradev.itinera.workflow.samples.adapters
+     */
+    @JvmStatic
+    public fun dataBagAccess(): Request<DataBagAccessKind, DataBagAccess> =
+        Asking(Handle.DATA_BAG_ACCESS, Answer.ITSELF)
 
     /**
      * The attempt a step hook acts on.

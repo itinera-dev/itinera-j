@@ -1,6 +1,7 @@
 package org.itineradev.itinera.engine
 
 import org.itineradev.itinera.policy.WorkflowPolicyDescriptor
+import org.itineradev.itinera.workflow.InputAdapterDescriptor
 import org.itineradev.itinera.workflow.JourneyIdGenerator
 import org.itineradev.itinera.workflow.Mode
 import org.itineradev.itinera.workflow.StepDescriptor
@@ -21,6 +22,7 @@ private constructor(
     override val steps: List<StepDescriptor<M>>,
     override val policies: List<WorkflowPolicyDescriptor<*, M>>,
     override val roles: List<Class<in W>>,
+    override val inputAdapters: List<InputAdapterDescriptor<W, M>>,
     override val idGenerator: JourneyIdGenerator<W>?,
 ) : WorkflowDescriptor<W, M> {
     /** Makes checked descriptors. */
@@ -36,10 +38,19 @@ private constructor(
             steps: List<StepDescriptor<M>>,
             policies: List<WorkflowPolicyDescriptor<*, M>>,
             roles: List<Class<in W>>,
+            inputAdapters: List<InputAdapterDescriptor<W, M>>,
             idGenerator: JourneyIdGenerator<W>?,
         ): Checked<W, M> {
             val described =
-                Checked(name, mode, steps.toList(), policies.toList(), roles.toList(), idGenerator)
+                Checked(
+                    name,
+                    mode,
+                    steps.toList(),
+                    policies.toList(),
+                    roles.toList(),
+                    inputAdapters.toList(),
+                    idGenerator,
+                )
             val violations = violationsOf(described)
             if (violations.isNotEmpty()) throw Violations(violations)
             return described

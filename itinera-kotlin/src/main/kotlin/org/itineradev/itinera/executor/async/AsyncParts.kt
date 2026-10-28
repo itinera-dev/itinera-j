@@ -21,6 +21,8 @@ import org.itineradev.itinera.step.StepFactory
 import org.itineradev.itinera.step.async.AsyncStepFactory
 import org.itineradev.itinera.step.async.AsyncStepRun
 import org.itineradev.itinera.workflow.Async
+import org.itineradev.itinera.workflow.InputAdapterCall
+import org.itineradev.itinera.workflow.async.AsyncInputAdapter
 
 /** The asynchronous mode's parts, whose dispatchers [factory] makes. */
 internal class AsyncParts(private val factory: AsyncDispatcherFactory) : Parts<Async> {
@@ -31,6 +33,9 @@ internal class AsyncParts(private val factory: AsyncDispatcherFactory) : Parts<A
 
     override fun accepts(hook: HookCall<*, *, *, *>?): Boolean =
         (hook is AsyncHook<*, *, *> || hook is AsyncWorkflowHook<*, *>) && writtenInKotlin(hook)
+
+    override fun accepts(adapter: InputAdapterCall<*, *>?): Boolean =
+        adapter is AsyncInputAdapter && writtenInKotlin(adapter)
 
     override fun accepts(reporter: ReporterOf<*>?): Boolean =
         reporter is AsyncReporter && writtenInKotlin(reporter)

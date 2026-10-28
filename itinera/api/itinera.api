@@ -28,6 +28,7 @@ public abstract interface class org/itineradev/itinera/engine/Asked {
 
 public final class org/itineradev/itinera/engine/Builders {
 	public static final field INSTANCE Lorg/itineradev/itinera/engine/Builders;
+	public final fun inputAdapter (Ljava/lang/String;Lorg/itineradev/itinera/workflow/InputAdapterCall;)Lorg/itineradev/itinera/workflow/InputAdapterBuilder;
 	public final fun step (Ljava/lang/String;Lorg/itineradev/itinera/step/StepFactory;)Lorg/itineradev/itinera/workflow/StepBuilder;
 	public final fun workflow (Ljava/lang/String;Lorg/itineradev/itinera/workflow/Mode;)Lorg/itineradev/itinera/workflow/WorkflowBuilder;
 }
@@ -42,6 +43,7 @@ public final class org/itineradev/itinera/engine/Captured : org/itineradev/itine
 public final class org/itineradev/itinera/engine/Checked : org/itineradev/itinera/workflow/WorkflowDescriptor {
 	public static final field Companion Lorg/itineradev/itinera/engine/Checked$Companion;
 	public fun getIdGenerator ()Lorg/itineradev/itinera/workflow/JourneyIdGenerator;
+	public fun getInputAdapters ()Ljava/util/List;
 	public fun getMode ()Lorg/itineradev/itinera/workflow/Mode;
 	public fun getName ()Lorg/itineradev/itinera/workflow/WorkflowName;
 	public fun getPolicies ()Ljava/util/List;
@@ -50,7 +52,7 @@ public final class org/itineradev/itinera/engine/Checked : org/itineradev/itiner
 }
 
 public final class org/itineradev/itinera/engine/Checked$Companion {
-	public final fun of (Lorg/itineradev/itinera/workflow/WorkflowName;Lorg/itineradev/itinera/workflow/Mode;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lorg/itineradev/itinera/workflow/JourneyIdGenerator;)Lorg/itineradev/itinera/engine/Checked;
+	public final fun of (Lorg/itineradev/itinera/workflow/WorkflowName;Lorg/itineradev/itinera/workflow/Mode;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lorg/itineradev/itinera/workflow/JourneyIdGenerator;)Lorg/itineradev/itinera/engine/Checked;
 }
 
 public final class org/itineradev/itinera/engine/ClassType : org/itineradev/itinera/engine/ValueType {
@@ -76,6 +78,7 @@ public final class org/itineradev/itinera/engine/Component {
 
 public final class org/itineradev/itinera/engine/DataBags {
 	public static final field INSTANCE Lorg/itineradev/itinera/engine/DataBags;
+	public static final fun access (Lorg/itineradev/itinera/journey/DataBag;)Lorg/itineradev/itinera/journey/DataBagAccess;
 	public static final fun of (Ljava/util/Map;)Lorg/itineradev/itinera/journey/DataBag;
 }
 
@@ -159,6 +162,7 @@ public final class org/itineradev/itinera/engine/Handle : java/lang/Enum, org/it
 	public static final field ASYNC_HOOK_REPORTER Lorg/itineradev/itinera/engine/Handle;
 	public static final field ASYNC_STEP_REPORTER Lorg/itineradev/itinera/engine/Handle;
 	public static final field CONTRIBUTOR Lorg/itineradev/itinera/engine/Handle;
+	public static final field DATA_BAG_ACCESS Lorg/itineradev/itinera/engine/Handle;
 	public static final field HOOK_REPORTER Lorg/itineradev/itinera/engine/Handle;
 	public static final field STEP_REPORTER Lorg/itineradev/itinera/engine/Handle;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
@@ -237,6 +241,7 @@ public abstract interface class org/itineradev/itinera/engine/Parts {
 	public abstract fun accepts (Lorg/itineradev/itinera/policy/HookCall;)Z
 	public abstract fun accepts (Lorg/itineradev/itinera/report/ReporterOf;)Z
 	public abstract fun accepts (Lorg/itineradev/itinera/step/StepFactory;)Z
+	public abstract fun accepts (Lorg/itineradev/itinera/workflow/InputAdapterCall;)Z
 	public abstract synthetic fun build (Lorg/itineradev/itinera/step/StepFactory;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract synthetic fun dispatcher (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract synthetic fun ensureActive (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -294,6 +299,7 @@ public final class org/itineradev/itinera/engine/SyncParts : org/itineradev/itin
 	public fun accepts (Lorg/itineradev/itinera/policy/HookCall;)Z
 	public fun accepts (Lorg/itineradev/itinera/report/ReporterOf;)Z
 	public fun accepts (Lorg/itineradev/itinera/step/StepFactory;)Z
+	public fun accepts (Lorg/itineradev/itinera/workflow/InputAdapterCall;)Z
 	public synthetic fun build (Lorg/itineradev/itinera/step/StepFactory;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public synthetic fun dispatcher (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public synthetic fun ensureActive (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -2095,6 +2101,10 @@ public final class org/itineradev/itinera/journey/DataBag {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class org/itineradev/itinera/journey/DataBagAccess {
+	public final fun read (Ljava/lang/String;Lorg/itineradev/itinera/value/TypeToken;)Lorg/itineradev/itinera/journey/Read;
+}
+
 public final class org/itineradev/itinera/journey/Failure : java/lang/Record {
 	public fun <init> (Lorg/itineradev/itinera/event/JourneyFailure;Ljava/lang/Throwable;)V
 	public final fun cause ()Lorg/itineradev/itinera/journey/FailureCause;
@@ -2510,6 +2520,9 @@ public abstract interface class org/itineradev/itinera/request/BuildKind {
 public abstract interface class org/itineradev/itinera/request/ContributorKind {
 }
 
+public abstract interface class org/itineradev/itinera/request/DataBagAccessKind {
+}
+
 public abstract interface class org/itineradev/itinera/request/ErrorKind {
 }
 
@@ -2529,7 +2542,13 @@ public abstract interface class org/itineradev/itinera/request/HookKind : org/it
 public abstract interface class org/itineradev/itinera/request/HookReporterKind {
 }
 
+public abstract interface class org/itineradev/itinera/request/InputAdapterKind : org/itineradev/itinera/request/DataBagAccessKind, org/itineradev/itinera/request/JourneyIdKind, org/itineradev/itinera/request/KeyKind, org/itineradev/itinera/request/StepNameKind, org/itineradev/itinera/request/WorkflowDataKind {
+}
+
 public abstract interface class org/itineradev/itinera/request/JourneyIdKind {
+}
+
+public abstract interface class org/itineradev/itinera/request/KeyKind {
 }
 
 public abstract interface class org/itineradev/itinera/request/ReasonKind {
@@ -2544,6 +2563,7 @@ public final class org/itineradev/itinera/request/Requests {
 	public static final field INSTANCE Lorg/itineradev/itinera/request/Requests;
 	public static final fun attempt ()Lorg/itineradev/itinera/request/Request;
 	public static final fun contributor ()Lorg/itineradev/itinera/request/Request;
+	public static final fun dataBagAccess ()Lorg/itineradev/itinera/request/Request;
 	public static final fun error ()Lorg/itineradev/itinera/request/Request;
 	public static final fun failureCause ()Lorg/itineradev/itinera/request/Request;
 	public static final fun fromStep (Ljava/lang/String;Lorg/itineradev/itinera/value/TypeToken;)Lorg/itineradev/itinera/request/Request;
@@ -2551,6 +2571,7 @@ public final class org/itineradev/itinera/request/Requests {
 	public static final fun hookReporter ()Lorg/itineradev/itinera/request/Request;
 	public static final fun input (Ljava/lang/String;Lorg/itineradev/itinera/value/TypeToken;)Lorg/itineradev/itinera/request/Request;
 	public static final fun journeyId ()Lorg/itineradev/itinera/request/Request;
+	public static final fun key ()Lorg/itineradev/itinera/request/Request;
 	public static final fun optionalError ()Lorg/itineradev/itinera/request/Request;
 	public static final fun optionalFromStep (Ljava/lang/String;Lorg/itineradev/itinera/value/TypeToken;)Lorg/itineradev/itinera/request/Request;
 	public static final fun optionalFromWorkflow (Ljava/lang/String;Lorg/itineradev/itinera/value/TypeToken;)Lorg/itineradev/itinera/request/Request;
@@ -2738,6 +2759,28 @@ public final class org/itineradev/itinera/workflow/Async : org/itineradev/itiner
 public abstract interface annotation class org/itineradev/itinera/workflow/IdGenerator : java/lang/annotation/Annotation {
 }
 
+public final class org/itineradev/itinera/workflow/InputAdapterBuilder {
+	public final fun build ()Lorg/itineradev/itinera/workflow/InputAdapterDescriptor;
+	public final fun request (Lorg/itineradev/itinera/request/Request;)Lorg/itineradev/itinera/workflow/InputAdapterBuilder;
+	public final fun step (Ljava/lang/String;)Lorg/itineradev/itinera/workflow/InputAdapterBuilder;
+}
+
+public abstract interface class org/itineradev/itinera/workflow/InputAdapterCall {
+}
+
+public abstract interface class org/itineradev/itinera/workflow/InputAdapterDescriptor {
+	public static final field Companion Lorg/itineradev/itinera/workflow/InputAdapterDescriptor$Companion;
+	public static fun builder (Ljava/lang/String;Ljava/lang/String;Lorg/itineradev/itinera/workflow/SyncInputAdapter;)Lorg/itineradev/itinera/workflow/InputAdapterBuilder;
+	public abstract fun getCall ()Lorg/itineradev/itinera/workflow/InputAdapterCall;
+	public abstract fun getName ()Lorg/itineradev/itinera/workflow/AdapterName;
+	public abstract fun getRequests ()Ljava/util/List;
+	public abstract fun getSteps ()Ljava/util/List;
+}
+
+public final class org/itineradev/itinera/workflow/InputAdapterDescriptor$Companion {
+	public final fun builder (Ljava/lang/String;Ljava/lang/String;Lorg/itineradev/itinera/workflow/SyncInputAdapter;)Lorg/itineradev/itinera/workflow/InputAdapterBuilder;
+}
+
 public abstract interface class org/itineradev/itinera/workflow/ItineraWorkflow {
 	public fun instance ()Lorg/itineradev/itinera/instance/InstanceBuilder;
 }
@@ -2772,6 +2815,27 @@ public final class org/itineradev/itinera/workflow/StepDescriptor$Companion {
 	public final fun builder (Ljava/lang/String;Lorg/itineradev/itinera/step/SyncStepFactory;)Lorg/itineradev/itinera/workflow/StepBuilder;
 }
 
+public abstract interface class org/itineradev/itinera/workflow/Supplied {
+}
+
+public final class org/itineradev/itinera/workflow/Supplied$FromDataBag : org/itineradev/itinera/workflow/Supplied {
+	public static final field INSTANCE Lorg/itineradev/itinera/workflow/Supplied$FromDataBag;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/workflow/Supplied$Value : java/lang/Record, org/itineradev/itinera/workflow/Supplied {
+	public fun <init> (Ljava/lang/Object;)V
+	public final fun component1 ()Ljava/lang/Object;
+	public final fun copy (Ljava/lang/Object;)Lorg/itineradev/itinera/workflow/Supplied$Value;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/workflow/Supplied$Value;Ljava/lang/Object;ILjava/lang/Object;)Lorg/itineradev/itinera/workflow/Supplied$Value;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public final fun value ()Ljava/lang/Object;
+}
+
 public final class org/itineradev/itinera/workflow/Sync : org/itineradev/itinera/workflow/Mode {
 	public static final field INSTANCE Lorg/itineradev/itinera/workflow/Sync;
 	public fun equals (Ljava/lang/Object;)Z
@@ -2779,8 +2843,25 @@ public final class org/itineradev/itinera/workflow/Sync : org/itineradev/itinera
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract interface class org/itineradev/itinera/workflow/SyncInputAdapter : org/itineradev/itinera/workflow/InputAdapterCall {
+	public abstract fun adapt (Ljava/lang/Object;Lorg/itineradev/itinera/request/Got;)Lorg/itineradev/itinera/workflow/Supplied;
+}
+
 public abstract interface class org/itineradev/itinera/workflow/Violation {
 	public abstract fun getNamed ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/workflow/Violation$DuplicateAdapterName : java/lang/Record, org/itineradev/itinera/workflow/Violation {
+	public fun <init> (Lorg/itineradev/itinera/workflow/AdapterName;)V
+	public final fun adapter ()Lorg/itineradev/itinera/workflow/AdapterName;
+	public final fun component1 ()Lorg/itineradev/itinera/workflow/AdapterName;
+	public final fun copy (Lorg/itineradev/itinera/workflow/AdapterName;)Lorg/itineradev/itinera/workflow/Violation$DuplicateAdapterName;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/workflow/Violation$DuplicateAdapterName;Lorg/itineradev/itinera/workflow/AdapterName;ILjava/lang/Object;)Lorg/itineradev/itinera/workflow/Violation$DuplicateAdapterName;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getNamed ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun named ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class org/itineradev/itinera/workflow/Violation$DuplicateStepName : java/lang/Record, org/itineradev/itinera/workflow/Violation {
@@ -2802,6 +2883,21 @@ public final class org/itineradev/itinera/workflow/Violation$Held : java/lang/En
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lorg/itineradev/itinera/workflow/Violation$Held;
 	public static fun values ()[Lorg/itineradev/itinera/workflow/Violation$Held;
+}
+
+public final class org/itineradev/itinera/workflow/Violation$InputAdapterForUnknownStep : java/lang/Record, org/itineradev/itinera/workflow/Violation {
+	public fun <init> (Lorg/itineradev/itinera/workflow/AdapterName;Lorg/itineradev/itinera/step/StepName;)V
+	public final fun adapter ()Lorg/itineradev/itinera/workflow/AdapterName;
+	public final fun component1 ()Lorg/itineradev/itinera/workflow/AdapterName;
+	public final fun component2 ()Lorg/itineradev/itinera/step/StepName;
+	public final fun copy (Lorg/itineradev/itinera/workflow/AdapterName;Lorg/itineradev/itinera/step/StepName;)Lorg/itineradev/itinera/workflow/Violation$InputAdapterForUnknownStep;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/workflow/Violation$InputAdapterForUnknownStep;Lorg/itineradev/itinera/workflow/AdapterName;Lorg/itineradev/itinera/step/StepName;ILjava/lang/Object;)Lorg/itineradev/itinera/workflow/Violation$InputAdapterForUnknownStep;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getNamed ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun named ()Ljava/lang/String;
+	public final fun step ()Lorg/itineradev/itinera/step/StepName;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class org/itineradev/itinera/workflow/Violation$Misdeclared : java/lang/Record, org/itineradev/itinera/workflow/Violation {
@@ -2904,6 +3000,21 @@ public final class org/itineradev/itinera/workflow/Violation$ServiceRequestedTwi
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class org/itineradev/itinera/workflow/Violation$StepAdaptedTwice : java/lang/Record, org/itineradev/itinera/workflow/Violation {
+	public fun <init> (Lorg/itineradev/itinera/step/StepName;Ljava/util/List;)V
+	public final fun adapters ()Ljava/util/List;
+	public final fun component1 ()Lorg/itineradev/itinera/step/StepName;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Lorg/itineradev/itinera/step/StepName;Ljava/util/List;)Lorg/itineradev/itinera/workflow/Violation$StepAdaptedTwice;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/workflow/Violation$StepAdaptedTwice;Lorg/itineradev/itinera/step/StepName;Ljava/util/List;ILjava/lang/Object;)Lorg/itineradev/itinera/workflow/Violation$StepAdaptedTwice;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getNamed ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun named ()Ljava/lang/String;
+	public final fun step ()Lorg/itineradev/itinera/step/StepName;
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class org/itineradev/itinera/workflow/Violation$StepHookDefinedTwice : java/lang/Record, org/itineradev/itinera/workflow/Violation {
 	public fun <init> (Lorg/itineradev/itinera/step/StepName;Lorg/itineradev/itinera/policy/StepHook;Ljava/util/List;)V
 	public final fun component1 ()Lorg/itineradev/itinera/step/StepName;
@@ -2961,6 +3072,7 @@ public abstract interface annotation class org/itineradev/itinera/workflow/Workf
 public final class org/itineradev/itinera/workflow/WorkflowBuilder {
 	public final fun build ()Lorg/itineradev/itinera/workflow/WorkflowDescriptor;
 	public final fun idGenerator (Lorg/itineradev/itinera/workflow/JourneyIdGenerator;)Lorg/itineradev/itinera/workflow/WorkflowBuilder;
+	public final fun inputAdapter (Lorg/itineradev/itinera/workflow/InputAdapterDescriptor;)Lorg/itineradev/itinera/workflow/WorkflowBuilder;
 	public final fun policy (Lorg/itineradev/itinera/policy/WorkflowPolicyDescriptor;)Lorg/itineradev/itinera/workflow/WorkflowBuilder;
 	public final fun role (Ljava/lang/Class;)Lorg/itineradev/itinera/workflow/WorkflowBuilder;
 	public final fun step (Lorg/itineradev/itinera/workflow/StepDescriptor;)Lorg/itineradev/itinera/workflow/WorkflowBuilder;
@@ -2970,6 +3082,7 @@ public abstract interface class org/itineradev/itinera/workflow/WorkflowDescript
 	public static final field Companion Lorg/itineradev/itinera/workflow/WorkflowDescriptor$Companion;
 	public static fun builder (Ljava/lang/Class;Ljava/lang/String;)Lorg/itineradev/itinera/workflow/WorkflowBuilder;
 	public abstract fun getIdGenerator ()Lorg/itineradev/itinera/workflow/JourneyIdGenerator;
+	public abstract fun getInputAdapters ()Ljava/util/List;
 	public abstract fun getMode ()Lorg/itineradev/itinera/workflow/Mode;
 	public abstract fun getName ()Lorg/itineradev/itinera/workflow/WorkflowName;
 	public abstract fun getPolicies ()Ljava/util/List;
