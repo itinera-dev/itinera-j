@@ -114,7 +114,7 @@ public final class org/itineradev/itinera/engine/DeliveryKt {
 
 public final class org/itineradev/itinera/engine/Described {
 	public static final field INSTANCE Lorg/itineradev/itinera/engine/Described;
-	public final fun read (Ljava/lang/Class;Lorg/itineradev/itinera/workflow/Mode;Lorg/itineradev/itinera/engine/StepFactories;)Lorg/itineradev/itinera/workflow/WorkflowDescriptor;
+	public final fun read (Ljava/lang/Class;Lorg/itineradev/itinera/workflow/Mode;Lorg/itineradev/itinera/engine/StepFactories;Lorg/itineradev/itinera/engine/HookCalls;)Lorg/itineradev/itinera/workflow/WorkflowDescriptor;
 	public final fun synchronous (Ljava/lang/Class;)Lorg/itineradev/itinera/workflow/WorkflowDescriptor;
 }
 
@@ -165,6 +165,18 @@ public final class org/itineradev/itinera/engine/Handle : java/lang/Enum, org/it
 	public fun toString ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/itineradev/itinera/engine/Handle;
 	public static fun values ()[Lorg/itineradev/itinera/engine/Handle;
+}
+
+public abstract interface class org/itineradev/itinera/engine/HookCalls {
+	public abstract fun getHandles ()Ljava/util/Map;
+	public abstract fun getOtherModes ()Ljava/util/Map;
+	public abstract fun stepHook (Lorg/itineradev/itinera/engine/HookMethod;)Lorg/itineradev/itinera/policy/HookCall;
+	public abstract fun workflowHook (Lorg/itineradev/itinera/engine/HookMethod;)Lorg/itineradev/itinera/policy/HookCall;
+}
+
+public final class org/itineradev/itinera/engine/HookMethod {
+	public final fun arguments (Lorg/itineradev/itinera/request/Got;)[Ljava/lang/Object;
+	public final fun getMethod ()Ljava/lang/reflect/Method;
 }
 
 public abstract interface class org/itineradev/itinera/engine/JavaForms {
@@ -2212,6 +2224,16 @@ public final class org/itineradev/itinera/journey/Read$Present : java/lang/Recor
 	public final fun value ()Ljava/lang/Object;
 }
 
+public abstract interface annotation class org/itineradev/itinera/policy/FromStep : java/lang/annotation/Annotation {
+	public abstract fun required ()Z
+	public abstract fun value ()Ljava/lang/String;
+}
+
+public abstract interface annotation class org/itineradev/itinera/policy/FromWorkflow : java/lang/annotation/Annotation {
+	public abstract fun required ()Z
+	public abstract fun value ()Ljava/lang/String;
+}
+
 public abstract interface class org/itineradev/itinera/policy/HookCall {
 }
 
@@ -2228,6 +2250,16 @@ public abstract interface class org/itineradev/itinera/policy/HookReporter {
 	public abstract fun setGlobalMetadata (Ljava/lang/String;Ljava/lang/Object;)V
 	public abstract fun warning (Ljava/lang/String;)V
 	public abstract fun warning (Ljava/lang/String;Ljava/lang/Object;)V
+}
+
+public abstract interface class org/itineradev/itinera/policy/ItineraStepPolicy {
+	public fun failWorkflow (Ljava/lang/String;)Lorg/itineradev/itinera/policy/Lifecycle$FailWorkflow;
+	public fun failWorkflow (Lorg/itineradev/itinera/step/Reason;)Lorg/itineradev/itinera/policy/Lifecycle$FailWorkflow;
+	public fun finishWorkflow ()Lorg/itineradev/itinera/policy/Lifecycle$FinishWorkflow;
+	public fun keepDefault ()Lorg/itineradev/itinera/policy/KeepDefault;
+}
+
+public abstract interface class org/itineradev/itinera/policy/ItineraWorkflowPolicy {
 }
 
 public final class org/itineradev/itinera/policy/KeepDefault : org/itineradev/itinera/policy/OnFailure, org/itineradev/itinera/policy/OnSuccess {
@@ -2285,6 +2317,18 @@ public final class org/itineradev/itinera/policy/OnFailure$Companion {
 	public final fun keepDefault ()Lorg/itineradev/itinera/policy/OnFailure;
 }
 
+public abstract interface annotation class org/itineradev/itinera/policy/OnStepAbnormalTermination : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class org/itineradev/itinera/policy/OnStepFailure : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class org/itineradev/itinera/policy/OnStepRetry : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class org/itineradev/itinera/policy/OnStepSuccess : java/lang/annotation/Annotation {
+}
+
 public abstract interface class org/itineradev/itinera/policy/OnSuccess {
 	public static final field Companion Lorg/itineradev/itinera/policy/OnSuccess$Companion;
 	public static fun failWorkflow (Ljava/lang/String;)Lorg/itineradev/itinera/policy/OnSuccess;
@@ -2301,6 +2345,12 @@ public final class org/itineradev/itinera/policy/OnSuccess$Companion {
 	public final fun failWorkflow (Lorg/itineradev/itinera/step/Reason;)Lorg/itineradev/itinera/policy/OnSuccess;
 	public final fun finishWorkflow ()Lorg/itineradev/itinera/policy/OnSuccess;
 	public final fun keepDefault ()Lorg/itineradev/itinera/policy/OnSuccess;
+}
+
+public abstract interface annotation class org/itineradev/itinera/policy/OnWorkflowFailure : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class org/itineradev/itinera/policy/OnWorkflowSuccess : java/lang/annotation/Annotation {
 }
 
 public abstract interface class org/itineradev/itinera/policy/PolicyFactory {
@@ -2337,6 +2387,10 @@ public final class org/itineradev/itinera/policy/StepHook : java/lang/Enum {
 	public fun toString ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/itineradev/itinera/policy/StepHook;
 	public static fun values ()[Lorg/itineradev/itinera/policy/StepHook;
+}
+
+public abstract interface annotation class org/itineradev/itinera/policy/StepPolicy : java/lang/annotation/Annotation {
+	public abstract fun name ()Ljava/lang/String;
 }
 
 public final class org/itineradev/itinera/policy/StepPolicyBuilder {
@@ -2381,6 +2435,10 @@ public final class org/itineradev/itinera/policy/WorkflowHook : java/lang/Enum {
 	public fun toString ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lorg/itineradev/itinera/policy/WorkflowHook;
 	public static fun values ()[Lorg/itineradev/itinera/policy/WorkflowHook;
+}
+
+public abstract interface annotation class org/itineradev/itinera/policy/WorkflowPolicy : java/lang/annotation/Annotation {
+	public abstract fun name ()Ljava/lang/String;
 }
 
 public final class org/itineradev/itinera/policy/WorkflowPolicyBuilder {
@@ -2886,6 +2944,7 @@ public final class org/itineradev/itinera/workflow/Violations : java/lang/Illega
 public abstract interface annotation class org/itineradev/itinera/workflow/WithStep : java/lang/annotation/Annotation {
 	public abstract fun name ()Ljava/lang/String;
 	public abstract fun noRetryOnAbnormalTermination ()Z
+	public abstract fun policies ()[Ljava/lang/Class;
 	public abstract fun retryBudget ()I
 	public abstract fun step ()Ljava/lang/Class;
 }
@@ -2896,6 +2955,7 @@ public abstract interface annotation class org/itineradev/itinera/workflow/WithS
 
 public abstract interface annotation class org/itineradev/itinera/workflow/Workflow : java/lang/annotation/Annotation {
 	public abstract fun name ()Ljava/lang/String;
+	public abstract fun policies ()[Ljava/lang/Class;
 }
 
 public final class org/itineradev/itinera/workflow/WorkflowBuilder {

@@ -1,5 +1,10 @@
 package org.itineradev.itinera.engine
 
+import org.itineradev.itinera.policy.HookCall
+import org.itineradev.itinera.policy.HookReporter
+import org.itineradev.itinera.policy.SyncHook
+import org.itineradev.itinera.policy.SyncWorkflowHook
+import org.itineradev.itinera.request.HookReporterKind
 import org.itineradev.itinera.request.Request
 import org.itineradev.itinera.request.Requests
 import org.itineradev.itinera.request.StepKind
@@ -22,7 +27,7 @@ public object Described {
     private val synchronous =
         object : ClassValue<WorkflowDescriptor<*, Sync>>() {
             override fun computeValue(type: Class<*>): WorkflowDescriptor<*, Sync> =
-                read<Any?, Sync>(type, Sync, SynchronousSteps)
+                read<Any?, Sync>(type, Sync, SynchronousSteps, SynchronousHooks)
         }
 
     /**
@@ -34,7 +39,8 @@ public object Described {
         returned(synchronous.get(type))
 
     /**
-     * Reads the workflow [type] declares in [mode], whose steps [steps] makes factories for.
+     * Reads the workflow [type] declares in [mode], whose steps [steps] makes factories for, and
+     * whose policies' hooks [hooks] calls.
      *
      * @throws Violations with every mistake in its declaration.
      */
@@ -42,7 +48,8 @@ public object Described {
         type: Class<*>,
         mode: M,
         steps: StepFactories<M>,
-    ): WorkflowDescriptor<W, M> = Reading(type, mode, steps).descriptor()
+        hooks: HookCalls<M>,
+    ): WorkflowDescriptor<W, M> = Reading(type, mode, steps, hooks).descriptor()
 }
 
 /**
@@ -83,4 +90,25 @@ private object SynchronousSteps : StepFactories<Sync> {
         val arguments = step.arguments(got)
         SyncStepRun { returned(invoked(step.run, built, *arguments)) }
     }
+}
+
+private object SynchronousHooks : HookCalls<Sync> {
+    override val handles: Map<Class<*>, Request<HookReporterKind<Sync>, *>> =
+        mapOf(HookReporter::class.java to Requests.hookReporter())
+
+    override val otherModes: Map<String, String> =
+        mapOf(
+            "org.itineradev.itinera.policy.async.AsyncHookReporter" to
+                "requests AsyncHookReporter, which only an asynchronous hook can"
+        )
+
+    override fun <K, R> stepHook(hook: HookMethod): HookCall<Sync, Any, K, R> =
+        SyncHook { policy, got ->
+            returned(invoked(hook.method, policy, *hook.arguments(got)))
+        }
+
+    override fun <K> workflowHook(hook: HookMethod): HookCall<Sync, Any, K, Unit> =
+        SyncWorkflowHook { policy, got ->
+            invoked(hook.method, policy, *hook.arguments(got))
+        }
 }
