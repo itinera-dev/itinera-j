@@ -23,9 +23,10 @@ internal class StepClasses<M : Mode>(
 
     /** The step class [step] named [name], or `null` when the class has a mistake. */
     fun read(name: StepName, step: Class<*>): StepClass<M>? {
-        val buildable = problems.readable(step) && marked(step) && buildable(step)
-        val constructor = if (buildable) constructor(step) else null
-        val run = if (buildable) run(name, step) else null
+        val buildable = problems.readable(step) && marked(step) && buildable(step, problems)
+        val constructor = if (buildable) constructorOf(step, "a step", problems) else null
+        val run =
+            if (buildable) runOf(step, problems)?.takeIf { run -> checked(name, run) } else null
         val inputs = constructor?.let(requests::inputs)
         val asks = run?.let(requests::ofRun)
         return if (constructor != null && run != null)
@@ -48,28 +49,6 @@ internal class StepClasses<M : Mode>(
         val marked = step.isAnnotationPresent(Step::class.java)
         if (!marked) problems.misdeclared(step.name, "is not marked @Step")
         return marked
-    }
-
-    private fun buildable(step: Class<*>): Boolean {
-        val abstract = Modifier.isAbstract(step.modifiers)
-        if (abstract) problems.misdeclared(step.name, "cannot be built: it is abstract")
-        return !abstract
-    }
-
-    private fun constructor(step: Class<*>): Constructor<*>? {
-        val constructors = step.declaredConstructors.filterNot(Constructor<*>::isSynthetic)
-        if (constructors.size != 1)
-            problems.misdeclared(step.name, "has several constructors, and a step has one")
-        return constructors.singleOrNull()
-    }
-
-    private fun run(name: StepName, step: Class<*>): Method? {
-        val runs = step.methods.filter(::isRun)
-        if (runs.size != 1) {
-            val count = if (runs.isEmpty()) "no public method" else "several public methods"
-            problems.misdeclared(step.name, "has $count named run")
-        }
-        return runs.singleOrNull()?.takeIf { run -> checked(name, run) }
     }
 
     private fun checked(name: StepName, run: Method): Boolean {
@@ -106,10 +85,34 @@ internal constructor(
     public fun arguments(got: Got<StepKind<M>>): Array<Any?> = answers(asks, got)
 }
 
-private fun <M : Mode> answers(
-    requests: List<Request<StepKind<M>, *>>,
-    got: Got<StepKind<M>>,
-): Array<Any?> = requests.map { request -> got[request] }.toTypedArray()
+/** Whether [part], a step's or a rescue step's class, can be built, recording why not. */
+internal fun buildable(part: Class<*>, problems: Problems): Boolean {
+    val abstract = Modifier.isAbstract(part.modifiers)
+    if (abstract) problems.misdeclared(part.name, "cannot be built: it is abstract")
+    return !abstract
+}
+
+/** The one constructor of [part], which [what], such as `a step`, has, recording when not one. */
+internal fun constructorOf(part: Class<*>, what: String, problems: Problems): Constructor<*>? {
+    val constructors = part.declaredConstructors.filterNot(Constructor<*>::isSynthetic)
+    if (constructors.size != 1)
+        problems.misdeclared(part.name, "has several constructors, and $what has one")
+    return constructors.singleOrNull()
+}
+
+/** The one public method `run` of [part], recording when there is not one. */
+internal fun runOf(part: Class<*>, problems: Problems): Method? {
+    val runs = part.methods.filter(::isRun)
+    if (runs.size != 1) {
+        val count = if (runs.isEmpty()) "no public method" else "several public methods"
+        problems.misdeclared(part.name, "has $count named run")
+    }
+    return runs.singleOrNull()
+}
+
+/** The answers in [got] to [requests], in order, as the arguments of a call. */
+internal fun <K> answers(requests: List<Request<K, *>>, got: Got<K>): Array<Any?> =
+    requests.map { request -> got[request] }.toTypedArray()
 
 private fun isRun(method: Method): Boolean =
     method.name == "run" && !method.isBridge && !method.isSynthetic

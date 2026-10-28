@@ -308,6 +308,12 @@ public final class org/itineradev/itinera/engine/RequestedKt {
 	public static final fun requestOf (Lorg/itineradev/itinera/engine/Asked;Lorg/itineradev/itinera/engine/Answer;)Lorg/itineradev/itinera/request/Request;
 }
 
+public final class org/itineradev/itinera/engine/RescueClass {
+	public final fun arguments (Lorg/itineradev/itinera/request/Got;)[Ljava/lang/Object;
+	public final fun built (Lorg/itineradev/itinera/request/Got;)Ljava/lang/Object;
+	public final fun getRun ()Ljava/lang/reflect/Method;
+}
+
 public abstract interface class org/itineradev/itinera/engine/Running {
 	public abstract synthetic fun run (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
@@ -321,6 +327,7 @@ public final class org/itineradev/itinera/engine/StepClass {
 public abstract interface class org/itineradev/itinera/engine/StepFactories {
 	public abstract fun getHandles ()Ljava/util/Map;
 	public abstract fun getOtherModes ()Ljava/util/Map;
+	public abstract fun of (Lorg/itineradev/itinera/engine/RescueClass;)Lorg/itineradev/itinera/step/RescueFactory;
 	public abstract fun of (Lorg/itineradev/itinera/engine/StepClass;)Lorg/itineradev/itinera/step/StepFactory;
 }
 
@@ -2779,9 +2786,18 @@ public final class org/itineradev/itinera/step/Attempt$Companion {
 	public final fun of (I)Lorg/itineradev/itinera/step/Attempt;
 }
 
+public abstract interface annotation class org/itineradev/itinera/step/FromRescuedStep : java/lang/annotation/Annotation {
+	public abstract fun required ()Z
+	public abstract fun value ()Ljava/lang/String;
+}
+
 public abstract interface annotation class org/itineradev/itinera/step/Input : java/lang/annotation/Annotation {
 	public abstract fun required ()Z
 	public abstract fun value ()Ljava/lang/String;
+}
+
+public abstract interface class org/itineradev/itinera/step/ItineraRescueStep {
+	public fun succeed ()Lorg/itineradev/itinera/step/RescueOutcome;
 }
 
 public abstract interface class org/itineradev/itinera/step/ItineraStep {
@@ -2839,6 +2855,9 @@ public final class org/itineradev/itinera/step/RescueOutcome$Success : org/itine
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface annotation class org/itineradev/itinera/step/RescueStep : java/lang/annotation/Annotation {
 }
 
 public abstract interface annotation class org/itineradev/itinera/step/Step : java/lang/annotation/Annotation {
@@ -3332,6 +3351,7 @@ public abstract interface annotation class org/itineradev/itinera/workflow/WithS
 	public abstract fun name ()Ljava/lang/String;
 	public abstract fun noRetryOnAbnormalTermination ()Z
 	public abstract fun policies ()[Ljava/lang/Class;
+	public abstract fun rescue ()Ljava/lang/Class;
 	public abstract fun retryBudget ()I
 	public abstract fun step ()Ljava/lang/Class;
 }
