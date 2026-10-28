@@ -10,7 +10,7 @@ Status: started. Stage 1 made the default dispatchers stop at a reporter that th
 2. **`journey_aborted`** reaches every reporter the default dispatchers hold, whatever they throw. The dispatcher then throws the first failure, which the executor ignores, as point 6 says.
 3. **An `Error`** thrown by a reporter is never caught, by the dispatchers or by the executor.
 4. **Whatever the dispatcher.** The executor wraps each reporter it adds in a `Guard`, in the engine, which all the journey's guards share a record of failures with. When the guarded reporter throws, the guard records its error and rethrows it, and the engine aborts the journey with `reporter failed`, naming the step being run, if any; it does the same when a dispatcher swallows a guard's failure. From then on it passes nothing to that reporter, and only `journey_aborted` to the others, so points 3 and 4 hold even for a dispatcher that goes on delivering.
-5. **Cancellation.** The asynchronous dispatcher catches whatever a reporter throws on `journey_aborted`, a `CancellationException` included, since a reporter's own timeout throws one that point 6 must ignore. So stage 3's asynchronous executor checks whether its own coroutine was cancelled once `journey_aborted` is delivered, and abandons the journey if it was, as section 11 of the plan says.
+5. **Cancellation.** The asynchronous dispatcher catches whatever a reporter throws on `journey_aborted`, a `CancellationException` included, since a reporter's own timeout throws one that point 6 must ignore. So the asynchronous executor checks whether its own coroutine was cancelled once `journey_aborted` is delivered, and abandons the journey if it was, as section 11 of the plan says; `AsyncLocalExecutorTest` shows it.
 
 ## Dependencies
 

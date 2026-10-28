@@ -14,6 +14,12 @@ public final class org/itineradev/itinera/engine/AnyValueType : org/itineradev/i
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class org/itineradev/itinera/engine/Builders {
+	public static final field INSTANCE Lorg/itineradev/itinera/engine/Builders;
+	public final fun step (Ljava/lang/String;Lorg/itineradev/itinera/step/StepFactory;)Lorg/itineradev/itinera/workflow/StepBuilder;
+	public final fun workflow (Ljava/lang/String;Lorg/itineradev/itinera/workflow/Mode;)Lorg/itineradev/itinera/workflow/WorkflowBuilder;
+}
+
 public abstract interface class org/itineradev/itinera/engine/Capture {
 }
 

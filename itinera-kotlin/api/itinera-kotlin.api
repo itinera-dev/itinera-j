@@ -1,3 +1,28 @@
+public final class org/itineradev/itinera/executor/async/AsyncLocalExecutor {
+	public fun <init> ()V
+	public fun <init> (Lorg/itineradev/itinera/report/async/AsyncDispatcherFactory;)V
+	public synthetic fun <init> (Lorg/itineradev/itinera/report/async/AsyncDispatcherFactory;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final synthetic fun run (Lorg/itineradev/itinera/instance/WorkflowInstance;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/itineradev/itinera/instance/async/AsyncInstanceBuilder {
+	public static final field Companion Lorg/itineradev/itinera/instance/async/AsyncInstanceBuilder$Companion;
+	public final fun create ()Lorg/itineradev/itinera/instance/WorkflowInstance;
+	public final fun data (Ljava/lang/String;Ljava/lang/Object;)Lorg/itineradev/itinera/instance/async/AsyncInstanceBuilder;
+	public final fun initialData (Ljava/util/Map;)Lorg/itineradev/itinera/instance/async/AsyncInstanceBuilder;
+	public final fun reporter (Lorg/itineradev/itinera/report/async/AsyncReporter;)Lorg/itineradev/itinera/instance/async/AsyncInstanceBuilder;
+	public final fun reporterFor (Lorg/itineradev/itinera/report/async/AsyncReporterFactory;)Lorg/itineradev/itinera/instance/async/AsyncInstanceBuilder;
+	public final fun reportersGlobalMetadata (Ljava/lang/String;Ljava/lang/Object;)Lorg/itineradev/itinera/instance/async/AsyncInstanceBuilder;
+}
+
+public final class org/itineradev/itinera/instance/async/AsyncInstanceBuilder$Companion {
+	public final fun of (Lorg/itineradev/itinera/workflow/WorkflowDescriptor;Ljava/lang/Object;)Lorg/itineradev/itinera/instance/async/AsyncInstanceBuilder;
+}
+
+public final class org/itineradev/itinera/instance/async/AsyncInstanceBuilderKt {
+	public static final fun instance (Lorg/itineradev/itinera/workflow/WorkflowDescriptor;Ljava/lang/Object;)Lorg/itineradev/itinera/instance/async/AsyncInstanceBuilder;
+}
+
 public final class org/itineradev/itinera/report/async/AsyncDebugReporter : org/itineradev/itinera/report/async/AsyncReporter {
 	public synthetic fun report (Lorg/itineradev/itinera/event/Event;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
@@ -24,12 +49,34 @@ public abstract interface class org/itineradev/itinera/report/async/AsyncDispatc
 	public abstract synthetic fun create (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
-public abstract interface class org/itineradev/itinera/report/async/AsyncReporter {
+public abstract interface class org/itineradev/itinera/report/async/AsyncReporter : org/itineradev/itinera/report/ReporterOf {
 	public abstract synthetic fun report (Lorg/itineradev/itinera/event/Event;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public synthetic fun setGlobalMetadata (Ljava/lang/String;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
+public abstract interface class org/itineradev/itinera/report/async/AsyncReporterFactory {
+	public abstract fun create (Lorg/itineradev/itinera/journey/JourneyId;)Lorg/itineradev/itinera/report/async/AsyncReporter;
+}
+
+public abstract interface class org/itineradev/itinera/step/async/AsyncStepFactory : org/itineradev/itinera/step/StepFactory {
+	public abstract fun build ()Lorg/itineradev/itinera/step/async/AsyncStepRun;
+}
+
+public abstract interface class org/itineradev/itinera/step/async/AsyncStepRun {
+	public abstract synthetic fun run (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
 public final class org/itineradev/itinera/value/kotlin/TypeTokensKt {
 	public static final fun tokenOf (Lkotlin/reflect/KType;)Lorg/itineradev/itinera/value/TypeToken;
+}
+
+public final class org/itineradev/itinera/workflow/async/AsyncDescriptorsKt {
+	public static final fun asyncBuilder (Ljava/lang/String;)Lorg/itineradev/itinera/workflow/WorkflowBuilder;
+	public static final fun asyncDescriptorOf (Lkotlin/reflect/KClass;)Lorg/itineradev/itinera/workflow/WorkflowDescriptor;
+	public static final fun asyncStep (Ljava/lang/String;Lorg/itineradev/itinera/step/async/AsyncStepFactory;)Lorg/itineradev/itinera/workflow/StepBuilder;
+}
+
+public abstract interface class org/itineradev/itinera/workflow/async/ItineraAsyncWorkflow {
+	public fun instance ()Lorg/itineradev/itinera/instance/async/AsyncInstanceBuilder;
 }
 
