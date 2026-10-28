@@ -92,4 +92,8 @@ internal class Recorders(private val failures: Map<String, ReporterFailure>) {
 
     /** The reporters made under [name], in the order they were made. */
     fun made(name: String): List<ScenarioReporter> = made[name].orEmpty().toList()
+
+    /** Every reporter made, by name in the order each name was first made. */
+    val all: List<ScenarioReporter>
+        get() = made.values.flatten()
 }

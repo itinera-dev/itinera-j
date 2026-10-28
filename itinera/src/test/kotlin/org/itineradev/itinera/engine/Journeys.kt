@@ -15,6 +15,7 @@ import org.itineradev.itinera.report.DispatcherFactory
 import org.itineradev.itinera.report.Reporter
 import org.itineradev.itinera.request.Requests
 import org.itineradev.itinera.step.Outcome
+import org.itineradev.itinera.step.StepReporter
 import org.itineradev.itinera.step.SyncStepFactory
 import org.itineradev.itinera.step.SyncStepRun
 import org.itineradev.itinera.workflow.StepBuilder
@@ -50,6 +51,18 @@ object Journeys {
                 SyncStepRun { attempt(handle) }
             }
             .request(contributor)
+    }
+
+    /** A step that requests its step reporter, whose attempts play [attempts] in turn with it. */
+    fun reporting(name: String, vararg attempts: (StepReporter) -> Outcome): StepBuilder<Sync> {
+        val left = attempts.toMutableList()
+        val reporter = Requests.stepReporter()
+        return StepDescriptor.builder(name) { got ->
+                val handle = got[reporter]
+                val attempt = left.removeFirst()
+                SyncStepRun { attempt(handle) }
+            }
+            .request(reporter)
     }
 
     fun building(name: String, factory: SyncStepFactory): StepBuilder<Sync> =
