@@ -1,6 +1,5 @@
 package org.itineradev.itinera.workflow
 
-import org.itineradev.itinera.compiling.assertCompiles
 import org.itineradev.itinera.compiling.assertDoesNotCompile
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -15,7 +14,6 @@ private const val SHOP =
     class Shop
 
     val shop = WorkflowDescriptor.builder(Shop::class.java, "shop")
-    val succeeding = SyncStepRun { Outcome.success() }
 
     suspend fun wait() {}
     """
@@ -27,7 +25,6 @@ class BuilderTypesTest {
             "$SHOP val pack = StepDescriptor.builder(\"pack\") { null }",
             "Null cannot be a value of a non-null type 'SyncStepRun'",
         )
-        assertCompiles("$SHOP val pack = StepDescriptor.builder(\"pack\") { succeeding }")
     }
 
     @Test
@@ -36,14 +33,12 @@ class BuilderTypesTest {
             "$SHOP val run = SyncStepRun { null }",
             "Null cannot be a value of a non-null type 'Outcome'",
         )
-        assertCompiles("$SHOP val run = SyncStepRun { Outcome.success() }")
     }
 
     @ParameterizedTest
     @FieldSource("notStrings")
     fun `an ID generator gives the journey ID as a string`(generated: String, error: String) {
         assertDoesNotCompile("$SHOP val ids = shop.idGenerator { _, _ -> $generated }", error)
-        assertCompiles("$SHOP val ids = shop.idGenerator { _, _ -> \"order-1\" }")
     }
 
     @Test
@@ -52,7 +47,6 @@ class BuilderTypesTest {
             "$SHOP val ids = shop.idGenerator { _, _ -> wait(); \"order-1\" }",
             "can only be called from a coroutine",
         )
-        assertCompiles("$SHOP val ids = shop.idGenerator { _, _ -> \"order-1\" }")
     }
 
     @ParameterizedTest
@@ -62,10 +56,6 @@ class BuilderTypesTest {
             "$SHOP fun add(shop: WorkflowBuilder<Shop, $workflow>, step: StepDescriptor<$step>) = " +
                 "shop.step(step)",
             "'StepDescriptor<$step>', but 'StepDescriptor<$workflow>' was expected",
-        )
-        assertCompiles(
-            "$SHOP fun add(shop: WorkflowBuilder<Shop, $workflow>, " +
-                "step: StepDescriptor<$workflow>) = shop.step(step)"
         )
     }
 

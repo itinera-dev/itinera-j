@@ -58,7 +58,7 @@ Every one of these is a required check in CI, each one Gradle task:
 - `./gradlew detekt`: detekt on its default rules with the changes in `config/detekt/detekt.yml`;
 - `./gradlew assemble`: compiles everything, with every warning an error;
 - `./gradlew test`: JUnit Jupiter, on JDK 25 unless `-Pitinera.test-jdk=N` names another; CI runs it on JDK 17, 21 and 25 on Linux, and on JDK 25 on Windows and macOS;
-- `./gradlew compileFailTest`: the compile-fail tests, snippets that the types refuse, each beside a twin that compiles;
+- `./gradlew compileFailTest`: the compile-fail tests, snippets that the types refuse, each beside a twin that compiles, run before pushing only when a change touches a public signature, a type that refuses something at compile time, the suites themselves or what compiles them;
 - `./gradlew checkKotlinAbi`: compares each artifact's public API with its dump under `api/`, which `./gradlew updateKotlinAbi` writes, so every change to what an artifact exposes shows in a pull request;
 - `./gradlew dokkaGenerate`: the API reference, with Dokka, every public item documented and warnings as errors;
 - `./gradlew publishAllPublicationsToPackageRepository`: everything Maven Central would receive, written to `build/package` instead: jars, sources and javadoc jars, POMs and Gradle module metadata;
@@ -68,7 +68,7 @@ Every one of these is a required check in CI, each one Gradle task:
 
 `./gradlew check dokkaGenerate publishAllPublicationsToPackageRepository` runs all of them, the tests on JDK 25. CI also runs `advisories`, [OSV-Scanner](https://google.github.io/osv-scanner/) over the lock files and the verification metadata through its GitHub action, `Kotlin conformance` and `Java conformance`. Each week, CI also runs the tests on the newest Kotlin, pre-releases included, and on the newest JDK.
 
-The compile-fail tests are a test suite of their own, in `src/compileFailTest` of `itinera`, `itinera-kotlin` and `itinera-java`, so the compiler they need stays off the class path of the other tests, which run on the oldest Kotlin standard library itinera supports. In Kotlin, they compile snippets with [kctfork](https://github.com/ZacSweers/kotlin-compile-testing), at the Kotlin version that builds itinera, through the helpers in `src/compileFailTest/kotlin/org/itineradev/itinera/compiling` of `itinera` and `itinera-kotlin`; in Java, `itinera-java`'s suite compiles them with `javax.tools`, with `itinera-kotlin` on the class path. Each expects the message saying why the Kotlin compiler or javac refused the snippet.
+The compile-fail tests are a test suite of their own, in `src/compileFailTest` of `itinera`, `itinera-kotlin` and `itinera-java`, so the compiler they need stays off the class path of the other tests, which run on the oldest Kotlin standard library itinera supports. In Kotlin, they compile snippets with [kctfork](https://github.com/ZacSweers/kotlin-compile-testing), at the Kotlin version that builds itinera, through the helpers in `src/compileFailTest/kotlin/org/itineradev/itinera/compiling` of `itinera` and `itinera-kotlin`; in Java, `itinera-java`'s suite compiles them with `javax.tools`, with `itinera-kotlin` on the class path. Each expects the message saying why the Kotlin compiler or javac refused the snippet. The twins are ordinary sources of the suite, in a file beside the test named with `Twins` for `Test`, such as `PolicyTypesTwins.kt`, so Gradle compiles them once with the suite, and only the refused snippets are compiled while the tests run.
 
 ## Dependencies
 

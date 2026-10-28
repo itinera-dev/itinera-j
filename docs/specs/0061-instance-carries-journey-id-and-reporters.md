@@ -28,7 +28,7 @@ None.
 - `itinera/src/test/kotlin/org/itineradev/itinera/instance/InstanceBuilderTest.kt`: what the instance holds, and that it is claimed once.
 - `itinera/src/test/java/org/itineradev/itinera/executor/JavaExecutorTest.java`: an ID generator or a reporter factory returning `null` from Java.
 - `itinera-kotlin/src/test/kotlin/org/itineradev/itinera/instance/async/AsyncInstanceBuilderTest.kt`: what an asynchronous instance holds, and a reporter factory given the journey ID.
-- `itinera-kotlin/src/compileFailTest/kotlin/org/itineradev/itinera/instance/async/InstanceModeTypesTest.kt`: compile-fail tests, each beside a twin that compiles: each instance builder takes only the reporters and reporter factories of its own mode.
+- `itinera-kotlin/src/compileFailTest/kotlin/org/itineradev/itinera/instance/async/InstanceModeTypesTest.kt`: compile-fail tests, each beside a twin that compiles in the matching `Twins` file: each instance builder takes only the reporters and reporter factories of its own mode.
 
 ## Done when
 
