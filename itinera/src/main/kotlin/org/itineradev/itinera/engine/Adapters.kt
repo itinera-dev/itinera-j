@@ -3,7 +3,6 @@ package org.itineradev.itinera.engine
 import org.itineradev.itinera.step.StepName
 import org.itineradev.itinera.workflow.AdapterName
 import org.itineradev.itinera.workflow.InputAdapterDescriptor
-import org.itineradev.itinera.workflow.StepDescriptor
 import org.itineradev.itinera.workflow.Violation
 import org.itineradev.itinera.workflow.WorkflowDescriptor
 
@@ -13,7 +12,7 @@ import org.itineradev.itinera.workflow.WorkflowDescriptor
  * attached to a step it does not have, once.
  */
 internal fun adapterViolations(descriptor: WorkflowDescriptor<*, *>): List<Violation> {
-    val steps = descriptor.steps.map(StepDescriptor<*>::name).toSet()
+    val steps = stepNamesOf(descriptor).toSet()
     val (known, unknown) =
         descriptor.inputAdapters.flatMap(::attachments).partition { attachment ->
             isAmong(attachment, steps)

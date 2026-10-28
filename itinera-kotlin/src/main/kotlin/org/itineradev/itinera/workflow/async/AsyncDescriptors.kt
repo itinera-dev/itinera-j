@@ -34,12 +34,14 @@ import org.itineradev.itinera.service.async.AsyncProvider
 import org.itineradev.itinera.service.async.AsyncProviderReporter
 import org.itineradev.itinera.step.StepFactory
 import org.itineradev.itinera.step.StepReporter
+import org.itineradev.itinera.step.async.AsyncRescueFactory
 import org.itineradev.itinera.step.async.AsyncStepFactory
 import org.itineradev.itinera.step.async.AsyncStepReporter
 import org.itineradev.itinera.step.async.AsyncStepRun
 import org.itineradev.itinera.workflow.Async
 import org.itineradev.itinera.workflow.InputAdapterBuilder
 import org.itineradev.itinera.workflow.InputAdapterCall
+import org.itineradev.itinera.workflow.RescueStepBuilder
 import org.itineradev.itinera.workflow.StepBuilder
 import org.itineradev.itinera.workflow.Violations
 import org.itineradev.itinera.workflow.WorkflowBuilder
@@ -66,6 +68,15 @@ public fun <W> asyncBuilder(name: String): WorkflowBuilder<W, Async> =
 @ExperimentalItineraApi
 public fun asyncStep(name: String, factory: AsyncStepFactory): StepBuilder<Async> =
     Builders.step(name, factory)
+
+/**
+ * Starts the descriptor of an asynchronous rescue step, which the factory builds.
+ *
+ * @sample org.itineradev.itinera.workflow.async.samples.asyncRescues
+ */
+@ExperimentalItineraApi
+public fun asyncRescueStep(factory: AsyncRescueFactory): RescueStepBuilder<Async> =
+    Builders.rescueStep(factory)
 
 /**
  * Starts the descriptor of an asynchronous input adapter named [name], attached to the step named

@@ -22,6 +22,16 @@
           "file": "itinera-java/src/compileFailTest/java/org/itineradev/itinera/service/JavaProviderTypesTest.java"
         }
       }
+    ],
+    "rescue-skip": [
+      {
+        "feature": "cases/tier-1/0003-rescue-steps/failing-rescue.feature",
+        "scenario": "A rescue step that skips aborts the journey",
+        "proof": {
+          "test": "aJavaRescueStepNeverSkips",
+          "file": "itinera-java/src/compileFailTest/java/org/itineradev/itinera/workflow/JavaRescueTypesTest.java"
+        }
+      }
     ]
   }
 }

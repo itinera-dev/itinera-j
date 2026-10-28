@@ -4,12 +4,14 @@ import org.itineradev.itinera.request.AttemptProviderKind
 import org.itineradev.itinera.request.JourneyProviderKind
 import org.itineradev.itinera.service.ProviderBuilder
 import org.itineradev.itinera.service.ProviderCall
+import org.itineradev.itinera.step.RescueFactory
 import org.itineradev.itinera.step.StepFactory
 import org.itineradev.itinera.step.StepName
 import org.itineradev.itinera.workflow.AdapterName
 import org.itineradev.itinera.workflow.InputAdapterBuilder
 import org.itineradev.itinera.workflow.InputAdapterCall
 import org.itineradev.itinera.workflow.Mode
+import org.itineradev.itinera.workflow.RescueStepBuilder
 import org.itineradev.itinera.workflow.StepBuilder
 import org.itineradev.itinera.workflow.WorkflowBuilder
 import org.itineradev.itinera.workflow.WorkflowName
@@ -27,6 +29,10 @@ public object Builders {
      */
     public fun <M : Mode> step(name: String, factory: StepFactory<M>): StepBuilder<M> =
         StepBuilder(StepName.of(name), factory)
+
+    /** Starts the descriptor of a rescue step of [factory]'s mode. */
+    public fun <M : Mode> rescueStep(factory: RescueFactory<M>): RescueStepBuilder<M> =
+        RescueStepBuilder(factory)
 
     /**
      * Starts the descriptor of an input adapter that [call] calls in its mode.
