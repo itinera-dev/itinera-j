@@ -36,7 +36,7 @@ internal fun localJourneys(model: Model, recorders: Recorders, witness: Witness)
     val builder = builder<Scenario>(workflow.name)
     for (step in workflow.steps) builder.step(stepOf(step, model, witness))
     for (adapter in workflow.adapters) builder.inputAdapter(adapterOf(adapter))
-    for (provider in workflow.providers) builder.provider(providerOf(provider))
+    for (provider in workflow.providers) builder.provider(providerOf(provider, witness))
     for (name in workflow.reporters.orEmpty()) {
         builder.reporter { recorders.make(name) }
     }
@@ -52,10 +52,11 @@ private fun stepOf(name: String, model: Model, witness: Witness): StepDescriptor
             "Kotlin hands no asynchronous step to LocalExecutor: its types refuse it"
         )
     }
+    val scripted = Scripted(script)
     val what = notRunYetIn(script)
-    val factory = if (what == null) witness.watching(name, mockOf(script)) else notRunYet(what)
-    val builder = StepDescriptor.builder(name, factory).scriptedBy(script)
-    script.services.map(::requestOf).forEach(builder::request)
+    val factory =
+        if (what == null) witness.watching(name, mockOf(script), scripted) else notRunYet(what)
+    val builder = scripted.declaredOn(StepDescriptor.builder(name, factory).scriptedBy(script))
     if (script.hasRescueStep) builder.rescue(rescueOf(model.step("${name}_rescue")))
     return builder.build()
 }
@@ -74,34 +75,59 @@ private fun adapterOf(adapter: AdapterModel): InputAdapterDescriptor<Scenario, S
             "Kotlin hands no asynchronous input adapter to LocalExecutor: its types refuse it"
         )
     }
+    val adapting = Adapting(adapter)
     val builder =
-        InputAdapterDescriptor.builder<Scenario>(adapter.name, adapter.steps.first()) { _, _ ->
-            throw NotRunYet("input adapters")
+        InputAdapterDescriptor.builder<Scenario>(adapter.name, adapter.steps.first()) { _, got ->
+            adapting.supplied(got)
         }
     adapter.steps.drop(1).forEach(builder::step)
-    return builder.build()
+    return adapting.declaredOn(builder).build()
 }
 
-private fun providerOf(provider: ProviderModel): ProviderDescriptor<Scenario, Sync> =
-    providerOf(provider, classOf(provider.type))
+private fun providerOf(
+    provider: ProviderModel,
+    witness: Witness,
+): ProviderDescriptor<Scenario, Sync> {
+    if (provider.isAsynchronous) {
+        throw ModelException(
+            "Kotlin hands no asynchronous service provider to LocalExecutor: its types refuse it"
+        )
+    }
+    return providerOf(provider, witness, classOf(provider.type))
+}
 
 private fun <T : Any> providerOf(
     provider: ProviderModel,
+    witness: Witness,
     type: Class<T>,
 ): ProviderDescriptor<Scenario, Sync> =
     when (provider.scope) {
-        ProviderScope.JOURNEY ->
-            ProviderDescriptor.builder<Scenario, T>(provider.name, provider.key, type) { _, _ ->
-                    throw NotRunYet("service providers")
-                }
+        ProviderScope.JOURNEY -> {
+            val providing = journeyProviding<Sync>(provider, witness)
+            providing
+                .declaredOn(
+                    ProviderDescriptor.builder<Scenario, T>(provider.name, provider.key, type) {
+                        _,
+                        got ->
+                        providing.provided(got, type)
+                    }
+                )
                 .servingOnly(provider)
                 .build()
-        ProviderScope.ATTEMPT ->
-            ProviderDescriptor.perAttempt<Scenario, T>(provider.name, provider.key, type) { _, _ ->
-                    throw NotRunYet("service providers")
-                }
+        }
+        ProviderScope.ATTEMPT -> {
+            val providing = attemptProviding<Sync>(provider, witness)
+            providing
+                .declaredOn(
+                    ProviderDescriptor.perAttempt<Scenario, T>(provider.name, provider.key, type) {
+                        _,
+                        got ->
+                        providing.provided(got, type)
+                    }
+                )
                 .servingOnly(provider)
                 .build()
+        }
     }
 
 private class LocalJourneys(

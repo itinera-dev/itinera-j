@@ -18,6 +18,7 @@ import org.itineradev.itinera.conformance.trace.Matching;
 import org.itineradev.itinera.conformance.trace.Table;
 import org.itineradev.itinera.conformance.trace.Writing;
 import org.itineradev.itinera.event.Event;
+import org.itineradev.itinera.event.JourneyAborted;
 import org.itineradev.itinera.event.JourneyStarted;
 
 /**
@@ -75,6 +76,17 @@ public final class EventSentences {
     holdsOfStream(events.isEmpty(), "no event", events);
   }
 
+  @Then("journey_aborted names no adapter")
+  public void abortedNamesNoAdapter() {
+    var events = world.stream();
+    var aborted =
+        events.stream().filter(JourneyAborted.class::isInstance).map(Writing::lineOf).toList();
+    holdsOfStream(
+        !aborted.isEmpty() && aborted.stream().noneMatch(EventSentences::namesAnAdapter),
+        "journey_aborted naming no adapter",
+        events);
+  }
+
   @Then("the last event is {string}")
   public void lastEvent(String event) {
     var events = world.stream();
@@ -116,6 +128,10 @@ public final class EventSentences {
 
   private static boolean inSequence(List<Event> events, int index) {
     return events.get(index - 1).getSequence() < events.get(index).getSequence();
+  }
+
+  private static boolean namesAnAdapter(Line line) {
+    return line.cells().containsKey("adapter");
   }
 
   /** Whether {@code line} carries {@code message} in a cell or in what no column shows. */

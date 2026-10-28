@@ -52,12 +52,6 @@ public final class Scripts {
    * checked, with each such part a call that throws {@link NotRunYet}, which no journey reaches.
    */
   public static String notRunYetIn(WorkflowModel model) {
-    if (!model.adapters().isEmpty()) {
-      return "input adapters";
-    }
-    if (!model.providers().isEmpty()) {
-      return "service providers";
-    }
     return model.scripts().values().stream()
         .map(Scripts::notRunYetIn)
         .filter(Objects::nonNull)
@@ -67,12 +61,6 @@ public final class Scripts {
 
   /** What {@code script} asks for that the runner cannot run yet, or {@code null} when it can. */
   static String notRunYetIn(StepScript script) {
-    if (!script.inputs().isEmpty()) {
-      return "inputs";
-    }
-    if (!script.services().isEmpty()) {
-      return "services";
-    }
     if (!script.contributions().isEmpty()) {
       return "contributions";
     }

@@ -1,0 +1,54 @@
+package org.itineradev.itinera.conformance.trace
+
+import org.itineradev.itinera.conformance.run.writtenImplementation
+import org.itineradev.itinera.event.AdapterSource
+import org.itineradev.itinera.event.ByWorkflowHook
+import org.itineradev.itinera.event.JourneyAborted
+import org.itineradev.itinera.event.OptionalInputAbsent
+import org.itineradev.itinera.event.ProviderSource
+import org.itineradev.itinera.event.RequestSource
+import org.itineradev.itinera.event.ServiceProvided
+import org.itineradev.itinera.event.StepHookSource
+import org.itineradev.itinera.event.StepSource
+
+/** A column of an event table and what an event writes in it. */
+internal typealias Cell = Pair<String, Any?>
+
+/** The cells of [event]: its code, its step, its error's message and what its abort names. */
+internal fun cellsOf(event: JourneyAborted): List<Cell> =
+    listOf(
+        "code" to event.abort.reason,
+        "step" to event.abort.step,
+        "error" to event.abort.errorMessage,
+    ) + cellsOf(event.abort)
+
+/** The cells of [event], whose implementation is written as the cases name it. */
+internal fun cellsOf(event: ServiceProvided): List<Cell> =
+    listOf(
+        "step" to event.step,
+        "attempt" to event.attempt,
+        "key" to event.key,
+        "provider" to event.provider,
+        "implementation" to writtenImplementation(event.implementation),
+    )
+
+/** The cells of [event]: the key and who requested it. */
+internal fun cellsOf(event: OptionalInputAbsent): List<Cell> =
+    listOf("key" to event.key) + cellsOf(event.requester)
+
+private fun cellsOf(source: RequestSource): List<Cell> =
+    when (source) {
+        is StepSource -> listOf("step" to source.step, "attempt" to source.attempt)
+        is AdapterSource ->
+            listOf("step" to source.step, "attempt" to source.attempt, "adapter" to source.adapter)
+        is ProviderSource ->
+            listOf(
+                "step" to source.step,
+                "attempt" to source.attempt,
+                "provider" to source.provider,
+            )
+        is StepHookSource ->
+            listOf("step" to source.step, "attempt" to source.attempt) +
+                hookCells(source.policy, source.hook)
+        is ByWorkflowHook -> hookCells(source.policy, source.hook)
+    }

@@ -7,6 +7,7 @@ import io.cucumber.java.en.Then;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import org.itineradev.itinera.conformance.World;
+import org.itineradev.itinera.conformance.run.Built;
 import org.itineradev.itinera.conformance.trace.Status;
 
 /** The sentences that read how each step ended, how often it was built, and whether any ran. */
@@ -36,7 +37,7 @@ public final class StepSentences {
 
   @Then("step {string} was built {int} times, each time as a new instance")
   public void wasBuilt(String step, int times) {
-    var built = world.witness().built(step);
+    var built = world.witness().built(step).stream().map(Built::step).toList();
     var distinct = Collections.newSetFromMap(new IdentityHashMap<Object, Boolean>());
     distinct.addAll(built);
     holds(

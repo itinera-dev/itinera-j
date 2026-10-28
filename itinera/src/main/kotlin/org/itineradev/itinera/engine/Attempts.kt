@@ -16,8 +16,15 @@ import org.itineradev.itinera.step.Outcome
 import org.itineradev.itinera.workflow.Mode
 import org.itineradev.itinera.workflow.StepDescriptor
 
-/** Runs the attempts of each step of [journey], building each through [parts]. */
-internal class Attempts<M : Mode>(private val journey: Journey, private val parts: Parts<M>) {
+/**
+ * Runs the attempts of each step of [journey], building each through [parts] from what [building]
+ * resolves.
+ */
+internal class Attempts<M : Mode>(
+    private val journey: Journey,
+    private val parts: Parts<M>,
+    private val building: Building<M>,
+) {
     /**
      * Runs [step] until an attempt succeeds, or until the step is given up, which this returns as
      * the journey's failure.
@@ -32,7 +39,7 @@ internal class Attempts<M : Mode>(private val journey: Journey, private val part
             journey.emit {
                 AttemptStarted(sequence, timestamp, journeyId, workflow, step.name, attempt)
             }
-            val error = terminated(step) ?: return succeeded(step, attempt)
+            val error = terminated(step, attempt) ?: return succeeded(step, attempt)
             val message = messageOf(error)
             journey.emit {
                 StepAbnormalTermination(
@@ -96,8 +103,8 @@ internal class Attempts<M : Mode>(private val journey: Journey, private val part
      * Builds and runs one attempt, and gives the error that ended it in an abnormal termination, or
      * `null` when it succeeded.
      */
-    private suspend fun terminated(step: StepDescriptor<M>): Throwable? {
-        val running = built(step)
+    private suspend fun terminated(step: StepDescriptor<M>, attempt: Attempt): Throwable? {
+        val running = built(step, attempt)
         val outcome =
             parts
                 .calling { running.run() }
@@ -110,11 +117,13 @@ internal class Attempts<M : Mode>(private val journey: Journey, private val part
         }
     }
 
-    private suspend fun built(step: StepDescriptor<M>): Running =
-        parts
-            .calling { parts.build(step.factory, Unresolved()) }
+    private suspend fun built(step: StepDescriptor<M>, attempt: Attempt): Running {
+        val got = building.got(step, attempt)
+        return parts
+            .calling { parts.build(step.factory, got) }
             .getOrElse { thrown -> throw notBuilt(step, thrown) }
             ?: throw unexpected(step, "the step's factory returned null, not a step")
+    }
 
     private fun notBuilt(step: StepDescriptor<M>, thrown: Throwable): JourneyAbortSignal =
         journey.abort(Abort(StepCouldNotBeBuilt(step.name, ByStep, messageOf(thrown)), thrown))

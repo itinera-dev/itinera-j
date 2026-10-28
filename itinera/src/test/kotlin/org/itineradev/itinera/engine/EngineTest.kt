@@ -169,19 +169,19 @@ class EngineTest {
     }
 
     @Test
-    fun `a step whose factory reads a request cannot be built until itinera resolves requests`() {
+    fun `a step whose factory reads a request it did not declare cannot be built`() {
         val note = Requests.input("note", TypeToken.of(String::class.java))
         val ship =
             building("ship") { got ->
                 check(got[note].isNotEmpty())
                 SyncStepRun { Outcome.success() }
             }
-        val result = ran(journeyOf(ship).create())
+        val result = ran(journeyOf(ship).data("note", "fragile").create())
         assertEquals(
             StepCouldNotBeBuilt(
                 StepName.of("ship"),
                 ByStep,
-                "This version of itinera does not resolve input note: String yet.",
+                "Nothing answers input note: String, which was not declared.",
             ),
             result.abort?.details,
         )

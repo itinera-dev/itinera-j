@@ -3,6 +3,7 @@
 package org.itineradev.itinera.executor.async
 
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.yield
 import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.returned
 import org.itineradev.itinera.executor.Refusal
@@ -16,11 +17,15 @@ import org.itineradev.itinera.policy.PolicyFactory
 import org.itineradev.itinera.policy.StepPolicyDescriptor
 import org.itineradev.itinera.policy.SyncHook
 import org.itineradev.itinera.policy.async.asyncStepPolicy
+import org.itineradev.itinera.request.Requests
 import org.itineradev.itinera.service.Provided
 import org.itineradev.itinera.service.ProviderDescriptor
 import org.itineradev.itinera.service.async.asyncProvider
+import org.itineradev.itinera.step.Outcome
 import org.itineradev.itinera.step.RescueOutcome
 import org.itineradev.itinera.step.SyncRescueRun
+import org.itineradev.itinera.step.async.AsyncStepRun
+import org.itineradev.itinera.value.TypeToken
 import org.itineradev.itinera.workflow.Async
 import org.itineradev.itinera.workflow.InputAdapterDescriptor
 import org.itineradev.itinera.workflow.RescueStepDescriptor
@@ -28,7 +33,9 @@ import org.itineradev.itinera.workflow.Supplied
 import org.itineradev.itinera.workflow.Violation
 import org.itineradev.itinera.workflow.async.asyncBuilder
 import org.itineradev.itinera.workflow.async.asyncInputAdapter
+import org.itineradev.itinera.workflow.async.asyncStep
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class AsyncPartsTest {
@@ -146,8 +153,49 @@ class AsyncPartsTest {
             )
         }
 
+    @Test
+    fun `an asynchronous input adapter and service provider are awaited while a step is built`() =
+        runBlocking<Unit> {
+            val order = Requests.input("order", TypeToken.of(String::class.java))
+            val labels = Requests.service("labels", String::class.java)
+            val built = mutableListOf<String>()
+            val ship =
+                asyncStep("ship") { got ->
+                        built += "${got[order]} ${got[labels]}"
+                        AsyncStepRun { Outcome.success() }
+                    }
+                    .request(order)
+                    .request(labels)
+            val instance =
+                asyncBuilder<Shop>("shop")
+                    .step(ship.build())
+                    .inputAdapter(
+                        asyncInputAdapter<Shop>("pricing", "ship") { _, _ ->
+                                Supplied.Value(later("42"))
+                            }
+                            .build()
+                    )
+                    .provider(
+                        asyncProvider<Shop, String>("printer", "labels", String::class.java) { _, _
+                                ->
+                                Provided.Instance(later("label"))
+                            }
+                            .build()
+                    )
+                    .build()
+                    .instance(Shop())
+                    .create()
+            assertTrue(AsyncLocalExecutor().run(instance).isSucceeded)
+            assertEquals(listOf("42 label"), built)
+        }
+
     private fun notOfTheMode(adapter: String): Violation =
         Violation.ModeNotAccepted("input adapter $adapter", Async)
+
+    private suspend fun later(value: String): String {
+        yield()
+        return value
+    }
 
     private suspend fun refused(run: suspend () -> Unit): Refused =
         try {
