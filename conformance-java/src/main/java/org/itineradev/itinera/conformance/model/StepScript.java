@@ -8,6 +8,7 @@ import java.util.stream.IntStream;
 /** What a scenario scripts for one step, a rescue step included, filled in as it is written. */
 public final class StepScript {
   private final List<Input> inputs = new ArrayList<>();
+  private final List<RequestedService> services = new ArrayList<>();
   private final List<Map.Entry<String, Object>> contributions = new ArrayList<>();
   private List<ScriptedAttempt> attempts;
   private Integer retries;
@@ -20,6 +21,11 @@ public final class StepScript {
   /** The inputs it requests, in the order written. */
   public List<Input> inputs() {
     return inputs;
+  }
+
+  /** The services it requests, in the order written. */
+  public List<RequestedService> services() {
+    return services;
   }
 
   /** What it contributes, in the order written. */

@@ -5,15 +5,18 @@ import org.itineradev.itinera.conformance.model.ModelException
 import org.itineradev.itinera.conformance.run.Admission
 import org.itineradev.itinera.conformance.run.Ended
 import org.itineradev.itinera.conformance.run.Journey
+import org.itineradev.itinera.conformance.run.NotRunYet
 import org.itineradev.itinera.conformance.run.Recorders
 import org.itineradev.itinera.conformance.run.Unmet
 import org.itineradev.itinera.conformance.run.Witness
 import org.itineradev.itinera.conformance.run.admittedBy
 import org.itineradev.itinera.conformance.run.asyncJourneys
 import org.itineradev.itinera.conformance.run.localJourneys
+import org.itineradev.itinera.conformance.run.notRunYetIn
 import org.itineradev.itinera.conformance.run.streamOf
 import org.itineradev.itinera.event.Event
 import org.itineradev.itinera.journey.JourneyResult
+import org.itineradev.itinera.workflow.ListedStep
 
 /**
  * What one scenario's sentences share: the column it runs in, the model its Given sentences fill,
@@ -52,11 +55,33 @@ internal class World {
         admitted = admission
     }
 
-    /** Runs [times] journeys of the workflow on one executor, once it is admitted. */
+    /**
+     * Runs [times] journeys of the workflow on one executor, once it is admitted.
+     *
+     * @throws NotRunYet when the workflow holds what the runner cannot run yet.
+     */
     fun run(times: Int) {
         val admission = admit()
-        if (admission is Admission.Admitted) journeys = admission.journeys.run(times)
+        if (admission is Admission.Admitted) {
+            notRunYetIn(model.workflow)?.let { what -> throw NotRunYet(what) }
+            journeys = admission.journeys.run(times)
+        }
     }
+
+    /**
+     * The listing of the workflow, once admitted.
+     *
+     * @throws Unmet when the builder refused the workflow.
+     */
+    val listing: List<ListedStep>
+        get() =
+            when (val admission = admit()) {
+                is Admission.Admitted -> admission.journeys.listing
+                is Admission.Refused ->
+                    throw Unmet(
+                        "expected a listing; the workflow was refused: ${admission.violations.message}"
+                    )
+            }
 
     /** What building the workflow gave, once a When sentence built it. */
     val admission: Admission

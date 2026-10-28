@@ -76,6 +76,12 @@ class RunTest {
     }
 
     @Test
+    fun `every scenario that declares adapters, services and providers or lists passes in both columns`() {
+        assertTrue(runs("@admission and not @not-run-yet"))
+        assertEquals(8, scenarios().size)
+    }
+
+    @Test
     fun `a journey that did not do what the case expects fails as unmet`() {
         assertFalse(runs("@unmet"))
         assertTrue(errors().all { "Unmet" in it }, errors().toString())
@@ -84,8 +90,14 @@ class RunTest {
     @Test
     fun `a script the runner cannot run yet fails saying so`() {
         assertFalse(runs("@not-run-yet"))
-        assertTrue(
-            errors().all { "cannot run an attempt that fails or is skipped yet" in it },
+        assertEquals(
+            listOf(
+                "the runner cannot run input adapters yet",
+                "the runner cannot run input adapters yet",
+                "the runner cannot run an attempt that fails or is skipped yet",
+                "the runner cannot run an attempt that fails or is skipped yet",
+            ),
+            errors().map(::notRunYet),
             errors().toString(),
         )
     }
@@ -112,6 +124,9 @@ private fun scenariosOf(feature: JsonNode): List<String> =
 
 private fun nameAndColumn(scenario: JsonNode): String =
     "${scenario.path("name").asString()} ${scenario.path("tags").last().path("name").asString()}"
+
+/** What the runner said it cannot run yet, from an error's first line. */
+private fun notRunYet(error: String): String = error.lineSequence().first().substringAfter(": ")
 
 /** The error of each failed step of a feature in the report. */
 private fun errorsOf(feature: JsonNode): List<String> =

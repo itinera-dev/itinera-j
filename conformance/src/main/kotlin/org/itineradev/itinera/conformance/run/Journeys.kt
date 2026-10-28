@@ -3,6 +3,7 @@ package org.itineradev.itinera.conformance.run
 import org.itineradev.itinera.executor.Refusal
 import org.itineradev.itinera.instance.WorkflowInstance
 import org.itineradev.itinera.journey.JourneyResult
+import org.itineradev.itinera.workflow.ListedStep
 import org.itineradev.itinera.workflow.Violations
 
 /** What building the scenario's workflow gave: journeys to run, or the violations refusing it. */
@@ -14,8 +15,11 @@ internal sealed interface Admission {
     data class Refused(val violations: Violations) : Admission
 }
 
-/** How a column runs journeys of the admitted workflow. */
-internal fun interface Journeys {
+/** How a column runs journeys of the admitted workflow, and its listing. */
+internal interface Journeys {
+    /** The admitted workflow's listing. */
+    val listing: List<ListedStep>
+
     /** Runs [times] journeys, one after another, on one executor, each with a new instance. */
     fun run(times: Int): List<Journey>
 }
