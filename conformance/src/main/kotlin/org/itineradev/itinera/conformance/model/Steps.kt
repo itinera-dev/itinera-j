@@ -116,6 +116,11 @@ internal class WorkflowModel(val name: String, val steps: List<String>) {
         providers += ProviderModel(name, key, type, scope)
     }
 
+    /** The one input adapter the workflow declares under [name]. */
+    fun adapter(name: String): AdapterModel =
+        adapters.filter { adapter -> isNamed(adapter, name) }.singleOrNull()
+            ?: throw ModelException("the workflow declares no adapter, or several, named \"$name\"")
+
     /** The one provider the workflow declares under [name]. */
     fun provider(name: String): ProviderModel =
         providers.filter { provider -> isNamed(provider, name) }.singleOrNull()
@@ -123,6 +128,8 @@ internal class WorkflowModel(val name: String, val steps: List<String>) {
                 "the workflow declares no provider, or several, named \"$name\""
             )
 }
+
+private fun isNamed(adapter: AdapterModel, name: String): Boolean = adapter.name == name
 
 private fun isNamed(provider: ProviderModel, name: String): Boolean = provider.name == name
 

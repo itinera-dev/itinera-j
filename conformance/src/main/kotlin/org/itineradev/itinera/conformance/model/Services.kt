@@ -52,4 +52,7 @@ internal class ProviderModel(
 }
 
 /** An input adapter the workflow declares, attached to its steps, each as often as named. */
-internal data class AdapterModel(val name: String, val steps: List<String>)
+internal class AdapterModel(val name: String, val steps: List<String>) {
+    /** Whether the adapter runs asynchronously. */
+    var isAsynchronous = false
+}
