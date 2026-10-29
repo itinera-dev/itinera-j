@@ -122,7 +122,7 @@ internal enum class JourneyEmitted(val written: String) {
 
         /** The event a case names. */
         fun named(written: String): JourneyEmitted =
-            byName[written] ?: throw ModelException("a hook cannot emit $written")
+            byName[written] ?: throw ModelException("a hook or a provider cannot emit $written")
     }
 }
 

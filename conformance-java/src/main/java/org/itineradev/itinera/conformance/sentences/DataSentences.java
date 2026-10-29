@@ -53,6 +53,11 @@ public final class DataSentences {
     model().generateIdsWith(new IdGenerator.Returns(id));
   }
 
+  @Given("the workflow instance is created with a non-value as global metadata {string}")
+  public void createdWithANonValueAsGlobalMetadata(String key) {
+    model().globalMetadata(key, NotAValue.INSTANCE);
+  }
+
   @Given("the workflow instance is created with the global metadata:")
   public void createdWithTheGlobalMetadata(DataTable metadata) {
     for (var row : metadata.asMaps()) {

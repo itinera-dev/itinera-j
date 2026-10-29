@@ -120,26 +120,28 @@ private fun <T : Any> providerOf(
 ): ProviderDescriptor<Scenario, Sync> =
     when (provider.scope) {
         ProviderScope.JOURNEY -> {
-            val providing = journeyProviding<Sync>(provider, witness)
+            val providing =
+                journeyProviding<Sync, _>(provider, witness, Requests.providerReporter())
             providing
                 .declaredOn(
                     ProviderDescriptor.builder<Scenario, T>(provider.name, provider.key, type) {
                         _,
                         got ->
-                        providing.provided(got, type)
+                        providing.provided(got, type, ::perform)
                     }
                 )
                 .servingOnly(provider)
                 .build()
         }
         ProviderScope.ATTEMPT -> {
-            val providing = attemptProviding<Sync>(provider, witness)
+            val providing =
+                attemptProviding<Sync, _>(provider, witness, Requests.providerReporter())
             providing
                 .declaredOn(
                     ProviderDescriptor.perAttempt<Scenario, T>(provider.name, provider.key, type) {
                         _,
                         got ->
-                        providing.provided(got, type)
+                        providing.provided(got, type, ::perform)
                     }
                 )
                 .servingOnly(provider)

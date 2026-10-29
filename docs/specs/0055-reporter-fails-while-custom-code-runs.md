@@ -2,7 +2,7 @@
 
 Tech spec for [proposal 0055](https://github.com/itinera-dev/spec/blob/main/proposals/0055-reporter-fails-while-custom-code-runs.md), implemented in [#17](https://github.com/itinera-dev/itinera-j/issues/17). [0081](0081-reporter-failure-stops-delivery.md) describes the guard that records a reporter's failure, and [0008](0008-steps.md) the step reporter.
 
-Status: done. Stage 5 delivers what a step emits before its call returns, and ends the step at the call a reporter failed on. Stage 7 does the same for hooks, through `HookEmits` in `engine/HookEmits.kt`, and lists 55 in both manifests. Stage 9 does it for rescue steps, whose scenario runs once 0003 is listed.
+Status: done. Stage 5 delivers what a step emits before its call returns, and ends the step at the call a reporter failed on. Stage 7 does the same for hooks, through `JourneyEmits` in `engine/JourneyEmits.kt`, and lists 55 in both manifests; stage 8 does it for service providers, through the same class. Stage 9 does it for rescue steps, whose scenario runs once 0003 is listed.
 
 ## How it is built
 

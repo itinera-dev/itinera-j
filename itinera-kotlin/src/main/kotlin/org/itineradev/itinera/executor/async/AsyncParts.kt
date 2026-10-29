@@ -141,6 +141,9 @@ private object AsyncReporterHandles : ReporterHandles {
 
     override fun hookReporter(emits: Emits): ReporterHandle =
         EmittingAsyncReporter(emits, Handle.ASYNC_HOOK_REPORTER)
+
+    override fun providerReporter(emits: Emits): ReporterHandle =
+        EmittingAsyncReporter(emits, Handle.ASYNC_PROVIDER_REPORTER)
 }
 
 /** Calls the asynchronous mode's hooks, awaiting each. */

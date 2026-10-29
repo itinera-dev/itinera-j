@@ -89,7 +89,9 @@ internal class Hooks<M : Mode>(
         call: suspend (Got<*>) -> Any?,
     ): Returned {
         val contributions = Contributions(journey, hooked.step, hooked.giver, "The $hooked")
-        val reporter = parts.reporterHandles.hookReporter(HookEmits(journey, hooked))
+        val closed = "The $hooked has returned, so its hook reporter reports nothing."
+        val emits = JourneyEmits(journey, hooked.step, hooked.giver, hooked.source, closed)
+        val reporter = parts.reporterHandles.hookReporter(emits)
         val handles =
             mapOf(Handle.CONTRIBUTOR to contributions, reporter.handle to reporter.reporter)
         val result =
