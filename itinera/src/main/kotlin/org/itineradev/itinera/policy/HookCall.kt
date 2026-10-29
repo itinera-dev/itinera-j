@@ -1,6 +1,5 @@
 package org.itineradev.itinera.policy
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.request.Got
 import org.itineradev.itinera.workflow.Mode
 import org.itineradev.itinera.workflow.Sync
@@ -17,7 +16,7 @@ import org.itineradev.itinera.workflow.Sync
  * @param R what it returns.
  * @sample org.itineradev.itinera.policy.samples.policies
  */
-@ExperimentalItineraApi public interface HookCall<M : Mode, in P, K, out R>
+public interface HookCall<M : Mode, in P, K, out R>
 
 /**
  * A synchronous step hook, called on `policy` with the answers to its requests in `got`. What it
@@ -28,7 +27,6 @@ import org.itineradev.itinera.workflow.Sync
  * @param R what it returns: [OnSuccess] or [OnFailure].
  * @sample org.itineradev.itinera.policy.samples.policies
  */
-@ExperimentalItineraApi
 public fun interface SyncHook<in P, K, out R> : HookCall<Sync, P, K, R> {
     /**
      * Calls the hook.
@@ -46,7 +44,6 @@ public fun interface SyncHook<in P, K, out R> : HookCall<Sync, P, K, R> {
  * @param K the kind of the hook, which says what it may request.
  * @sample org.itineradev.itinera.policy.samples.policies
  */
-@ExperimentalItineraApi
 public fun interface SyncWorkflowHook<in P, K> : HookCall<Sync, P, K, Unit> {
     /**
      * Calls the hook.

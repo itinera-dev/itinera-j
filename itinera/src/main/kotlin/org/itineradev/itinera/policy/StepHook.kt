@@ -1,14 +1,11 @@
 package org.itineradev.itinera.policy
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * The hooks of a step policy, each written as the specification names it, such as `on step
  * success`.
  *
  * @sample org.itineradev.itinera.policy.samples.hooks
  */
-@ExperimentalItineraApi
 public enum class StepHook(private val text: String) {
     /** Called after an attempt reported Success. */
     ON_STEP_SUCCESS("on step success"),

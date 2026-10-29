@@ -1,9 +1,6 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.workflow.async.samples
 
 import kotlinx.coroutines.delay
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.executor.async.AsyncLocalExecutor
 import org.itineradev.itinera.journey.JourneyResult
 import org.itineradev.itinera.step.ItineraStep

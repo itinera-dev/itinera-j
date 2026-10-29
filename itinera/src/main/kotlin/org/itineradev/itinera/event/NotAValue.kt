@@ -1,6 +1,5 @@
 package org.itineradev.itinera.event
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.AbortReason
 import org.itineradev.itinera.step.StepName
 
@@ -12,7 +11,6 @@ import org.itineradev.itinera.step.StepName
  *
  * @sample org.itineradev.itinera.event.samples.aborts
  */
-@ExperimentalItineraApi
 public sealed interface NotAValue : JourneyAbort {
     /** Who gave it. */
     public val source: ValueSource

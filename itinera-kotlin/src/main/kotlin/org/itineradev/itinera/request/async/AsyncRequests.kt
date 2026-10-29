@@ -19,7 +19,6 @@ import org.itineradev.itinera.workflow.Async
  *
  * @sample org.itineradev.itinera.request.async.samples.asyncRequests
  */
-@ExperimentalItineraApi
 public fun Requests.asyncStepReporter(): Request<StepReporterKind<Async>, AsyncStepReporter> =
     requestOf(Handle.ASYNC_STEP_REPORTER, Answer.ITSELF)
 
@@ -28,7 +27,6 @@ public fun Requests.asyncStepReporter(): Request<StepReporterKind<Async>, AsyncS
  *
  * @sample org.itineradev.itinera.policy.async.samples.asyncPolicies
  */
-@ExperimentalItineraApi
 public fun Requests.asyncHookReporter(): Request<HookReporterKind<Async>, AsyncHookReporter> =
     requestOf(Handle.ASYNC_HOOK_REPORTER, Answer.ITSELF)
 

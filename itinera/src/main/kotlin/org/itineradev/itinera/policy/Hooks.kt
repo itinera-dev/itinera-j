@@ -1,14 +1,11 @@
 package org.itineradev.itinera.policy
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * Marks the method of a step policy that is its `on step success`, called after an attempt
  * succeeded. It returns [OnSuccess].
  *
  * @sample org.itineradev.itinera.workflow.annotated.samples.auditing
  */
-@ExperimentalItineraApi
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
 @MustBeDocumented
@@ -21,7 +18,6 @@ public annotation class OnStepSuccess
  *
  * @sample org.itineradev.itinera.workflow.annotated.samples.auditing
  */
-@ExperimentalItineraApi
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
 @MustBeDocumented
@@ -33,7 +29,6 @@ public annotation class OnStepFailure
  *
  * @sample org.itineradev.itinera.workflow.annotated.samples.auditing
  */
-@ExperimentalItineraApi
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
 @MustBeDocumented
@@ -45,7 +40,6 @@ public annotation class OnStepRetry
  *
  * @sample org.itineradev.itinera.workflow.annotated.samples.auditing
  */
-@ExperimentalItineraApi
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
 @MustBeDocumented
@@ -57,7 +51,6 @@ public annotation class OnStepAbnormalTermination
  *
  * @sample org.itineradev.itinera.workflow.annotated.samples.telling
  */
-@ExperimentalItineraApi
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
 @MustBeDocumented
@@ -69,7 +62,6 @@ public annotation class OnWorkflowSuccess
  *
  * @sample org.itineradev.itinera.workflow.annotated.samples.telling
  */
-@ExperimentalItineraApi
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
 @MustBeDocumented

@@ -1,6 +1,5 @@
 package org.itineradev.itinera.step
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.request.Answers
 import org.itineradev.itinera.step.samples.charging
 import org.itineradev.itinera.step.samples.discounting
@@ -13,7 +12,6 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments.argumentSet
 import org.junit.jupiter.params.provider.FieldSource
 
-@OptIn(ExperimentalItineraApi::class)
 class OutcomeTest {
     @Test
     fun `a step's helper and the static factory make the same success`() {

@@ -1,6 +1,5 @@
 package org.itineradev.itinera.policy
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.step.Reason
 
 /**
@@ -14,7 +13,6 @@ import org.itineradev.itinera.step.Reason
  *
  * @sample org.itineradev.itinera.workflow.annotated.samples.auditing
  */
-@ExperimentalItineraApi
 public interface ItineraStepPolicy {
     /**
      * Keeps the default, from any step hook.

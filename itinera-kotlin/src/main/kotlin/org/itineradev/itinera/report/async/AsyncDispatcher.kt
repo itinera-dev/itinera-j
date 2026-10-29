@@ -19,7 +19,6 @@ import org.itineradev.itinera.event.Event
  *
  * @sample org.itineradev.itinera.report.async.samples.asyncDispatching
  */
-@ExperimentalItineraApi
 public interface AsyncDispatcher {
     /**
      * Adds a reporter of the journey.
@@ -40,7 +39,9 @@ public interface AsyncDispatcher {
      *
      * @sample org.itineradev.itinera.report.async.samples.asyncDispatching
      */
-    @JvmSynthetic public suspend fun setGlobalMetadata(key: String, value: Any?)
+    @ExperimentalItineraApi
+    @JvmSynthetic
+    public suspend fun setGlobalMetadata(key: String, value: Any?)
 }
 
 /**
@@ -50,7 +51,6 @@ public interface AsyncDispatcher {
  *
  * @sample org.itineradev.itinera.report.async.samples.asyncDispatching
  */
-@ExperimentalItineraApi
 public fun interface AsyncDispatcherFactory {
     /**
      * Creates the dispatcher of one journey.

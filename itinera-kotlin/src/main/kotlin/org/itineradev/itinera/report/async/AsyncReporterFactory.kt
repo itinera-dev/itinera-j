@@ -1,6 +1,5 @@
 package org.itineradev.itinera.report.async
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.JourneyId
 import org.itineradev.itinera.report.ReporterFactoryOf
 import org.itineradev.itinera.workflow.Async
@@ -12,7 +11,6 @@ import org.itineradev.itinera.workflow.Async
  *
  * @sample org.itineradev.itinera.instance.async.samples.asyncPerJourney
  */
-@ExperimentalItineraApi
 public fun interface AsyncReporterFactory : ReporterFactoryOf<Async> {
     /**
      * Makes the reporter of the journey with this ID.

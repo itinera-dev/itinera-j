@@ -20,7 +20,6 @@ import org.itineradev.itinera.workflow.Workflow
  *
  * @sample org.itineradev.itinera.workflow.async.samples.asyncShipping
  */
-@ExperimentalItineraApi
 public interface ItineraAsyncWorkflow {
     /**
      * Starts a workflow instance of this object, reading the class's annotations the first time any
@@ -51,6 +50,7 @@ public interface ItineraAsyncWorkflow {
      *
      * @sample org.itineradev.itinera.workflow.async.samples.asyncProviding
      */
+    @ExperimentalItineraApi
     public fun <T : Any> provide(instance: T): Provided<T> = Provided.Instance(instance)
 
     /**
@@ -59,6 +59,7 @@ public interface ItineraAsyncWorkflow {
      *
      * @sample org.itineradev.itinera.workflow.async.samples.asyncProviding
      */
+    @ExperimentalItineraApi
     public fun <T : Any> provide(instance: T, data: Any?): Provided<T> =
         Provided.Instance(instance, data)
 
@@ -67,5 +68,5 @@ public interface ItineraAsyncWorkflow {
      *
      * @sample org.itineradev.itinera.workflow.async.samples.asyncProviding
      */
-    public fun <T : Any> noInstance(): Provided<T> = Provided.NoInstance
+    @ExperimentalItineraApi public fun <T : Any> noInstance(): Provided<T> = Provided.NoInstance
 }

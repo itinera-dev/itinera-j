@@ -8,7 +8,6 @@ package org.itineradev.itinera
  *
  * @sample org.itineradev.itinera.samples.names
  */
-@ExperimentalItineraApi
 public abstract class Name internal constructor(private val text: String, part: String) {
     init {
         require(text.isNotEmpty()) { "A $part's name is never empty." }

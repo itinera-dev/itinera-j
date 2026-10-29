@@ -1,6 +1,5 @@
 package org.itineradev.itinera.event
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.FailureCause
 import org.itineradev.itinera.step.Reason
 
@@ -10,7 +9,6 @@ import org.itineradev.itinera.step.Reason
  *
  * @sample org.itineradev.itinera.event.samples.failures
  */
-@ExperimentalItineraApi
 public sealed interface JourneyFailure {
     /** The cause, as the specification names it. */
     public val cause: FailureCause

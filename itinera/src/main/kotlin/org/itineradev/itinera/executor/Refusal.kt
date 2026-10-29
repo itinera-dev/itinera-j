@@ -12,7 +12,6 @@ import org.itineradev.itinera.workflow.Violation
  *
  * @sample org.itineradev.itinera.executor.samples.refusals
  */
-@ExperimentalItineraApi
 public class Refusal(
     /** Why `run` refused the instance. */
     public val refused: Refused
@@ -23,7 +22,6 @@ public class Refusal(
  *
  * @sample org.itineradev.itinera.executor.samples.refusals
  */
-@ExperimentalItineraApi
 public sealed interface Refused {
     /** What the refusal says. */
     public val message: String
@@ -120,6 +118,7 @@ public sealed interface Refused {
      *
      * @sample org.itineradev.itinera.executor.samples.refusals
      */
+    @ExperimentalItineraApi
     @JvmRecord
     public data class GlobalMetadataNotSet(
         /** What the reporter or the dispatcher threw. */

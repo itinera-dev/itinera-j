@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.request.kotlin.samples
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.policy.OnSuccess
 import org.itineradev.itinera.policy.PolicyFactory
 import org.itineradev.itinera.policy.Role

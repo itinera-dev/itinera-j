@@ -14,21 +14,21 @@ import org.itineradev.itinera.workflow.AdapterName
  *
  * @sample org.itineradev.itinera.event.samples.sources
  */
-@ExperimentalItineraApi public sealed interface RequestSource
+public sealed interface RequestSource
 
 /**
  * Who made a contribution: a step or a hook.
  *
  * @sample org.itineradev.itinera.event.samples.sources
  */
-@ExperimentalItineraApi public sealed interface ContributionSource
+public sealed interface ContributionSource
 
 /**
  * Who set an entry of global metadata: a step, a hook or a service provider.
  *
  * @sample org.itineradev.itinera.event.samples.sources
  */
-@ExperimentalItineraApi public sealed interface MetadataSource
+public sealed interface MetadataSource
 
 /**
  * Who emitted a `journey_info`, `journey_warning` or `journey_error` event: a hook or a service
@@ -36,7 +36,7 @@ import org.itineradev.itinera.workflow.AdapterName
  *
  * @sample org.itineradev.itinera.event.samples.sources
  */
-@ExperimentalItineraApi public sealed interface EmitterSource : RequestSource, MetadataSource
+public sealed interface EmitterSource : RequestSource, MetadataSource
 
 /**
  * A hook that was called: a hook of a step policy, with the step and attempt that triggered it, or
@@ -44,14 +44,13 @@ import org.itineradev.itinera.workflow.AdapterName
  *
  * @sample org.itineradev.itinera.event.samples.sources
  */
-@ExperimentalItineraApi public sealed interface HookSource : EmitterSource, ContributionSource
+public sealed interface HookSource : EmitterSource, ContributionSource
 
 /**
  * A step, during one of its attempts.
  *
  * @sample org.itineradev.itinera.event.samples.sources
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class StepSource(
     /** The step's name. */
@@ -65,7 +64,6 @@ public data class StepSource(
  *
  * @sample org.itineradev.itinera.event.samples.sources
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class AdapterSource(
     /** The adapter's name. */
@@ -81,7 +79,6 @@ public data class AdapterSource(
  *
  * @sample org.itineradev.itinera.event.samples.sources
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class StepHookSource(
     /** The policy's name. */

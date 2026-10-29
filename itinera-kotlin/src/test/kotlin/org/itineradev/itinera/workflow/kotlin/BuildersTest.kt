@@ -1,6 +1,5 @@
 package org.itineradev.itinera.workflow.kotlin
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.executor.LocalExecutor
 import org.itineradev.itinera.instance.instance
 import org.itineradev.itinera.journey.JourneyId
@@ -10,7 +9,6 @@ import org.itineradev.itinera.workflow.kotlin.samples.reifiedBuilding
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-@OptIn(ExperimentalItineraApi::class)
 class BuildersTest {
     @Test
     fun `the reified builder makes a workflow called with objects of its type`() {

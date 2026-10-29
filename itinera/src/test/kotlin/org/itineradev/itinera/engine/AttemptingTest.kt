@@ -1,6 +1,5 @@
 package org.itineradev.itinera.engine
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Journeys.contributing
 import org.itineradev.itinera.engine.Journeys.journeyOf
 import org.itineradev.itinera.engine.Journeys.ran
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-@OptIn(ExperimentalItineraApi::class)
 class AttemptingTest {
     private val charge = StepName.of("charge")
     private val aborted = listOf("journey_started", "attempt_started", "journey_aborted")

@@ -1,6 +1,5 @@
 package org.itineradev.itinera.policy
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.request.Request
 import org.itineradev.itinera.workflow.Mode
 
@@ -14,7 +13,6 @@ import org.itineradev.itinera.workflow.Mode
  * @param R what it returns.
  * @sample org.itineradev.itinera.policy.samples.policies
  */
-@ExperimentalItineraApi
 public interface HookDefinition<M : Mode, in P, K, out R> {
     /** What the hook requests, in the order declared, resolved in that order before it runs. */
     public val requests: List<Request<K, *>>

@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.event.samples
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.event.JourneyAbort
 import org.itineradev.itinera.event.MissingData
 import org.itineradev.itinera.event.WrongData

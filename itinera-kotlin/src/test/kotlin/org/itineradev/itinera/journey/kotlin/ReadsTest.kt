@@ -1,6 +1,5 @@
 package org.itineradev.itinera.journey.kotlin
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.DataBags
 import org.itineradev.itinera.journey.kotlin.samples.Parcel
 import org.itineradev.itinera.journey.kotlin.samples.accessReads
@@ -9,7 +8,6 @@ import org.itineradev.itinera.value.kotlin.bagOf
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-@OptIn(ExperimentalItineraApi::class)
 class ReadsTest {
     @Test
     fun `a reified read gives the reader's own copy of a value of the type`() {

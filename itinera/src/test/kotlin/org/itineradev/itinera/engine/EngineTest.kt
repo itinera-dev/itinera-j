@@ -1,7 +1,6 @@
 package org.itineradev.itinera.engine
 
 import java.time.Instant
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Hooking.audit
 import org.itineradev.itinera.engine.Hooking.ledger
 import org.itineradev.itinera.engine.Journeys.Shop
@@ -47,7 +46,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-@OptIn(ExperimentalItineraApi::class)
 class EngineTest {
     @Test
     fun `a workflow whose steps succeed emits each attempt and succeeds with its initial data`() {

@@ -1,6 +1,5 @@
 package org.itineradev.itinera.engine
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.DataBags
 import org.itineradev.itinera.value.Fragile
 import org.itineradev.itinera.value.Parcel
@@ -12,7 +11,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 
-@OptIn(ExperimentalItineraApi::class)
 class ValuesTest {
     @AfterEach
     fun rebuildAgain() {

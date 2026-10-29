@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.workflow.annotated.samples
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.executor.LocalExecutor
 import org.itineradev.itinera.journey.DataBag
 import org.itineradev.itinera.journey.JourneyResult

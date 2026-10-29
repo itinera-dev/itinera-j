@@ -13,7 +13,6 @@ import org.itineradev.itinera.workflow.AdapterName
  *
  * @sample org.itineradev.itinera.event.samples.aborts
  */
-@ExperimentalItineraApi
 public data object ByStep : Requester, BuildSource, ValueSource, ReasonSource, ResultSource
 
 /**
@@ -29,7 +28,6 @@ public data object ByStep : Requester, BuildSource, ValueSource, ReasonSource, R
  *
  * @sample org.itineradev.itinera.event.samples.aborts
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class ByAdapter(
     /** The adapter's name. */
@@ -41,7 +39,6 @@ public data class ByAdapter(
  *
  * @sample org.itineradev.itinera.event.samples.aborts
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class ByAdapterForKey(
     /** The adapter's name. */
@@ -55,7 +52,6 @@ public data class ByAdapterForKey(
  *
  * @sample org.itineradev.itinera.event.samples.aborts
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class ByStepHook(
     /** The policy's name. */
@@ -69,7 +65,6 @@ public data class ByStepHook(
  *
  * @sample org.itineradev.itinera.event.samples.aborts
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class ByWorkflowHook(
     /** The policy's name. */
@@ -109,7 +104,6 @@ public data class ByProviderForKey(
  *
  * @sample org.itineradev.itinera.event.samples.aborts
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class ByPolicy(
     /** The policy's name. */

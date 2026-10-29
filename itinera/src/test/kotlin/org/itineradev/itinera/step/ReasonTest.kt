@@ -1,12 +1,10 @@
 package org.itineradev.itinera.step
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.step.samples.reasons
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 
-@OptIn(ExperimentalItineraApi::class)
 class ReasonTest {
     @Test
     fun `a reason given only a code says nothing more`() {

@@ -1,7 +1,5 @@
 package org.itineradev.itinera.policy
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * Marks an interface as a role: operations a workflow's own code implements, which the hooks of its
  * policies may call. A workflow provides the roles it implements. A hook requests one with
@@ -12,7 +10,6 @@ import org.itineradev.itinera.ExperimentalItineraApi
  * @sample org.itineradev.itinera.policy.samples.notifying
  * @sample org.itineradev.itinera.workflow.annotated.samples.telling
  */
-@ExperimentalItineraApi
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.VALUE_PARAMETER)
 @MustBeDocumented

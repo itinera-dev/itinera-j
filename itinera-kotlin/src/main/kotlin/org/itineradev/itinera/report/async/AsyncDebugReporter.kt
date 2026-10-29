@@ -1,7 +1,6 @@
 package org.itineradev.itinera.report.async
 
 import java.io.PrintStream
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.event.Event
 
 /**
@@ -11,7 +10,6 @@ import org.itineradev.itinera.event.Event
  *
  * @sample org.itineradev.itinera.report.async.samples.asyncDebugging
  */
-@ExperimentalItineraApi
 public class AsyncDebugReporter internal constructor(private val out: PrintStream) : AsyncReporter {
     /**
      * A reporter printing on standard output.

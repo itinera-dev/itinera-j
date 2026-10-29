@@ -1,6 +1,5 @@
 package org.itineradev.itinera.journey
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.ClassType
 import org.itineradev.itinera.engine.JourneyData
 import org.itineradev.itinera.engine.returned
@@ -15,7 +14,6 @@ import org.itineradev.itinera.value.TypeToken
  *
  * @sample org.itineradev.itinera.journey.samples.results
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class JourneyResult(
     /** The journey's ID, which every event of the journey carries. */
@@ -102,7 +100,6 @@ public data class JourneyResult(
  *
  * @sample org.itineradev.itinera.journey.samples.results
  */
-@ExperimentalItineraApi
 public sealed interface JourneyStatus {
     /**
      * Every step ended without failing the journey.

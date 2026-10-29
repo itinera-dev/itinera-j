@@ -9,7 +9,6 @@ import org.itineradev.itinera.ExperimentalItineraApi
  *
  * @sample org.itineradev.itinera.event.samples.kinds
  */
-@ExperimentalItineraApi
 public enum class EventKind {
     /** The journey started. */
     JOURNEY_STARTED,
@@ -22,11 +21,11 @@ public enum class EventKind {
     /** An optional request had no value. */
     OPTIONAL_INPUT_ABSENT,
     /** A service provider made an instance of a step's service. */
-    SERVICE_PROVIDED,
+    @ExperimentalItineraApi SERVICE_PROVIDED,
     /** A service provider failed for a step's service. */
-    SERVICE_PROVIDER_FAILED,
+    @ExperimentalItineraApi SERVICE_PROVIDER_FAILED,
     /** A step, hook or service provider set an entry of global metadata. */
-    GLOBAL_METADATA_SET,
+    @ExperimentalItineraApi GLOBAL_METADATA_SET,
     /** An attempt reported Success. */
     STEP_SUCCEEDED,
     /** An attempt reported Failure. */
@@ -48,9 +47,9 @@ public enum class EventKind {
     /** The executor decided to attempt a step again. */
     STEP_RETRYING,
     /** The executor decided to rescue a step. */
-    STEP_RESCUING,
+    @ExperimentalItineraApi STEP_RESCUING,
     /** A step's rescue step succeeded, and the step will be attempted again. */
-    STEP_RESCUED,
+    @ExperimentalItineraApi STEP_RESCUED,
     /** The executor decided not to attempt a step again. */
     STEP_GIVEN_UP,
     /** The executor decided that the journey succeeds. */
