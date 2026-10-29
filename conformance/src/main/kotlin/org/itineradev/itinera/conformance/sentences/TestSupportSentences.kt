@@ -94,8 +94,8 @@ internal class TestSupportSentences(private val world: World) {
         val mistake =
             (ended as? Ended.Stopped)?.mistake
                 ?: throw Unmet("expected the test to stop before the journey; it ended $ended")
-        val found = mistake.problems.map(::namedBy).sortedBy(Named::toString)
-        val expected = table.asMaps().map(::namedIn).sortedBy(Named::toString)
+        val found = mistake.problems.map(::namedBy).map(Named::toString).sorted()
+        val expected = table.asMaps().map(::namedIn).map(Named::toString).sorted()
         holds(found == expected, "the mistakes $expected", "${mistake.message}")
     }
 }
