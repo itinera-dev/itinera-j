@@ -2,6 +2,7 @@ package org.itineradev.itinera.conformance.run
 
 import org.itineradev.itinera.conformance.model.Emitted
 import org.itineradev.itinera.conformance.model.StepAction
+import org.itineradev.itinera.conformance.model.value
 import org.itineradev.itinera.step.StepReporter
 import org.itineradev.itinera.step.async.AsyncStepReporter
 
@@ -23,6 +24,7 @@ internal fun perform(
             }
         is StepAction.SetsGlobalMetadata ->
             reporting(ignoresEmitFailures) { reporter.setGlobalMetadata(action.key, action.value) }
+        is StepAction.ContributesThenChanges -> contributesThenChanges(action, received)
     }
 }
 
@@ -41,7 +43,17 @@ internal suspend fun performAsync(
             }
         is StepAction.SetsGlobalMetadata ->
             reporting(ignoresEmitFailures) { reporter.setGlobalMetadata(action.key, action.value) }
+        is StepAction.ContributesThenChanges -> contributesThenChanges(action, received)
     }
+}
+
+private fun contributesThenChanges(
+    action: StepAction.ContributesThenChanges,
+    received: Received<*>,
+) {
+    val contributed = value(action.written)
+    received.contributor.contribute(action.key, contributed)
+    changeInPlace(contributed, action.changed)
 }
 
 /** Makes [call], catching every exception it throws when [ignoring] its failures. */

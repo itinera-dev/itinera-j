@@ -101,8 +101,9 @@ final class Scripted {
         : Requests.input(input.key(), type);
   }
 
+  /** Changes {@code received}, a list or a map, to the content of {@code to}, in place. */
   @SuppressWarnings("unchecked")
-  private static void changeInPlace(Object received, Object to) {
+  static void changeInPlace(Object received, Object to) {
     if (received instanceof List<?> list && to instanceof List<?> changed) {
       var inPlace = (List<Object>) list;
       inPlace.clear();

@@ -100,6 +100,12 @@ final class RunTest {
   }
 
   @Test
+  void everyScenarioWhosePoliciesDefineHooksPasses() {
+    assertTrue(runs("@hooks"), errors().toString());
+    assertEquals(3, scenarios().size());
+  }
+
+  @Test
   void aJourneyThatDidNotDoWhatTheCaseExpectsFailsAsUnmet() {
     assertFalse(runs("@unmet"));
     assertTrue(errors().stream().allMatch(RunTest::isUnmet), errors().toString());

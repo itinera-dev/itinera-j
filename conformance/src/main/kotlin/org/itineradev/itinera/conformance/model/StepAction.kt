@@ -10,6 +10,13 @@ internal sealed interface StepAction {
 
     /** It sets the global metadata [key] to [value]. */
     data class SetsGlobalMetadata(val key: String, val value: Any?) : StepAction
+
+    /**
+     * It contributes the value [written] under [key], then changes that same object to [changed],
+     * in place. Each attempt contributes a value of its own, read again from [written].
+     */
+    data class ContributesThenChanges(val key: String, val written: String, val changed: Any?) :
+        StepAction
 }
 
 /** The events a step emits through its step reporter, as a case names them. */

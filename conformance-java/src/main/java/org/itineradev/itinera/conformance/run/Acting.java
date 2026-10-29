@@ -1,6 +1,7 @@
 package org.itineradev.itinera.conformance.run;
 
 import org.itineradev.itinera.conformance.model.StepAction;
+import org.itineradev.itinera.conformance.model.Values;
 import org.itineradev.itinera.step.StepReporter;
 
 /** How a scripted step does what its script says, with the handles it received. */
@@ -17,9 +18,13 @@ final class Acting {
       received.contributor().contribute(contributes.key(), contributes.value());
     } else if (action instanceof StepAction.Emits emits) {
       reporting(ignoresEmitFailures, () -> emit(reporter, emits));
-    } else {
-      var sets = (StepAction.SetsGlobalMetadata) action;
+    } else if (action instanceof StepAction.SetsGlobalMetadata sets) {
       reporting(ignoresEmitFailures, () -> reporter.setGlobalMetadata(sets.key(), sets.value()));
+    } else {
+      var changes = (StepAction.ContributesThenChanges) action;
+      var contributed = Values.value(changes.written());
+      received.contributor().contribute(changes.key(), contributed);
+      Scripted.changeInPlace(contributed, changes.changed());
     }
   }
 
