@@ -210,8 +210,12 @@ public final class JavaParityTwins {
   @StepPolicy(name = "audit in Kotlin")
   public static final class KotlinAudit extends KotlinAuditing {}
 
+  @Workflow(name = "audited", policies = Tell.class)
   @WithStep(step = Ship.class, name = "ship", policies = KotlinAudit.class)
-  public static final class AuditInKotlin implements ItineraWorkflow {
+  public static final class AuditInKotlin implements ItineraWorkflow, Customers {
+    @Override
+    public void tell(String message) {}
+
     @Provider(key = "receipts")
     public Provided<String> receipts() {
       return noInstance();

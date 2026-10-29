@@ -42,6 +42,11 @@ class JavaParityTest {
         assertEquals(emptyList<String>(), javacErrors(javaSourceOf(twins)))
     }
 
+    @Test
+    fun `the checker reports nothing through KSP for the twins that name parts written in Kotlin`() {
+        assertEquals(emptyList<String>(), kspErrors(javaSourceOf(JavaParityTwins::class.java)))
+    }
+
     companion object {
         @JvmStatic
         fun mistaken(): List<Arguments> =

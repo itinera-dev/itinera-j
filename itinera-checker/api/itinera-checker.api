@@ -5,3 +5,8 @@ public final class org/itineradev/itinera/workflow/checker/JavacChecker : javax/
 	public fun process (Ljava/util/Set;Ljavax/annotation/processing/RoundEnvironment;)Z
 }
 
+public final class org/itineradev/itinera/workflow/checker/KspChecker : com/google/devtools/ksp/processing/SymbolProcessorProvider {
+	public fun <init> ()V
+	public fun create (Lcom/google/devtools/ksp/processing/SymbolProcessorEnvironment;)Lcom/google/devtools/ksp/processing/SymbolProcessor;
+}
+
