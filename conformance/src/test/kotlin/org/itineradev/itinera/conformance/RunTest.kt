@@ -100,6 +100,12 @@ class RunTest {
     }
 
     @Test
+    fun `every scenario whose policies define hooks passes in both columns`() {
+        assertTrue(runs("@hooks"), errors().toString())
+        assertEquals(6, scenarios().size)
+    }
+
+    @Test
     fun `a journey that did not do what the case expects fails as unmet`() {
         assertFalse(runs("@unmet"))
         assertTrue(errors().all { "Unmet" in it }, errors().toString())

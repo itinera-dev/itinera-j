@@ -20,9 +20,12 @@ import org.itineradev.itinera.event.GlobalMetadataSet;
 import org.itineradev.itinera.event.InputAdapterFailed;
 import org.itineradev.itinera.event.InputAdapterSupplied;
 import org.itineradev.itinera.event.JourneyAborted;
+import org.itineradev.itinera.event.JourneyError;
 import org.itineradev.itinera.event.JourneyFailed;
+import org.itineradev.itinera.event.JourneyInfo;
 import org.itineradev.itinera.event.JourneyStarted;
 import org.itineradev.itinera.event.JourneySucceeded;
+import org.itineradev.itinera.event.JourneyWarning;
 import org.itineradev.itinera.event.OptionalInputAbsent;
 import org.itineradev.itinera.event.ServiceProvided;
 import org.itineradev.itinera.event.ServiceProviderFailed;
@@ -30,6 +33,7 @@ import org.itineradev.itinera.event.StepAbnormalTermination;
 import org.itineradev.itinera.event.StepError;
 import org.itineradev.itinera.event.StepFailed;
 import org.itineradev.itinera.event.StepGivenUp;
+import org.itineradev.itinera.event.StepHookCalled;
 import org.itineradev.itinera.event.StepInfo;
 import org.itineradev.itinera.event.StepRescued;
 import org.itineradev.itinera.event.StepRescuing;
@@ -37,6 +41,7 @@ import org.itineradev.itinera.event.StepRetrying;
 import org.itineradev.itinera.event.StepSkipped;
 import org.itineradev.itinera.event.StepSucceeded;
 import org.itineradev.itinera.event.StepWarning;
+import org.itineradev.itinera.event.WorkflowHookCalled;
 import org.itineradev.itinera.step.Attempt;
 import org.itineradev.itinera.step.Reason;
 import org.itineradev.itinera.step.StepName;
@@ -100,6 +105,10 @@ public final class Writing {
       EventCells.cellsOf(aborted).forEach(this::set);
     } else if (event instanceof OptionalInputAbsent absent) {
       EventCells.cellsOf(absent).forEach(this::set);
+    } else if (event instanceof StepHookCalled called) {
+      EventCells.hookCalledCells(called).forEach(this::set);
+    } else if (event instanceof WorkflowHookCalled called) {
+      EventCells.sourceCells(called.source()).forEach(this::set);
     } else if (event instanceof ServiceProvided provided) {
       EventCells.cellsOf(provided).forEach(this::set);
       data = provided.data() == null ? new Data.None() : new Data.Is(provided.data());
@@ -139,11 +148,17 @@ public final class Writing {
 
   private boolean emitted(Event event) {
     if (event instanceof StepInfo info) {
-      emitted(info.step(), info.attempt(), info.message(), info.data());
+      emitted(stepCells(info.step(), info.attempt()), info.message(), info.data());
     } else if (event instanceof StepWarning warning) {
-      emitted(warning.step(), warning.attempt(), warning.message(), warning.data());
+      emitted(stepCells(warning.step(), warning.attempt()), warning.message(), warning.data());
     } else if (event instanceof StepError error) {
-      emitted(error.step(), error.attempt(), error.message(), error.data());
+      emitted(stepCells(error.step(), error.attempt()), error.message(), error.data());
+    } else if (event instanceof JourneyInfo info) {
+      emitted(EventCells.sourceCells(info.source()), info.message(), info.data());
+    } else if (event instanceof JourneyWarning warning) {
+      emitted(EventCells.sourceCells(warning.source()), warning.message(), warning.data());
+    } else if (event instanceof JourneyError error) {
+      emitted(EventCells.sourceCells(error.source()), error.message(), error.data());
     } else {
       return false;
     }
@@ -194,10 +209,14 @@ public final class Writing {
     set("decided by", writtenBy(decidedBy));
   }
 
-  private void emitted(StepName step, Attempt attempt, String message, Object emitted) {
-    attempt(step, attempt);
+  private void emitted(List<Cell> source, String message, Object emitted) {
+    source.forEach(this::set);
     set("message", message);
     data = emitted == null ? new Data.None() : new Data.Is(emitted);
+  }
+
+  private static List<Cell> stepCells(StepName step, Attempt attempt) {
+    return List.of(new Cell("step", step), new Cell("attempt", attempt));
   }
 
   private static String writtenBy(DecidedBy decidedBy) {

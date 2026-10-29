@@ -108,7 +108,8 @@ private fun use(service: Any) {
     if (service is Meter) service.reading()
 }
 
-private fun changeInPlace(received: Any?, to: Any?) {
+/** Changes [received], a list or a map, to the content of [to], in place. */
+internal fun changeInPlace(received: Any?, to: Any?) {
     if (received is MutableList<*> && to is List<*>) replaced(received, to)
     if (received is MutableMap<*, *> && to is Map<*, *>) replaced(received, to)
 }
