@@ -218,6 +218,10 @@ final class JavaPolicyClassesTest {
             WrongReturn.class,
             List.of("returns OnFailure, not OnSuccess")),
         Arguments.argumentSet(
+            "a failure hook returning what only a success hook does",
+            Finishing.class,
+            List.of("returns OnSuccess, not OnFailure")),
+        Arguments.argumentSet(
             "a policy class that cannot be built with nothing",
             Constructed.class,
             List.of("has no constructor that takes nothing, which a policy is built with")),
@@ -504,6 +508,14 @@ final class JavaPolicyClassesTest {
     }
   }
 
+  @StepPolicy(name = "finishing")
+  public static final class FinishingPolicy implements ItineraStepPolicy {
+    @OnStepFailure
+    public OnSuccess failed() {
+      return OnSuccess.finishWorkflow();
+    }
+  }
+
   @StepPolicy(name = "constructed")
   public static final class ConstructedPolicy implements ItineraStepPolicy {
     ConstructedPolicy(String note) {}
@@ -602,6 +614,9 @@ final class JavaPolicyClassesTest {
 
   @WithStep(step = Charge.class, name = "charge", policies = WrongReturnPolicy.class)
   public static final class WrongReturn implements ItineraWorkflow {}
+
+  @WithStep(step = Charge.class, name = "charge", policies = FinishingPolicy.class)
+  public static final class Finishing implements ItineraWorkflow {}
 
   @WithStep(step = Charge.class, name = "charge", policies = ConstructedPolicy.class)
   public static final class Constructed implements ItineraWorkflow {}

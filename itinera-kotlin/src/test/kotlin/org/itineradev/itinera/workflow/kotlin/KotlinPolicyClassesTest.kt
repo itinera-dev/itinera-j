@@ -229,6 +229,11 @@ class KotlinPolicyClassesTest {
                     "returns OnSuccess?, which admits null",
                 ),
                 argumentSet(
+                    "a failure hook returning what only a success hook does",
+                    describing { WorkflowDescriptor.of(Finishing::class.java) },
+                    "returns OnSuccess, not OnFailure",
+                ),
+                argumentSet(
                     "a role that admits null",
                     describing { WorkflowDescriptor.of(MaybeTelling::class.java) },
                     "requests role Customers as a type that admits null, though a role is " +
@@ -298,6 +303,14 @@ class MaybePolicy : ItineraStepPolicy {
 
 @WithStep(Charging::class, name = "charge", policies = [MaybePolicy::class])
 class MaybeDeciding : ItineraWorkflow
+
+@StepPolicy(name = "finishing")
+class FinishingPolicy : ItineraStepPolicy {
+    @OnStepFailure fun failed(): OnSuccess = finishWorkflow()
+}
+
+@WithStep(Charging::class, name = "charge", policies = [FinishingPolicy::class])
+class Finishing : ItineraWorkflow
 
 @WorkflowPolicy(name = "maybe tell")
 class MaybeTell : ItineraWorkflowPolicy {
