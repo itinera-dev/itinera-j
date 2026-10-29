@@ -1,6 +1,5 @@
 package org.itineradev.itinera.service
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.request.Got
 import org.itineradev.itinera.workflow.Mode
 import org.itineradev.itinera.workflow.Sync
@@ -17,7 +16,7 @@ import org.itineradev.itinera.workflow.Sync
  * @param T the service's type.
  * @sample org.itineradev.itinera.service.samples.providers
  */
-@ExperimentalItineraApi public interface ProviderCall<M : Mode, in W, K, out T : Any>
+public interface ProviderCall<M : Mode, in W, K, out T : Any>
 
 /**
  * A synchronous service provider, called with the workflow object and the answers to its requests
@@ -28,7 +27,6 @@ import org.itineradev.itinera.workflow.Sync
  * @param T the service's type.
  * @sample org.itineradev.itinera.service.samples.providers
  */
-@ExperimentalItineraApi
 public fun interface SyncProvider<in W, K, out T : Any> : ProviderCall<Sync, W, K, T> {
     /**
      * Provides an instance of the service, or [Provided.NoInstance].

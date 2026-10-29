@@ -1,6 +1,5 @@
 package org.itineradev.itinera.report.async
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.deliverToEveryone
 import org.itineradev.itinera.event.Event
 import org.itineradev.itinera.event.EventKind
@@ -49,7 +48,6 @@ public class AsyncDefaultDispatcher : AsyncDispatcher {
      *
      * @sample org.itineradev.itinera.report.async.samples.asyncDispatching
      */
-    @ExperimentalItineraApi
     @JvmSynthetic
     override suspend fun setGlobalMetadata(key: String, value: Any?) {
         reporters.forEach { reporter -> reporter.setGlobalMetadata(key, value) }

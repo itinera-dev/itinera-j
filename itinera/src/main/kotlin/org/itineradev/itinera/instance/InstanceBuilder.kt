@@ -1,6 +1,5 @@
 package org.itineradev.itinera.instance
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Draft
 import org.itineradev.itinera.report.Reporter
 import org.itineradev.itinera.report.ReporterFactory
@@ -75,7 +74,6 @@ public class InstanceBuilder internal constructor(private val draft: Draft<*, Sy
      *
      * @sample org.itineradev.itinera.instance.samples.instances
      */
-    @ExperimentalItineraApi
     public fun reportersGlobalMetadata(key: String, value: Any?): InstanceBuilder = apply {
         draft.metadata(key, value)
     }

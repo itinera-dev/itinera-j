@@ -1,7 +1,5 @@
 package org.itineradev.itinera.step.async
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * What an asynchronous step emits its own events through, `step_info`, `step_warning` and
  * `step_error`, and sets global metadata through, made for one attempt and closed when it ends.
@@ -69,7 +67,5 @@ public interface AsyncStepReporter {
      * @throws IllegalStateException when its attempt has ended.
      * @sample org.itineradev.itinera.step.async.samples.asyncReporters
      */
-    @ExperimentalItineraApi
-    @JvmSynthetic
-    public suspend fun setGlobalMetadata(key: String, value: Any?)
+    @JvmSynthetic public suspend fun setGlobalMetadata(key: String, value: Any?)
 }
