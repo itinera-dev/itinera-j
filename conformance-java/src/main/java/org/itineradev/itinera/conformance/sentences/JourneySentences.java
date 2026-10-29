@@ -71,6 +71,10 @@ public final class JourneySentences {
     if (ended instanceof Ended.Returned returned) {
       throw new Unmet("expected run to be refused; the journey " + statusOf(returned.result()));
     }
+    if (ended instanceof Ended.Stopped stopped) {
+      throw new Unmet(
+          "expected run to be refused; the test was stopped: " + stopped.mistake().getMessage());
+    }
     throw new Unmet(
         "expected run to be refused; no instance was created: "
             + ((Ended.NotCreated) ended).failure().getMessage());

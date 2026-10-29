@@ -39,7 +39,12 @@ import org.itineradev.itinera.workflow.async.asyncStep
  *
  * @throws org.itineradev.itinera.workflow.Violations when the builder refuses the workflow.
  */
-internal fun asyncJourneys(model: Model, recorders: Recorders, witness: Witness): Journeys {
+internal fun asyncJourneys(
+    model: Model,
+    recorders: Recorders,
+    witness: Witness,
+    tested: Tested,
+): Journeys {
     if (model.onlySynchronous) {
         throw ModelException(
             "a scenario whose executor accepts only synchronous parts runs only synchronously"
@@ -63,7 +68,7 @@ internal fun asyncJourneys(model: Model, recorders: Recorders, witness: Witness)
     for (role in workflow.roles.keys) builder.role(roleOf(role))
     val generator = workflow.idGenerator
     if (generator is IdGenerator.Returns) builder.idGenerator { _, _ -> generator.id }
-    return AsyncJourneys(builder.build(), model, recorders, witness)
+    return AsyncJourneys(builder.build(), model, recorders, witness, tested)
 }
 
 private fun asyncStepOf(
@@ -145,6 +150,7 @@ private class AsyncJourneys(
     private val model: Model,
     private val recorders: Recorders,
     private val witness: Witness,
+    private val tested: Tested,
 ) : Journeys {
     override val listing: List<ListedStep>
         get() = descriptor.listing()
@@ -158,10 +164,10 @@ private class AsyncJourneys(
         journeyOf(::instance, ::idOf) { runBlocking { executor.run(it) } }
 
     private fun instance(): WorkflowInstance<Async> {
-        val builder =
-            descriptor
-                .instance(Scenario(witness, model.workflow.failingOperations))
-                .initialData(model.initialData)
+        val scenario = Scenario(witness, model.workflow.failingOperations)
+        if (model.testing.createsTheInstance)
+            return tested.asyncInstance(descriptor, scenario, model)
+        val builder = descriptor.instance(scenario).initialData(model.initialData)
         for ((key, value) in model.initialGlobalMetadata) {
             builder.reportersGlobalMetadata(key, value)
         }

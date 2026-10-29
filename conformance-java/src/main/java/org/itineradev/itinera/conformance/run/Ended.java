@@ -2,10 +2,11 @@ package org.itineradev.itinera.conformance.run;
 
 import org.itineradev.itinera.executor.Refusal;
 import org.itineradev.itinera.journey.JourneyResult;
+import org.itineradev.itinera.testing.TestMistake;
 
 /**
  * How one journey ended: with its result, refused by {@code run}, or before, when no instance was
- * created.
+ * created or test support stopped the test.
  */
 public sealed interface Ended {
   /**
@@ -28,4 +29,11 @@ public sealed interface Ended {
    * @param refusal what it threw
    */
   record Refused(Refusal refusal) implements Ended {}
+
+  /**
+   * Test support stopped the test before the journey.
+   *
+   * @param mistake what it threw
+   */
+  record Stopped(TestMistake mistake) implements Ended {}
 }

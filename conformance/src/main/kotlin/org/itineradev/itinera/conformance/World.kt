@@ -5,7 +5,9 @@ import org.itineradev.itinera.conformance.model.ModelException
 import org.itineradev.itinera.conformance.run.Admission
 import org.itineradev.itinera.conformance.run.Ended
 import org.itineradev.itinera.conformance.run.Journey
+import org.itineradev.itinera.conformance.run.RanAlone
 import org.itineradev.itinera.conformance.run.Recorders
+import org.itineradev.itinera.conformance.run.Tested
 import org.itineradev.itinera.conformance.run.Unmet
 import org.itineradev.itinera.conformance.run.Witness
 import org.itineradev.itinera.conformance.run.admittedBy
@@ -15,6 +17,7 @@ import org.itineradev.itinera.conformance.run.streamOf
 import org.itineradev.itinera.event.Event
 import org.itineradev.itinera.journey.JourneyResult
 import org.itineradev.itinera.workflow.ListedStep
+import org.itineradev.itinera.workflow.Supplied
 
 /**
  * What one scenario's sentences share: the column it runs in, the model its Given sentences fill,
@@ -34,7 +37,28 @@ internal class World {
     /** Every step the scenario's workflow built. */
     val witness = Witness()
 
+    /** The test support the scenario's journeys use. */
+    val tested = Tested(model.testing)
+
     private var admitted: Admission? = null
+
+    private var alone: RanAlone? = null
+
+    private var supplied: Supplied? = null
+
+    /** What the step or hook the scenario ran alone was lent and did. */
+    var ranAlone: RanAlone
+        get() = alone ?: throw ModelException("no step or hook ran alone")
+        set(ran) {
+            alone = ran
+        }
+
+    /** What the input adapter the scenario called alone supplied. */
+    var returned: Supplied
+        get() = supplied ?: throw ModelException("no input adapter was called alone")
+        set(given) {
+            supplied = given
+        }
 
     /** Every journey the scenario ran, in order. */
     var journeys: List<Journey> = emptyList()
@@ -45,8 +69,8 @@ internal class World {
 
     private fun admittedInColumn(): Admission =
         when (column) {
-            Column.SYNCHRONOUS -> admittedBy { localJourneys(model, recorders, witness) }
-            Column.ASYNCHRONOUS -> admittedBy { asyncJourneys(model, recorders, witness) }
+            Column.SYNCHRONOUS -> admittedBy { localJourneys(model, recorders, witness, tested) }
+            Column.ASYNCHRONOUS -> admittedBy { asyncJourneys(model, recorders, witness, tested) }
         }
 
     private fun keep(admission: Admission) {
@@ -112,6 +136,10 @@ internal class World {
                 is Ended.NotCreated ->
                     throw Unmet(
                         "expected a journey result; no instance was created: ${ended.failure.message}"
+                    )
+                is Ended.Stopped ->
+                    throw Unmet(
+                        "expected a journey result; the test was stopped: ${ended.mistake.message}"
                     )
             }
 

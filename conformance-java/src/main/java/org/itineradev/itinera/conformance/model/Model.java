@@ -19,6 +19,12 @@ public final class Model {
   private final Map<String, ReporterFailure> reporterFailures = new LinkedHashMap<>();
   private Dispatching dispatching = new Dispatching.Unstated();
   private boolean onlySynchronous;
+  private final TestSupport testing = new TestSupport();
+
+  /** What the scenario declares of test support. */
+  public TestSupport testing() {
+    return testing;
+  }
 
   /** The initial data of the workflow instance, in the order written. */
   public Map<String, Object> initialData() {

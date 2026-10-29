@@ -21,6 +21,7 @@ import org.itineradev.itinera.instance.InstanceBuilder;
 import org.itineradev.itinera.instance.WorkflowInstance;
 import org.itineradev.itinera.policy.StepPolicyDescriptor;
 import org.itineradev.itinera.service.ProviderDescriptor;
+import org.itineradev.itinera.testing.TestMistake;
 import org.itineradev.itinera.workflow.InputAdapterBuilder;
 import org.itineradev.itinera.workflow.InputAdapterDescriptor;
 import org.itineradev.itinera.workflow.ListedStep;
@@ -38,16 +39,19 @@ public final class LocalJourneys implements Journeys {
   private final Model model;
   private final Recorders recorders;
   private final Witness witness;
+  private final Tested tested;
 
   private LocalJourneys(
       WorkflowDescriptor<Scenario, Sync> descriptor,
       Model model,
       Recorders recorders,
-      Witness witness) {
+      Witness witness,
+      Tested tested) {
     this.descriptor = descriptor;
     this.model = model;
     this.recorders = recorders;
     this.witness = witness;
+    this.tested = tested;
   }
 
   /**
@@ -55,7 +59,7 @@ public final class LocalJourneys implements Journeys {
    *
    * @throws org.itineradev.itinera.workflow.Violations when the builder refuses the workflow
    */
-  public static Journeys of(Model model, Recorders recorders, Witness witness) {
+  public static Journeys of(Model model, Recorders recorders, Witness witness, Tested tested) {
     var workflow = model.workflow();
     var builder = WorkflowDescriptor.builder(Scenario.class, workflow.name());
     Map<String, StepPolicyDescriptor<?, Sync>> policies =
@@ -87,7 +91,7 @@ public final class LocalJourneys implements Journeys {
     if (workflow.idGenerator() instanceof IdGenerator.Returns generator) {
       builder.idGenerator((scenario, data) -> generator.id());
     }
-    return new LocalJourneys(builder.build(), model, recorders, witness);
+    return new LocalJourneys(builder.build(), model, recorders, witness, tested);
   }
 
   private static StepDescriptor<Sync> stepOf(
@@ -193,6 +197,8 @@ public final class LocalJourneys implements Journeys {
       instance = instance();
     } catch (IllegalStateException failure) {
       return new Journey(null, new Ended.NotCreated(failure));
+    } catch (TestMistake mistake) {
+      return new Journey(null, new Ended.Stopped(mistake));
     }
     return new Journey(instance.getJourneyId().toString(), endedOf(executor, instance));
   }
@@ -206,9 +212,11 @@ public final class LocalJourneys implements Journeys {
   }
 
   private WorkflowInstance<Sync> instance() {
-    var builder =
-        InstanceBuilder.of(descriptor, new Scenario(witness, model.workflow().failingOperations()))
-            .initialData(model.initialData());
+    var scenario = new Scenario(witness, model.workflow().failingOperations());
+    if (model.testing().createsTheInstance()) {
+      return tested.instance(descriptor, scenario, model);
+    }
+    var builder = InstanceBuilder.of(descriptor, scenario).initialData(model.initialData());
     for (var entry : model.initialGlobalMetadata()) {
       builder.reportersGlobalMetadata(entry.getKey(), entry.getValue());
     }

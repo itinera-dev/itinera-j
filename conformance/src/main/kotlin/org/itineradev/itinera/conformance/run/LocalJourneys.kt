@@ -31,7 +31,12 @@ import org.itineradev.itinera.workflow.kotlin.builder
  *
  * @throws org.itineradev.itinera.workflow.Violations when the builder refuses the workflow.
  */
-internal fun localJourneys(model: Model, recorders: Recorders, witness: Witness): Journeys {
+internal fun localJourneys(
+    model: Model,
+    recorders: Recorders,
+    witness: Witness,
+    tested: Tested,
+): Journeys {
     val workflow = model.workflow
     val builder = builder<Scenario>(workflow.name)
     val policies =
@@ -50,7 +55,7 @@ internal fun localJourneys(model: Model, recorders: Recorders, witness: Witness)
     for (role in workflow.roles.keys) builder.role(roleOf(role))
     val generator = workflow.idGenerator
     if (generator is IdGenerator.Returns) builder.idGenerator { _, _ -> generator.id }
-    return LocalJourneys(builder.build(), model, recorders, witness)
+    return LocalJourneys(builder.build(), model, recorders, witness, tested)
 }
 
 private fun stepOf(
@@ -148,6 +153,7 @@ private class LocalJourneys(
     private val model: Model,
     private val recorders: Recorders,
     private val witness: Witness,
+    private val tested: Tested,
 ) : Journeys {
     override val listing: List<ListedStep>
         get() = descriptor.listing()
@@ -161,10 +167,9 @@ private class LocalJourneys(
         journeyOf(::instance, ::idOf) { executor.run(it) }
 
     private fun instance(): WorkflowInstance<Sync> {
-        val builder =
-            descriptor
-                .instance(Scenario(witness, model.workflow.failingOperations))
-                .initialData(model.initialData)
+        val scenario = Scenario(witness, model.workflow.failingOperations)
+        if (model.testing.createsTheInstance) return tested.instance(descriptor, scenario, model)
+        val builder = descriptor.instance(scenario).initialData(model.initialData)
         for ((key, value) in model.initialGlobalMetadata) {
             builder.reportersGlobalMetadata(key, value)
         }

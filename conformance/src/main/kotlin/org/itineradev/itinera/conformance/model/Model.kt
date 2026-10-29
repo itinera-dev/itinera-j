@@ -17,6 +17,9 @@ internal class Model {
      */
     val initialGlobalMetadata = mutableListOf<Pair<String, Any?>>()
 
+    /** What the scenario declares of test support. */
+    val testing = TestSupport()
+
     /** How each scripted reporter fails, by name; one not here never fails. */
     val reporterFailures = linkedMapOf<String, ReporterFailure>()
 
