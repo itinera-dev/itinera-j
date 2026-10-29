@@ -10,16 +10,17 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.yield
 import org.itineradev.itinera.engine.Emits
+import org.itineradev.itinera.engine.Handle
 import org.itineradev.itinera.engine.Severity
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
 
-class EmittingAsyncStepReporterTest {
+class EmittingAsyncReporterTest {
     @Test
     fun `calls from several coroutines go through one at a time`() {
         val emits = Overlapping()
-        val reporter = EmittingAsyncStepReporter(emits)
+        val reporter = EmittingAsyncReporter(emits, Handle.ASYNC_STEP_REPORTER)
         runBlocking(Dispatchers.Default) { List(COROUTINES) { emitting(reporter) }.joinAll() }
         assertEquals(COROUTINES * EMITS, emits.calls.get())
         assertEquals(1, emits.most.get())
@@ -28,7 +29,7 @@ class EmittingAsyncStepReporterTest {
     @Test
     fun `closing waits for the call going through`() {
         val emits = Gated()
-        val reporter = EmittingAsyncStepReporter(emits)
+        val reporter = EmittingAsyncReporter(emits, Handle.ASYNC_STEP_REPORTER)
         runBlocking {
             val emitting = launch { reporter.info("noted") }
             emits.entered.await()
@@ -45,7 +46,7 @@ class EmittingAsyncStepReporterTest {
 private const val COROUTINES = 8
 private const val EMITS = 50
 
-private fun CoroutineScope.emitting(reporter: EmittingAsyncStepReporter): Job = launch {
+private fun CoroutineScope.emitting(reporter: EmittingAsyncReporter): Job = launch {
     repeat(EMITS) { reporter.info("noted") }
 }
 

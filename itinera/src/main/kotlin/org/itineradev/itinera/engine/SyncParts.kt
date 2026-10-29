@@ -71,6 +71,9 @@ public class SyncParts(private val factory: DispatcherFactory) : Parts<Sync> {
     override val reporterHandles: ReporterHandles
         get() = SyncReporterHandles
 
+    override val hooks: HookCaller
+        get() = SyncHooks
+
     @JvmSynthetic override suspend fun ensureActive(): Unit = Unit
 }
 
@@ -103,5 +106,21 @@ private class Guarded(private val reporter: Reporter, private val guard: Guard) 
 
 /** Makes the synchronous mode's reporter handles. */
 private object SyncReporterHandles : ReporterHandles {
-    override fun stepReporter(emits: Emits): ReporterHandle = EmittingStepReporter(emits)
+    override fun stepReporter(emits: Emits): ReporterHandle =
+        EmittingReporter(emits, Handle.STEP_REPORTER)
+
+    override fun hookReporter(emits: Emits): ReporterHandle =
+        EmittingReporter(emits, Handle.HOOK_REPORTER)
+}
+
+/** Calls the synchronous mode's hooks. */
+private object SyncHooks : HookCaller {
+    @JvmSynthetic
+    override suspend fun step(hook: HookCall<*, *, *, *>, policy: Any?, got: Got<*>): Any? =
+        returned<SyncHook<Any?, Any?, Any?>>(hook).call(policy, returned(got))
+
+    @JvmSynthetic
+    override suspend fun workflow(hook: HookCall<*, *, *, *>, policy: Any?, got: Got<*>) {
+        returned<SyncWorkflowHook<Any?, Any?>>(hook).call(policy, returned(got))
+    }
 }

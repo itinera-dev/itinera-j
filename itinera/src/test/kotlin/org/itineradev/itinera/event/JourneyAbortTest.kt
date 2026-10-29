@@ -8,6 +8,7 @@ import org.itineradev.itinera.event.Fixtures.payments
 import org.itineradev.itinera.event.Fixtures.pricing
 import org.itineradev.itinera.event.samples.aborts
 import org.itineradev.itinera.event.samples.missing
+import org.itineradev.itinera.event.samples.wrong
 import org.itineradev.itinera.journey.AbortReason
 import org.itineradev.itinera.policy.StepHook
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -35,12 +36,13 @@ class JourneyAbortTest {
     }
 
     @Test
-    fun `the samples tell why a journey was aborted and what was missing`() {
+    fun `the samples tell why a journey was aborted and what was missing or of the wrong type`() {
         assertEquals(
             "hook failed during charge: no ledger",
             aborts(HookFailed(charge, "no ledger")),
         )
         assertEquals("the failure's reason", missing(MissingData.FailureReason(ByRescueStep)))
+        assertEquals("the key amount", wrong(WrongData.Key("amount", closing)))
     }
 
     companion object {
@@ -75,13 +77,13 @@ class JourneyAbortTest {
                 ),
                 argumentSet(
                     "a wrong type",
-                    WrongType(null, "amount", closing, null),
+                    WrongType(null, WrongData.Key("amount", closing), null),
                     AbortReason.WRONG_TYPE,
                     null,
                 ),
                 argumentSet(
                     "a wrong type whose copy threw",
-                    WrongType(charge, "ticket", ByStep, "no more tickets"),
+                    WrongType(charge, WrongData.Key("ticket", ByStep), "no more tickets"),
                     AbortReason.WRONG_TYPE,
                     "no more tickets",
                 ),

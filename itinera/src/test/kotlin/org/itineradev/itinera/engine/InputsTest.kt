@@ -20,6 +20,7 @@ import org.itineradev.itinera.event.RequiredDataMissing
 import org.itineradev.itinera.event.StepCouldNotBeBuilt
 import org.itineradev.itinera.event.StepSource
 import org.itineradev.itinera.event.UnexpectedResult
+import org.itineradev.itinera.event.WrongData
 import org.itineradev.itinera.event.WrongType
 import org.itineradev.itinera.journey.AbortReason
 import org.itineradev.itinera.journey.DataBagAccess
@@ -77,8 +78,7 @@ class InputsTest {
     @Test
     fun `an input of another type aborts the journey with wrong type, naming the step`() {
         val result = ran(journeyOf(reading(order)).data("order", 42L).create())
-        val wrong = result.abort?.details as WrongType
-        assertEquals(listOf(ship, "order", ByStep), listOf(wrong.step, wrong.key, wrong.requester))
+        assertEquals(WrongType(ship, WrongData.Key("order", ByStep), null), result.abort?.details)
     }
 
     @Test
@@ -165,7 +165,7 @@ class InputsTest {
     fun `what an input adapter supplies of another type is wrong type, naming the adapter`() {
         val result = ran(adapted(adapting { _, _ -> Supplied.Value(42L) }).create())
         val wrong = result.abort?.details as WrongType
-        assertEquals(ByAdapter(pricing), wrong.requester)
+        assertEquals(ByAdapter(pricing), (wrong.wrong as WrongData.Key).requester)
     }
 
     @Test
