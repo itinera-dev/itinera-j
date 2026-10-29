@@ -27,6 +27,15 @@ public class Draft<W, M : Mode>(
         data[key] = value
     }
 
+    /**
+     * Puts each component of [value], a record or data class, in the initial data under its key.
+     *
+     * @throws IllegalArgumentException when [value] is neither, or as `JourneyData.of` says.
+     */
+    public fun initialData(value: Any) {
+        data.putAll(JourneyData.of(ClassType(value.javaClass, emptyList(), false)).entries(value))
+    }
+
     /** Sets [value] as the initial global metadata under [key]. */
     public fun metadata(key: String, value: Any?) {
         metadata[key] = value

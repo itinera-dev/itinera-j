@@ -9,6 +9,7 @@ public final class org/itineradev/itinera/instance/async/AsyncInstanceBuilder {
 	public static final field Companion Lorg/itineradev/itinera/instance/async/AsyncInstanceBuilder$Companion;
 	public final fun create ()Lorg/itineradev/itinera/instance/WorkflowInstance;
 	public final fun data (Ljava/lang/String;Ljava/lang/Object;)Lorg/itineradev/itinera/instance/async/AsyncInstanceBuilder;
+	public final fun initialData (Ljava/lang/Object;)Lorg/itineradev/itinera/instance/async/AsyncInstanceBuilder;
 	public final fun initialData (Ljava/util/Map;)Lorg/itineradev/itinera/instance/async/AsyncInstanceBuilder;
 	public final fun reporter (Lorg/itineradev/itinera/report/async/AsyncReporter;)Lorg/itineradev/itinera/instance/async/AsyncInstanceBuilder;
 	public final fun reporterFor (Lorg/itineradev/itinera/report/async/AsyncReporterFactory;)Lorg/itineradev/itinera/instance/async/AsyncInstanceBuilder;
