@@ -1,6 +1,5 @@
 package org.itineradev.itinera.workflow.async
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.request.Got
 import org.itineradev.itinera.request.InputAdapterKind
 import org.itineradev.itinera.workflow.Async
@@ -15,7 +14,6 @@ import org.itineradev.itinera.workflow.Supplied
  * @param W the class of the workflow object it is called with.
  * @sample org.itineradev.itinera.workflow.async.samples.asyncAdapters
  */
-@ExperimentalItineraApi
 public fun interface AsyncInputAdapter<in W> : InputAdapterCall<W, Async> {
     /**
      * Supplies the input whose key `got` answers, or leaves it to the data bag.

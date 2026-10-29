@@ -1,6 +1,5 @@
 package org.itineradev.itinera.engine
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Journeys.succeeding
 import org.itineradev.itinera.event.GiveUpCause
 import org.itineradev.itinera.event.JourneyFailure
@@ -15,7 +14,6 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.Arguments.argumentSet
 import org.junit.jupiter.params.provider.FieldSource
 
-@OptIn(ExperimentalItineraApi::class)
 internal class DecisionTest {
     @ParameterizedTest
     @FieldSource("abnormalTerminations")

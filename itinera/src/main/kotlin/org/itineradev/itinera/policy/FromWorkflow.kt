@@ -1,7 +1,5 @@
 package org.itineradev.itinera.policy
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * Marks a parameter of a hook as data from the workflow: what the data bag holds under the key,
  * read as the parameter's type, never through an input adapter.
@@ -12,7 +10,6 @@ import org.itineradev.itinera.ExperimentalItineraApi
  *
  * @sample org.itineradev.itinera.workflow.annotated.samples.telling
  */
-@ExperimentalItineraApi
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @MustBeDocumented

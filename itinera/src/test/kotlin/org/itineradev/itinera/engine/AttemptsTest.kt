@@ -1,6 +1,5 @@
 package org.itineradev.itinera.engine
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Journeys.contributing
 import org.itineradev.itinera.engine.Journeys.journeyOf
 import org.itineradev.itinera.engine.Journeys.ran
@@ -24,7 +23,6 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-@OptIn(ExperimentalItineraApi::class)
 class AttemptsTest {
     private val charge = StepName.of("charge")
     private val declined = Reason("declined", "The card was declined.", mapOf("bank" to "05"))

@@ -21,7 +21,6 @@ import org.itineradev.itinera.service.ProviderDescriptor
  * @param M the workflow's mode.
  * @sample org.itineradev.itinera.workflow.samples.building
  */
-@ExperimentalItineraApi
 public interface WorkflowDescriptor<W, M : Mode> {
     /** The workflow's name, which every event of its journeys carries. */
     public val name: WorkflowName
@@ -45,7 +44,7 @@ public interface WorkflowDescriptor<W, M : Mode> {
     public val inputAdapters: List<InputAdapterDescriptor<W, M>>
 
     /** The service providers, which supply the services the steps request. */
-    public val providers: List<ProviderDescriptor<W, M>>
+    @ExperimentalItineraApi public val providers: List<ProviderDescriptor<W, M>>
 
     /**
      * The factories of the reporters the workflow lists, with which each instance makes its own, in

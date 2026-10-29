@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.request.async.samples
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.request.Requests
 import org.itineradev.itinera.request.async.asyncStepReporter
 import org.itineradev.itinera.step.Outcome

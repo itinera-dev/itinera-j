@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.policy
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.policy.samples.Corner
 import org.itineradev.itinera.policy.samples.Messages
 import org.itineradev.itinera.policy.samples.Notify

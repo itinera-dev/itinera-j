@@ -1,6 +1,5 @@
 package org.itineradev.itinera.workflow
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.request.InputAdapterKind
 import org.itineradev.itinera.request.Request
 import org.itineradev.itinera.step.StepName
@@ -18,7 +17,6 @@ import org.itineradev.itinera.step.StepName
  * @param M the mode of the workflows the adapter can join.
  * @sample org.itineradev.itinera.workflow.samples.adapters
  */
-@ExperimentalItineraApi
 public interface InputAdapterDescriptor<in W, M : Mode> {
     /** The adapter's name, unique among the workflow's input adapters. */
     public val name: AdapterName
@@ -58,7 +56,6 @@ public interface InputAdapterDescriptor<in W, M : Mode> {
  * @param M the mode of the workflows the adapter can join.
  * @sample org.itineradev.itinera.workflow.samples.adapters
  */
-@ExperimentalItineraApi
 public class InputAdapterBuilder<W, M : Mode>
 internal constructor(private val name: AdapterName, private val call: InputAdapterCall<W, M>) {
     private val steps = mutableListOf<StepName>()

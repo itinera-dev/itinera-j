@@ -13,7 +13,6 @@ import org.itineradev.itinera.workflow.Mode
  * @param M the mode of the workflows the step can join.
  * @sample org.itineradev.itinera.request.samples.requests
  */
-@ExperimentalItineraApi
 public interface StepKind<M : Mode> : BuildKind, ContributorKind, StepReporterKind<M>
 
 /**
@@ -33,7 +32,7 @@ public interface RescueKind<M : Mode> : StepKind<M>, FromStepKind, ReasonKind, E
  *
  * @sample org.itineradev.itinera.request.samples.requests
  */
-@ExperimentalItineraApi public interface BuildKind
+public interface BuildKind
 
 /**
  * The kinds of part that contribute data, which may request a contributor: steps, rescue steps and
@@ -41,7 +40,7 @@ public interface RescueKind<M : Mode> : StepKind<M>, FromStepKind, ReasonKind, E
  *
  * @sample org.itineradev.itinera.request.samples.requests
  */
-@ExperimentalItineraApi public interface ContributorKind
+public interface ContributorKind
 
 /**
  * The kinds of part of mode [M] that may request the step reporter of that mode: steps and rescue
@@ -50,4 +49,4 @@ public interface RescueKind<M : Mode> : StepKind<M>, FromStepKind, ReasonKind, E
  * @param M the mode of the reporter they may request.
  * @sample org.itineradev.itinera.request.samples.requests
  */
-@ExperimentalItineraApi public interface StepReporterKind<M : Mode>
+public interface StepReporterKind<M : Mode>

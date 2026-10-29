@@ -1,6 +1,5 @@
 package org.itineradev.itinera.step
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Captured
 import org.itineradev.itinera.engine.NotAValue
 import org.itineradev.itinera.engine.Values
@@ -17,7 +16,6 @@ import org.itineradev.itinera.engine.Values
  *
  * @sample org.itineradev.itinera.step.samples.outcomes
  */
-@ExperimentalItineraApi
 public sealed interface Outcome {
     /**
      * The attempt succeeded: its contributions are committed, and the journey goes on to the next

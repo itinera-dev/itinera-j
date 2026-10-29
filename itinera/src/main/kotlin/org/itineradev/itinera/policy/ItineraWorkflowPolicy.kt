@@ -1,7 +1,5 @@
 package org.itineradev.itinera.policy
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * A workflow policy written as a class, marked [WorkflowPolicy]: hooks that act on the journey of a
  * workflow it is attached to with `@Workflow(policies = ...)`. Each hook is a public method marked
@@ -11,4 +9,4 @@ import org.itineradev.itinera.ExperimentalItineraApi
  *
  * @sample org.itineradev.itinera.workflow.annotated.samples.telling
  */
-@ExperimentalItineraApi public interface ItineraWorkflowPolicy
+public interface ItineraWorkflowPolicy

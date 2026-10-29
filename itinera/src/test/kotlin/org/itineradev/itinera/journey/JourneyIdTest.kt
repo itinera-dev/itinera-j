@@ -1,11 +1,9 @@
 package org.itineradev.itinera.journey
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-@OptIn(ExperimentalItineraApi::class)
 class JourneyIdTest {
     @Test
     fun `a journey ID is never empty`() {

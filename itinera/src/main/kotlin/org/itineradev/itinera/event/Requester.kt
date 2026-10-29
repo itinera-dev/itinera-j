@@ -1,14 +1,12 @@
 package org.itineradev.itinera.event
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * Who made a request whose data could not be resolved: a step for one of its inputs, an input
  * adapter resolving a step's input, a hook, or a service provider supplying a step's service.
  *
  * @sample org.itineradev.itinera.event.samples.aborts
  */
-@ExperimentalItineraApi public sealed interface Requester
+public sealed interface Requester
 
 /**
  * Who requested what a failed attempt left, the failure's reason or the error: a hook of a step
@@ -16,7 +14,7 @@ import org.itineradev.itinera.ExperimentalItineraApi
  *
  * @sample org.itineradev.itinera.event.samples.aborts
  */
-@ExperimentalItineraApi public sealed interface FailureRequester
+public sealed interface FailureRequester
 
 /**
  * What failed while a step was built: its own constructor, an input adapter with the key of the
@@ -24,14 +22,14 @@ import org.itineradev.itinera.ExperimentalItineraApi
  *
  * @sample org.itineradev.itinera.event.samples.aborts
  */
-@ExperimentalItineraApi public sealed interface BuildSource
+public sealed interface BuildSource
 
 /**
  * Who gave a value, or set global metadata: a step, a hook or a service provider.
  *
  * @sample org.itineradev.itinera.event.samples.aborts
  */
-@ExperimentalItineraApi public sealed interface ValueSource
+public sealed interface ValueSource
 
 /**
  * Who gave a reason whose details may not be a value: a step, a rescue step included, or a hook of
@@ -39,7 +37,7 @@ import org.itineradev.itinera.ExperimentalItineraApi
  *
  * @sample org.itineradev.itinera.event.samples.aborts
  */
-@ExperimentalItineraApi public sealed interface ReasonSource : ValueSource
+public sealed interface ReasonSource : ValueSource
 
 /**
  * What returned something its call cannot return: a step's or rescue step's own `run` or
@@ -48,7 +46,7 @@ import org.itineradev.itinera.ExperimentalItineraApi
  *
  * @sample org.itineradev.itinera.event.samples.aborts
  */
-@ExperimentalItineraApi public sealed interface ResultSource
+public sealed interface ResultSource
 
 /**
  * What a required request found missing: data under a key, or the failure's reason or the error of
@@ -56,7 +54,6 @@ import org.itineradev.itinera.ExperimentalItineraApi
  *
  * @sample org.itineradev.itinera.event.samples.missing
  */
-@ExperimentalItineraApi
 public sealed interface MissingData {
     /**
      * Data under a key.
@@ -100,7 +97,6 @@ public sealed interface MissingData {
  *
  * @sample org.itineradev.itinera.event.samples.wrong
  */
-@ExperimentalItineraApi
 public sealed interface WrongData {
     /**
      * Data under a key.
