@@ -1,6 +1,6 @@
 {
   "cases": "v0.1.0-rc.19",
-  "proposals": [56, 62, 116, 121],
+  "proposals": [12, 32, 42, 56, 62, 116, 121],
   "capabilities": ["sync"],
   "impossible": {
     "bag-write": [
@@ -20,6 +20,32 @@
         "proof": {
           "test": "aJavaProviderOfJourneyScopeCannotDeclareARequestOfTheAttempt",
           "file": "itinera-java/src/compileFailTest/java/org/itineradev/itinera/service/JavaProviderTypesTest.java"
+        }
+      }
+    ],
+    "mode-not-accepted": [
+      {
+        "feature": "cases/tier-1/0012-local-executor/local-executor.feature",
+        "scenario": "A synchronous-only executor refuses an asynchronous step before the journey starts",
+        "proof": {
+          "test": "aSynchronousJavaWorkflowTakesNoAsynchronousPart",
+          "file": "itinera-java/src/compileFailTest/java/org/itineradev/itinera/workflow/JavaModeTypesTest.java"
+        }
+      },
+      {
+        "feature": "cases/tier-1/0012-local-executor/local-executor.feature",
+        "scenario": "A synchronous-only executor refuses an asynchronous input adapter before the journey starts",
+        "proof": {
+          "test": "aSynchronousJavaWorkflowTakesNoAsynchronousPart",
+          "file": "itinera-java/src/compileFailTest/java/org/itineradev/itinera/workflow/JavaModeTypesTest.java"
+        }
+      },
+      {
+        "feature": "cases/tier-1/0095-services-provided-to-steps/admission.feature",
+        "scenario": "A synchronous-only executor refuses an asynchronous provider before the journey starts",
+        "proof": {
+          "test": "aSynchronousJavaWorkflowTakesNoAsynchronousPart",
+          "file": "itinera-java/src/compileFailTest/java/org/itineradev/itinera/workflow/JavaModeTypesTest.java"
         }
       }
     ],
