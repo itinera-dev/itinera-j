@@ -1,3 +1,107 @@
+public abstract interface class org/itineradev/itinera/policy/testing/FailureHookEnding : org/itineradev/itinera/policy/testing/HookEnding {
+	public fun onFailure ()Lorg/itineradev/itinera/policy/OnFailure;
+}
+
+public abstract interface class org/itineradev/itinera/policy/testing/HookEnding {
+	public static final field Companion Lorg/itineradev/itinera/policy/testing/HookEnding$Companion;
+	public static fun failWorkflow (Ljava/lang/String;)Lorg/itineradev/itinera/policy/testing/FailureHookEnding;
+	public static fun failWorkflow (Lorg/itineradev/itinera/step/Reason;)Lorg/itineradev/itinera/policy/testing/FailureHookEnding;
+	public static fun fails (Ljava/lang/String;)Lorg/itineradev/itinera/policy/testing/HookEnding$Fails;
+	public static fun finishWorkflow ()Lorg/itineradev/itinera/policy/testing/HookEnding;
+	public static fun keepDefault ()Lorg/itineradev/itinera/policy/testing/HookEnding$KeepDefault;
+	public fun onSuccess ()Lorg/itineradev/itinera/policy/OnSuccess;
+}
+
+public final class org/itineradev/itinera/policy/testing/HookEnding$Companion {
+	public final fun failWorkflow (Ljava/lang/String;)Lorg/itineradev/itinera/policy/testing/FailureHookEnding;
+	public final fun failWorkflow (Lorg/itineradev/itinera/step/Reason;)Lorg/itineradev/itinera/policy/testing/FailureHookEnding;
+	public final fun fails (Ljava/lang/String;)Lorg/itineradev/itinera/policy/testing/HookEnding$Fails;
+	public final fun finishWorkflow ()Lorg/itineradev/itinera/policy/testing/HookEnding;
+	public final fun keepDefault ()Lorg/itineradev/itinera/policy/testing/HookEnding$KeepDefault;
+}
+
+public final class org/itineradev/itinera/policy/testing/HookEnding$FailWorkflow : java/lang/Record, org/itineradev/itinera/policy/testing/FailureHookEnding {
+	public fun <init> (Lorg/itineradev/itinera/step/Reason;)V
+	public final fun component1 ()Lorg/itineradev/itinera/step/Reason;
+	public final fun copy (Lorg/itineradev/itinera/step/Reason;)Lorg/itineradev/itinera/policy/testing/HookEnding$FailWorkflow;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/policy/testing/HookEnding$FailWorkflow;Lorg/itineradev/itinera/step/Reason;ILjava/lang/Object;)Lorg/itineradev/itinera/policy/testing/HookEnding$FailWorkflow;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public final fun reason ()Lorg/itineradev/itinera/step/Reason;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/policy/testing/HookEnding$Fails : java/lang/Record, org/itineradev/itinera/policy/testing/FailureHookEnding, org/itineradev/itinera/policy/testing/WorkflowHookEnding {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lorg/itineradev/itinera/policy/testing/HookEnding$Fails;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/policy/testing/HookEnding$Fails;Ljava/lang/String;ILjava/lang/Object;)Lorg/itineradev/itinera/policy/testing/HookEnding$Fails;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun errorMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/policy/testing/HookEnding$FinishWorkflow : org/itineradev/itinera/policy/testing/HookEnding {
+	public static final field INSTANCE Lorg/itineradev/itinera/policy/testing/HookEnding$FinishWorkflow;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/policy/testing/HookEnding$KeepDefault : org/itineradev/itinera/policy/testing/FailureHookEnding, org/itineradev/itinera/policy/testing/WorkflowHookEnding {
+	public static final field INSTANCE Lorg/itineradev/itinera/policy/testing/HookEnding$KeepDefault;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/policy/testing/StepPolicyMock {
+	public final fun onStepAbnormalTermination ()Lorg/itineradev/itinera/policy/OnFailure;
+	public final fun onStepFailure ()Lorg/itineradev/itinera/policy/OnFailure;
+	public final fun onStepRetry ()Lorg/itineradev/itinera/policy/OnFailure;
+	public final fun onStepSuccess ()Lorg/itineradev/itinera/policy/OnSuccess;
+}
+
+public final class org/itineradev/itinera/policy/testing/StepPolicyScript : org/itineradev/itinera/policy/PolicyFactory {
+	public static final field Companion Lorg/itineradev/itinera/policy/testing/StepPolicyScript$Companion;
+	public synthetic fun build ()Ljava/lang/Object;
+	public fun build ()Lorg/itineradev/itinera/policy/testing/StepPolicyMock;
+	public final fun failingToBuild (Ljava/lang/String;)Lorg/itineradev/itinera/policy/testing/StepPolicyScript;
+	public static final fun keepingDefault ()Lorg/itineradev/itinera/policy/testing/StepPolicyScript;
+	public final fun onStepAbnormalTermination (Lorg/itineradev/itinera/policy/testing/FailureHookEnding;)Lorg/itineradev/itinera/policy/testing/StepPolicyScript;
+	public final fun onStepFailure (Lorg/itineradev/itinera/policy/testing/FailureHookEnding;)Lorg/itineradev/itinera/policy/testing/StepPolicyScript;
+	public final fun onStepRetry (Lorg/itineradev/itinera/policy/testing/FailureHookEnding;)Lorg/itineradev/itinera/policy/testing/StepPolicyScript;
+	public final fun onStepSuccess (Lorg/itineradev/itinera/policy/testing/HookEnding;)Lorg/itineradev/itinera/policy/testing/StepPolicyScript;
+}
+
+public final class org/itineradev/itinera/policy/testing/StepPolicyScript$Companion {
+	public final fun keepingDefault ()Lorg/itineradev/itinera/policy/testing/StepPolicyScript;
+}
+
+public abstract interface class org/itineradev/itinera/policy/testing/WorkflowHookEnding {
+	public fun played ()V
+}
+
+public final class org/itineradev/itinera/policy/testing/WorkflowPolicyMock {
+	public final fun onWorkflowFailure ()V
+	public final fun onWorkflowSuccess ()V
+}
+
+public final class org/itineradev/itinera/policy/testing/WorkflowPolicyScript : org/itineradev/itinera/policy/PolicyFactory {
+	public static final field Companion Lorg/itineradev/itinera/policy/testing/WorkflowPolicyScript$Companion;
+	public synthetic fun build ()Ljava/lang/Object;
+	public fun build ()Lorg/itineradev/itinera/policy/testing/WorkflowPolicyMock;
+	public final fun failingToBuild (Ljava/lang/String;)Lorg/itineradev/itinera/policy/testing/WorkflowPolicyScript;
+	public final fun onWorkflowFailure (Lorg/itineradev/itinera/policy/testing/WorkflowHookEnding;)Lorg/itineradev/itinera/policy/testing/WorkflowPolicyScript;
+	public final fun onWorkflowSuccess (Lorg/itineradev/itinera/policy/testing/WorkflowHookEnding;)Lorg/itineradev/itinera/policy/testing/WorkflowPolicyScript;
+	public static final fun returning ()Lorg/itineradev/itinera/policy/testing/WorkflowPolicyScript;
+}
+
+public final class org/itineradev/itinera/policy/testing/WorkflowPolicyScript$Companion {
+	public final fun returning ()Lorg/itineradev/itinera/policy/testing/WorkflowPolicyScript;
+}
+
 public final class org/itineradev/itinera/report/testing/AsyncRecordingReporter : org/itineradev/itinera/report/async/AsyncReporter {
 	public fun <init> ()V
 	public final fun getEvents ()Ljava/util/List;
