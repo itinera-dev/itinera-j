@@ -33,6 +33,14 @@ internal class TestSupport {
     var hookRecorderFails = false
         private set
 
+    /** The rows of the script, in the order written, once it is written. */
+    var script: List<ScriptRow>? = null
+        private set
+
+    /** Whether the script ensures every step is scripted. */
+    var ensuresAllScripted = false
+        private set
+
     /** Whether the instance is created through test support. */
     val createsTheInstance: Boolean
         get() = recordingReporter || fakes.isNotEmpty()
@@ -46,6 +54,17 @@ internal class TestSupport {
     fun fake(provider: String, fake: FakeModel) {
         if (provider in fakes) throw ModelException("the provider \"$provider\" is faked twice")
         fakes[provider] = fake
+    }
+
+    /** Writes the script, once. */
+    fun script(rows: List<ScriptRow>) {
+        if (script != null) throw ModelException("the script is written twice")
+        script = rows
+    }
+
+    /** Makes the script ensure every step is scripted. */
+    fun ensureAllScripted() {
+        ensuresAllScripted = true
     }
 
     /** Makes the step event reporter fail. */
