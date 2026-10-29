@@ -6,7 +6,7 @@ Status: done. Stage 3 added what the result's failure and abort carry, and the r
 
 ## API
 
-83 is listed in both manifests, so no public item below carries `@ExperimentalItineraApi`, but for the details of aborts that belong to a proposal not listed yet: `RescueSkipped` (0003) and `UnexpectedResult` (0122), with their entries of `AbortReason`. `ReservedMetadataKey` (0102) kept it until stage 8 listed 102.
+83 is listed in both manifests, so no public item below carries `@ExperimentalItineraApi`. `ReservedMetadataKey` (0102) kept it until stage 8 listed 102, and `RescueSkipped` (0003) and `UnexpectedResult` (0122), with their entries of `AbortReason`, until stage 9 listed 3 and 122.
 
 - **`Failure`**, in `org.itineradev.itinera.journey`, carries the `JourneyFailure` its `journey_failed` event carries, as `details`, and the error that ended the step, when an abnormal termination failed the journey. `cause`, `reason` and `errorMessage` read the details.
 - **`Abort`** carries the `JourneyAbort` its `journey_aborted` event carries, as `details`, and the error that aborted the journey, when one did. `reason`, `step` and `errorMessage` read the details. Reusing the events' types keeps the result and the event saying the same thing, as itinera-ts does.

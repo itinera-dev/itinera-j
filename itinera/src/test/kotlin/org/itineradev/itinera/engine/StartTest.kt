@@ -1,6 +1,5 @@
 package org.itineradev.itinera.engine
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Journeys.Shop
 import org.itineradev.itinera.engine.Journeys.packing
 import org.itineradev.itinera.engine.Journeys.ran
@@ -54,7 +53,6 @@ import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-@OptIn(ExperimentalItineraApi::class)
 class StartTest {
     @Test
     fun `the journey ID, then the initial global metadata, reach the reporters before journey_started`() {
@@ -145,15 +143,15 @@ class StartTest {
     @Test
     fun `a hook of no mode the executor accepts is refused with mode not accepted`() {
         val audit =
-            object : StepPolicyDescriptor<Any?, Sync> {
+            object : StepPolicyDescriptor<Any, Sync> {
                 override val name: PolicyName = PolicyName.of("audit")
-                override val factory: PolicyFactory<Any?> = PolicyFactory { null }
+                override val factory: PolicyFactory<Any> = PolicyFactory(::Any)
                 override val onStepSuccess:
-                    HookDefinition<Sync, Any?, StepHookKind<Sync>, OnSuccess> =
-                    object : HookDefinition<Sync, Any?, StepHookKind<Sync>, OnSuccess> {
+                    HookDefinition<Sync, Any, StepHookKind<Sync>, OnSuccess> =
+                    object : HookDefinition<Sync, Any, StepHookKind<Sync>, OnSuccess> {
                         override val requests: List<Request<StepHookKind<Sync>, *>> = emptyList()
-                        override val call: HookCall<Sync, Any?, StepHookKind<Sync>, OnSuccess> =
-                            object : HookCall<Sync, Any?, StepHookKind<Sync>, OnSuccess> {}
+                        override val call: HookCall<Sync, Any, StepHookKind<Sync>, OnSuccess> =
+                            object : HookCall<Sync, Any, StepHookKind<Sync>, OnSuccess> {}
                     }
                 override val onStepFailure = null
                 override val onStepRetry = null

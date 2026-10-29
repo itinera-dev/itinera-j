@@ -1,6 +1,5 @@
 package org.itineradev.itinera.step.async
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.request.Got
 import org.itineradev.itinera.request.RescueKind
 import org.itineradev.itinera.step.RescueFactory
@@ -14,7 +13,6 @@ import org.itineradev.itinera.workflow.Async
  *
  * @sample org.itineradev.itinera.workflow.async.samples.asyncRescues
  */
-@ExperimentalItineraApi
 public fun interface AsyncRescueFactory : RescueFactory<Async> {
     /**
      * Builds the rescue step, from the answers to the requests its descriptor declares.
@@ -31,7 +29,6 @@ public fun interface AsyncRescueFactory : RescueFactory<Async> {
  *
  * @sample org.itineradev.itinera.workflow.async.samples.asyncRescues
  */
-@ExperimentalItineraApi
 public fun interface AsyncRescueRun {
     /**
      * Runs the rescue step.

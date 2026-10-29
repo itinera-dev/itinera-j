@@ -15,7 +15,7 @@ import org.itineradev.itinera.workflow.Async
  * @param P the policy its hooks are called on.
  * @sample org.itineradev.itinera.policy.async.samples.asyncPolicies
  */
-public class AsyncWorkflowPolicyBuilder<P>
+public class AsyncWorkflowPolicyBuilder<P : Any>
 internal constructor(private val draft: PolicyDraft<P, Async>) {
     /**
      * Defines `on workflow success`, called once the journey succeeded, which requests nothing.
@@ -77,7 +77,7 @@ internal constructor(private val draft: PolicyDraft<P, Async>) {
  * @throws IllegalArgumentException when [name] is empty.
  * @sample org.itineradev.itinera.policy.async.samples.asyncPolicies
  */
-public fun <P> asyncWorkflowPolicy(
+public fun <P : Any> asyncWorkflowPolicy(
     name: String,
     factory: PolicyFactory<P>,
 ): AsyncWorkflowPolicyBuilder<P> =

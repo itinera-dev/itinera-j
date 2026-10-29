@@ -1,6 +1,5 @@
 package org.itineradev.itinera.step
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.request.Got
 import org.itineradev.itinera.request.RescueKind
 import org.itineradev.itinera.workflow.Mode
@@ -15,7 +14,7 @@ import org.itineradev.itinera.workflow.Sync
  * @param M the mode of the workflows the rescue step can join.
  * @sample org.itineradev.itinera.workflow.samples.rescues
  */
-@ExperimentalItineraApi public interface RescueFactory<M : Mode>
+public interface RescueFactory<M : Mode>
 
 /**
  * Builds a synchronous rescue step, as a class's constructor does: what it throws aborts the
@@ -24,7 +23,6 @@ import org.itineradev.itinera.workflow.Sync
  *
  * @sample org.itineradev.itinera.workflow.samples.rescues
  */
-@ExperimentalItineraApi
 public fun interface SyncRescueFactory : RescueFactory<Sync> {
     /**
      * Builds the rescue step, from the answers to the requests its descriptor declares.
@@ -40,7 +38,6 @@ public fun interface SyncRescueFactory : RescueFactory<Sync> {
  *
  * @sample org.itineradev.itinera.workflow.samples.rescues
  */
-@ExperimentalItineraApi
 public fun interface SyncRescueRun {
     /**
      * Runs the rescue step.

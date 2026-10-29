@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.event.samples
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.event.GiveUpCause
 import org.itineradev.itinera.event.JourneyFailure
 import org.itineradev.itinera.event.RescueCause

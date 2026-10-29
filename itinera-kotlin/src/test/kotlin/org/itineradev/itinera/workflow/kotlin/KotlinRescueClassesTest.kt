@@ -1,10 +1,7 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.workflow.kotlin
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.Contributor
 import org.itineradev.itinera.request.Answers
 import org.itineradev.itinera.request.Request

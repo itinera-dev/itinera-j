@@ -33,6 +33,15 @@ class ProviderTypesTest {
     }
 
     @Test
+    fun `a service provider always says what it provides`() {
+        assertDoesNotCompile(
+            "$PROVIDERS val warehouse = ProviderDescriptor.perAttempt<Shop, String>" +
+                "(\"warehouse\", \"stock\", String::class.java) { _, _ -> null }",
+            "Null cannot be a value of a non-null type 'Provided<String>'",
+        )
+    }
+
+    @Test
     fun `a workflow takes only service providers of its own workflow objects`() {
         assertDoesNotCompile(
             "$PROVIDERS fun provide(workflow: WorkflowBuilder<Shop, Sync>, " +

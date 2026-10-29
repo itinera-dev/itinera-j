@@ -1,6 +1,5 @@
 package org.itineradev.itinera.event
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.AbortReason
 import org.itineradev.itinera.step.StepName
 
@@ -47,7 +46,6 @@ public data class ReporterFailed(override val step: StepName?, override val erro
  *
  * @sample org.itineradev.itinera.event.samples.aborts
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class RescueSkipped(override val step: StepName) : JourneyAbort {
     override val reason: AbortReason
@@ -87,7 +85,6 @@ public data class ReservedMetadataKey(
  *
  * @sample org.itineradev.itinera.event.samples.aborts
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class UnexpectedResult(
     override val step: StepName,

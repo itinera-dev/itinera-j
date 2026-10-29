@@ -8,7 +8,7 @@ Status: done. Stage 4 declared each policy with the factory that builds it, and 
 
 58 is listed in both manifests, and none of its public items carries `@ExperimentalItineraApi`.
 
-- **`PolicyFactory<P>`**, in `org.itineradev.itinera.policy`, builds a policy; `StepPolicyDescriptor.builder(name, factory)` and `WorkflowPolicyDescriptor.builder(name, factory)` take one, and an annotated policy class is built with its constructor that takes nothing.
+- **`PolicyFactory<P>`**, in `org.itineradev.itinera.policy`, builds a policy, whose type `P` is bounded by `Any`, so a Kotlin factory never gives `null` ([0122](0122-unexpected-results.md)); `StepPolicyDescriptor.builder(name, factory)` and `WorkflowPolicyDescriptor.builder(name, factory)` take one, and an annotated policy class is built with its constructor that takes nothing.
 - **`PolicyCouldNotBeBuilt`**, in `org.itineradev.itinera.event`, the details of the abort `policy could not be built`, naming the step and the policy.
 - **`Refused.WorkflowPolicyFailed`** and **`Refused.WorkflowPolicyReturnedNull`**, in `org.itineradev.itinera.executor`, the refusals of a workflow policy that cannot be built.
 

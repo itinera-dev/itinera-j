@@ -8,7 +8,7 @@ package org.itineradev.itinera
  * `-opt-in=org.itineradev.itinera.ExperimentalItineraApi`. Java does not check the marker, which
  * shows only in the documentation.
  *
- * @sample org.itineradev.itinera.samples.optingIn
+ * @sample org.itineradev.itinera.step.testing.samples.optingIn
  */
 @RequiresOptIn(
     message =

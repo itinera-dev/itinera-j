@@ -1,7 +1,6 @@
 package org.itineradev.itinera.event
 
 import java.time.Instant
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.JourneyId
 import org.itineradev.itinera.policy.RetryCause
 import org.itineradev.itinera.step.Attempt
@@ -39,7 +38,6 @@ public data class StepRetrying(
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class StepRescuing(
     override val sequence: Long,
@@ -68,7 +66,6 @@ public data class StepRescuing(
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class StepRescued(
     override val sequence: Long,

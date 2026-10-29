@@ -36,6 +36,28 @@ class PolicyTypesTest {
     }
 
     @ParameterizedTest
+    @FieldSource("notLifecycles")
+    fun `a step hook returns keepDefault or a lifecycle, and nothing else`(
+        hook: String,
+        returned: String,
+        refused: String,
+    ) {
+        assertDoesNotCompile(
+            "$POLICIES val hooked = audit.$hook { _, _ -> $returned }",
+            refused,
+        )
+    }
+
+    @ParameterizedTest
+    @FieldSource("unbuilt")
+    fun `a policy's factory always builds a policy`(builder: String) {
+        assertDoesNotCompile(
+            "$POLICIES val unbuilt = $builder.builder(\"audit\") { null }",
+            "Null cannot be a value of a non-null type",
+        )
+    }
+
+    @ParameterizedTest
     @FieldSource("misplaced")
     fun `a hook requests only what its kind may`(
         hook: String,
@@ -79,6 +101,30 @@ class PolicyTypesTest {
     }
 
     companion object {
+        @JvmField
+        val notLifecycles =
+            listOf(
+                argumentSet(
+                    "something that is not a lifecycle",
+                    "onStepSuccess",
+                    "\"not a lifecycle\"",
+                    "Return type mismatch: expected 'OnSuccess', actual 'String'.",
+                ),
+                argumentSet(
+                    "nothing",
+                    "onStepFailure",
+                    "null",
+                    "Null cannot be a value of a non-null type 'OnFailure'",
+                ),
+            )
+
+        @JvmField
+        val unbuilt =
+            listOf(
+                argumentSet("a step policy", "StepPolicyDescriptor"),
+                argumentSet("a workflow policy", "WorkflowPolicyDescriptor"),
+            )
+
         @JvmField
         val foreignPolicies =
             listOf(

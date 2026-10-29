@@ -10,6 +10,11 @@ import org.itineradev.itinera.value.TypeToken
 internal object AdapterTypesTwins {
     class Shop
 
+    val pricing =
+        InputAdapterDescriptor.builder<Shop>("pricing", "charge") { _, _ ->
+            Supplied.FromDataBag
+        }
+
     fun read(got: Got<InputAdapterKind>) =
         listOf(
             got[Requests.key()],

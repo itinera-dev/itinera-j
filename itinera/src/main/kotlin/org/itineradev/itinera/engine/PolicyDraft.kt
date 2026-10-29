@@ -23,7 +23,7 @@ import org.itineradev.itinera.workflow.Mode
  *
  * Part of itinera's engine, not of its API.
  */
-public class PolicyDraft<P, M : Mode>(
+public class PolicyDraft<P : Any, M : Mode>(
     private val name: PolicyName,
     private val factory: PolicyFactory<P>,
 ) {
@@ -164,7 +164,7 @@ private class Defined<M : Mode, P, K, R>(
     override val call: HookCall<M, P, K, R>,
 ) : HookDefinition<M, P, K, R>
 
-private class DefinedStepPolicy<P, M : Mode>(
+private class DefinedStepPolicy<P : Any, M : Mode>(
     override val name: PolicyName,
     override val factory: PolicyFactory<P>,
     override val onStepSuccess: HookDefinition<M, P, StepHookKind<M>, OnSuccess>?,
@@ -173,7 +173,7 @@ private class DefinedStepPolicy<P, M : Mode>(
     override val onStepAbnormalTermination: HookDefinition<M, P, StepHookKind<M>, OnFailure>?,
 ) : StepPolicyDescriptor<P, M>
 
-private class DefinedWorkflowPolicy<P, M : Mode>(
+private class DefinedWorkflowPolicy<P : Any, M : Mode>(
     override val name: PolicyName,
     override val factory: PolicyFactory<P>,
     override val onWorkflowSuccess: HookDefinition<M, P, WorkflowHookKind<M>, Unit>?,
