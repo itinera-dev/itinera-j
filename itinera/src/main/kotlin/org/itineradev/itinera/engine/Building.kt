@@ -17,12 +17,13 @@ import org.itineradev.itinera.workflow.StepDescriptor
 /**
  * Resolves what the steps of [instance]'s journey, and their rescue steps, request for each
  * attempt: first their data, in the order each declares it, then their services, lent by their
- * providers.
+ * providers. Once an attempt has everything, it tells [scripting] which values it was given.
  */
 internal class Building<M : Mode>(
     private val journey: Journey,
     parts: Parts<M>,
     private val instance: WorkflowInstance<M>,
+    private val scripting: Scripting,
 ) {
     private val inputs = Inputs(journey, parts, instance)
     private val lending = Lending(journey, parts, instance)
@@ -38,8 +39,8 @@ internal class Building<M : Mode>(
         attempt: Attempt,
         handles: Map<Handle, Any>,
     ): Got<StepKind<M>> =
-        answered(step.name, attempt, step.requests, handles) { asked ->
-            inputs.of(step.name, attempt, inputOf(asked))
+        answered(step.name, attempt, step.requests, handles) { asked, found ->
+            inputs.of(step.name, attempt, inputOf(asked), found)
         }
 
     /**
@@ -58,9 +59,10 @@ internal class Building<M : Mode>(
     ): Got<RescueKind<M>> {
         val name = rescueOf(step.name)
         val acting = ActingOn(left, name, ByRescueStep)
-        return answered(name, FIRST, rescue.requests, handles) { asked ->
+        return answered(name, FIRST, rescue.requests, handles) { asked, found ->
             when (asked) {
-                is FromStepAsked ->
+                is FromStepAsked -> {
+                    left.contributed[asked.key]?.let { stored -> found[asked.key] = stored }
                     journey.fromStep(
                         left.contributed,
                         asked.key,
@@ -68,33 +70,36 @@ internal class Building<M : Mode>(
                         asked.required,
                         requestedBy(name, FIRST),
                     )
+                }
                 is ReasonAsked -> journey.reasonFor(acting, asked)
                 is ErrorAsked -> journey.errorFor(acting, asked)
-                is InputAsked -> inputs.of(name, FIRST, asked)
+                is InputAsked -> inputs.of(name, FIRST, asked, found)
             }
         }
     }
 
     /**
      * What [attempt] of the step or rescue step [name] is built from: what [data] gives for each of
-     * its [requests] for data, in order, then each service lent to it, then what the executor knows
-     * and the [handles].
+     * its [requests] for data, in order, keeping the values it finds, then each service lent to it,
+     * then what the executor knows and the [handles].
      */
     private suspend fun <K> answered(
         name: StepName,
         attempt: Attempt,
         requests: List<Request<K, *>>,
         handles: Map<Handle, Any>,
-        data: suspend (BuiltWithAsked) -> Any?,
+        data: suspend (BuiltWithAsked, MutableMap<String, Captured>) -> Any?,
     ): Got<K> {
+        val found = LinkedHashMap<String, Captured>()
         val read =
             requests.filter(::asksData).associateWith { request ->
-                data(request.asked as BuiltWithAsked)
+                data(request.asked as BuiltWithAsked, found)
             }
         val lent =
             requests.filter(::asksService).associateWith { service ->
                 lending.of(name, attempt, service.asked as ServiceAsked)
             }
+        scripting.building(name, attempt, found)
         val call =
             Call(
                 requestedBy(name, attempt),

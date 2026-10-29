@@ -3,6 +3,16 @@
   "proposals": [2, 3, 8, 9, 10, 11, 12, 24, 27, 32, 40, 41, 42, 49, 54, 55, 56, 57, 58, 60, 61, 62, 63, 64, 65, 81, 83, 85, 91, 95, 98, 102, 104, 106, 116, 121, 122],
   "capabilities": ["sync"],
   "impossible": {
+    "attempt-fraction": [
+      {
+        "feature": "cases/tier-1/0108-test-support/script-checks.feature",
+        "scenario": "A script that describes a fraction of an attempt stops the test",
+        "proof": {
+          "test": "aJavaScriptChoosesAnAttemptByAWholeNumber",
+          "file": "itinera-testing/src/compileFailTest/java/org/itineradev/itinera/executor/testing/JavaAttemptTypesTest.java"
+        }
+      }
+    ],
     "bag-write": [
       {
         "feature": "cases/tier-1/0060-input-adapters-attached-to-steps/data-bag-access.feature",

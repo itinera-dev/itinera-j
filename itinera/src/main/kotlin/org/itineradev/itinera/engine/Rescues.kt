@@ -5,11 +5,19 @@ import org.itineradev.itinera.workflow.StepDescriptor
 import org.itineradev.itinera.workflow.Violation
 import org.itineradev.itinera.workflow.WorkflowDescriptor
 
-/** The name of the rescue step of [step], `<step name>_rescue`. */
-internal fun rescueOf(step: StepName): StepName = StepName.of("${step}_rescue")
+/**
+ * The name of the rescue step of [step], `<step name>_rescue`.
+ *
+ * Part of itinera's engine, not of its API.
+ */
+public fun rescueOf(step: StepName): StepName = StepName.of("${step}_rescue")
 
-/** The name of each step of [descriptor], each followed by its rescue step's, if it has one. */
-internal fun stepNamesOf(descriptor: WorkflowDescriptor<*, *>): List<StepName> =
+/**
+ * The name of each step of [descriptor], each followed by its rescue step's, if it has one.
+ *
+ * Part of itinera's engine, not of its API.
+ */
+public fun stepNamesOf(descriptor: WorkflowDescriptor<*, *>): List<StepName> =
     descriptor.steps.flatMap(::namesOf)
 
 private fun namesOf(step: StepDescriptor<*>): List<StepName> =
