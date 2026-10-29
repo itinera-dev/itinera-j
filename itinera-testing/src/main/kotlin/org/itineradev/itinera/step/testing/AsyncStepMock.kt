@@ -1,6 +1,5 @@
 package org.itineradev.itinera.step.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.request.Got
 import org.itineradev.itinera.request.StepKind
 import org.itineradev.itinera.step.async.AsyncStepFactory
@@ -14,7 +13,6 @@ import org.itineradev.itinera.workflow.Async
  *
  * @sample org.itineradev.itinera.step.testing.samples.asyncMocks
  */
-@ExperimentalItineraApi
 public class AsyncStepMock private constructor(private val script: Script<Ending>) :
     AsyncStepFactory {
     /**

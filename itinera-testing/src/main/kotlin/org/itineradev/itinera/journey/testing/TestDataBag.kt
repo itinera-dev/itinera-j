@@ -1,6 +1,5 @@
 package org.itineradev.itinera.journey.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Captured
 import org.itineradev.itinera.engine.DataBags
 import org.itineradev.itinera.engine.NotAValue
@@ -14,7 +13,6 @@ import org.itineradev.itinera.journey.DataBagAccess
  *
  * @sample org.itineradev.itinera.journey.testing.samples.testDataBag
  */
-@ExperimentalItineraApi
 public class TestDataBag private constructor(private val values: Map<String, Captured>) {
     /**
      * An empty data bag.

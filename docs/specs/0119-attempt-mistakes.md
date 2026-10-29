@@ -2,7 +2,7 @@
 
 Tech spec for [proposal 0119](https://github.com/itinera-dev/spec/blob/main/proposals/0119-attempt-mistakes.md), implemented in [#38](https://github.com/itinera-dev/itinera-j/issues/38). It amends 0108, whose tech spec, [0108](0108-test-support.md), describes scripted runs and their record.
 
-Status: started in stage 10, with scripted runs.
+Status: done. Stage 10 adds the checks with scripted runs, and lists 119 with 108 in both manifests.
 
 ## The rules and where they are checked
 

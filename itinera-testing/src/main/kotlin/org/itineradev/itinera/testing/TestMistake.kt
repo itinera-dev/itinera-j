@@ -1,7 +1,5 @@
 package org.itineradev.itinera.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * A mistake in a test, such as a script that leaves out an attempt or a fake named after a provider
  * the workflow does not have. It is thrown where the mistake is made: while a fake provider or a
@@ -11,7 +9,6 @@ import org.itineradev.itinera.ExperimentalItineraApi
  *
  * @sample org.itineradev.itinera.testing.samples.mistakes
  */
-@ExperimentalItineraApi
 public class TestMistake
 internal constructor(
     /** Every problem found, in the order found. */

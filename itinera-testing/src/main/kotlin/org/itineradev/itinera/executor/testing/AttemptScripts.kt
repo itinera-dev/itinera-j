@@ -1,6 +1,5 @@
 package org.itineradev.itinera.executor.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.report.testing.Level
 import org.itineradev.itinera.step.Reason
 import org.itineradev.itinera.testing.TestMistake
@@ -12,7 +11,6 @@ import org.itineradev.itinera.testing.TestMistake
  * @param S what the script is once the attempts chosen are described.
  * @sample org.itineradev.itinera.executor.testing.samples.scriptedRuns
  */
-@ExperimentalItineraApi
 public interface AttemptChoice<out S> {
     /**
      * Describes attempt [attempt], which comes after the last one described.
@@ -47,7 +45,7 @@ public interface AttemptChoice<out S> {
  * @param S what the script is once the attempts are described.
  * @sample org.itineradev.itinera.executor.testing.samples.scriptedRuns
  */
-@ExperimentalItineraApi public interface NamedStep<out S> : AttemptChoice<S>, AttemptScript<S>
+public interface NamedStep<out S> : AttemptChoice<S>, AttemptScript<S>
 
 /**
  * The attempts chosen, before they do anything: they run the real step, or do what follows, in this
@@ -56,7 +54,6 @@ public interface AttemptChoice<out S> {
  * @param S what the script is once the attempts are described.
  * @sample org.itineradev.itinera.executor.testing.samples.scriptedRuns
  */
-@ExperimentalItineraApi
 public interface AttemptScript<out S> : AttemptContributing<S> {
     /**
      * The attempts run the real step.
@@ -72,7 +69,6 @@ public interface AttemptScript<out S> : AttemptContributing<S> {
  * @param S what the script is once the attempts are described.
  * @sample org.itineradev.itinera.executor.testing.samples.scriptedRuns
  */
-@ExperimentalItineraApi
 public interface AttemptContributing<out S> : AttemptEmitting<S> {
     /**
      * The attempts contribute [value] under [key], committed only if the attempt succeeds, as a
@@ -91,7 +87,6 @@ public interface AttemptContributing<out S> : AttemptEmitting<S> {
  * @param S what the script is once the attempts are described.
  * @sample org.itineradev.itinera.executor.testing.samples.scriptedRuns
  */
-@ExperimentalItineraApi
 public interface AttemptEmitting<out S> : AttemptSettingGlobalMetadata<S> {
     /**
      * The attempts emit an event of [level] with [message], as the step's reporter would.
@@ -117,7 +112,6 @@ public interface AttemptEmitting<out S> : AttemptSettingGlobalMetadata<S> {
  * @param S what the script is once the attempts are described.
  * @sample org.itineradev.itinera.executor.testing.samples.scriptedRuns
  */
-@ExperimentalItineraApi
 public interface AttemptSettingGlobalMetadata<out S> : AttemptEndings<S> {
     /**
      * The attempts set the global metadata [key] to [value], as the step's reporter would.
@@ -135,7 +129,6 @@ public interface AttemptSettingGlobalMetadata<out S> : AttemptEndings<S> {
  * @param S what the script is once the attempts are described.
  * @sample org.itineradev.itinera.executor.testing.samples.scriptedRuns
  */
-@ExperimentalItineraApi
 public interface AttemptEndings<out S> {
     /**
      * The attempts succeed.

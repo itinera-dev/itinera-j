@@ -1,6 +1,5 @@
 package org.itineradev.itinera.step.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.step.Outcome
 import org.itineradev.itinera.step.Reason
 
@@ -12,7 +11,6 @@ import org.itineradev.itinera.step.Reason
  *
  * @sample org.itineradev.itinera.step.testing.samples.endings
  */
-@ExperimentalItineraApi
 public sealed interface Ending {
     /**
      * The outcome a step's run returns to end this way.

@@ -1,14 +1,11 @@
 package org.itineradev.itinera.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * The kinds of mistake in a test, each written in words, such as `attempt left out`, by its
  * [toString].
  *
  * @sample org.itineradev.itinera.testing.samples.mistakes
  */
-@ExperimentalItineraApi
 public enum class MistakeKind {
     /** [Mistake.UnknownStep]. */
     UNKNOWN_STEP,

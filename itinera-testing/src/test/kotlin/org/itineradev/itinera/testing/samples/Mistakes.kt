@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.testing.samples
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.instance.testing.TestInstanceBuilder
 import org.itineradev.itinera.instance.testing.samples.AcceptingGateway
 import org.itineradev.itinera.instance.testing.samples.Gateway

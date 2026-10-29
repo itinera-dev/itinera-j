@@ -1,7 +1,5 @@
 package org.itineradev.itinera.policy.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * A workflow policy for tests, which a [WorkflowPolicyScript] builds for each journey: a method for
  * each workflow hook, which ends the call as its script says, through a [WorkflowHookEnding]. A
@@ -10,7 +8,6 @@ import org.itineradev.itinera.ExperimentalItineraApi
  *
  * @sample org.itineradev.itinera.policy.testing.samples.workflowPolicies
  */
-@ExperimentalItineraApi
 public class WorkflowPolicyMock internal constructor(private val script: WorkflowPolicyScript) {
     /**
      * Ends a call of `on workflow success` as the script says.
