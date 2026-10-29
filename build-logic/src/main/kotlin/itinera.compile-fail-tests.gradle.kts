@@ -27,7 +27,7 @@ configurations
         }
     }
 
-// The twins compile with the opt-in that kctfork gives the snippets.
+// The twins compile with the opt-in, which kctfork also gives itinera-testing's snippets.
 tasks.named<KotlinCompile>("compileCompileFailTestKotlin") {
     compilerOptions.optIn.add("org.itineradev.itinera.ExperimentalItineraApi")
 }

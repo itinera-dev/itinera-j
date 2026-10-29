@@ -1,13 +1,10 @@
 package org.itineradev.itinera.event
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * How the attempt of a step that is rescued failed.
  *
  * @sample org.itineradev.itinera.event.samples.rescued
  */
-@ExperimentalItineraApi
 public enum class RescueCause(private val text: String) {
     /** The attempt reported a failure. */
     FAILURE("failure"),

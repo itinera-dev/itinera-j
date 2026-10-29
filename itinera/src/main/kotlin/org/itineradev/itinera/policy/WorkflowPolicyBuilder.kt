@@ -12,7 +12,7 @@ import org.itineradev.itinera.workflow.Sync
  * @param P the policy its hooks are called on.
  * @sample org.itineradev.itinera.policy.samples.policies
  */
-public class WorkflowPolicyBuilder<P>
+public class WorkflowPolicyBuilder<P : Any>
 internal constructor(private val draft: PolicyDraft<P, Sync>) {
     /**
      * Defines `on workflow success`, called once the journey succeeded, which requests nothing.

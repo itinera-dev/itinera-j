@@ -25,6 +25,10 @@ internal object PolicyTypesTwins {
     val notify = WorkflowPolicyDescriptor.builder("notify", PolicyFactory(::Audit))
 
     val failing = audit.onStepFailure(SyncHook { _, _ -> OnFailure.keepDefault() })
+    val hooked = audit.onStepFailure { _, _ -> OnFailure.keepDefault() }
+    val succeeding = audit.onStepSuccess { _, _ -> OnSuccess.keepDefault() }
+    val builtStepPolicy = StepPolicyDescriptor.builder("audit") { Audit() }
+    val builtWorkflowPolicy = WorkflowPolicyDescriptor.builder("audit") { Audit() }
     val succeedingWithRequests =
         audit.onStepSuccess(
             listOf(Requests.journeyId()),

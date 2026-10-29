@@ -1,7 +1,5 @@
 package org.itineradev.itinera.step
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * What a rescue step's run reports when it returns: a success or a failure. It has no skip, since a
  * rescue step either fixes the cause of its step's failure or fails, so a rescue step that skips
@@ -13,7 +11,6 @@ import org.itineradev.itinera.ExperimentalItineraApi
  *
  * @sample org.itineradev.itinera.workflow.samples.rescues
  */
-@ExperimentalItineraApi
 public sealed interface RescueOutcome {
     /**
      * The rescue step succeeded: its contributions are committed, and the step it rescues is

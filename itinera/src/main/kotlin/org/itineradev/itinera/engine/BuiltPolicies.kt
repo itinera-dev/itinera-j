@@ -60,7 +60,7 @@ private suspend fun Journey.builtFor(
 ): BuiltPolicy<StepHook> {
     val built =
         parts
-            .calling { policy.factory.build() }
+            .calling { nullable(policy.factory.build()) }
             .getOrElse { thrown ->
                 val failure = PolicyCouldNotBeBuilt(step.name, policy.name, messageOf(thrown))
                 throw abort(Abort(failure, thrown))
@@ -78,7 +78,7 @@ private suspend fun builtFor(
 ): BuiltPolicy<WorkflowHook> {
     val built =
         parts
-            .calling { policy.factory.build() }
+            .calling { nullable(policy.factory.build()) }
             .getOrElse { thrown ->
                 throw Refusal(Refused.WorkflowPolicyFailed(policy.name, thrown, messageOf(thrown)))
             } ?: throw Refusal(Refused.WorkflowPolicyReturnedNull(policy.name))

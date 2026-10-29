@@ -1,6 +1,5 @@
 package org.itineradev.itinera.engine
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Hooking.Audit
 import org.itineradev.itinera.engine.Hooking.audit
 import org.itineradev.itinera.engine.Journeys.contributing
@@ -28,7 +27,6 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments.argumentSet
 import org.junit.jupiter.params.provider.FieldSource
 
-@OptIn(ExperimentalItineraApi::class)
 class LifecyclesTest {
     private val charge = StepName.of("charge")
     private val onSuccess = ByStepHook(PolicyName.of("audit"), StepHook.ON_STEP_SUCCESS)

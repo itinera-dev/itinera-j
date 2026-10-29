@@ -17,7 +17,7 @@ import org.itineradev.itinera.workflow.Mode
  * @param M the mode of the workflows it can join.
  * @sample org.itineradev.itinera.policy.samples.policies
  */
-public interface WorkflowPolicyDescriptor<P, M : Mode> {
+public interface WorkflowPolicyDescriptor<P : Any, M : Mode> {
     /** The policy's name. */
     public val name: PolicyName
 
@@ -40,7 +40,10 @@ public interface WorkflowPolicyDescriptor<P, M : Mode> {
          * @sample org.itineradev.itinera.policy.samples.policies
          */
         @JvmStatic
-        public fun <P> builder(name: String, factory: PolicyFactory<P>): WorkflowPolicyBuilder<P> =
+        public fun <P : Any> builder(
+            name: String,
+            factory: PolicyFactory<P>,
+        ): WorkflowPolicyBuilder<P> =
             WorkflowPolicyBuilder(PolicyDraft(PolicyName.of(name), factory))
     }
 }

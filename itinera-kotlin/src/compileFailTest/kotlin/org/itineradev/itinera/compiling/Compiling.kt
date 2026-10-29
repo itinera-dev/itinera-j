@@ -18,7 +18,6 @@ private fun compile(source: String): JvmCompilationResult =
             inheritClassPath = true
             jvmTarget = "17"
             messageOutputStream = OutputStream.nullOutputStream()
-            kotlincArguments = listOf("-opt-in=org.itineradev.itinera.ExperimentalItineraApi")
         }
         .compile()
 

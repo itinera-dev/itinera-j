@@ -1,7 +1,5 @@
 package org.itineradev.itinera.event
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * The kind of an event, one per event of the specification's catalogue and per event a step, hook
  * or service provider emits. Each is written as the specification names it, in snake_case, such as
@@ -47,9 +45,9 @@ public enum class EventKind {
     /** The executor decided to attempt a step again. */
     STEP_RETRYING,
     /** The executor decided to rescue a step. */
-    @ExperimentalItineraApi STEP_RESCUING,
+    STEP_RESCUING,
     /** A step's rescue step succeeded, and the step will be attempted again. */
-    @ExperimentalItineraApi STEP_RESCUED,
+    STEP_RESCUED,
     /** The executor decided not to attempt a step again. */
     STEP_GIVEN_UP,
     /** The executor decided that the journey succeeds. */

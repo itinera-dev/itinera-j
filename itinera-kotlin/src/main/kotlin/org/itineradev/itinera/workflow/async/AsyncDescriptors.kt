@@ -3,7 +3,6 @@ package org.itineradev.itinera.workflow.async
 import java.lang.reflect.Method
 import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
 import kotlin.reflect.KClass
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.AdapterMethod
 import org.itineradev.itinera.engine.Builders
 import org.itineradev.itinera.engine.Described
@@ -76,7 +75,6 @@ public fun asyncStep(name: String, factory: AsyncStepFactory): StepBuilder<Async
  *
  * @sample org.itineradev.itinera.workflow.async.samples.asyncRescues
  */
-@ExperimentalItineraApi
 public fun asyncRescueStep(factory: AsyncRescueFactory): RescueStepBuilder<Async> =
     Builders.rescueStep(factory)
 

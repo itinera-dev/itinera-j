@@ -1,6 +1,5 @@
 package org.itineradev.itinera.workflow
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.policy.PolicyName
 import org.itineradev.itinera.service.ProviderName
 import org.itineradev.itinera.step.StepName
@@ -62,7 +61,7 @@ public data class ListedStep(
     /** The services the step requests, in the order it requests them. */
     val services: List<ListedService>,
     /** The step's rescue section, or `null` when the step has no rescue step. */
-    @ExperimentalItineraApi val rescue: ListedRescue?,
+    val rescue: ListedRescue?,
 )
 
 /**
@@ -71,7 +70,6 @@ public data class ListedStep(
  *
  * @sample org.itineradev.itinera.workflow.samples.listing
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class ListedRescue(
     /** The rescue step's name, `<step name>_rescue`. */

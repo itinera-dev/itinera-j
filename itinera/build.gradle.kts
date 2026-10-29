@@ -12,7 +12,8 @@ dependencies {
 }
 
 // The samples of annotated Kotlin classes and of data classes run in itinera-kotlin's tests, where
-// Kotlin classes are read.
+// Kotlin classes are read, and the sample of opting in runs in itinera-testing's, whose API is the
+// only one not claimed yet.
 dokka {
     dokkaSourceSets.configureEach {
         samples.from(
@@ -21,6 +22,9 @@ dokka {
             ),
             rootProject.file(
                 "itinera-kotlin/src/test/kotlin/org/itineradev/itinera/journey/kotlin/samples"
+            ),
+            rootProject.file(
+                "itinera-testing/src/test/kotlin/org/itineradev/itinera/step/testing/samples"
             ),
         )
     }
