@@ -69,6 +69,15 @@ internal sealed interface Supplies {
     data object NonValue : Supplies
 }
 
+/** One thing a scripted provider does on every call before it returns, as a case writes it. */
+internal sealed interface ProviderAction {
+    /** It emits [kind] with [message] and [data], `null` when the case gives none. */
+    data class Emits(val kind: JourneyEmitted, val message: String, val data: Any?) : ProviderAction
+
+    /** It sets the global metadata [key] to [value]. */
+    data class SetsGlobalMetadata(val key: String, val value: Any?) : ProviderAction
+}
+
 /** When a provider fails: on [received] for the request of [key], or on every call. */
 internal data class ProviderFailure(
     val message: String,
@@ -94,6 +103,9 @@ internal class ProviderModel(
 
     /** What it requests, in the order written. */
     val requests = mutableListOf<ProviderRequest>()
+
+    /** What it does on every call before it returns, in the order written. */
+    val actions = mutableListOf<ProviderAction>()
 
     /** The key of the request whose string labels each instance, instead of name and count. */
     var labelledBy: String? = null

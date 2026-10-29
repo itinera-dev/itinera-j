@@ -55,6 +55,9 @@ public interface ReporterHandles {
 
     /** The hook reporter for one call of a hook, which reports through [emits]. */
     public fun hookReporter(emits: Emits): ReporterHandle
+
+    /** The provider reporter for one call of a service provider, which reports through [emits]. */
+    public fun providerReporter(emits: Emits): ReporterHandle
 }
 
 /**

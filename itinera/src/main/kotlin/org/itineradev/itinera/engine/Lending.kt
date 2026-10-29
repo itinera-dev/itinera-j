@@ -60,29 +60,39 @@ internal class Lending<M : Mode>(
         private val step: StepName,
         private val attempt: Attempt,
     ) {
-        private val call =
-            Call(
-                RequestedBy(
-                    step,
-                    ByProvider(provider.name),
-                    ProviderSource(provider.name, step, attempt),
-                ),
-                knownBy(provider),
-                emptyMap(),
-            )
+        private val giver = ByProvider(provider.name)
+        private val source = ProviderSource(provider.name, step, attempt)
 
         /**
          * Calls the provider, once what it requests is resolved, and gives the instance it made.
          *
          * @throws JourneyAbortSignal when it fails, returns no instance, supplies data that is not
-         *   a value or returns `null`, and when resolving what it requests aborts the journey.
+         *   a value or returns `null`, when resolving what it requests aborts the journey, and once
+         *   the journey is aborted, even when the provider caught the signal its reporter gave it.
          */
         @JvmSynthetic
         suspend fun made(): Any {
-            val requests = requestsOf(provider)
-            val got = Answered<Nothing>(requests, journey.resolved(requests, call))
-            val returned = parts.calling { parts.provide(callOf(provider), instance.workflow, got) }
+            val reporter = parts.reporterHandles.providerReporter(emits())
+            val by = RequestedBy(step, giver, source)
+            val call = Call(by, knownBy(provider), mapOf(reporter.handle to reporter.reporter))
+            val returned =
+                try {
+                    val requests = requestsOf(provider)
+                    val got = Answered<Nothing>(requests, journey.resolved(requests, call))
+                    parts.calling { parts.provide(callOf(provider), instance.workflow, got) }
+                } finally {
+                    reporter.close()
+                }
+            journey.ensureNotAborted()
             return lent(returned.getOrElse { thrown -> throw failed(thrown) })
+        }
+
+        /** What the provider's reporter emits through, naming it and the step being built. */
+        private fun emits(): Emits {
+            val closed =
+                "The service provider ${provider.name} has returned, so its provider reporter " +
+                    "reports nothing."
+            return JourneyEmits(journey, step, giver, source, closed)
         }
 
         private fun knownBy(provider: ProviderDescriptor<*, M>): Map<Known, Any> =
@@ -130,11 +140,10 @@ internal class Lending<M : Mode>(
             }
 
         private fun notAValue(error: Throwable?): JourneyAbortSignal {
-            val source = ByProvider(provider.name)
             val inEvent =
                 NotAValueAbort.InEvent(
                     step,
-                    source,
+                    giver,
                     EventKind.SERVICE_PROVIDED,
                     error?.let(::messageOf),
                 )
@@ -155,7 +164,7 @@ internal class Lending<M : Mode>(
                 )
             }
             val message = thrown?.let(::messageOf)
-            val failure = StepCouldNotBeBuilt(step, ByProvider(provider.name), message)
+            val failure = StepCouldNotBeBuilt(step, giver, message)
             return journey.abort(Abort(failure, thrown))
         }
 

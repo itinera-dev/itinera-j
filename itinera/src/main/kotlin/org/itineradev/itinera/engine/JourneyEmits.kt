@@ -1,24 +1,29 @@
 package org.itineradev.itinera.engine
 
+import org.itineradev.itinera.event.EmitterSource
 import org.itineradev.itinera.event.Event
 import org.itineradev.itinera.event.EventKind
 import org.itineradev.itinera.event.JourneyError
 import org.itineradev.itinera.event.JourneyInfo
 import org.itineradev.itinera.event.JourneyWarning
+import org.itineradev.itinera.event.ValueSource
+import org.itineradev.itinera.step.StepName
 
 /**
- * What the hook reporter of one call of a hook in [journey] emits through, `journey_info`,
- * `journey_warning` and `journey_error`, and sets global metadata through, until the hook returns
- * and closes it.
+ * What the reporter of one call of a hook or a service provider in [journey], during [step] if any,
+ * emits through, `journey_info`, `journey_warning` and `journey_error` naming [source], and sets
+ * global metadata through for [giver], until the call returns and closes it; [closed] says why it
+ * reports nothing then.
  */
-internal class HookEmits(journey: Journey, private val hooked: Hooked<*>) :
-    Emitting(journey, hooked.step, hooked.giver, hooked.source) {
-    override val closed: String
-        get() = "The $hooked has returned, so its hook reporter reports nothing."
-
-    override fun eventOf(stamp: Stamp, severity: Severity, message: String, data: Any?): Event {
-        val source = hooked.source
-        return with(stamp) {
+internal class JourneyEmits(
+    journey: Journey,
+    step: StepName?,
+    giver: ValueSource,
+    private val source: EmitterSource,
+    override val closed: String,
+) : Emitting(journey, step, giver, source) {
+    override fun eventOf(stamp: Stamp, severity: Severity, message: String, data: Any?): Event =
+        with(stamp) {
             when (severity) {
                 Severity.INFO ->
                     JourneyInfo(sequence, timestamp, journeyId, workflow, source, message, data)
@@ -28,7 +33,6 @@ internal class HookEmits(journey: Journey, private val hooked: Hooked<*>) :
                     JourneyError(sequence, timestamp, journeyId, workflow, source, message, data)
             }
         }
-    }
 
     override fun kindOf(severity: Severity): EventKind =
         when (severity) {
