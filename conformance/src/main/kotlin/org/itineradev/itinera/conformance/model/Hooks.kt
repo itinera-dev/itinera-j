@@ -111,7 +111,7 @@ internal sealed interface HookReturn {
     data class Fails(val message: String?) : HookReturn
 }
 
-/** The events a hook emits through its hook reporter, as a case names them. */
+/** The events a hook or a service provider emits through its reporter, as a case names them. */
 internal enum class JourneyEmitted(val written: String) {
     JOURNEY_INFO("journey_info"),
     JOURNEY_WARNING("journey_warning"),

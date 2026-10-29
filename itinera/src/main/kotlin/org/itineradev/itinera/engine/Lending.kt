@@ -37,7 +37,8 @@ internal class Lending<M : Mode>(
      * The instance of [service] lent to [step]'s [attempt].
      *
      * @throws JourneyAbortSignal when its provider fails, returns no instance, supplies data that
-     *   is not a value or returns `null`, and when resolving what it requests aborts the journey.
+     *   is not a value or returns `null`, when resolving what it requests aborts the journey, and
+     *   once the journey is aborted, even when the provider caught the signal its reporter gave it.
      */
     @JvmSynthetic
     suspend fun of(step: StepName, attempt: Attempt, service: ServiceAsked): Any {
