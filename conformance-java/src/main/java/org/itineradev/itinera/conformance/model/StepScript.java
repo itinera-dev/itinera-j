@@ -23,6 +23,7 @@ public final class StepScript {
   private boolean isAsynchronous;
   private List<String> policies;
   private boolean keepsHandles;
+  private boolean declaresNoHandles;
   private boolean builtAsNull;
   private boolean returnsNoOutcome;
 
@@ -102,6 +103,16 @@ public final class StepScript {
   /** Whether the step keeps its contributor and step reporter after its attempt ends. */
   public boolean keepsHandles() {
     return keepsHandles;
+  }
+
+  /** Whether the step declares neither a contributor nor a step reporter. */
+  public boolean declaresNoHandles() {
+    return declaresNoHandles;
+  }
+
+  /** Says the step declares neither a contributor nor a step reporter. */
+  public void declareNoHandles() {
+    declaresNoHandles = true;
   }
 
   /** Whether the step's factory returns {@code null}, not a step. */

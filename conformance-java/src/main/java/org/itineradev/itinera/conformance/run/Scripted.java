@@ -12,6 +12,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import org.itineradev.itinera.conformance.model.HookRequest;
 import org.itineradev.itinera.conformance.model.Input;
+import org.itineradev.itinera.conformance.model.ModelException;
 import org.itineradev.itinera.conformance.model.RescuedStepRequest;
 import org.itineradev.itinera.conformance.model.StepScript;
 import org.itineradev.itinera.journey.Contributor;
@@ -84,8 +85,10 @@ final class Scripted {
 
   private List<Request<? super StepKind<Sync>, ?>> afterInputs() {
     var declared = new ArrayList<Request<? super StepKind<Sync>, ?>>(services);
-    declared.add(contributor);
-    declared.add(reporter);
+    if (!script.declaresNoHandles()) {
+      declared.add(contributor);
+      declared.add(reporter);
+    }
     return declared;
   }
 
@@ -133,6 +136,9 @@ final class Scripted {
 
   private <K extends StepKind<Sync>> Received received(
       Got<K> got, Map<HookRequest, Object> ofRescuedStep) {
+    if (script.declaresNoHandles()) {
+      throw new ModelException("the cases never build a step that declares no handles");
+    }
     var read = new LinkedHashMap<String, Object>();
     for (var input : inputs.entrySet()) {
       read.put(input.getKey(), Providing.answerOf(got.get(input.getValue())));

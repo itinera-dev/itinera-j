@@ -1,6 +1,7 @@
 package org.itineradev.itinera.conformance.model;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,6 +14,8 @@ public final class TestSupport {
   private final Map<String, FakeModel> fakes = new LinkedHashMap<>();
   private boolean stepRecorderFails;
   private boolean hookRecorderFails;
+  private List<ScriptRow> script;
+  private boolean ensuresAllScripted;
 
   /** Whether the instance has the recording reporter of test support. */
   public boolean recordingReporter() {
@@ -32,6 +35,29 @@ public final class TestSupport {
   /** Whether the hook event reporter is failing. */
   public boolean hookRecorderFails() {
     return hookRecorderFails;
+  }
+
+  /** The rows of the script, in the order written, or {@code null} until it is written. */
+  public List<ScriptRow> script() {
+    return script;
+  }
+
+  /** Whether the script ensures every step is scripted. */
+  public boolean ensuresAllScripted() {
+    return ensuresAllScripted;
+  }
+
+  /** Writes the script, once. */
+  public void script(List<ScriptRow> rows) {
+    if (script != null) {
+      throw new ModelException("the script is written twice");
+    }
+    script = List.copyOf(rows);
+  }
+
+  /** Makes the script ensure every step is scripted. */
+  public void ensureAllScripted() {
+    ensuresAllScripted = true;
   }
 
   /** Whether the instance is created through test support. */

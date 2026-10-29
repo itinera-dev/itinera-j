@@ -15,6 +15,7 @@ import org.itineradev.itinera.conformance.run.asyncJourneys
 import org.itineradev.itinera.conformance.run.localJourneys
 import org.itineradev.itinera.conformance.run.streamOf
 import org.itineradev.itinera.event.Event
+import org.itineradev.itinera.executor.testing.ScriptedRun
 import org.itineradev.itinera.journey.JourneyResult
 import org.itineradev.itinera.workflow.ListedStep
 import org.itineradev.itinera.workflow.Supplied
@@ -75,6 +76,22 @@ internal class World {
 
     private fun keep(admission: Admission) {
         admitted = admission
+    }
+
+    private var run: ScriptedRun? = null
+
+    /** The record of the scripted run. */
+    val scriptedRun: ScriptedRun
+        get() = run ?: throw Unmet("expected a scripted run; ${journey.ended}")
+
+    /** Runs one journey of the workflow with the scenario's script, once it is admitted. */
+    fun runScripted() {
+        val admission = admit()
+        if (admission is Admission.Admitted) {
+            val scripted = admission.journeys.runScripted()
+            journeys = listOf(scripted.journey)
+            run = scripted.run
+        }
     }
 
     /** Runs [times] journeys of the workflow on one executor, once it is admitted. */
