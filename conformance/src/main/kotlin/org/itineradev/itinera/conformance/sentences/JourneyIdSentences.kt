@@ -4,7 +4,9 @@ import io.cucumber.java.en.Then
 import org.itineradev.itinera.conformance.World
 import org.itineradev.itinera.conformance.run.Ended
 import org.itineradev.itinera.conformance.run.Journey
+import org.itineradev.itinera.conformance.run.ScenarioReporter
 import org.itineradev.itinera.conformance.run.holds
+import org.itineradev.itinera.journey.JourneyId
 
 private val uuidV4 =
     Regex(
@@ -30,6 +32,13 @@ internal class JourneyIdSentences(private val world: World) {
     fun resultsJourneyIdIs(id: String) {
         val found = world.result.journeyId.toString()
         holds(found == id, "the result's journey ID \"$id\"", "\"$found\"")
+    }
+
+    @Then("the reporter {string} was made with the journey ID {string}")
+    fun reporterMadeWith(reporter: String, id: String) {
+        val found = madeAs(world, reporter).map(ScenarioReporter::journeyId)
+        val expected = "\"$reporter\" made with the journey ID \"$id\""
+        holds(found == listOf(JourneyId.of(id)), expected, "$found")
     }
 
     @Then("no journey ID was produced")

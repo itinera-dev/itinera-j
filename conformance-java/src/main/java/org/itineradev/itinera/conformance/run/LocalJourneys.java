@@ -64,7 +64,7 @@ public final class LocalJourneys implements Journeys {
     }
     var reporters = workflow.reporters();
     for (var name : reporters == null ? List.<String>of() : reporters) {
-      builder.reporter(journeyId -> recorders.make(name));
+      builder.reporter(journeyId -> recorders.make(name, journeyId));
     }
     if (workflow.idGenerator() instanceof IdGenerator.Returns generator) {
       builder.idGenerator((scenario, data) -> generator.id());

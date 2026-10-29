@@ -4,22 +4,31 @@ import java.util.ArrayList;
 import java.util.List;
 import org.itineradev.itinera.conformance.model.ReporterFailure;
 import org.itineradev.itinera.event.Event;
+import org.itineradev.itinera.journey.JourneyId;
 import org.itineradev.itinera.report.Reporter;
 import org.itineradev.itinera.report.testing.RecordingReporter;
 
 /**
  * A recording reporter of the scenario: it keeps every event and entry of global metadata it
  * receives, the one it fails on included, then fails as the scenario scripts it, and remembers
- * whether it ever failed.
+ * whether it ever failed. A reporter the workflow lists keeps the journey ID it was made with; one
+ * a dispatcher holds is made with none.
  */
 public final class ScenarioReporter implements Reporter {
   private final ReporterFailure failure;
+  private final JourneyId journeyId;
   private final RecordingReporter recording = new RecordingReporter();
   private final List<Entry> received = new ArrayList<>();
   private boolean failed;
 
-  ScenarioReporter(ReporterFailure failure) {
+  ScenarioReporter(ReporterFailure failure, JourneyId journeyId) {
     this.failure = failure;
+    this.journeyId = journeyId;
+  }
+
+  /** The journey ID it was made with, or {@code null} when a dispatcher holds it. */
+  public JourneyId journeyId() {
+    return journeyId;
   }
 
   /** Whether it failed on any event or entry of global metadata. */

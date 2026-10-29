@@ -14,6 +14,7 @@ Feature: Scenarios whose steps emit events and set global metadata
     And the executor uses its default dispatcher
     When the workflow runs
     Then the journey succeeded
+    And the reporter "audit" was made with the journey ID "order-42"
     And the events include, in order:
       | event               | step   | attempt | message  | key    | source | data          |
       | step_info           | charge | 1       | charging |        |        |               |
