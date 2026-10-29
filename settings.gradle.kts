@@ -20,6 +20,7 @@ include(
     "itinera-kotlin",
     "itinera-java",
     "itinera-testing",
+    "itinera-checker",
     "itinera-bom",
     "conformance",
     "conformance-java",
