@@ -44,7 +44,7 @@ What the modules share lives in `build-logic`, a build included by `settings.gra
 - `itinera.published`, applied by every published artifact: Maven Central through the `com.vanniktech.maven.publish` plugin, the POM Central requires, signing when a key is given, and the `Package` repository under `build/package`;
 - `itinera.bom`, applied by `itinera-bom`;
 - `itinera.raised-dependencies`, applied by `itinera.jvm`, `itinera.bom` and `itinera.root`: `RaiseGuava`, which raises Guava wherever it is resolved, as "Dependencies" says;
-- `itinera.root`, applied by the root project: the formatting of the build's own files and the check that the two manifests agree, `CheckManifests` over `ManifestAgreement`, which `build-logic`'s own tests check.
+- `itinera.root`, applied by the root project: the formatting of the build's own files and of `examples/`, the check that the two manifests agree, `CheckManifests` over `ManifestAgreement`, which `build-logic`'s own tests check, and the `examples` task, which runs the examples' build.
 
 `gradle/libs.versions.toml` holds every version: Kotlin, the standard library applications get, and every plugin and library, but for two that Gradle reads before the catalogue exists: the toolchain resolver plugin in `settings.gradle.kts`, and Gradle itself in `gradle/wrapper/gradle-wrapper.properties`.
 
@@ -62,13 +62,20 @@ Every one of these is a required check in CI, each one Gradle task:
 - `./gradlew checkKotlinAbi`: compares each artifact's public API with its dump under `api/`, which `./gradlew updateKotlinAbi` writes, so every change to what an artifact exposes shows in a pull request;
 - `./gradlew dokkaGenerate`: the API reference, with Dokka, every public item documented and warnings as errors;
 - `./gradlew publishAllPublicationsToPackageRepository`: everything Maven Central would receive, written to `build/package` instead: jars, sources and javadoc jars, POMs and Gradle module metadata;
+- `./gradlew examples`: the examples under `examples/`, a Kotlin application and a Java one, built and tested against what `publishAllPublicationsToPackageRepository` wrote, as an application receives it, as "The examples" below says;
 - `./gradlew checkLicense`: the licences of each artifact's run-time dependencies, what applications receive, against `config/allowed-licences.json`, the licences `deny.toml` allows in itinera-rs;
 - `./gradlew checkManifests`: the Kotlin and the Java manifests agree, as "Conformance" says;
 - `./gradlew :build-logic:check`: the tests of the build's own code.
 
-`./gradlew check dokkaGenerate publishAllPublicationsToPackageRepository` runs all of them, the tests on JDK 25. CI also runs `advisories`, [OSV-Scanner](https://google.github.io/osv-scanner/) over the lock files and the verification metadata through its GitHub action, `Kotlin conformance` and `Java conformance`. Each week, CI also runs the tests on the newest Kotlin, pre-releases included, and on the newest JDK.
+`./gradlew check dokkaGenerate examples` runs all of them, the tests on JDK 25. CI also runs `advisories`, [OSV-Scanner](https://google.github.io/osv-scanner/) over the lock files and the verification metadata through its GitHub action, `Kotlin conformance` and `Java conformance`. Each week, CI also runs the tests on the newest Kotlin, pre-releases included, and on the newest JDK.
 
 The compile-fail tests are a test suite of their own, in `src/compileFailTest` of `itinera`, `itinera-kotlin`, `itinera-java` and `itinera-testing`, so the compiler they need stays off the class path of the other tests, which run on the oldest Kotlin standard library itinera supports. In Kotlin, they compile snippets with [kctfork](https://github.com/ZacSweers/kotlin-compile-testing), at the Kotlin version that builds itinera, through the helpers in `src/compileFailTest/kotlin/org/itineradev/itinera/compiling` of `itinera`, `itinera-kotlin` and `itinera-testing`; in Java, the suites of `itinera-java` and `itinera-testing` compile them with `javax.tools`, with `itinera-kotlin` on the class path. Each expects the message saying why the Kotlin compiler or javac refused the snippet. The twins are ordinary sources of the suite, in a file beside the test named with `Twins` for `Test`, such as `PolicyTypesTwins.kt`, so Gradle compiles them once with the suite, and only the refused snippets are compiled while the tests run.
+
+### The examples
+
+`examples/` is a Gradle build of its own, holding two applications that use itinera as an application does, through Maven Central's form of each artifact: `kotlin`, which reads the artifacts through Gradle's module metadata, and `java`, which reads them through their POMs alone, as Maven does. Each holds the first workflow that the README shows, a test that runs it, a test of it with test support's recording reporter, and a test that the README shows it exactly as it is, and has `itinera-checker` check it while it compiles: through KSP in `kotlin`, at the catalogue's `ksp`, which the README names, and through javac in `java`. Both compile for JDK 17, the oldest the artifacts run on, with every warning an error. Their checks also find the sources of each artifact the Kotlin application and its tests receive, as variants of their modules; the sources and javadoc jars of all five artifacts, beside their POMs; and the Java application's class path and its tests' holding neither kotlin-reflect nor kotlinx.coroutines, which only `itinera-kotlin` brings.
+
+`./gradlew examples` publishes every artifact to `build/package` and then runs `check` in the examples' build, with `itinera.version` set to the version in `gradle.properties`. The examples' build takes its versions from this build's version catalogue, and has its own lock files and its own `gradle/verification-metadata.xml`, which trusts the group `org.itinera-dev`, since this build makes those artifacts moments before.
 
 ## Dependencies
 
@@ -78,8 +85,9 @@ A change to a version, a dependency or a plugin rewrites both in the same commit
 
 1. `./gradlew :itinera:dependencies :itinera-kotlin:dependencies :itinera-java:dependencies :itinera-testing:dependencies :itinera-checker:dependencies :itinera-bom:dependencies :conformance:dependencies :conformance-java:dependencies :build-logic:dependencies dependencies --write-locks`, with every new project added to the list;
 2. `GRADLE_USER_HOME=$(mktemp -d) ./gradlew --write-verification-metadata sha256 check dokkaGenerate publishAllPublicationsToPackageRepository --rerun-tasks`, which fetches every artifact the build uses and records it. The empty Gradle home matters: with a warm cache, Gradle never fetches the parent POMs and BOMs it already holds, so it never records them, and CI, which starts empty, then fails verification.
+3. For the examples, once `./gradlew publishAllPublicationsToPackageRepository` has run, `./gradlew --project-dir=examples -Pitinera.version=VERSION :kotlin:dependencies :java:dependencies --write-locks`, then `GRADLE_USER_HOME=$(mktemp -d) ./gradlew --project-dir=examples -Pitinera.version=VERSION --write-verification-metadata sha256 check --rerun-tasks`, with `VERSION` the version in `gradle.properties`.
 
-Read the diff of both files: every new entry is a dependency the change meant to add.
+Read the diff of each of these files: every new entry is a dependency the change meant to add.
 
 An advisory that `advisories` reports is fixed by raising the library. When a tool brings it, a constraint raises it where the tool resolves it: the Jackson BOM in build-logic, for the Dokka plugin, and the Jackson BOM with constraints on FreeMarker and jsoup in `dokkaHtmlGeneratorRuntime`, for Dokka's generator, which a Dokka plugin resolved in another of Dokka's configurations needs as well. Where no configuration can be named, as for the formatters Spotless resolves on its own, a component metadata rule raises it everywhere, as `RaiseGuava`, in the convention `itinera.raised-dependencies`, does for Guava. Only an advisory on a tool that runs on this repository's own sources alone, at a version the build cannot choose, such as the Kotlin Gradle plugin that Gradle's `kotlin-dsl` embeds, goes in `osv-scanner.toml`, with its reason and a date three months on, when it is checked again.
 
