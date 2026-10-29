@@ -23,6 +23,7 @@ import java.util.stream.Stream;
 import org.itineradev.itinera.conformance.World;
 import org.itineradev.itinera.conformance.run.Entry;
 import org.itineradev.itinera.conformance.run.ScenarioReporter;
+import org.itineradev.itinera.conformance.trace.Fields;
 import org.itineradev.itinera.event.Event;
 import org.itineradev.itinera.event.EventKind;
 
@@ -116,7 +117,7 @@ public final class MetadataSentences {
   }
 
   /** Whether {@code event} is one the engine emits, not one a step, hook or provider emits. */
-  private static boolean isEngineEvent(Event event) {
+  static boolean isEngineEvent(Event event) {
     return !EMITTED_BY_CUSTOM_CODE.contains(event.getKind());
   }
 
@@ -126,7 +127,7 @@ public final class MetadataSentences {
   }
 
   private static boolean shows(Event event, Entry entry) {
-    return event.toString().contains(String.valueOf(entry.value()));
+    return Fields.apartFromIdAndTime(event).toString().contains(String.valueOf(entry.value()));
   }
 
   private static Stream<Entry> received(ScenarioReporter reporter) {

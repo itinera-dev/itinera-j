@@ -1,6 +1,5 @@
 package org.itineradev.itinera.conformance.trace
 
-import org.itineradev.itinera.conformance.run.NotRunYet
 import org.itineradev.itinera.event.AttemptStarted
 import org.itineradev.itinera.event.ContributionCommitted
 import org.itineradev.itinera.event.ContributionsDiscarded
@@ -101,17 +100,18 @@ private class Writing {
                 cellsOf(event).forEach(::set)
                 data = if (event.data == null) Data.None else Data.Is(event.data)
             }
-            is StepInfo -> emitted(event.step, event.attempt, event.message, event.data)
-            is StepWarning -> emitted(event.step, event.attempt, event.message, event.data)
-            is StepError -> emitted(event.step, event.attempt, event.message, event.data)
+            is StepInfo -> emitted(stepCells(event.step, event.attempt), event.message, event.data)
+            is StepWarning ->
+                emitted(stepCells(event.step, event.attempt), event.message, event.data)
+            is StepError -> emitted(stepCells(event.step, event.attempt), event.message, event.data)
             is ContributionCommitted -> contributedCells(event.key, event.source).forEach(::set)
             is DataOverwritten -> contributedCells(event.key, event.source).forEach(::set)
             is GlobalMetadataSet -> metadataCells(event.key, event.source).forEach(::set)
-            is StepHookCalled,
-            is WorkflowHookCalled,
-            is JourneyInfo,
-            is JourneyWarning,
-            is JourneyError -> throw NotRunYet("reading ${event.kind} in an event table")
+            is StepHookCalled -> hookCalledCells(event).forEach(::set)
+            is WorkflowHookCalled -> sourceCells(event.source).forEach(::set)
+            is JourneyInfo -> emitted(sourceCells(event.source), event.message, event.data)
+            is JourneyWarning -> emitted(sourceCells(event.source), event.message, event.data)
+            is JourneyError -> emitted(sourceCells(event.source), event.message, event.data)
         }
     }
 
@@ -155,8 +155,8 @@ private class Writing {
         set("decided by", writtenBy(decidedBy))
     }
 
-    private fun emitted(step: StepName, attempt: Attempt, message: String, emitted: Any?) {
-        attempt(step, attempt)
+    private fun emitted(source: List<Cell>, message: String, emitted: Any?) {
+        source.forEach(::set)
         set("message", message)
         data = if (emitted == null) Data.None else Data.Is(emitted)
     }

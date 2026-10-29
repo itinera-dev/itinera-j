@@ -20,7 +20,8 @@ public final class Fields {
     return events.stream().map(Fields::apartFromIdAndTime).toList();
   }
 
-  private static List<Object> apartFromIdAndTime(Event event) {
+  /** Every field of {@code event}, its type included, apart from the ID and timestamp. */
+  public static List<Object> apartFromIdAndTime(Event event) {
     var components = event.getClass().getRecordComponents();
     if (components == null) {
       throw new ModelException(

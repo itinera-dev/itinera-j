@@ -2,8 +2,10 @@ package org.itineradev.itinera.conformance.model;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * The workflow a scenario declares: its name, its steps in declaration order, and their scripts.
@@ -16,6 +18,10 @@ public final class WorkflowModel {
   private IdGenerator idGenerator;
   private final List<AdapterModel> adapters = new ArrayList<>();
   private final List<ProviderModel> providers = new ArrayList<>();
+  private final Map<String, PolicyModel> policies = new LinkedHashMap<>();
+  private List<String> workflowPolicies;
+  private final Map<String, String> roles = new LinkedHashMap<>();
+  private final Set<RoleOperation> failingOperations = new LinkedHashSet<>();
 
   /** A workflow named {@code name} with {@code steps}, in declaration order. */
   WorkflowModel(String name, List<String> steps) {
@@ -59,6 +65,58 @@ public final class WorkflowModel {
   /** The service providers, in the order declared, two of one name among them. */
   public List<ProviderModel> providers() {
     return providers;
+  }
+
+  /** The policies the scenario defines, by name, in the order first written. */
+  public Map<String, PolicyModel> policies() {
+    return policies;
+  }
+
+  /** The workflow policies attached to the workflow, in order, or {@code null} until stated. */
+  public List<String> workflowPolicies() {
+    return workflowPolicies;
+  }
+
+  /** The roles the workflow provides, each with its operation, by name. */
+  public Map<String, String> roles() {
+    return roles;
+  }
+
+  /** The operations of roles that throw when called. */
+  public Set<RoleOperation> failingOperations() {
+    return failingOperations;
+  }
+
+  /**
+   * Defines {@code hook} on the policy {@code name} of {@code kind}, defining the policy the first
+   * time.
+   */
+  public void define(String name, PolicyKind kind, Hook hook) {
+    var policy = policies.computeIfAbsent(name, undefined -> new PolicyModel(name, kind));
+    if (policy.kind() != kind) {
+      throw new ModelException("\"" + name + "\" is a step and a workflow policy");
+    }
+    if (policy.hooks().containsKey(hook)) {
+      throw new ModelException("\"" + name + "\" defines \"" + hook + "\" twice");
+    }
+    policy.hooks().put(hook, new HookScript());
+  }
+
+  /** The policy the scenario defined under {@code name}. */
+  public PolicyModel policy(String name) {
+    var policy = policies.get(name);
+    if (policy == null) {
+      throw new ModelException("no policy \"" + name + "\" is defined");
+    }
+    return policy;
+  }
+
+  /** Attaches workflow policies, once. */
+  public void attach(List<String> attached) {
+    if (workflowPolicies != null) {
+      throw new ModelException("the workflow's policies are stated twice");
+    }
+    workflowPolicies = List.copyOf(attached);
   }
 
   /** Declares an input adapter attached to {@code steps}, after those already declared. */

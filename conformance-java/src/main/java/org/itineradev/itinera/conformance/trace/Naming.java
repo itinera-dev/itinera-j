@@ -27,6 +27,12 @@ import org.itineradev.itinera.event.WrongType;
 
 /** The cells naming who an abort blames. */
 final class Naming {
+  /** The key a case writes for an abort on a request for the failure's reason. */
+  private static final String FAILURE_REASON = "failure reason";
+
+  /** The key a case writes for an abort on a request for the error. */
+  private static final String ERROR = "error";
+
   private Naming() {}
 
   /**
@@ -71,16 +77,16 @@ final class Naming {
       return keyed(key.key(), requesterCells(key.requester()));
     }
     if (missing instanceof MissingData.FailureReason reason) {
-      return failureCells(reason.requester());
+      return keyed(FAILURE_REASON, failureCells(reason.requester()));
     }
-    return failureCells(((MissingData.Error) missing).requester());
+    return keyed(ERROR, failureCells(((MissingData.Error) missing).requester()));
   }
 
   private static List<Cell> cellsOf(WrongData wrong) {
     if (wrong instanceof WrongData.Key key) {
       return keyed(key.key(), requesterCells(key.requester()));
     }
-    return failureCells(((WrongData.FailureReason) wrong).requester());
+    return keyed(FAILURE_REASON, failureCells(((WrongData.FailureReason) wrong).requester()));
   }
 
   private static List<Cell> requesterCells(Requester requester) {

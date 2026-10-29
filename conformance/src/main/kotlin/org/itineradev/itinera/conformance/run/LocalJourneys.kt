@@ -6,6 +6,7 @@ import org.itineradev.itinera.conformance.model.Dispatching
 import org.itineradev.itinera.conformance.model.IdGenerator
 import org.itineradev.itinera.conformance.model.Model
 import org.itineradev.itinera.conformance.model.ModelException
+import org.itineradev.itinera.conformance.model.PolicyModel
 import org.itineradev.itinera.conformance.model.ProviderModel
 import org.itineradev.itinera.conformance.model.ProviderScope
 import org.itineradev.itinera.conformance.model.StepScript
@@ -14,6 +15,7 @@ import org.itineradev.itinera.conformance.record.failingDispatchers
 import org.itineradev.itinera.executor.LocalExecutor
 import org.itineradev.itinera.instance.WorkflowInstance
 import org.itineradev.itinera.instance.instance
+import org.itineradev.itinera.policy.StepPolicyDescriptor
 import org.itineradev.itinera.request.Requests
 import org.itineradev.itinera.service.ProviderDescriptor
 import org.itineradev.itinera.step.SyncStepFactory
@@ -35,18 +37,31 @@ import org.itineradev.itinera.workflow.kotlin.builder
 internal fun localJourneys(model: Model, recorders: Recorders, witness: Witness): Journeys {
     val workflow = model.workflow
     val builder = builder<Scenario>(workflow.name)
-    for (step in workflow.steps) builder.step(stepOf(step, model, witness))
+    val policies =
+        workflow.policies.values.filter(::isStepPolicy).associateBy(PolicyModel::name) { policy ->
+            stepPolicyOf(policy, witness)
+        }
+    for (step in workflow.steps) builder.step(stepOf(step, model, witness, policies))
     for (adapter in workflow.adapters) builder.inputAdapter(adapterOf(adapter))
     for (provider in workflow.providers) builder.provider(providerOf(provider, witness))
     for (name in workflow.reporters.orEmpty()) {
         builder.reporter { journeyId -> recorders.make(name, journeyId) }
     }
+    for (name in workflow.workflowPolicies.orEmpty()) {
+        builder.policy(workflowPolicyOf(workflow.policy(name), witness))
+    }
+    for (role in workflow.roles.keys) builder.role(roleOf(role))
     val generator = workflow.idGenerator
     if (generator is IdGenerator.Returns) builder.idGenerator { _, _ -> generator.id }
-    return LocalJourneys(builder.build(), model, recorders)
+    return LocalJourneys(builder.build(), model, recorders, witness)
 }
 
-private fun stepOf(name: String, model: Model, witness: Witness): StepDescriptor<Sync> {
+private fun stepOf(
+    name: String,
+    model: Model,
+    witness: Witness,
+    policies: Map<String, StepPolicyDescriptor<*, Sync>>,
+): StepDescriptor<Sync> {
     val script = model.step(name)
     if (script.isAsynchronous) {
         throw ModelException(
@@ -58,6 +73,7 @@ private fun stepOf(name: String, model: Model, witness: Witness): StepDescriptor
     val factory =
         if (what == null) witness.watching(name, mockOf(script), scripted) else notRunYet(what)
     val builder = scripted.declaredOn(StepDescriptor.builder(name, factory).scriptedBy(script))
+    for (policy in script.policies.orEmpty()) builder.policy(attached(policies, policy))
     if (script.hasRescueStep) builder.rescue(rescueOf(model.step("${name}_rescue")))
     return builder.build()
 }
@@ -135,6 +151,7 @@ private class LocalJourneys(
     private val descriptor: WorkflowDescriptor<Scenario, Sync>,
     private val model: Model,
     private val recorders: Recorders,
+    private val witness: Witness,
 ) : Journeys {
     override val listing: List<ListedStep>
         get() = descriptor.listing()
@@ -148,7 +165,10 @@ private class LocalJourneys(
         journeyOf(::instance, ::idOf) { executor.run(it) }
 
     private fun instance(): WorkflowInstance<Sync> {
-        val builder = descriptor.instance(Scenario).initialData(model.initialData)
+        val builder =
+            descriptor
+                .instance(Scenario(witness, model.workflow.failingOperations))
+                .initialData(model.initialData)
         for ((key, value) in model.initialGlobalMetadata) {
             builder.reportersGlobalMetadata(key, value)
         }

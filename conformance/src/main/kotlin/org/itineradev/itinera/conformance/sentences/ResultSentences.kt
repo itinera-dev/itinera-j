@@ -1,21 +1,16 @@
 package org.itineradev.itinera.conformance.sentences
 
-import io.cucumber.datatable.DataTable
 import io.cucumber.java.en.Then
 import org.itineradev.itinera.conformance.World
-import org.itineradev.itinera.conformance.model.value
 import org.itineradev.itinera.conformance.run.Unmet
 import org.itineradev.itinera.conformance.run.holds
 import org.itineradev.itinera.conformance.run.holdsOfStream
 import org.itineradev.itinera.conformance.trace.abortsAt
+import org.itineradev.itinera.event.JourneyFailed
 import org.itineradev.itinera.journey.Abort
-import org.itineradev.itinera.journey.DataBag
-import org.itineradev.itinera.journey.JourneyStatus
-import org.itineradev.itinera.value.kotlin.typeToken
+import org.itineradev.itinera.journey.FailureCause
 
-private val anything = typeToken<Any?>()
-
-/** The sentences that read the result's abort and data bag. */
+/** The sentences that read the result's abort and failure. */
 internal class ResultSentences(private val world: World) {
     @Then("the result's abort carries the error {string}")
     fun abortCarriesTheError(message: String) {
@@ -52,40 +47,20 @@ internal class ResultSentences(private val world: World) {
                 "expected the journey to be aborted; it ${statusOf(world.result.status)}"
             )
 
-    @Then("the result's data bag contains:")
-    fun dataBagContains(table: DataTable) {
-        val bag = dataBag()
-        for (row in table.asMaps()) {
-            val key = cell(row, "key")
-            val expected = value(cell(row, "value"))
-            holds(
-                key in bag.keys && bag.read(key, anything).orNull() == expected,
-                "\"$key\" = $expected in the data bag",
-                "${bag.read(key, anything).orNull()}",
-            )
-        }
-    }
-
-    @Then("the result's data bag has no key {string}")
-    fun dataBagHasNoKey(key: String) {
-        val keys = dataBag().keys
-        holds(key !in keys, "no \"$key\" in the data bag", "$keys")
-    }
-
-    @Then("the result carries no data bag")
-    fun carriesNoDataBag() {
-        val status = world.result.status
-        holds(
-            status is JourneyStatus.Aborted,
-            "no data bag",
-            "the data bag of a journey that ${statusOf(status)}",
+    @Then(
+        "the result names the step {string} whose hook failed the journey, with the code {string}"
+    )
+    fun namesTheStepWhoseHookFailed(step: String, code: String) {
+        val failure = world.result.failure
+        val events = world.stream()
+        holdsOfStream(
+            failure?.cause == FailureCause.FAIL_WORKFLOW &&
+                failure.reason?.code == code &&
+                events.filterIsInstance<JourneyFailed>().any { failed -> names(failed, step) },
+            "FailWorkflow with \"$code\", whose journey_failed names \"$step\"",
+            events,
         )
     }
-
-    private fun dataBag(): DataBag =
-        when (val status = world.result.status) {
-            is JourneyStatus.Succeeded -> status.dataBag
-            is JourneyStatus.Failed -> status.dataBag
-            is JourneyStatus.Aborted -> throw Unmet("expected a data bag; the journey was aborted")
-        }
 }
+
+private fun names(failed: JourneyFailed, step: String): Boolean = "${failed.step}" == step
