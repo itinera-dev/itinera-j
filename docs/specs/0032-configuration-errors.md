@@ -6,7 +6,7 @@ Status: done. Stage 3 added the refusals before a journey and the abort of a jou
 
 ## API
 
-32 is listed in both manifests, and from stage 7 no public item below carries `@ExperimentalItineraApi`, but for the violations of rescue steps (0003) and the details of aborts that belong to 0003 and 0122. The violations of services (0095) and of global metadata (0102), and the details of `reserved metadata key`, kept it until stage 8 listed 95 and 102. Until then, every item kept it, as AGENTS.md allows, since `Violation` listed the violations of 0010 and 0060, and `Abort` carried the details of 0083.
+32 is listed in both manifests, and from stage 9 no public item below carries `@ExperimentalItineraApi`. The violations of services (0095) and of global metadata (0102), and the details of `reserved metadata key`, kept it until stage 8 listed 95 and 102, and the violations of rescue steps (0003) and the details of aborts that belong to 0003 and 0122 until stage 9 listed 3 and 122. Until then, every item kept it, as AGENTS.md allows, since `Violation` listed the violations of 0010 and 0060, and `Abort` carried the details of 0083.
 
 - **`Violations`**, in `org.itineradev.itinera.workflow`, an unchecked exception, is what `build()`, `WorkflowDescriptor.of(...)` and `asyncDescriptorOf(...)` throw when a workflow is put together wrongly. It lists every `Violation` found at once, so a test that describes a workflow, or builds it, checks its declaration without running anything.
 - **`Refusal`**, in `org.itineradev.itinera.executor`, is what `run` throws for a hand-written descriptor with a violation, with every one listed in `Refused.Inadmissible`, before any journey and any event, as [0042](0042-configuration-errors-before-the-journey.md) says.

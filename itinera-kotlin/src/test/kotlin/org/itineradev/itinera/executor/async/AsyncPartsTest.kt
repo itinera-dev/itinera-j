@@ -1,10 +1,7 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.executor.async
 
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.yield
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.returned
 import org.itineradev.itinera.event.Event
 import org.itineradev.itinera.executor.Refusal

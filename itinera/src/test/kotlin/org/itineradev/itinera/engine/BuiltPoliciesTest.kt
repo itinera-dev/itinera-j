@@ -1,6 +1,5 @@
 package org.itineradev.itinera.engine
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Hooking.Audit
 import org.itineradev.itinera.engine.Journeys.instanceOf
 import org.itineradev.itinera.engine.Journeys.journeyOf
@@ -29,7 +28,6 @@ import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-@OptIn(ExperimentalItineraApi::class)
 class BuiltPoliciesTest {
     private val charge = StepName.of("charge")
     private val audit = PolicyName.of("audit")
@@ -74,7 +72,7 @@ class BuiltPoliciesTest {
     @Test
     fun `a step policy built as null aborts the journey with unexpected result`() {
         val policy =
-            StepPolicyDescriptor.builder<Audit?>("audit", PolicyFactory { null })
+            StepPolicyDescriptor.builder("audit", PolicyFactory<Audit> { returned(null) })
                 .onStepSuccess(SyncHook { _, _ -> OnSuccess.keepDefault() })
                 .build()
         val result = ran(journeyOf(succeeding("charge").policy(policy)).create())
@@ -121,11 +119,12 @@ class BuiltPoliciesTest {
 
     @Test
     fun `a workflow policy built as null refuses the instance`() {
-        val refusal = assertThrows<Refusal> { ran(ledgered(PolicyFactory { null }, Log())) }
+        val refusal =
+            assertThrows<Refusal> { ran(ledgered(PolicyFactory { returned(null) }, Log())) }
         assertEquals(Refused.WorkflowPolicyReturnedNull(PolicyName.of("ledger")), refusal.refused)
     }
 
-    private fun ledgered(factory: PolicyFactory<Audit?>, log: Log) =
+    private fun ledgered(factory: PolicyFactory<Audit>, log: Log) =
         instanceOf(
                 shop()
                     .step(succeeding("pack").build())

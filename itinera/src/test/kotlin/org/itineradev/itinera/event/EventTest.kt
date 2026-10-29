@@ -1,6 +1,5 @@
 package org.itineradev.itinera.event
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.event.Fixtures.SEQUENCE
 import org.itineradev.itinera.event.Fixtures.charge
 import org.itineradev.itinera.event.Fixtures.closing
@@ -22,7 +21,6 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments.argumentSet
 import org.junit.jupiter.params.provider.FieldSource
 
-@OptIn(ExperimentalItineraApi::class)
 class EventTest {
     @ParameterizedTest
     @FieldSource("events")

@@ -34,6 +34,15 @@ class AdapterTypesTest {
     }
 
     @Test
+    fun `an input adapter always says what it supplies`() {
+        assertDoesNotCompile(
+            "$ADAPTERS val pricing = InputAdapterDescriptor.builder<Shop>(\"pricing\", \"charge\") " +
+                "{ _, _ -> null }",
+            "Null cannot be a value of a non-null type 'Supplied'",
+        )
+    }
+
+    @Test
     fun `an adapter's access to the data bag has no method that writes`() {
         assertDoesNotCompile(
             "$ADAPTERS fun write(access: DataBagAccess) = access.put(\"amount\", 7L)",

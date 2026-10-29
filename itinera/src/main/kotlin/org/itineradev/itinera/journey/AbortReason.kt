@@ -1,7 +1,5 @@
 package org.itineradev.itinera.journey
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * Why a journey was aborted, each written as the specification names it, such as `reporter failed`.
  *
@@ -25,11 +23,11 @@ public enum class AbortReason(private val text: String) {
     /** A reporter, or a dispatcher while dispatching, failed. */
     REPORTER_FAILED("reporter failed"),
     /** A rescue step reported Skipped. */
-    @ExperimentalItineraApi RESCUE_SKIPPED("rescue skipped"),
+    RESCUE_SKIPPED("rescue skipped"),
     /** A step, hook or service provider set global metadata under `journey_id`. */
     RESERVED_METADATA_KEY("reserved metadata key"),
     /** Custom code returned something its call cannot return. */
-    @ExperimentalItineraApi UNEXPECTED_RESULT("unexpected result");
+    UNEXPECTED_RESULT("unexpected result");
 
     /** The name, as the specification writes it. */
     override fun toString(): String = text

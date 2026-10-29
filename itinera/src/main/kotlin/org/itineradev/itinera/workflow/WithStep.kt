@@ -1,7 +1,6 @@
 package org.itineradev.itinera.workflow
 
 import kotlin.reflect.KClass
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.policy.ItineraStepPolicy
 import org.itineradev.itinera.step.ItineraRescueStep
 import org.itineradev.itinera.step.ItineraStep
@@ -31,5 +30,5 @@ public annotation class WithStep(
      * The step's rescue step, a class marked `@RescueStep`, or [ItineraRescueStep] itself, the
      * default, for none. A step with a rescue step has a retry budget of 0.
      */
-    @ExperimentalItineraApi val rescue: KClass<out ItineraRescueStep> = ItineraRescueStep::class,
+    val rescue: KClass<out ItineraRescueStep> = ItineraRescueStep::class,
 )

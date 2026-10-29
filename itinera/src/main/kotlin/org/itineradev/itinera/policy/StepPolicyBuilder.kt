@@ -14,7 +14,8 @@ import org.itineradev.itinera.workflow.Sync
  * @param P the policy its hooks are called on.
  * @sample org.itineradev.itinera.policy.samples.policies
  */
-public class StepPolicyBuilder<P> internal constructor(private val draft: PolicyDraft<P, Sync>) {
+public class StepPolicyBuilder<P : Any>
+internal constructor(private val draft: PolicyDraft<P, Sync>) {
     /**
      * Defines `on step success`, called after an attempt succeeded, which requests nothing.
      *

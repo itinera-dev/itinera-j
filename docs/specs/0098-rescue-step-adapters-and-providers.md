@@ -2,7 +2,7 @@
 
 Tech spec for [proposal 0098](https://github.com/itinera-dev/spec/blob/main/proposals/0098-rescue-step-adapters-and-providers.md), implemented in [#32](https://github.com/itinera-dev/itinera-j/issues/32). It amends [0003](0003-rescue-steps.md), [0060](0060-input-adapters-attached-to-steps.md) and [0095](0095-services-provided-to-steps.md). The [tier 1 plan](../tier-1-plan.md) holds what crosses proposals, and [0062](0062-workflow-descriptors.md) how adapters, providers and rescue steps are declared and checked.
 
-Status: started. Stage 4 checked the attachments and listed each rescue step's adapter and services; stage 9 resolves a rescue step's inputs and services through them, and its last pull request lists 98 in both manifests.
+Status: done. Stage 4 checked the attachments and listed each rescue step's adapter and services; stage 9 resolves a rescue step's inputs and services through them, and lists 98 in both manifests, with [0003](0003-rescue-steps.md).
 
 ## Attaching to a rescue step
 

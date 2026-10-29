@@ -1,6 +1,5 @@
 package org.itineradev.itinera.workflow
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.request.Request
 import org.itineradev.itinera.request.RescueKind
 import org.itineradev.itinera.step.RescueFactory
@@ -19,7 +18,6 @@ import org.itineradev.itinera.step.SyncRescueFactory
  * @param M the mode of the workflows the rescue step can join.
  * @sample org.itineradev.itinera.workflow.samples.rescues
  */
-@ExperimentalItineraApi
 public interface RescueStepDescriptor<M : Mode> {
     /**
      * What the rescue step requests, in the order declared, which its factory reads: its inputs and
@@ -50,7 +48,6 @@ public interface RescueStepDescriptor<M : Mode> {
  * @param M the mode of the workflows the rescue step can join.
  * @sample org.itineradev.itinera.workflow.samples.rescues
  */
-@ExperimentalItineraApi
 public class RescueStepBuilder<M : Mode>
 internal constructor(private val factory: RescueFactory<M>) {
     private val requests = mutableListOf<Request<RescueKind<M>, *>>()
