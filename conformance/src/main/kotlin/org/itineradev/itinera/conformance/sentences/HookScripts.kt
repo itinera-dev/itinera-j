@@ -23,5 +23,6 @@ internal fun World.ends(hook: String, policy: String, ending: HookReturn) {
     model.workflow.policy(policy).hook(named).returns(named, policy, ending)
 }
 
-private fun World.scriptOf(hook: String, policy: String): HookScript =
+/** The script of [hook] of [policy]. */
+internal fun World.scriptOf(hook: String, policy: String): HookScript =
     model.workflow.policy(policy).hook(Hook.named(hook))

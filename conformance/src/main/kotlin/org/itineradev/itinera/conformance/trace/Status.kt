@@ -5,6 +5,7 @@ import org.itineradev.itinera.event.AttemptStarted
 import org.itineradev.itinera.event.Event
 import org.itineradev.itinera.event.JourneyAborted
 import org.itineradev.itinera.event.StepGivenUp
+import org.itineradev.itinera.event.StepRescuing
 import org.itineradev.itinera.event.StepSkipped
 import org.itineradev.itinera.event.StepSucceeded
 
@@ -27,27 +28,35 @@ internal enum class Status(val written: String) {
 }
 
 /**
- * The status of [step], read from the journey's [events]: the first event that settles it, which
- * stays final even when the journey is aborted afterwards; otherwise aborted when `journey_aborted`
- * names it; otherwise not executed when no attempt started; and `null` while it was still being
- * attempted. Rescuing waits for rescue steps to run.
+ * The status of [step], read from the journey's [events] in order: the first event that settles it
+ * stays final even when the journey is aborted afterwards; `step_rescuing` makes it rescuing until
+ * its next `attempt_started`; `journey_aborted` aborts it when it names it or while it is rescuing.
+ * Otherwise it is not executed when no attempt started, and `null` while it was still being
+ * attempted.
  */
 internal fun statusOf(events: List<Event>, step: String): Status? =
-    events.firstNotNullOfOrNull { settled(it, step) } ?: unsettled(events, step)
+    events.fold(null) { status: Status?, event -> next(status, event, step) }
+        ?: Status.NOT_EXECUTED.takeIf { attemptsOf(events, step) == 0 }
 
-private fun unsettled(events: List<Event>, step: String): Status? =
+/** The status of [step] once [event] follows its [status], which a final status keeps. */
+private fun next(status: Status?, event: Event, step: String): Status? =
+    if (status == null || status == Status.RESCUING) after(status, event, step) else status
+
+private fun after(status: Status?, event: Event, step: String): Status? =
     when {
-        events.any { abortsAt(it, step) } -> Status.ABORTED
-        attemptsOf(events, step) == 0 -> Status.NOT_EXECUTED
-        else -> null
+        event is JourneyAborted && (status == Status.RESCUING || abortsAt(event, step)) ->
+            Status.ABORTED
+        status == Status.RESCUING && startsAnAttempt(event, step) -> null
+        else -> settled(event, step) ?: status
     }
 
-/** The status [event] settles [step] in, if it is one of its own that settles it. */
+/** The status [event] puts [step] in, if it is one of its own that does. */
 private fun settled(event: Event, step: String): Status? =
     when {
         event is StepSucceeded && event.step.toString() == step -> Status.SUCCEEDED
         event is StepSkipped && event.step.toString() == step -> Status.SKIPPED
         event is StepGivenUp && event.step.toString() == step -> Status.FAILED
+        event is StepRescuing && event.step.toString() == step -> Status.RESCUING
         else -> null
     }
 

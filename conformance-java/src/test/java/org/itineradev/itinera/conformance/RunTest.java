@@ -77,7 +77,7 @@ final class RunTest {
 
   @Test
   void everyScenarioThatDeclaresAdaptersServicesAndProvidersOrListsPasses() {
-    assertTrue(runs("@admission and not @not-run-yet"));
+    assertTrue(runs("@admission"));
     assertEquals(4, scenarios().size());
   }
 
@@ -112,12 +112,15 @@ final class RunTest {
   }
 
   @Test
-  void aScriptTheRunnerCannotRunYetFailsSayingSo() {
-    assertFalse(runs("@not-run-yet"));
-    assertEquals(
-        List.of("the runner cannot run rescue steps yet"),
-        errors().stream().map(RunTest::notRunYet).toList(),
-        errors().toString());
+  void everyScenarioWhoseStepsAreRescuedPasses() {
+    assertTrue(runs("@rescues"), errors().toString());
+    assertEquals(5, scenarios().size());
+  }
+
+  @Test
+  void everyScenarioWhoseCustomCodeReturnsAnUnexpectedResultPasses() {
+    assertTrue(runs("@unexpected-results"), errors().toString());
+    assertEquals(10, scenarios().size());
   }
 
   @Test
@@ -162,12 +165,5 @@ final class RunTest {
 
   private static boolean isUnmet(String error) {
     return error.contains("Unmet");
-  }
-
-  /** What the runner said it cannot run yet, from an error's first line. */
-  private static String notRunYet(String error) {
-    var first = error.lines().findFirst().orElse("");
-    var at = first.indexOf(": ");
-    return at < 0 ? first : first.substring(at + 2);
   }
 }

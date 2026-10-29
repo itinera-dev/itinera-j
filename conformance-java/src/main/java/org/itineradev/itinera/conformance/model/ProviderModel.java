@@ -21,6 +21,7 @@ public final class ProviderModel {
   private Implementation implementation = Implementation.FIRST;
   private Supplies supplies = new Supplies.Nothing();
   private boolean returnsNothing;
+  private boolean returnsNull;
   private String servicesFail;
   private boolean asynchronous;
 
@@ -125,6 +126,16 @@ public final class ProviderModel {
   /** Says it returns neither an instance nor an error. */
   public void returnNothing() {
     returnsNothing = true;
+  }
+
+  /** Whether it returns {@code null}, not what it provides. */
+  public boolean returnsNull() {
+    return returnsNull;
+  }
+
+  /** Says it returns {@code null}, not what it provides. */
+  public void returnNull() {
+    returnsNull = true;
   }
 
   /** The message every operation of the instances it makes fails with, or {@code null}. */

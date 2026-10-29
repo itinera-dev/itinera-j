@@ -47,6 +47,28 @@ class StatusTest {
     }
 
     @Test
+    fun `a step being rescued is rescuing, and aborted when the journey is aborted then`() {
+        val events = Events()
+        val rescuing = listOf(events.attempt("charge"), events.rescuing("charge"))
+        assertEquals(Status.RESCUING, statusOf(rescuing, "charge"))
+        assertEquals(
+            Status.ABORTED,
+            statusOf(rescuing + events.aborted("charge_rescue", "no client"), "charge"),
+        )
+    }
+
+    @Test
+    fun `a rescued step is rescuing until its next attempt starts, which settles it`() {
+        val events = Events()
+        val rescued =
+            listOf(events.attempt("charge"), events.rescuing("charge"), events.rescued("charge"))
+        val again = rescued + events.attempt("charge", 2)
+        assertEquals(Status.RESCUING, statusOf(rescued, "charge"))
+        assertNull(statusOf(again, "charge"))
+        assertEquals(Status.SUCCEEDED, statusOf(again + events.succeeded("charge", 2), "charge"))
+    }
+
+    @Test
     fun `attempts are counted from their attempt_started`() {
         val events = Events()
         val stream =
