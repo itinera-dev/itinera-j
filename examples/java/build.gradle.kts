@@ -32,7 +32,8 @@ dependencies {
         }
 }
 
-// The oldest JVM the artifacts run on, so that Gradle refuses one that needs a newer.
+// The oldest JVM the artifacts run on, so that Gradle refuses one that needs a newer. The checker
+// claims no annotation, so the processing lint would fail every build.
 tasks.withType<JavaCompile>().configureEach {
     options.release = 17
     options.compilerArgs.addAll(listOf("-Xlint:all,-processing", "-Werror"))

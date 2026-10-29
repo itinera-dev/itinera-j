@@ -57,7 +57,7 @@ dependencies {
 }
 ```
 
-The checker claims no annotation, so that every other processor still sees them all, and javac's lint warns of each annotation no processor claims. An application that compiles with `-Xlint:all` and `-Werror` therefore turns that one warning off, with `-Xlint:all,-processing`.
+The checker claims no annotation, so that every other processor still sees them all, and javac's `processing` lint warns of each annotation no processor claims. An application that compiles with `-Xlint:all` and `-Werror` therefore turns that lint off, with `-Xlint:all,-processing`.
 
 A Kotlin application has KSP report them instead, by applying KSP's Gradle plugin, at the release the checker is built against, which the example below names, and adding the checker to its symbol processors. KSP checks the workflows written in Kotlin, and those written in Java that extend a Kotlin class or name a part written in Kotlin; javac's checker checks the other Java workflows:
 
