@@ -2,7 +2,7 @@
 
 Tech spec for [proposal 0057](https://github.com/itinera-dev/spec/blob/main/proposals/0057-handles-valid-during-their-attempt.md), implemented in [#19](https://github.com/itinera-dev/itinera-j/issues/19). [0008](0008-steps.md) describes the contributor and the step reporter.
 
-Status: started. Stage 5 closes a step's contributor and step reporter when its attempt ends. Stage 7 closes a hook's contributor and means of emitting when the hook returns, and its scenario, whose hook uses the handles a step kept, passes then.
+Status: done. Stage 5 closes a step's contributor and step reporter when its attempt ends. Stage 7 closes a hook's contributor and hook reporter when the hook returns, runs the scenario whose hook uses the handles a step kept, and lists 57 in both manifests.
 
 ## How it is built
 
@@ -19,8 +19,8 @@ None.
 
 - `itinera/src/test/kotlin/org/itineradev/itinera/engine/AttemptingTest.kt`: "a contributor used after its attempt throws and changes nothing".
 - `itinera/src/test/kotlin/org/itineradev/itinera/engine/StepEmitsTest.kt`: "a step reporter used after its attempt throws and reports nothing".
-- `itinera/src/test/kotlin/org/itineradev/itinera/engine/EmittingStepReporterTest.kt` and `itinera-kotlin/src/test/kotlin/org/itineradev/itinera/executor/async/EmittingAsyncStepReporterTest.kt`: "closing waits for the call going through".
+- `itinera/src/test/kotlin/org/itineradev/itinera/engine/EmittingReporterTest.kt` and `itinera-kotlin/src/test/kotlin/org/itineradev/itinera/executor/async/EmittingAsyncReporterTest.kt`: "closing waits for the call going through".
 
 ## Done when
 
-57 is listed in both manifests once every scenario tagged `@proposal-0057` passes in both runners.
+57 is listed in both manifests by the pull request of stage 7 that lists the stage's proposals, which says `Closes #19`: every scenario tagged `@proposal-0057` passes in both runners and every column, but those that also name a proposal not listed yet.
