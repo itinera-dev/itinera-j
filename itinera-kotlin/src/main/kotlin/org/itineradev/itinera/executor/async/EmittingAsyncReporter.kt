@@ -8,18 +8,16 @@ import org.itineradev.itinera.engine.Emits
 import org.itineradev.itinera.engine.Handle
 import org.itineradev.itinera.engine.ReporterHandle
 import org.itineradev.itinera.engine.Severity
+import org.itineradev.itinera.policy.async.AsyncHookReporter
 import org.itineradev.itinera.step.async.AsyncStepReporter
 
 /**
- * An asynchronous step's reporter, which emits through [emits], letting one call through at a time,
- * whichever coroutine makes it.
+ * An asynchronous step's or hook's reporter, given to custom code that requests [handle], which
+ * emits through [emits], letting one call through at a time, whichever coroutine makes it.
  */
-internal class EmittingAsyncStepReporter(private val emits: Emits) :
-    AsyncStepReporter, ReporterHandle {
+internal class EmittingAsyncReporter(private val emits: Emits, override val handle: Handle) :
+    AsyncStepReporter, AsyncHookReporter, ReporterHandle {
     private val mutex = Mutex()
-
-    override val handle: Handle
-        get() = Handle.ASYNC_STEP_REPORTER
 
     override val reporter: Any
         get() = this

@@ -28,7 +28,7 @@ internal class Attempting<M : Mode>(
      */
     @JvmSynthetic
     suspend fun ended(step: StepDescriptor<M>, attempt: Attempt): Ended {
-        val contributions = Contributions(journey, step.name)
+        val contributions = Contributions(journey, step.name, ByStep, "The attempt of ${step.name}")
         val reporter = parts.reporterHandles.stepReporter(StepEmits(journey, step.name, attempt))
         val handles =
             mapOf(Handle.CONTRIBUTOR to contributions, reporter.handle to reporter.reporter)

@@ -5,6 +5,8 @@ import kotlinx.coroutines.ensureActive
 import org.itineradev.itinera.engine.Delivery
 import org.itineradev.itinera.engine.Emits
 import org.itineradev.itinera.engine.Guard
+import org.itineradev.itinera.engine.Handle
+import org.itineradev.itinera.engine.HookCaller
 import org.itineradev.itinera.engine.Parts
 import org.itineradev.itinera.engine.ReporterHandle
 import org.itineradev.itinera.engine.ReporterHandles
@@ -83,6 +85,9 @@ internal class AsyncParts(private val factory: AsyncDispatcherFactory) : Parts<A
     override val reporterHandles: ReporterHandles
         get() = AsyncReporterHandles
 
+    override val hooks: HookCaller
+        get() = AsyncHooks
+
     @JvmSynthetic
     override suspend fun ensureActive() {
         currentCoroutineContext().ensureActive()
@@ -131,5 +136,21 @@ private class Guarded(private val reporter: AsyncReporter, private val guard: Gu
 
 /** Makes the asynchronous mode's reporter handles. */
 private object AsyncReporterHandles : ReporterHandles {
-    override fun stepReporter(emits: Emits): ReporterHandle = EmittingAsyncStepReporter(emits)
+    override fun stepReporter(emits: Emits): ReporterHandle =
+        EmittingAsyncReporter(emits, Handle.ASYNC_STEP_REPORTER)
+
+    override fun hookReporter(emits: Emits): ReporterHandle =
+        EmittingAsyncReporter(emits, Handle.ASYNC_HOOK_REPORTER)
+}
+
+/** Calls the asynchronous mode's hooks, awaiting each. */
+private object AsyncHooks : HookCaller {
+    @JvmSynthetic
+    override suspend fun step(hook: HookCall<*, *, *, *>, policy: Any?, got: Got<*>): Any? =
+        returned<AsyncHook<Any?, Any?, Any?>>(hook).call(policy, returned(got))
+
+    @JvmSynthetic
+    override suspend fun workflow(hook: HookCall<*, *, *, *>, policy: Any?, got: Got<*>) {
+        returned<AsyncWorkflowHook<Any?, Any?>>(hook).call(policy, returned(got))
+    }
 }

@@ -3,6 +3,7 @@ package org.itineradev.itinera.engine
 import org.itineradev.itinera.event.MissingData
 import org.itineradev.itinera.event.OptionalInputAbsent
 import org.itineradev.itinera.event.RequiredDataMissing
+import org.itineradev.itinera.event.WrongData
 import org.itineradev.itinera.event.WrongType as WrongTypeAbort
 import org.itineradev.itinera.journey.Abort
 
@@ -20,10 +21,32 @@ internal suspend fun Journey.fromWorkflow(
     type: ValueType,
     required: Boolean,
     by: RequestedBy,
-): Any? {
-    val stored = data.stored(key) ?: return absent(key, required, by)
-    return typed(stored, key, type, by)
-}
+): Any? = requested(data.stored(key), key, type, required, by)
+
+/**
+ * Reads data a step [contributed] under [key] for [by], a hook acting on the step, as [type]: its
+ * own copy of the value contributed, committed or not, or `null` when an [optional][required]
+ * request finds none, which emits `optional_input_absent`.
+ *
+ * @throws JourneyAbortSignal when a required request finds no value, when the value is of another
+ *   type, or when copying it throws, and once the journey is aborted.
+ */
+@JvmSynthetic
+internal suspend fun Journey.fromStep(
+    contributed: Map<String, Captured>,
+    key: String,
+    type: ValueType,
+    required: Boolean,
+    by: RequestedBy,
+): Any? = requested(contributed[key], key, type, required, by)
+
+private suspend fun Journey.requested(
+    stored: Captured?,
+    key: String,
+    type: ValueType,
+    required: Boolean,
+    by: RequestedBy,
+): Any? = if (stored == null) absent(key, required, by) else typed(stored, key, type, by)
 
 /**
  * The receiver's own copy of [stored], read as [type] for [by] under [key].
@@ -45,4 +68,9 @@ private suspend fun Journey.absent(key: String, required: Boolean, by: Requested
 }
 
 private fun Journey.wrongType(key: String, by: RequestedBy, error: Throwable?): JourneyAbortSignal =
-    abort(Abort(WrongTypeAbort(by.step, key, by.requester, error?.let(::messageOf)), error))
+    abort(
+        Abort(
+            WrongTypeAbort(by.step, WrongData.Key(key, by.requester), error?.let(::messageOf)),
+            error,
+        )
+    )
