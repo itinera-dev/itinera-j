@@ -1,6 +1,5 @@
 package org.itineradev.itinera.executor
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.policy.PolicyName
 import org.itineradev.itinera.workflow.Violation
 
@@ -118,7 +117,6 @@ public sealed interface Refused {
      *
      * @sample org.itineradev.itinera.executor.samples.refusals
      */
-    @ExperimentalItineraApi
     @JvmRecord
     public data class GlobalMetadataNotSet(
         /** What the reporter or the dispatcher threw. */

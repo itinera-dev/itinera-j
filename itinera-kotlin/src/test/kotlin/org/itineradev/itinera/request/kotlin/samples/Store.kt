@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.request.kotlin.samples
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.request.BuildKind
 import org.itineradev.itinera.request.Request
 import org.itineradev.itinera.request.Requests

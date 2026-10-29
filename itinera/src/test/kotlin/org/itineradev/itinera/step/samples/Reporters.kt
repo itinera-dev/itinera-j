@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.step.samples
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.step.StepReporter
 
 fun reporters(reporter: StepReporter) {

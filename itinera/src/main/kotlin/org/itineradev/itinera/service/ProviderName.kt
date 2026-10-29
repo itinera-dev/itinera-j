@@ -1,6 +1,5 @@
 package org.itineradev.itinera.service
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.Name
 
 /**
@@ -8,7 +7,6 @@ import org.itineradev.itinera.Name
  *
  * @sample org.itineradev.itinera.samples.names
  */
-@ExperimentalItineraApi
 public class ProviderName private constructor(name: String) : Name(name, "service provider") {
     /** Makes service provider names. */
     public companion object {

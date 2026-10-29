@@ -2,7 +2,6 @@ package org.itineradev.itinera.report
 
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.executor.LocalExecutor
 import org.itineradev.itinera.instance.instance
 import org.itineradev.itinera.report.Fixtures.started
@@ -16,7 +15,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 
-@OptIn(ExperimentalItineraApi::class)
 class ReporterTest {
     @Test
     fun `a reporter accepts every entry of global metadata unless it overrides it`() {

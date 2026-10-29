@@ -1,6 +1,5 @@
 package org.itineradev.itinera.report.async
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.event.Event
 import org.itineradev.itinera.report.ReporterOf
 import org.itineradev.itinera.workflow.Async
@@ -34,7 +33,5 @@ public fun interface AsyncReporter : ReporterOf<Async> {
      *
      * @sample org.itineradev.itinera.report.async.samples.asyncTenants
      */
-    @ExperimentalItineraApi
-    @JvmSynthetic
-    public suspend fun setGlobalMetadata(key: String, value: Any?): Unit = Unit
+    @JvmSynthetic public suspend fun setGlobalMetadata(key: String, value: Any?): Unit = Unit
 }

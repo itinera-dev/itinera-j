@@ -2,7 +2,9 @@
 
 Tech spec for [proposal 0095](https://github.com/itinera-dev/spec/blob/main/proposals/0095-services-provided-to-steps.md), implemented in [#31](https://github.com/itinera-dev/itinera-j/issues/31). The [tier 1 plan](../tier-1-plan.md) holds what crosses proposals, sections 6 and 9 above all, [0062](0062-workflow-descriptors.md) how providers are declared and checked, and [0104](0104-service-implementation-on-events.md) the implementation and data `service_provided` carries.
 
-Status: started. Stage 4 declared providers and refused those misattached. Stage 5 calls them while a step is built and lends their instances, earlier than the plan's stage 8, since a step's services are resolved with its inputs. Stage 8 gives each call a provider reporter, through which a provider emits its own events and sets global metadata, and 95 is listed then; the scenarios of rescue steps wait for 0003.
+Status: done. Stage 4 declared providers and refused those misattached. Stage 5 calls them while a step is built and lends their instances, earlier than the plan's stage 8, since a step's services are resolved with its inputs. Stage 8 gives each call a provider reporter, through which a provider emits its own events and sets global metadata, and lists 95 in both manifests, with [0102](0102-global-metadata.md) and [0104](0104-service-implementation-on-events.md); the scenarios of rescue steps wait for 0003.
+
+95 is listed in both manifests, so no public item of services carries `@ExperimentalItineraApi`: providers and their descriptors, builders and calls, `Provided`, `ProviderName`, `ProviderReporter` and `AsyncProviderReporter`, `@Service` and `@Provider`, `Requests.service` and the provider kinds, `provide` and `noInstance` on the workflow interfaces, the service events and their sources, and the violations of services. Each kept it until stage 8.
 
 ## Lending a service
 
@@ -47,4 +49,4 @@ Both runners call a scripted provider, `Providing`, in each runner's `run` packa
 
 ## Done when
 
-95 is listed in both manifests once every scenario tagged `@proposal-0095` passes in both runners.
+95 is listed in both manifests by the pull request of stage 8 that lists 95, 102 and 104, which says `Closes #31`: every scenario tagged `@proposal-0095` passes in both runners and every column, but those that also name a proposal not listed yet, and those the manifests exclude as impossible.
