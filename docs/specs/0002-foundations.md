@@ -4,7 +4,7 @@ Tech spec for [proposal 0002](https://github.com/itinera-dev/spec/blob/main/prop
 
 Status: done. Stage 3 built steps from what they request, stage 4 declared policies, input adapters and the listing and refused what is misdeclared, stage 5 resolved inputs, and stage 7 calls hooks with the data a step contributed, and lists 2 in both manifests.
 
-2 is listed in both manifests, so its public items carry no `@ExperimentalItineraApi`, but for `ListedStep.services` and `ListedStep.rescue`, the services of [0095](0095-services-provided-to-steps.md) and the rescue section of 0003, not listed yet.
+2 is listed in both manifests, so its public items carry no `@ExperimentalItineraApi`, but for `ListedStep.rescue`, the rescue section of 0003, not listed yet. `ListedStep.services`, the services of [0095](0095-services-provided-to-steps.md), kept it until stage 8 listed 95.
 
 ## How each premise is kept
 

@@ -1,6 +1,5 @@
 package org.itineradev.itinera.report
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.event.Event
 import org.itineradev.itinera.event.Fixtures.SEQUENCE
 import org.itineradev.itinera.event.Fixtures.journey
@@ -11,7 +10,6 @@ import org.itineradev.itinera.event.JourneyStarted
 import org.itineradev.itinera.event.ReporterFailed
 
 /** Events and reporters for the tests of the core's dispatchers. */
-@OptIn(ExperimentalItineraApi::class)
 object Fixtures {
     @JvmField
     val started: Event = JourneyStarted(SEQUENCE, timestamp, journey, workflow, setOf("amount"))
@@ -26,7 +24,6 @@ object Fixtures {
 }
 
 /** Writes what it receives to a log the test shares between reporters. */
-@OptIn(ExperimentalItineraApi::class)
 class Recording(private val name: String, private val log: MutableList<String>) : Reporter {
     override fun report(event: Event) {
         log += Fixtures.received(name, event)
@@ -38,7 +35,6 @@ class Recording(private val name: String, private val log: MutableList<String>) 
 }
 
 /** Throws whatever it receives, as a reporter must not. */
-@OptIn(ExperimentalItineraApi::class)
 class Failing(private val thrown: Throwable) : Reporter {
     override fun report(event: Event): Unit = throw thrown
 

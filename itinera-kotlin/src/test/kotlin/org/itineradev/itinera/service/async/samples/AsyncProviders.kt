@@ -1,9 +1,6 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.service.async.samples
 
 import kotlinx.coroutines.delay
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.request.Requests
 import org.itineradev.itinera.request.async.asyncProviderReporter
 import org.itineradev.itinera.service.Provided

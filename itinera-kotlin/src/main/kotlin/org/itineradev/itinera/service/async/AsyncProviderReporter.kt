@@ -1,7 +1,5 @@
 package org.itineradev.itinera.service.async
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * What an asynchronous service provider emits its own events through, `journey_info`,
  * `journey_warning` and `journey_error`, which name the provider and the step being built, and sets
@@ -14,7 +12,6 @@ import org.itineradev.itinera.ExperimentalItineraApi
  *
  * @sample org.itineradev.itinera.service.async.samples.asyncProviderReporters
  */
-@ExperimentalItineraApi
 public interface AsyncProviderReporter {
     /**
      * Emits `journey_info` with [message].

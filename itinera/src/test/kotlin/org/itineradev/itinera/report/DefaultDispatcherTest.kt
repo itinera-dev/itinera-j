@@ -1,6 +1,5 @@
 package org.itineradev.itinera.report
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.report.Fixtures.aborted
 import org.itineradev.itinera.report.Fixtures.received
 import org.itineradev.itinera.report.Fixtures.started
@@ -12,7 +11,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 
-@OptIn(ExperimentalItineraApi::class)
 class DefaultDispatcherTest {
     private val log = mutableListOf<String>()
 

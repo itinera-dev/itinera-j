@@ -1,6 +1,5 @@
 package org.itineradev.itinera.report
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.event.Event
 
 /**
@@ -39,7 +38,7 @@ public interface Dispatcher {
      *
      * @sample org.itineradev.itinera.report.samples.dispatching
      */
-    @ExperimentalItineraApi public fun setGlobalMetadata(key: String, value: Any?)
+    public fun setGlobalMetadata(key: String, value: Any?)
 }
 
 /**

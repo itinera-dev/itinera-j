@@ -78,7 +78,6 @@ public data class ByWorkflowHook(
  *
  * @sample org.itineradev.itinera.event.samples.aborts
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class ByProvider(
     /** The provider's name. */
@@ -90,7 +89,6 @@ public data class ByProvider(
  *
  * @sample org.itineradev.itinera.event.samples.aborts
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class ByProviderForKey(
     /** The provider's name. */

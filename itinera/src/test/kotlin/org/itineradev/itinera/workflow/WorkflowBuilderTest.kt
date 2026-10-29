@@ -1,6 +1,5 @@
 package org.itineradev.itinera.workflow
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.DataBagAccess
 import org.itineradev.itinera.journey.DataBags
 import org.itineradev.itinera.request.Answers
@@ -27,7 +26,6 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments.argumentSet
 import org.junit.jupiter.params.provider.FieldSource
 
-@OptIn(ExperimentalItineraApi::class)
 class WorkflowBuilderTest {
     @Test
     fun `two steps with one name are refused when the workflow is built`() {

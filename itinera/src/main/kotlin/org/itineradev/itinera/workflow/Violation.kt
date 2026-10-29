@@ -159,7 +159,6 @@ public sealed interface Violation {
      *
      * @sample org.itineradev.itinera.workflow.samples.violations
      */
-    @ExperimentalItineraApi
     @JvmRecord
     public data class ServiceRequestedTwice(
         /** The step. */
@@ -176,7 +175,6 @@ public sealed interface Violation {
      *
      * @sample org.itineradev.itinera.workflow.samples.violations
      */
-    @ExperimentalItineraApi
     @JvmRecord
     public data class ServiceNotProvided(
         /** The step. */
@@ -194,7 +192,6 @@ public sealed interface Violation {
      *
      * @sample org.itineradev.itinera.service.samples.misprovided
      */
-    @ExperimentalItineraApi
     @JvmRecord
     public data class ServiceProvidedTwice(
         /** The key of the service they supply. */
@@ -215,7 +212,6 @@ public sealed interface Violation {
      *
      * @sample org.itineradev.itinera.service.samples.misprovided
      */
-    @ExperimentalItineraApi
     @JvmRecord
     public data class DuplicateProviderName(
         /** The name the providers share. */
@@ -231,7 +227,6 @@ public sealed interface Violation {
      *
      * @sample org.itineradev.itinera.service.samples.misprovided
      */
-    @ExperimentalItineraApi
     @JvmRecord
     public data class ServiceProviderForUnknownStep(
         /** The provider. */
@@ -248,7 +243,6 @@ public sealed interface Violation {
      *
      * @sample org.itineradev.itinera.service.samples.misprovided
      */
-    @ExperimentalItineraApi
     @JvmRecord
     public data class WrongServiceType(
         /** The step. */
@@ -270,7 +264,6 @@ public sealed interface Violation {
      *
      * @sample org.itineradev.itinera.workflow.annotated.samples.misscoped
      */
-    @ExperimentalItineraApi
     @JvmRecord
     public data class AttemptRequestInJourneyScope(
         /** The provider. */
@@ -321,7 +314,6 @@ public sealed interface Violation {
      *
      * @sample org.itineradev.itinera.workflow.samples.violations
      */
-    @ExperimentalItineraApi
     public data object ReservedMetadataKey : Violation {
         override val named: String?
             get() = null
@@ -356,6 +348,6 @@ public sealed interface Violation {
         /** In its initial data. */
         INITIAL_DATA,
         /** In its initial global metadata. */
-        @ExperimentalItineraApi INITIAL_GLOBAL_METADATA,
+        INITIAL_GLOBAL_METADATA,
     }
 }

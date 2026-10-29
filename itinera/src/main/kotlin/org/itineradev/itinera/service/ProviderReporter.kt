@@ -1,7 +1,5 @@
 package org.itineradev.itinera.service
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * What a synchronous service provider emits its own events through, `journey_info`,
  * `journey_warning` and `journey_error`, which name the provider and the step being built, and sets
@@ -12,7 +10,6 @@ import org.itineradev.itinera.ExperimentalItineraApi
  *
  * @sample org.itineradev.itinera.service.samples.providerReporters
  */
-@ExperimentalItineraApi
 public interface ProviderReporter {
     /**
      * Emits `journey_info` with [message].
@@ -69,5 +66,5 @@ public interface ProviderReporter {
      * @throws IllegalStateException when its provider has returned.
      * @sample org.itineradev.itinera.service.samples.providerReporters
      */
-    @ExperimentalItineraApi public fun setGlobalMetadata(key: String, value: Any?)
+    public fun setGlobalMetadata(key: String, value: Any?)
 }

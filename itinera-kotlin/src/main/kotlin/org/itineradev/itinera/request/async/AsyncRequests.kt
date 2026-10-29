@@ -1,6 +1,5 @@
 package org.itineradev.itinera.request.async
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Answer
 import org.itineradev.itinera.engine.Handle
 import org.itineradev.itinera.engine.requestOf
@@ -35,7 +34,6 @@ public fun Requests.asyncHookReporter(): Request<HookReporterKind<Async>, AsyncH
  *
  * @sample org.itineradev.itinera.service.async.samples.asyncProviders
  */
-@ExperimentalItineraApi
 public fun Requests.asyncProviderReporter():
     Request<ProviderReporterKind<Async>, AsyncProviderReporter> =
     requestOf(Handle.ASYNC_PROVIDER_REPORTER, Answer.ITSELF)

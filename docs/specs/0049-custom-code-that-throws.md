@@ -6,7 +6,7 @@ Status: done. Stage 3 guarded the calls a journey of one step makes, and stage 5
 
 ## API
 
-49 is listed in both manifests. It adds no public item of its own: what a failure does is read from the result and the refusals, and `Refused.GlobalMetadataNotSet` keeps `@ExperimentalItineraApi`, since it belongs to [0102](0102-global-metadata.md), not listed yet.
+49 is listed in both manifests. It adds no public item of its own: what a failure does is read from the result and the refusals, and `Refused.GlobalMetadataNotSet`, which belongs to [0102](0102-global-metadata.md), kept `@ExperimentalItineraApi` until stage 8 listed 102.
 
 ## What "throws" means
 

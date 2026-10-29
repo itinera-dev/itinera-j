@@ -1,6 +1,5 @@
 package org.itineradev.itinera.request.kotlin
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.request.BuildKind
 import org.itineradev.itinera.request.FromStepKind
 import org.itineradev.itinera.request.Request
@@ -36,7 +35,6 @@ public inline fun <reified T> Requests.optionalInput(key: String): Request<Build
  *
  * @sample org.itineradev.itinera.request.kotlin.samples.reifiedRequests
  */
-@ExperimentalItineraApi
 public inline fun <reified T : Any> Requests.service(key: String): ServiceRequest<T> =
     service(key, T::class.java)
 

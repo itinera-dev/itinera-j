@@ -1,6 +1,5 @@
 package org.itineradev.itinera.request
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.workflow.Mode
 
 /**
@@ -11,7 +10,6 @@ import org.itineradev.itinera.workflow.Mode
  * @param M the mode of the workflows the provider can join.
  * @sample org.itineradev.itinera.service.samples.providers
  */
-@ExperimentalItineraApi
 public interface JourneyProviderKind<M : Mode> :
     JourneyIdKind, WorkflowDataKind, ProviderReporterKind<M>
 
@@ -22,7 +20,6 @@ public interface JourneyProviderKind<M : Mode> :
  * @param M the mode of the workflows the provider can join.
  * @sample org.itineradev.itinera.service.samples.providers
  */
-@ExperimentalItineraApi
 public interface AttemptProviderKind<M : Mode> : JourneyProviderKind<M>, StepNameKind, AttemptKind
 
 /**
@@ -32,4 +29,4 @@ public interface AttemptProviderKind<M : Mode> : JourneyProviderKind<M>, StepNam
  * @param M the mode of the reporter they may request.
  * @sample org.itineradev.itinera.service.samples.providers
  */
-@ExperimentalItineraApi public interface ProviderReporterKind<M : Mode>
+public interface ProviderReporterKind<M : Mode>

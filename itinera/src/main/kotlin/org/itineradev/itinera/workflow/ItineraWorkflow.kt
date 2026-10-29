@@ -1,6 +1,5 @@
 package org.itineradev.itinera.workflow
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.instance.InstanceBuilder
 import org.itineradev.itinera.service.Provided
 
@@ -43,7 +42,6 @@ public interface ItineraWorkflow {
      *
      * @sample org.itineradev.itinera.workflow.annotated.samples.providing
      */
-    @ExperimentalItineraApi
     public fun <T : Any> provide(instance: T): Provided<T> = Provided.Instance(instance)
 
     /**
@@ -52,7 +50,6 @@ public interface ItineraWorkflow {
      *
      * @sample org.itineradev.itinera.workflow.annotated.samples.providing
      */
-    @ExperimentalItineraApi
     public fun <T : Any> provide(instance: T, data: Any?): Provided<T> =
         Provided.Instance(instance, data)
 
@@ -61,5 +58,5 @@ public interface ItineraWorkflow {
      *
      * @sample org.itineradev.itinera.workflow.annotated.samples.providing
      */
-    @ExperimentalItineraApi public fun <T : Any> noInstance(): Provided<T> = Provided.NoInstance
+    public fun <T : Any> noInstance(): Provided<T> = Provided.NoInstance
 }
