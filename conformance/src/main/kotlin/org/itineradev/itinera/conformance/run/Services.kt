@@ -40,7 +40,8 @@ internal fun madeBy(provider: ProviderModel, type: ServiceType, label: String): 
         ServiceType.METER -> Meter { 0 }
     }
 
-private fun labellerOf(implementation: Implementation, label: String, failure: String?): Labeller =
+/** An instance of [implementation] labelled [label], whose operation fails with [failure]. */
+internal fun labellerOf(implementation: Implementation, label: String, failure: String?): Labeller =
     when (implementation) {
         Implementation.FIRST -> FirstLabeller(label, failure)
         Implementation.SECOND -> SecondLabeller(label, failure)

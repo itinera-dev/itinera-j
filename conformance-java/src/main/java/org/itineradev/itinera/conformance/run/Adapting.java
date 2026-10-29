@@ -62,12 +62,29 @@ final class Adapting {
 
   /** What the adapter supplies for one call, given {@code got}. */
   Supplied supplied(Got<InputAdapterKind> got) {
-    var calledFor = got.get(step).toString();
-    var given = access == null ? null : got.get(access);
+    return supplied(
+        got.get(step).toString(), got.get(key), access == null ? null : got.get(access));
+  }
+
+  /**
+   * What the adapter supplies called alone, outside any journey, for {@code input} of {@code step},
+   * given {@code given} when it requests the data bag.
+   *
+   * @throws ModelException when it requests data from the workflow, which an adapter called alone
+   *     is not given
+   */
+  Supplied suppliedAlone(String step, String input, DataBagAccess given) {
+    if (!fromWorkflow.isEmpty()) {
+      throw new ModelException("an input adapter called alone is given no data from the workflow");
+    }
+    return supplied(step, input, access == null ? null : given);
+  }
+
+  private Supplied supplied(String calledFor, String input, DataBagAccess given) {
     if (calledFor.equals(adapter.keepsAccessOf())) {
       kept = given;
     }
-    var answer = adapter.answerFor(calledFor, got.get(key));
+    var answer = adapter.answerFor(calledFor, input);
     if (answer instanceof AdapterAnswer.Returns returns) {
       return new Supplied.Value(returns.value());
     }

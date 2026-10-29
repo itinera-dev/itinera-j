@@ -41,7 +41,8 @@ public final class Services {
     };
   }
 
-  private static Labeller labellerOf(Implementation implementation, String label, String failure) {
+  /** An instance of {@code implementation} labelled {@code label}, failing with {@code failure}. */
+  static Labeller labellerOf(Implementation implementation, String label, String failure) {
     return switch (implementation) {
       case FIRST -> new MadeLabeller.First(label, failure);
       case SECOND -> new MadeLabeller.Second(label, failure);

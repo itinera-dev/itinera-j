@@ -3,6 +3,7 @@ package org.itineradev.itinera.conformance.run
 import org.itineradev.itinera.conformance.model.AdapterAnswer
 import org.itineradev.itinera.conformance.model.AdapterModel
 import org.itineradev.itinera.conformance.model.AdapterRequest
+import org.itineradev.itinera.conformance.model.ModelException
 import org.itineradev.itinera.conformance.model.ValueType
 import org.itineradev.itinera.journey.DataBagAccess
 import org.itineradev.itinera.request.Got
@@ -39,11 +40,26 @@ internal class Adapting(private val adapter: AdapterModel) {
     }
 
     /** What the adapter supplies for one call, given [got]. */
-    fun supplied(got: Got<InputAdapterKind>): Supplied {
-        val calledFor = got[step].toString()
-        val given = access?.let(got::get)
+    fun supplied(got: Got<InputAdapterKind>): Supplied =
+        supplied(got[step].toString(), got[key], access?.let(got::get))
+
+    /**
+     * What the adapter supplies called alone, outside any journey, for [input] of [step], given
+     * [access] when it requests the data bag.
+     *
+     * @throws ModelException when it requests data from the workflow, which an adapter called alone
+     *   is not given.
+     */
+    fun suppliedAlone(step: String, input: String, access: DataBagAccess): Supplied {
+        if (fromWorkflow.isNotEmpty()) {
+            throw ModelException("an input adapter called alone is given no data from the workflow")
+        }
+        return supplied(step, input, access.takeIf { this.access != null })
+    }
+
+    private fun supplied(calledFor: String, input: String, given: DataBagAccess?): Supplied {
         if (calledFor == adapter.keepsAccessOf) kept = given
-        return when (val answer = adapter.answerFor(calledFor, got[key])) {
+        return when (val answer = adapter.answerFor(calledFor, input)) {
             is AdapterAnswer.Returns -> Supplied.Value(answer.value)
             AdapterAnswer.Nothing -> Supplied.FromDataBag
             is AdapterAnswer.Fails -> throw IllegalStateException(answer.message)

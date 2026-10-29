@@ -3,6 +3,7 @@ package org.itineradev.itinera.conformance.run
 import org.itineradev.itinera.executor.Refusal
 import org.itineradev.itinera.instance.WorkflowInstance
 import org.itineradev.itinera.journey.JourneyResult
+import org.itineradev.itinera.testing.TestMistake
 import org.itineradev.itinera.workflow.ListedStep
 import org.itineradev.itinera.workflow.Violations
 
@@ -37,6 +38,9 @@ internal sealed interface Ended {
 
     /** `run` refused the journey. */
     data class Refused(val refusal: Refusal) : Ended
+
+    /** Test support stopped the test before the journey, for [mistake]. */
+    data class Stopped(val mistake: TestMistake) : Ended
 }
 
 /** One journey the scenario ran, with the ID of its instance, `null` when none was created. */
@@ -45,20 +49,34 @@ internal data class Journey(val journeyId: String?, val ended: Ended)
 /** The journey ID of [instance]. */
 internal fun idOf(instance: WorkflowInstance<*>): String = instance.journeyId.toString()
 
-/** The journey of the instance [create] makes, run by [run], or the failure creating it. */
+/**
+ * The journey of the instance [create] makes, run by [run], the failure creating it, or the mistake
+ * in the test that stopped it.
+ */
 internal inline fun <I> journeyOf(
     create: () -> I,
     id: (I) -> String,
     run: (I) -> JourneyResult,
 ): Journey {
     val instance =
-        try {
-            create()
-        } catch (failure: IllegalStateException) {
-            return Journey(null, Ended.NotCreated(failure))
+        runCatching(create).getOrElse { failure ->
+            return Journey(null, endedBefore(failure))
         }
     return Journey(id(instance), endedOf { run(instance) })
 }
+
+/**
+ * How a journey ended before `run` when creating its instance threw [failure]: not created, or
+ * stopped for a mistake in the test.
+ *
+ * @throws Throwable [failure] itself when it is neither.
+ */
+internal fun endedBefore(failure: Throwable): Ended =
+    when (failure) {
+        is IllegalStateException -> Ended.NotCreated(failure)
+        is TestMistake -> Ended.Stopped(failure)
+        else -> throw failure
+    }
 
 /** How [run] ended. */
 internal inline fun endedOf(run: () -> JourneyResult): Ended =
