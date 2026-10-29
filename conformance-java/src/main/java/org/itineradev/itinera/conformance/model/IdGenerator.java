@@ -8,7 +8,7 @@ public sealed interface IdGenerator {
   /**
    * A generator that returns this ID.
    *
-   * @param id the ID it returns
+   * @param id the ID it returns, {@code null} for a generator returning what is not a string
    */
   record Returns(String id) implements IdGenerator {}
 }

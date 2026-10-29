@@ -7,10 +7,13 @@ import org.itineradev.itinera.event.Event
 import org.itineradev.itinera.event.GiveUpCause
 import org.itineradev.itinera.event.JourneyAborted
 import org.itineradev.itinera.event.JourneyStarted
+import org.itineradev.itinera.event.RescueCause
 import org.itineradev.itinera.event.StepAbnormalTermination
 import org.itineradev.itinera.event.StepCouldNotBeBuilt
 import org.itineradev.itinera.event.StepGivenUp
 import org.itineradev.itinera.event.StepInfo
+import org.itineradev.itinera.event.StepRescued
+import org.itineradev.itinera.event.StepRescuing
 import org.itineradev.itinera.event.StepSucceeded
 import org.itineradev.itinera.journey.JourneyId
 import org.itineradev.itinera.step.Attempt
@@ -63,6 +66,29 @@ internal class Events {
             journey,
             orders,
             StepCouldNotBeBuilt(StepName.of(step), ByStep, message),
+        )
+
+    fun rescuing(step: String): Event =
+        StepRescuing(
+            next(),
+            at,
+            journey,
+            orders,
+            StepName.of(step),
+            Attempt.of(1),
+            RescueCause.FAILURE,
+            StepName.of("${step}_rescue"),
+        )
+
+    fun rescued(step: String): Event =
+        StepRescued(
+            next(),
+            at,
+            journey,
+            orders,
+            StepName.of(step),
+            Attempt.of(1),
+            StepName.of("${step}_rescue"),
         )
 
     fun info(step: String, message: String, data: Any?): Event =

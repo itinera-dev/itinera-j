@@ -4,15 +4,16 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import org.itineradev.itinera.conformance.model.ProviderRequest;
 import org.itineradev.itinera.conformance.model.RoleOperation;
-import org.itineradev.itinera.step.Outcome;
+import org.itineradev.itinera.step.SyncRescueFactory;
 import org.itineradev.itinera.step.SyncStepFactory;
-import org.itineradev.itinera.step.SyncStepRun;
 
 /**
- * Every step the scenario's workflow built, by step name, in the order built, how many ran, what
- * each service provider received on each call, every call of a hook and of a role's operation.
+ * Every step and rescue step the scenario's workflow built, by name, in the order built, how many
+ * ran, what each service provider received on each call, every call of a hook and of a role's
+ * operation.
  */
 public final class Witness {
   private final Map<String, List<Built>> built = new LinkedHashMap<>();
@@ -64,19 +65,39 @@ public final class Witness {
   /**
    * A factory building with {@code factory}, each step kept under {@code step} with what it
    * received as it is built, and counted as it runs, where it first acts as {@code scripted} says.
+   * It returns {@code null} instead of the step, or of its outcome, when the script says so.
    */
   SyncStepFactory watching(String step, SyncStepFactory factory, Scripted scripted) {
     return got -> {
       var received = scripted.receivedFrom(got);
       var run = factory.build(got);
-      built.computeIfAbsent(step, unbuilt -> new ArrayList<>()).add(new Built(run, received));
-      return () -> ran(run, received, scripted);
+      keep(step, run, received);
+      return scripted.builtAsNull() ? null : () -> ran(run::run, received, scripted);
     };
   }
 
-  private Outcome ran(SyncStepRun run, Received received, Scripted scripted) {
+  /**
+   * A factory building rescue steps with {@code factory}, each kept under {@code step} with what it
+   * received as it is built, and counted as it runs, where it first acts as {@code scripted} says.
+   * It returns {@code null} instead of the rescue step, or of its outcome, when the script says so.
+   */
+  SyncRescueFactory watchingRescue(String step, SyncRescueFactory factory, Scripted scripted) {
+    return got -> {
+      var received = scripted.rescueReceivedFrom(got);
+      var run = factory.build(got);
+      keep(step, run, received);
+      return scripted.builtAsNull() ? null : () -> ran(run::run, received, scripted);
+    };
+  }
+
+  private void keep(String step, Object run, Received received) {
+    built.computeIfAbsent(step, unbuilt -> new ArrayList<>()).add(new Built(run, received));
+  }
+
+  private <O> O ran(Supplier<O> run, Received received, Scripted scripted) {
     ran += 1;
     scripted.act(received);
-    return run.run();
+    var outcome = run.get();
+    return scripted.returnsNoOutcome() ? null : outcome;
   }
 }

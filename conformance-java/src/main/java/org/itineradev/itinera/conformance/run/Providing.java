@@ -88,6 +88,9 @@ final class Providing<K extends JourneyProviderKind<Sync>> {
     if (provider.returnsNothing()) {
       return Provided.noInstance();
     }
+    if (provider.returnsNull()) {
+      return null;
+    }
     int count = made.merge(got.get(journeyId), 1, Integer::sum);
     return new Provided.Instance<>(
         type.cast(Services.madeBy(provider, labelOf(received, count))), dataOf(provider));

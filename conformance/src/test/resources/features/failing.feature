@@ -21,12 +21,3 @@ Feature: Scenarios that fail the run
       | charge |
     When the workflow runs
     Then the journey failed
-
-  @not-run-yet
-  Scenario: A step with a rescue step, which the runner cannot run yet
-    Given a workflow "orders" with the steps:
-      | step   |
-      | charge |
-    And step "charge" has a rescue step
-    When the workflow runs
-    Then the journey failed

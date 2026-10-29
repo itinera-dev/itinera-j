@@ -10,6 +10,7 @@ import org.itineradev.itinera.event.AttemptStarted;
 import org.itineradev.itinera.event.Event;
 import org.itineradev.itinera.event.JourneyAborted;
 import org.itineradev.itinera.event.StepGivenUp;
+import org.itineradev.itinera.event.StepRescuing;
 import org.itineradev.itinera.event.StepSkipped;
 import org.itineradev.itinera.event.StepSucceeded;
 
@@ -46,24 +47,43 @@ public enum Status {
   }
 
   /**
-   * The status of {@code step}, read from the journey's {@code events}: the first event that
-   * settles it, which stays final even when the journey is aborted afterwards; otherwise aborted
-   * when {@code journey_aborted} names it; otherwise not executed when no attempt started; and
-   * {@code null} while it was still being attempted. Rescuing waits for rescue steps to run.
+   * The status of {@code step}, read from the journey's {@code events} in order: the first event
+   * that settles it stays final even when the journey is aborted afterwards; {@code step_rescuing}
+   * makes it rescuing until its next {@code attempt_started}; {@code journey_aborted} aborts it
+   * when it names it or while it is rescuing. Otherwise it is not executed when no attempt started,
+   * and {@code null} while it was still being attempted.
    */
   public static Status of(List<Event> events, String step) {
-    var settled =
-        events.stream().map(event -> settled(event, step)).filter(Status::isSome).findFirst();
-    if (settled.isPresent()) {
-      return settled.get();
-    }
-    if (events.stream().anyMatch(event -> abortsAt(event, step))) {
-      return ABORTED;
+    var status =
+        events.stream()
+            .<Status>reduce(
+                null, (sofar, event) -> next(sofar, event, step), (earlier, later) -> later);
+    if (status != null) {
+      return status;
     }
     return attemptsOf(events, step) == 0 ? NOT_EXECUTED : null;
   }
 
-  /** The status {@code event} settles {@code step} in, if it is one of its own that settles it. */
+  /**
+   * The status of {@code step} once {@code event} follows its {@code status}, which a final status
+   * keeps.
+   */
+  private static Status next(Status status, Event event, String step) {
+    return status == null || status == RESCUING ? after(status, event, step) : status;
+  }
+
+  private static Status after(Status status, Event event, String step) {
+    if (event instanceof JourneyAborted && (status == RESCUING || abortsAt(event, step))) {
+      return ABORTED;
+    }
+    if (status == RESCUING && startsAnAttempt(event, step)) {
+      return null;
+    }
+    var settled = settled(event, step);
+    return settled == null ? status : settled;
+  }
+
+  /** The status {@code event} puts {@code step} in, if it is one of its own that does. */
   private static Status settled(Event event, String step) {
     if (event instanceof StepSucceeded succeeded && succeeded.step().toString().equals(step)) {
       return SUCCEEDED;
@@ -74,11 +94,10 @@ public enum Status {
     if (event instanceof StepGivenUp givenUp && givenUp.step().toString().equals(step)) {
       return FAILED;
     }
+    if (event instanceof StepRescuing rescuing && rescuing.step().toString().equals(step)) {
+      return RESCUING;
+    }
     return null;
-  }
-
-  private static boolean isSome(Status status) {
-    return status != null;
   }
 
   /** Whether {@code event} is a {@code journey_aborted} naming {@code step}. */

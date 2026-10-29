@@ -2,20 +2,24 @@ package org.itineradev.itinera.conformance.run
 
 import org.itineradev.itinera.conformance.model.ProviderRequest
 import org.itineradev.itinera.step.StepReporter
+import org.itineradev.itinera.step.SyncRescueFactory
+import org.itineradev.itinera.step.SyncRescueRun
 import org.itineradev.itinera.step.SyncStepFactory
 import org.itineradev.itinera.step.SyncStepRun
+import org.itineradev.itinera.step.async.AsyncRescueFactory
+import org.itineradev.itinera.step.async.AsyncRescueRun
 import org.itineradev.itinera.step.async.AsyncStepFactory
 import org.itineradev.itinera.step.async.AsyncStepReporter
 import org.itineradev.itinera.step.async.AsyncStepRun
 import org.itineradev.itinera.workflow.Async
 import org.itineradev.itinera.workflow.Sync
 
-/** One step built for an attempt: the step itself, and what it received. */
+/** One step or rescue step built for an attempt: the step itself, and what it received. */
 internal data class Built(val step: Any, val received: Received<*>)
 
 /**
- * Every step the scenario's workflow built, by step name, in the order built, how many ran, and
- * what each service provider received on each call.
+ * Every step and rescue step the scenario's workflow built, by name, in the order built, how many
+ * ran, and what each service provider received on each call.
  */
 internal class Witness {
     private val built = linkedMapOf<String, MutableList<Built>>()
@@ -88,6 +92,45 @@ internal class Witness {
         val run = factory.build(got)
         keep(step, run, received)
         AsyncStepRun {
+            ran += 1
+            scripted.prepared(received).forEach { action ->
+                performAsync(action, received, scripted.ignoresEmitFailures)
+            }
+            run.run()
+        }
+    }
+
+    /**
+     * A factory building rescue steps with [factory], each kept under [step] with what it received
+     * as it is built, and counted as it runs, where it first acts as [scripted] says.
+     */
+    fun watchingRescue(
+        step: String,
+        factory: SyncRescueFactory,
+        scripted: Scripted<Sync, StepReporter>,
+    ): SyncRescueFactory = SyncRescueFactory { got ->
+        val received = scripted.rescueReceivedFrom(got)
+        val run = factory.build(got)
+        keep(step, run, received)
+        SyncRescueRun {
+            ran += 1
+            scripted.prepared(received).forEach { action ->
+                perform(action, received, scripted.ignoresEmitFailures)
+            }
+            run.run()
+        }
+    }
+
+    /** The asynchronous twin of [watchingRescue]. */
+    fun watchingAsyncRescue(
+        step: String,
+        factory: AsyncRescueFactory,
+        scripted: Scripted<Async, AsyncStepReporter>,
+    ): AsyncRescueFactory = AsyncRescueFactory { got ->
+        val received = scripted.rescueReceivedFrom(got)
+        val run = factory.build(got)
+        keep(step, run, received)
+        AsyncRescueRun {
             ran += 1
             scripted.prepared(received).forEach { action ->
                 performAsync(action, received, scripted.ignoresEmitFailures)

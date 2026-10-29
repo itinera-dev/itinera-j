@@ -77,6 +77,9 @@ final class Adapting {
     if (answer instanceof AdapterAnswer.Fails fails) {
       throw new IllegalStateException(fails.message());
     }
+    if (answer instanceof AdapterAnswer.NoResult) {
+      return null;
+    }
     if (answer instanceof AdapterAnswer.NonValue) {
       return new Supplied.Value(NotAValue.INSTANCE);
     }

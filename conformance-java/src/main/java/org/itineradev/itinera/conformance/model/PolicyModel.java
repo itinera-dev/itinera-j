@@ -37,10 +37,19 @@ public final class PolicyModel {
 
   /** Says that building it fails, with {@code message} or none, once. */
   public void failsToBuild(String message) {
+    builtAs(new PolicyBuild.Fails(message));
+  }
+
+  /** Says that its factory returns {@code null}, not a policy, once. */
+  public void buildAsNull() {
+    builtAs(new PolicyBuild.NullLike());
+  }
+
+  private void builtAs(PolicyBuild stated) {
     if (!(build instanceof PolicyBuild.Built)) {
       throw new ModelException("how the policy \"" + name + "\" fails to build is stated twice");
     }
-    build = new PolicyBuild.Fails(message);
+    build = stated;
   }
 
   /** The script of {@code hook}, which the policy must define. */

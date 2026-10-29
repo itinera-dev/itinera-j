@@ -2,6 +2,7 @@ package org.itineradev.itinera.conformance.run
 
 import org.itineradev.itinera.conformance.model.Hook
 import org.itineradev.itinera.conformance.model.HookScript
+import org.itineradev.itinera.conformance.model.ModelException
 import org.itineradev.itinera.conformance.model.PolicyModel
 import org.itineradev.itinera.policy.HookReporter
 import org.itineradev.itinera.policy.StepHook
@@ -46,6 +47,7 @@ private fun StepPolicyBuilder<Played<StepPolicyMock>>.define(
     script: HookScript,
     witness: Witness,
 ) {
+    synchronous(script)
     val reporter = Requests.hookReporter()
     when (stepHookOf(hook)) {
         StepHook.ON_STEP_SUCCESS -> {
@@ -89,6 +91,7 @@ private fun WorkflowPolicyBuilder<Played<WorkflowPolicyMock>>.define(
     script: HookScript,
     witness: Witness,
 ) {
+    synchronous(script)
     val scripted =
         ScriptedHook<Sync, WorkflowHookKind<Sync>, _>(policy, hook, script, Requests.hookReporter())
     when (workflowHookOf(hook)) {
@@ -106,6 +109,15 @@ private fun WorkflowPolicyBuilder<Played<WorkflowPolicyMock>>.define(
                     played(scripted, played, got, witness).onWorkflowFailure()
                 },
             )
+    }
+}
+
+/** Refuses an asynchronous hook, which Kotlin hands no synchronous policy. */
+private fun synchronous(script: HookScript) {
+    if (script.isAsynchronous) {
+        throw ModelException(
+            "Kotlin hands no asynchronous hook to LocalExecutor: its types refuse it"
+        )
     }
 }
 
