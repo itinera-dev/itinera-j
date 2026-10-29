@@ -40,6 +40,11 @@ internal class DataSentences(private val world: World) {
         model.generateIdsWith(IdGenerator.Returns(id))
     }
 
+    @Given("the workflow instance is created with a non-value as global metadata {string}")
+    fun createdWithANonValueAsGlobalMetadata(key: String) {
+        model.globalMetadata(key, NotAValue)
+    }
+
     @Given("the workflow instance is created with the global metadata:")
     fun createdWithTheGlobalMetadata(metadata: DataTable) {
         for (row in metadata.asMaps()) {
