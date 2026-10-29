@@ -1,6 +1,5 @@
 package org.itineradev.itinera.journey.kotlin
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.JourneyResult
 import org.itineradev.itinera.value.kotlin.typeToken
 
@@ -10,5 +9,4 @@ import org.itineradev.itinera.value.kotlin.typeToken
  *
  * @sample org.itineradev.itinera.journey.kotlin.samples.outputs
  */
-@ExperimentalItineraApi
 public inline fun <reified T> JourneyResult.output(): T = output(typeToken<T>())

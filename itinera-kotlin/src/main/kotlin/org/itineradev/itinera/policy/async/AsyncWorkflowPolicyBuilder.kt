@@ -1,6 +1,5 @@
 package org.itineradev.itinera.policy.async
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.PolicyDraft
 import org.itineradev.itinera.policy.PolicyFactory
 import org.itineradev.itinera.policy.PolicyName
@@ -16,7 +15,6 @@ import org.itineradev.itinera.workflow.Async
  * @param P the policy its hooks are called on.
  * @sample org.itineradev.itinera.policy.async.samples.asyncPolicies
  */
-@ExperimentalItineraApi
 public class AsyncWorkflowPolicyBuilder<P>
 internal constructor(private val draft: PolicyDraft<P, Async>) {
     /**
@@ -79,7 +77,6 @@ internal constructor(private val draft: PolicyDraft<P, Async>) {
  * @throws IllegalArgumentException when [name] is empty.
  * @sample org.itineradev.itinera.policy.async.samples.asyncPolicies
  */
-@ExperimentalItineraApi
 public fun <P> asyncWorkflowPolicy(
     name: String,
     factory: PolicyFactory<P>,

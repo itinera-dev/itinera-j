@@ -1,6 +1,5 @@
 package org.itineradev.itinera.event
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.AbortReason
 import org.itineradev.itinera.policy.PolicyName
 import org.itineradev.itinera.step.StepName
@@ -13,7 +12,6 @@ import org.itineradev.itinera.step.StepName
  *
  * @sample org.itineradev.itinera.event.samples.aborts
  */
-@ExperimentalItineraApi
 public sealed interface JourneyAbort {
     /** Why the journey was aborted. */
     public val reason: AbortReason
@@ -32,7 +30,6 @@ public sealed interface JourneyAbort {
  *
  * @sample org.itineradev.itinera.event.samples.aborts
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class StepCouldNotBeBuilt(
     override val step: StepName,
@@ -49,7 +46,6 @@ public data class StepCouldNotBeBuilt(
  *
  * @sample org.itineradev.itinera.event.samples.aborts
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class PolicyCouldNotBeBuilt(
     override val step: StepName,
@@ -66,7 +62,6 @@ public data class PolicyCouldNotBeBuilt(
  *
  * @sample org.itineradev.itinera.event.samples.aborts
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class RequiredDataMissing(
     override val step: StepName?,
@@ -85,7 +80,6 @@ public data class RequiredDataMissing(
  *
  * @sample org.itineradev.itinera.event.samples.aborts
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class WrongType(
     override val step: StepName?,

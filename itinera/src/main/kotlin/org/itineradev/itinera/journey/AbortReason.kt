@@ -7,7 +7,6 @@ import org.itineradev.itinera.ExperimentalItineraApi
  *
  * @sample org.itineradev.itinera.event.samples.aborts
  */
-@ExperimentalItineraApi
 public enum class AbortReason(private val text: String) {
     /** A step's constructor, input adapter or service provider failed. */
     STEP_COULD_NOT_BE_BUILT("step could not be built"),
@@ -26,11 +25,11 @@ public enum class AbortReason(private val text: String) {
     /** A reporter, or a dispatcher while dispatching, failed. */
     REPORTER_FAILED("reporter failed"),
     /** A rescue step reported Skipped. */
-    RESCUE_SKIPPED("rescue skipped"),
+    @ExperimentalItineraApi RESCUE_SKIPPED("rescue skipped"),
     /** A step, hook or service provider set global metadata under `journey_id`. */
-    RESERVED_METADATA_KEY("reserved metadata key"),
+    @ExperimentalItineraApi RESERVED_METADATA_KEY("reserved metadata key"),
     /** Custom code returned something its call cannot return. */
-    UNEXPECTED_RESULT("unexpected result");
+    @ExperimentalItineraApi UNEXPECTED_RESULT("unexpected result");
 
     /** The name, as the specification writes it. */
     override fun toString(): String = text

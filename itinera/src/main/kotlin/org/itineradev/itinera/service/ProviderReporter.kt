@@ -69,5 +69,5 @@ public interface ProviderReporter {
      * @throws IllegalStateException when its provider has returned.
      * @sample org.itineradev.itinera.service.samples.providerReporters
      */
-    public fun setGlobalMetadata(key: String, value: Any?)
+    @ExperimentalItineraApi public fun setGlobalMetadata(key: String, value: Any?)
 }

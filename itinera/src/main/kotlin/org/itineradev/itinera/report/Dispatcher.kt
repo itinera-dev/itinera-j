@@ -19,7 +19,6 @@ import org.itineradev.itinera.event.Event
  *
  * @sample org.itineradev.itinera.report.samples.dispatching
  */
-@ExperimentalItineraApi
 public interface Dispatcher {
     /**
      * Adds a reporter of the journey.
@@ -40,7 +39,7 @@ public interface Dispatcher {
      *
      * @sample org.itineradev.itinera.report.samples.dispatching
      */
-    public fun setGlobalMetadata(key: String, value: Any?)
+    @ExperimentalItineraApi public fun setGlobalMetadata(key: String, value: Any?)
 }
 
 /**
@@ -50,7 +49,6 @@ public interface Dispatcher {
  *
  * @sample org.itineradev.itinera.report.samples.dispatching
  */
-@ExperimentalItineraApi
 public fun interface DispatcherFactory {
     /**
      * Creates the dispatcher of one journey.

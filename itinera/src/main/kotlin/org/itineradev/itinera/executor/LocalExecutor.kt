@@ -1,7 +1,6 @@
 package org.itineradev.itinera.executor
 
 import java.util.concurrent.atomic.AtomicBoolean
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Engine
 import org.itineradev.itinera.engine.SyncParts
 import org.itineradev.itinera.engine.driven
@@ -21,7 +20,6 @@ import org.itineradev.itinera.workflow.Sync
  *
  * @sample org.itineradev.itinera.executor.samples.executors
  */
-@ExperimentalItineraApi
 public class LocalExecutor
 /** An executor whose journeys deliver their events through dispatchers [factory] makes. */
 @JvmOverloads

@@ -1,6 +1,5 @@
 package org.itineradev.itinera.report
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.JourneyId
 import org.itineradev.itinera.workflow.Sync
 
@@ -10,7 +9,6 @@ import org.itineradev.itinera.workflow.Sync
  *
  * @sample org.itineradev.itinera.report.samples.perJourney
  */
-@ExperimentalItineraApi
 public fun interface ReporterFactory : ReporterFactoryOf<Sync> {
     /**
      * Makes the reporter of the journey with this ID.

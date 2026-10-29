@@ -11,7 +11,6 @@ import org.itineradev.itinera.step.StepName
  *
  * @sample org.itineradev.itinera.workflow.samples.listing
  */
-@ExperimentalItineraApi
 public class Position
 private constructor(
     /** The position's number, counted from 1. */
@@ -50,7 +49,6 @@ private constructor(
  *
  * @sample org.itineradev.itinera.workflow.samples.listing
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class ListedStep(
     /** The step's name. */
@@ -62,9 +60,9 @@ public data class ListedStep(
     /** The name of the input adapter attached to the step, or `null` when none is. */
     val adapter: AdapterName?,
     /** The services the step requests, in the order it requests them. */
-    val services: List<ListedService>,
+    @ExperimentalItineraApi val services: List<ListedService>,
     /** The step's rescue section, or `null` when the step has no rescue step. */
-    val rescue: ListedRescue?,
+    @ExperimentalItineraApi val rescue: ListedRescue?,
 )
 
 /**

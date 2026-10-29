@@ -17,7 +17,6 @@ import org.itineradev.itinera.event.EventKind
  *
  * @sample org.itineradev.itinera.report.samples.dispatching
  */
-@ExperimentalItineraApi
 public class DefaultDispatcher : Dispatcher {
     private val reporters = mutableListOf<Reporter>()
 
@@ -48,6 +47,7 @@ public class DefaultDispatcher : Dispatcher {
      *
      * @sample org.itineradev.itinera.report.samples.dispatching
      */
+    @ExperimentalItineraApi
     override fun setGlobalMetadata(key: String, value: Any?) {
         reporters.forEach { reporter -> reporter.setGlobalMetadata(key, value) }
     }
@@ -58,7 +58,6 @@ public class DefaultDispatcher : Dispatcher {
  *
  * @sample org.itineradev.itinera.report.samples.dispatching
  */
-@ExperimentalItineraApi
 public class DefaultDispatcherFactory : DispatcherFactory {
     /**
      * A new dispatcher, holding no reporter.

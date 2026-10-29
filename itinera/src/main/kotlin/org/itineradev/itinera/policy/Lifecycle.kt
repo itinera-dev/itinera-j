@@ -1,6 +1,5 @@
 package org.itineradev.itinera.policy
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.step.Reason
 
 /**
@@ -10,7 +9,6 @@ import org.itineradev.itinera.step.Reason
  *
  * @sample org.itineradev.itinera.policy.samples.hooks
  */
-@ExperimentalItineraApi
 public sealed interface Lifecycle {
     /**
      * The journey succeeds at once.

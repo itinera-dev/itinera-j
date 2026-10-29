@@ -1,6 +1,5 @@
 package org.itineradev.itinera.engine
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Hooking.audit
 import org.itineradev.itinera.engine.Journeys.contributing
 import org.itineradev.itinera.engine.Journeys.journeyOf
@@ -30,7 +29,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 
-@OptIn(ExperimentalItineraApi::class)
 class StepHooksTest {
     private val fraud = Reason("fraud")
     private val audit = PolicyName.of("audit")
