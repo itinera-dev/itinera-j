@@ -1,7 +1,5 @@
 package org.itineradev.itinera.service
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * Marks a method of a workflow class, or of a superclass, as a service provider, returning
  * [Provided] of the service's type, which `provide` and `noInstance` of the workflow's interface
@@ -11,7 +9,6 @@ import org.itineradev.itinera.ExperimentalItineraApi
  *
  * @sample org.itineradev.itinera.workflow.annotated.samples.providing
  */
-@ExperimentalItineraApi
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
 @MustBeDocumented

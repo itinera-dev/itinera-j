@@ -1,6 +1,5 @@
 package org.itineradev.itinera.request
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Answer
 import org.itineradev.itinera.engine.ServiceAsked
 
@@ -12,7 +11,6 @@ import org.itineradev.itinera.engine.ServiceAsked
  * @param T the service's type.
  * @sample org.itineradev.itinera.request.samples.requests
  */
-@ExperimentalItineraApi
 public class ServiceRequest<T : Any>
 internal constructor(
     /** The key, unique among the services one step requests. */

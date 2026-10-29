@@ -1,6 +1,5 @@
 package org.itineradev.itinera.instance
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.instance.samples.fromKotlin
 import org.itineradev.itinera.instance.samples.instances
 import org.itineradev.itinera.instance.samples.typedInstances
@@ -10,7 +9,6 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-@OptIn(ExperimentalItineraApi::class)
 class InstanceBuilderTest {
     @Test
     fun `an instance holds what it was created with`() {

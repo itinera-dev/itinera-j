@@ -63,7 +63,6 @@ public data class RescueSkipped(override val step: StepName) : JourneyAbort {
  *
  * @sample org.itineradev.itinera.event.samples.aborts
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class ReservedMetadataKey(
     override val step: StepName?,
