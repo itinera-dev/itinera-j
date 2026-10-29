@@ -1,18 +1,23 @@
 package org.itineradev.itinera.engine
 
+import org.itineradev.itinera.event.ByRescueStep
 import org.itineradev.itinera.event.ByStep
 import org.itineradev.itinera.event.StepSource
 import org.itineradev.itinera.instance.WorkflowInstance
 import org.itineradev.itinera.request.Got
 import org.itineradev.itinera.request.Request
+import org.itineradev.itinera.request.RescueKind
 import org.itineradev.itinera.request.StepKind
 import org.itineradev.itinera.step.Attempt
+import org.itineradev.itinera.step.StepName
 import org.itineradev.itinera.workflow.Mode
+import org.itineradev.itinera.workflow.RescueStepDescriptor
 import org.itineradev.itinera.workflow.StepDescriptor
 
 /**
- * Resolves what the steps of [instance]'s journey request for each attempt: first their inputs, in
- * the order each step declares them, then their services, lent by their providers.
+ * Resolves what the steps of [instance]'s journey, and their rescue steps, request for each
+ * attempt: first their data, in the order each declares it, then their services, lent by their
+ * providers.
  */
 internal class Building<M : Mode>(
     private val journey: Journey,
@@ -32,40 +37,91 @@ internal class Building<M : Mode>(
         step: StepDescriptor<M>,
         attempt: Attempt,
         handles: Map<Handle, Any>,
-    ): Got<StepKind<M>> {
-        val requests = step.requests
+    ): Got<StepKind<M>> =
+        answered(step.name, attempt, step.requests, handles) { asked ->
+            inputs.of(step.name, attempt, inputOf(asked))
+        }
+
+    /**
+     * What [rescue], the rescue step of [step], is built from, once [step]'s failed attempt left
+     * [left], the [handles] made for its attempt among it: its inputs, and what it requests from
+     * the step it rescues, from what the attempt left.
+     *
+     * @throws JourneyAbortSignal when resolving a request aborts the journey.
+     */
+    @JvmSynthetic
+    suspend fun rescuing(
+        step: StepDescriptor<M>,
+        rescue: RescueStepDescriptor<M>,
+        left: Left,
+        handles: Map<Handle, Any>,
+    ): Got<RescueKind<M>> {
+        val name = rescueOf(step.name)
+        val acting = ActingOn(left, name, ByRescueStep)
+        return answered(name, FIRST, rescue.requests, handles) { asked ->
+            when (asked) {
+                is FromStepAsked ->
+                    journey.fromStep(
+                        left.contributed,
+                        asked.key,
+                        asked.type,
+                        asked.required,
+                        requestedBy(name, FIRST),
+                    )
+                is ReasonAsked -> journey.reasonFor(acting, asked)
+                is ErrorAsked -> journey.errorFor(acting, asked)
+                is InputAsked -> inputs.of(name, FIRST, asked)
+            }
+        }
+    }
+
+    /**
+     * What [attempt] of the step or rescue step [name] is built from: what [data] gives for each of
+     * its [requests] for data, in order, then each service lent to it, then what the executor knows
+     * and the [handles].
+     */
+    private suspend fun <K> answered(
+        name: StepName,
+        attempt: Attempt,
+        requests: List<Request<K, *>>,
+        handles: Map<Handle, Any>,
+        data: suspend (BuiltWithAsked) -> Any?,
+    ): Got<K> {
         val read =
-            requests.filter(::asksInput).associateWith { input -> inputOf(step, attempt, input) }
+            requests.filter(::asksData).associateWith { request ->
+                data(request.asked as BuiltWithAsked)
+            }
         val lent =
             requests.filter(::asksService).associateWith { service ->
-                lentTo(step, attempt, service)
+                lending.of(name, attempt, service.asked as ServiceAsked)
             }
         val call =
             Call(
-                RequestedBy(step.name, ByStep, StepSource(step.name, attempt)),
+                requestedBy(name, attempt),
                 mapOf(
                     Known.JOURNEY_ID to instance.journeyId,
-                    Known.STEP_NAME to step.name,
+                    Known.STEP_NAME to name,
                     Known.ATTEMPT to attempt,
                 ),
                 handles,
             )
         return Answered(requests, read + lent + journey.resolved(requests, call))
     }
-
-    private suspend fun inputOf(
-        step: StepDescriptor<M>,
-        attempt: Attempt,
-        input: Request<*, *>,
-    ): Any? = inputs.of(step.name, attempt, input.asked as InputAsked)
-
-    private suspend fun lentTo(
-        step: StepDescriptor<M>,
-        attempt: Attempt,
-        service: Request<*, *>,
-    ): Any = lending.of(step.name, attempt, service.asked as ServiceAsked)
 }
 
-private fun asksInput(request: Request<*, *>): Boolean = request.asked is InputAsked
+private fun requestedBy(name: StepName, attempt: Attempt): RequestedBy =
+    RequestedBy(name, ByStep, StepSource(name, attempt))
+
+/** Whether [request] asks for data a step or rescue step is built with, besides its services. */
+private fun asksData(request: Request<*, *>): Boolean = request.asked is BuiltWithAsked
+
+/** The input [asked] stands for, the only data a step requests besides its services. */
+private fun inputOf(asked: BuiltWithAsked): InputAsked =
+    when (asked) {
+        is InputAsked -> asked
+        is FromStepAsked,
+        is ReasonAsked,
+        is ErrorAsked -> throw AssertionError("A step cannot request $asked.")
+    }
 
 private fun asksService(request: Request<*, *>): Boolean = request.asked is ServiceAsked
