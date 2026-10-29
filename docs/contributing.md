@@ -27,7 +27,7 @@ One Gradle build, with the Kotlin DSL, a module per artifact, and every artifact
 | `itinera-kotlin` | yes | What Kotlin applications add: asynchronous workflows on coroutines, the reader and value walk for Kotlin classes, and the reified forms. It brings kotlin-reflect and kotlinx.coroutines |
 | `itinera-java` | yes | What Java applications add: the Java face of the core, which grows from stage 3 with whatever Java finds awkward in the core |
 | `itinera-testing` | yes | Test support, which an application adds to its tests only |
-| `itinera-checker` | yes | Compile-time checks of the annotations, for javac, and for KSP once stage 12 adds it |
+| `itinera-checker` | yes | Compile-time checks of the annotations, for KSP and javac |
 | `itinera-bom` | yes | The bill of materials: the version of every artifact above |
 | `conformance` | no | The Kotlin conformance runner |
 | `conformance-java` | no | The Java conformance runner, written wholly in Java |

@@ -33,6 +33,19 @@ dependencies {
 }
 ```
 
+A Kotlin application has KSP report them instead, by applying KSP's Gradle plugin, at the KSP version the checker's release notes name, and adding the checker to its symbol processors. KSP checks the workflows written in Kotlin, and those written in Java that extend a Kotlin class or name a part written in Kotlin; javac's checker checks the other Java workflows:
+
+```kotlin
+plugins {
+    id("com.google.devtools.ksp") version "KSP_VERSION"
+}
+
+dependencies {
+    ksp(platform("org.itinera-dev:itinera-bom:VERSION"))
+    ksp("org.itinera-dev:itinera-checker")
+}
+```
+
 The artifacts run on JDK 17 and later. Java applications write synchronous workflows, and Kotlin applications synchronous ones or asynchronous ones on coroutines.
 
 ## Contributing
