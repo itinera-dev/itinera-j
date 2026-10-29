@@ -12,6 +12,8 @@ internal class IdGenerators(private val problems: Problems) {
         val generators =
             generateSequence(type, Class<*>::getSuperclass)
                 .flatMap(::declaredMethods)
+                .map(::bridged)
+                .distinct()
                 .filter(::isIdGenerator)
                 .toList()
         if (generators.size > 1) problems.misdeclared(type.name, "has several ID generators")
