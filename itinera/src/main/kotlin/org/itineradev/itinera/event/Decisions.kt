@@ -13,7 +13,6 @@ import org.itineradev.itinera.workflow.WorkflowName
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class StepRetrying(
     override val sequence: Long,
@@ -95,7 +94,6 @@ public data class StepRescued(
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class StepGivenUp(
     override val sequence: Long,
@@ -122,7 +120,6 @@ public data class StepGivenUp(
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class JourneySucceeded(
     override val sequence: Long,
@@ -141,7 +138,6 @@ public data class JourneySucceeded(
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class JourneyFailed(
     override val sequence: Long,

@@ -18,7 +18,6 @@ import org.itineradev.itinera.workflow.Sync
  *
  * @sample org.itineradev.itinera.report.samples.printer
  */
-@ExperimentalItineraApi
 public fun interface Reporter : ReporterOf<Sync> {
     /**
      * Receives one event of the journey, in sequence order.
@@ -35,5 +34,5 @@ public fun interface Reporter : ReporterOf<Sync> {
      *
      * @sample org.itineradev.itinera.report.samples.tenants
      */
-    public fun setGlobalMetadata(key: String, value: Any?): Unit = Unit
+    @ExperimentalItineraApi public fun setGlobalMetadata(key: String, value: Any?): Unit = Unit
 }

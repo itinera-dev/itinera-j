@@ -1,6 +1,5 @@
 package org.itineradev.itinera.policy
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.PolicyDraft
 import org.itineradev.itinera.request.Request
 import org.itineradev.itinera.request.StepFailureKind
@@ -15,7 +14,6 @@ import org.itineradev.itinera.workflow.Sync
  * @param P the policy its hooks are called on.
  * @sample org.itineradev.itinera.policy.samples.policies
  */
-@ExperimentalItineraApi
 public class StepPolicyBuilder<P> internal constructor(private val draft: PolicyDraft<P, Sync>) {
     /**
      * Defines `on step success`, called after an attempt succeeded, which requests nothing.

@@ -14,7 +14,6 @@ import org.itineradev.itinera.workflow.WorkflowName
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class InputAdapterSupplied(
     override val sequence: Long,
@@ -39,7 +38,6 @@ public data class InputAdapterSupplied(
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class InputAdapterFailed(
     override val sequence: Long,
@@ -64,7 +62,6 @@ public data class InputAdapterFailed(
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class OptionalInputAbsent(
     override val sequence: Long,

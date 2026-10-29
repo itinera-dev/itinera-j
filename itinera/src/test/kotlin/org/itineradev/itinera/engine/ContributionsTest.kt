@@ -1,6 +1,5 @@
 package org.itineradev.itinera.engine
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Journeys.contributing
 import org.itineradev.itinera.engine.Journeys.journeyOf
 import org.itineradev.itinera.engine.Journeys.ran
@@ -13,7 +12,6 @@ import org.itineradev.itinera.value.TypeToken
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-@OptIn(ExperimentalItineraApi::class)
 class ContributionsTest {
     @Test
     fun `the last value contributed under a key in one attempt wins`() {

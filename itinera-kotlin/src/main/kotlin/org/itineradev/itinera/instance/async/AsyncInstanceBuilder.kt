@@ -20,7 +20,6 @@ import org.itineradev.itinera.workflow.WorkflowDescriptor
  *
  * @sample org.itineradev.itinera.instance.async.samples.asyncInstances
  */
-@ExperimentalItineraApi
 public class AsyncInstanceBuilder internal constructor(private val draft: Draft<*, Async>) {
     /**
      * Puts [value] in the initial data under [key], replacing what was put there before.
@@ -78,6 +77,7 @@ public class AsyncInstanceBuilder internal constructor(private val draft: Draft<
      *
      * @sample org.itineradev.itinera.instance.async.samples.asyncInstances
      */
+    @ExperimentalItineraApi
     public fun reportersGlobalMetadata(key: String, value: Any?): AsyncInstanceBuilder = apply {
         draft.metadata(key, value)
     }
@@ -113,6 +113,5 @@ public class AsyncInstanceBuilder internal constructor(private val draft: Draft<
  *
  * @sample org.itineradev.itinera.instance.async.samples.asyncInstances
  */
-@ExperimentalItineraApi
 public fun <W> WorkflowDescriptor<W, Async>.instance(workflow: W): AsyncInstanceBuilder =
     AsyncInstanceBuilder.of(this, workflow)

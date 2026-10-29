@@ -18,7 +18,6 @@ import org.itineradev.itinera.workflow.WorkflowDescriptor
  *
  * @sample org.itineradev.itinera.instance.samples.instances
  */
-@ExperimentalItineraApi
 public class InstanceBuilder internal constructor(private val draft: Draft<*, Sync>) {
     /**
      * Puts [value] in the initial data under [key], replacing what was put there before.
@@ -76,6 +75,7 @@ public class InstanceBuilder internal constructor(private val draft: Draft<*, Sy
      *
      * @sample org.itineradev.itinera.instance.samples.instances
      */
+    @ExperimentalItineraApi
     public fun reportersGlobalMetadata(key: String, value: Any?): InstanceBuilder = apply {
         draft.metadata(key, value)
     }
@@ -110,7 +110,6 @@ public class InstanceBuilder internal constructor(private val draft: Draft<*, Sy
  *
  * @sample org.itineradev.itinera.instance.samples.instances
  */
-@ExperimentalItineraApi
 @JvmSynthetic
 public fun <W> WorkflowDescriptor<W, Sync>.instance(workflow: W): InstanceBuilder =
     InstanceBuilder.of(this, workflow)

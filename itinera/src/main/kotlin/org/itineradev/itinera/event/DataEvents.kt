@@ -12,7 +12,6 @@ import org.itineradev.itinera.workflow.WorkflowName
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class ContributionCommitted(
     override val sequence: Long,
@@ -33,7 +32,6 @@ public data class ContributionCommitted(
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class ContributionsDiscarded(
     override val sequence: Long,
@@ -54,7 +52,6 @@ public data class ContributionsDiscarded(
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class DataOverwritten(
     override val sequence: Long,

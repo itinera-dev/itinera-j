@@ -18,7 +18,6 @@ import org.itineradev.itinera.workflow.WorkflowDescriptor
  * @param M the workflow's mode, which only the executor of that mode accepts.
  * @sample org.itineradev.itinera.instance.samples.instances
  */
-@ExperimentalItineraApi
 public interface WorkflowInstance<M : Mode> {
     /** The workflow's descriptor. */
     public val descriptor: WorkflowDescriptor<*, M>
@@ -36,7 +35,7 @@ public interface WorkflowInstance<M : Mode> {
     public val initialData: Map<String, Any?>
 
     /** The global metadata set on the reporters before the journey starts, by key, in order. */
-    public val initialGlobalMetadata: Map<String, Any?>
+    @ExperimentalItineraApi public val initialGlobalMetadata: Map<String, Any?>
 
     /**
      * Claims the instance for a journey: `true` the first time it is called, and `false` ever

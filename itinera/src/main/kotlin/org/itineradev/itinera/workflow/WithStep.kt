@@ -12,7 +12,6 @@ import org.itineradev.itinera.step.ItineraStep
  *
  * @sample org.itineradev.itinera.workflow.annotated.samples.shipping
  */
-@ExperimentalItineraApi
 @Repeatable
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
@@ -32,5 +31,5 @@ public annotation class WithStep(
      * The step's rescue step, a class marked `@RescueStep`, or [ItineraRescueStep] itself, the
      * default, for none. A step with a rescue step has a retry budget of 0.
      */
-    val rescue: KClass<out ItineraRescueStep> = ItineraRescueStep::class,
+    @ExperimentalItineraApi val rescue: KClass<out ItineraRescueStep> = ItineraRescueStep::class,
 )

@@ -1,6 +1,5 @@
 package org.itineradev.itinera.policy
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.PolicyDraft
 import org.itineradev.itinera.request.WorkflowHookKind
 import org.itineradev.itinera.workflow.Mode
@@ -18,7 +17,6 @@ import org.itineradev.itinera.workflow.Mode
  * @param M the mode of the workflows it can join.
  * @sample org.itineradev.itinera.policy.samples.policies
  */
-@ExperimentalItineraApi
 public interface WorkflowPolicyDescriptor<P, M : Mode> {
     /** The policy's name. */
     public val name: PolicyName

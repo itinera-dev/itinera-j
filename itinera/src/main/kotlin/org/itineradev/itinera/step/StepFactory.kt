@@ -1,6 +1,5 @@
 package org.itineradev.itinera.step
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.request.Got
 import org.itineradev.itinera.request.StepKind
 import org.itineradev.itinera.workflow.Mode
@@ -15,7 +14,7 @@ import org.itineradev.itinera.workflow.Sync
  * @param M the mode of the workflows the step can join.
  * @sample org.itineradev.itinera.step.samples.factories
  */
-@ExperimentalItineraApi public interface StepFactory<M : Mode>
+public interface StepFactory<M : Mode>
 
 /**
  * Builds a synchronous step for one attempt, as a class's constructor does: what it throws aborts
@@ -24,7 +23,6 @@ import org.itineradev.itinera.workflow.Sync
  *
  * @sample org.itineradev.itinera.step.samples.factories
  */
-@ExperimentalItineraApi
 public fun interface SyncStepFactory : StepFactory<Sync> {
     /**
      * Builds the step for one attempt, from the answers to the requests its descriptor declares.
@@ -40,7 +38,6 @@ public fun interface SyncStepFactory : StepFactory<Sync> {
  *
  * @sample org.itineradev.itinera.step.samples.factories
  */
-@ExperimentalItineraApi
 public fun interface SyncStepRun {
     /**
      * Runs the attempt.

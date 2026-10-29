@@ -1,6 +1,5 @@
 package org.itineradev.itinera.journey.kotlin
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.DataBag
 import org.itineradev.itinera.journey.DataBagAccess
 import org.itineradev.itinera.journey.Read
@@ -20,5 +19,4 @@ public inline fun <reified T> DataBag.read(key: String): Read<T> = read(key, typ
  *
  * @sample org.itineradev.itinera.journey.kotlin.samples.accessReads
  */
-@ExperimentalItineraApi
 public inline fun <reified T> DataBagAccess.read(key: String): Read<T> = read(key, typeToken<T>())

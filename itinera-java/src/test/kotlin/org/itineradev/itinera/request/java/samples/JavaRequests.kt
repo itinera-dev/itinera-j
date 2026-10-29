@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.request.java.samples
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.request.Requests
 import org.itineradev.itinera.request.java.JavaRequests
 import org.itineradev.itinera.step.Outcome

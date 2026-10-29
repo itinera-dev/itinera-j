@@ -1,6 +1,5 @@
 package org.itineradev.itinera.journey
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.event.JourneyFailure
 import org.itineradev.itinera.event.ReporterFailed
 import org.itineradev.itinera.journey.samples.outputs
@@ -14,7 +13,6 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments.argumentSet
 import org.junit.jupiter.params.provider.FieldSource
 
-@OptIn(ExperimentalItineraApi::class)
 class JourneyResultTest {
     private val id = JourneyId.of("order-42")
 

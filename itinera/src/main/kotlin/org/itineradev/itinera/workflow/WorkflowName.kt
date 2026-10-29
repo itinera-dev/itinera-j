@@ -1,6 +1,5 @@
 package org.itineradev.itinera.workflow
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.Name
 
 /**
@@ -8,7 +7,6 @@ import org.itineradev.itinera.Name
  *
  * @sample org.itineradev.itinera.samples.names
  */
-@ExperimentalItineraApi
 public class WorkflowName private constructor(name: String) : Name(name, "workflow") {
     /** Makes workflow names. */
     public companion object {

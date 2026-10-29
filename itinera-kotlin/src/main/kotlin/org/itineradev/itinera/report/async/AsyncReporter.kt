@@ -18,7 +18,6 @@ import org.itineradev.itinera.workflow.Async
  *
  * @sample org.itineradev.itinera.report.async.samples.asyncPrinter
  */
-@ExperimentalItineraApi
 public fun interface AsyncReporter : ReporterOf<Async> {
     /**
      * Receives one event of the journey, in sequence order; the journey goes on once it returns.
@@ -35,5 +34,7 @@ public fun interface AsyncReporter : ReporterOf<Async> {
      *
      * @sample org.itineradev.itinera.report.async.samples.asyncTenants
      */
-    @JvmSynthetic public suspend fun setGlobalMetadata(key: String, value: Any?): Unit = Unit
+    @ExperimentalItineraApi
+    @JvmSynthetic
+    public suspend fun setGlobalMetadata(key: String, value: Any?): Unit = Unit
 }
