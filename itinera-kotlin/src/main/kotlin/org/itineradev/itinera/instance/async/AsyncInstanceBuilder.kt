@@ -42,6 +42,18 @@ public class AsyncInstanceBuilder internal constructor(private val draft: Draft<
     }
 
     /**
+     * Puts each component of [data], a data class or record, in the initial data under its key, in
+     * the components' order, replacing what was put under its key before. The key is the
+     * component's name, unless `@Datum` names another, and an optional component, as `@Datum` says,
+     * gives no key when it holds `null`.
+     *
+     * @throws IllegalArgumentException when [data] is not a data class or a record, when two of its
+     *   components give one key, or when no value can be of a component's type.
+     * @sample org.itineradev.itinera.instance.async.samples.typedAsyncInstances
+     */
+    public fun initialData(data: Any): AsyncInstanceBuilder = apply { draft.initialData(data) }
+
+    /**
      * Adds a reporter after those already added.
      *
      * @sample org.itineradev.itinera.instance.async.samples.asyncInstances

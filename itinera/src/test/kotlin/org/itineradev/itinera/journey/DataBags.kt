@@ -11,6 +11,8 @@ object DataBags {
 
     @JvmStatic fun of(key: String, value: Any?): DataBag = of(key to value)
 
+    @JvmStatic fun of(entries: Map<String, Any?>): DataBag = of(*entries.toList().toTypedArray())
+
     @JvmStatic fun captured(value: Any?): Captured = Values.capture(value) as Captured
 
     private fun captured(entry: Pair<String, Any?>): Pair<String, Captured> =
