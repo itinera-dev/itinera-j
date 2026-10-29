@@ -1,16 +1,16 @@
 package org.itineradev.itinera.engine
 
+import org.itineradev.itinera.policy.HookReporter
 import org.itineradev.itinera.step.StepReporter
 
 /**
- * A synchronous step's reporter, which emits through [emits] and blocks until it is done, letting
- * one call through at a time, whichever thread makes it.
+ * A synchronous step's or hook's reporter, given to custom code that requests [handle], which emits
+ * through [emits] and blocks until it is done, letting one call through at a time, whichever thread
+ * makes it.
  */
-internal class EmittingStepReporter(private val emits: Emits) : StepReporter, ReporterHandle {
+internal class EmittingReporter(private val emits: Emits, override val handle: Handle) :
+    StepReporter, HookReporter, ReporterHandle {
     private val lock = Any()
-
-    override val handle: Handle
-        get() = Handle.STEP_REPORTER
 
     override val reporter: Any
         get() = this

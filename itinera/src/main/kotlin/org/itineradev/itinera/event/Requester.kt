@@ -93,3 +93,36 @@ public sealed interface MissingData {
         val requester: FailureRequester
     ) : MissingData
 }
+
+/**
+ * What a request found of the wrong type, or could not copy for itself: data under a key, or the
+ * failure's reason of a failed attempt, whose details could not be copied.
+ *
+ * @sample org.itineradev.itinera.event.samples.wrong
+ */
+@ExperimentalItineraApi
+public sealed interface WrongData {
+    /**
+     * Data under a key.
+     *
+     * @sample org.itineradev.itinera.event.samples.wrong
+     */
+    @JvmRecord
+    public data class Key(
+        /** The key that was requested. */
+        val key: String,
+        /** Who requested it. */
+        val requester: Requester,
+    ) : WrongData
+
+    /**
+     * The failure's reason, whose details could not be copied for the request.
+     *
+     * @sample org.itineradev.itinera.event.samples.wrong
+     */
+    @JvmRecord
+    public data class FailureReason(
+        /** Who requested it. */
+        val requester: FailureRequester
+    ) : WrongData
+}

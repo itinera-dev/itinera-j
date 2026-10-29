@@ -26,6 +26,7 @@ import org.itineradev.itinera.event.ResultSource
 import org.itineradev.itinera.event.StepCouldNotBeBuilt
 import org.itineradev.itinera.event.UnexpectedResult
 import org.itineradev.itinera.event.ValueSource
+import org.itineradev.itinera.event.WrongData
 import org.itineradev.itinera.event.WrongType
 
 /**
@@ -37,7 +38,7 @@ internal fun cellsOf(abort: JourneyAbort): List<Cell> =
         is StepCouldNotBeBuilt -> builtCells(abort.source)
         is PolicyCouldNotBeBuilt -> listOf("policy" to abort.policy)
         is RequiredDataMissing -> cellsOf(abort.missing)
-        is WrongType -> listOf("key" to abort.key) + requesterCells(abort.requester)
+        is WrongType -> cellsOf(abort.wrong)
         is NotAValue.UnderKey -> listOf("key" to abort.key) + valueCells(abort.source)
         is NotAValue.InEvent -> valueCells(abort.source)
         is NotAValue.InDetails -> valueCells(abort.source)
@@ -54,6 +55,12 @@ private fun cellsOf(missing: MissingData): List<Cell> =
         is MissingData.Key -> listOf("key" to missing.key) + requesterCells(missing.requester)
         is MissingData.FailureReason -> failureCells(missing.requester)
         is MissingData.Error -> failureCells(missing.requester)
+    }
+
+private fun cellsOf(wrong: WrongData): List<Cell> =
+    when (wrong) {
+        is WrongData.Key -> listOf("key" to wrong.key) + requesterCells(wrong.requester)
+        is WrongData.FailureReason -> failureCells(wrong.requester)
     }
 
 private fun requesterCells(requester: Requester): List<Cell> =

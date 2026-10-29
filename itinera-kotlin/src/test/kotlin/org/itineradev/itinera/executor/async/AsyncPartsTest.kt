@@ -17,9 +17,14 @@ import org.itineradev.itinera.policy.OnSuccess
 import org.itineradev.itinera.policy.PolicyFactory
 import org.itineradev.itinera.policy.StepPolicyDescriptor
 import org.itineradev.itinera.policy.SyncHook
+import org.itineradev.itinera.policy.async.AsyncHook
+import org.itineradev.itinera.policy.async.AsyncHookReporter
+import org.itineradev.itinera.policy.async.AsyncWorkflowHook
 import org.itineradev.itinera.policy.async.asyncStepPolicy
+import org.itineradev.itinera.policy.async.asyncWorkflowPolicy
 import org.itineradev.itinera.report.async.AsyncReporter
 import org.itineradev.itinera.request.Requests
+import org.itineradev.itinera.request.async.asyncHookReporter
 import org.itineradev.itinera.request.async.asyncStepReporter
 import org.itineradev.itinera.service.Provided
 import org.itineradev.itinera.service.ProviderDescriptor
@@ -216,8 +221,58 @@ class AsyncPartsTest {
             assertEquals(listOf("journey_id", "carrier"), log.keys)
         }
 
+    @Test
+    fun `asynchronous hooks are awaited, with their hook reporter, and decide with what they return`() =
+        runBlocking<Unit> {
+            val reporter = Requests.asyncHookReporter()
+            val contributor = Requests.contributor()
+            val audit =
+                asyncStepPolicy("audit", PolicyFactory(::Any))
+                    .onStepSuccess(
+                        listOf(reporter),
+                        AsyncHook { _, got -> audited(got[reporter]) },
+                    )
+                    .build()
+            val ledger =
+                asyncWorkflowPolicy("ledger", PolicyFactory(::Any))
+                    .onWorkflowFailure(
+                        listOf(contributor),
+                        AsyncWorkflowHook { _, got ->
+                            yield()
+                            got[contributor].contribute("ledger", "failed")
+                        },
+                    )
+                    .build()
+            val log = Yielding()
+            val instance =
+                asyncBuilder<Shop>("shop")
+                    .step(succeeding("pack").policy(audit).build())
+                    .policy(ledger)
+                    .build()
+                    .instance(Shop())
+                    .reporter(log)
+                    .create()
+            val result = AsyncLocalExecutor().run(instance)
+            assertEquals("fraud", result.failure?.reason?.code)
+            assertEquals(
+                listOf(
+                    "journey_info",
+                    "hook_called",
+                    "hook_called",
+                    "contribution_committed",
+                    "journey_failed",
+                ),
+                log.kinds.takeLast(5),
+            )
+        }
+
     private fun notOfTheMode(adapter: String): Violation =
         Violation.ModeNotAccepted("input adapter $adapter", Async)
+
+    private suspend fun audited(reporter: AsyncHookReporter): OnSuccess {
+        reporter.info("audited")
+        return OnSuccess.failWorkflow("fraud")
+    }
 
     private suspend fun later(value: String): String {
         yield()
