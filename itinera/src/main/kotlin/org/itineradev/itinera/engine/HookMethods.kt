@@ -24,7 +24,7 @@ internal class HookMethods<M : Mode>(
             .flatMap(::declaredMethods)
             .filter(::isHiddenHook)
             .forEach(::hidden)
-        val marked = type.methods.filter(::isDeclared).mapNotNull(::marked)
+        val marked = type.methods.map(::bridged).filter(::isDeclared).mapNotNull(::marked)
         if (marked.isEmpty())
             problems.misdeclared(type.name, "defines no hook, though a policy defines at least one")
         definedTwice(type, marked)
