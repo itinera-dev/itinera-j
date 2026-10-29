@@ -106,6 +106,12 @@ class RunTest {
     }
 
     @Test
+    fun `every scenario that uses test support passes in both columns`() {
+        assertTrue(runs("@testing"), errors().toString())
+        assertEquals(24, scenarios().size)
+    }
+
+    @Test
     fun `a journey that did not do what the case expects fails as unmet`() {
         assertFalse(runs("@unmet"))
         assertTrue(errors().all { "Unmet" in it }, errors().toString())

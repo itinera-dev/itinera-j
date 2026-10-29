@@ -19,7 +19,8 @@ module org.itineradev.itinera {
   exports org.itineradev.itinera.workflow;
   exports org.itineradev.itinera.engine to
       org.itineradev.itinera.kotlin,
-      org.itineradev.itinera.java;
+      org.itineradev.itinera.java,
+      org.itineradev.itinera.testing;
 
   uses org.itineradev.itinera.engine.KotlinClasses;
   uses org.itineradev.itinera.engine.JavaForms;

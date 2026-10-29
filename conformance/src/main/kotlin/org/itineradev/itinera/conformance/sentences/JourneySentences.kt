@@ -64,6 +64,10 @@ internal class JourneySentences(private val world: World) {
                 throw Unmet(
                     "expected run to be refused; no instance was created: ${ended.failure.message}"
                 )
+            is Ended.Stopped ->
+                throw Unmet(
+                    "expected run to be refused; the test was stopped: ${ended.mistake.message}"
+                )
         }
 }
 

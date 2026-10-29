@@ -239,6 +239,18 @@ public final class org/itineradev/itinera/engine/KotlinFunction$Companion {
 public abstract interface class org/itineradev/itinera/engine/KotlinShape {
 }
 
+public final class org/itineradev/itinera/engine/Lone {
+	public fun <init> (Z)V
+	public final fun getContributed ()Ljava/util/Map;
+	public final fun getContributor ()Lorg/itineradev/itinera/journey/Contributor;
+	public final fun getEvents ()Ljava/util/List;
+	public final fun getGlobalMetadata ()Ljava/util/Map;
+	public final fun getHookEmits ()Lorg/itineradev/itinera/engine/Emits;
+	public final fun getHookReporter ()Lorg/itineradev/itinera/policy/HookReporter;
+	public final fun getStepEmits ()Lorg/itineradev/itinera/engine/Emits;
+	public final fun getStepReporter ()Lorg/itineradev/itinera/step/StepReporter;
+}
+
 public final class org/itineradev/itinera/engine/MessagesKt {
 	public static final fun messageOf (Ljava/lang/Throwable;)Ljava/lang/String;
 }

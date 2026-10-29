@@ -1,3 +1,73 @@
+public abstract interface class org/itineradev/itinera/instance/testing/AsyncFake {
+	public abstract synthetic fun provide (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/itineradev/itinera/instance/testing/AsyncTestInstanceBuilder {
+	public static final field Companion Lorg/itineradev/itinera/instance/testing/AsyncTestInstanceBuilder$Companion;
+	public final fun create ()Lorg/itineradev/itinera/instance/WorkflowInstance;
+	public final fun data (Ljava/lang/String;Ljava/lang/Object;)Lorg/itineradev/itinera/instance/testing/AsyncTestInstanceBuilder;
+	public final fun fakeProvider (Ljava/lang/String;Ljava/lang/Class;Lorg/itineradev/itinera/instance/testing/AsyncFake;)Lorg/itineradev/itinera/instance/testing/AsyncTestInstanceBuilder;
+	public final fun initialData (Ljava/lang/Object;)Lorg/itineradev/itinera/instance/testing/AsyncTestInstanceBuilder;
+	public final fun initialData (Ljava/util/Map;)Lorg/itineradev/itinera/instance/testing/AsyncTestInstanceBuilder;
+	public final fun reporter (Lorg/itineradev/itinera/report/async/AsyncReporter;)Lorg/itineradev/itinera/instance/testing/AsyncTestInstanceBuilder;
+	public final fun reporterFor (Lorg/itineradev/itinera/report/async/AsyncReporterFactory;)Lorg/itineradev/itinera/instance/testing/AsyncTestInstanceBuilder;
+	public final fun reportersGlobalMetadata (Ljava/lang/String;Ljava/lang/Object;)Lorg/itineradev/itinera/instance/testing/AsyncTestInstanceBuilder;
+}
+
+public final class org/itineradev/itinera/instance/testing/AsyncTestInstanceBuilder$Companion {
+	public final fun of (Lorg/itineradev/itinera/workflow/WorkflowDescriptor;Ljava/lang/Object;)Lorg/itineradev/itinera/instance/testing/AsyncTestInstanceBuilder;
+	public final fun of (Lorg/itineradev/itinera/workflow/async/ItineraAsyncWorkflow;)Lorg/itineradev/itinera/instance/testing/AsyncTestInstanceBuilder;
+}
+
+public abstract interface class org/itineradev/itinera/instance/testing/Fake {
+	public abstract fun provide ()Lorg/itineradev/itinera/service/Provided;
+}
+
+public final class org/itineradev/itinera/instance/testing/TestInstanceBuilder {
+	public static final field Companion Lorg/itineradev/itinera/instance/testing/TestInstanceBuilder$Companion;
+	public final fun create ()Lorg/itineradev/itinera/instance/WorkflowInstance;
+	public final fun data (Ljava/lang/String;Ljava/lang/Object;)Lorg/itineradev/itinera/instance/testing/TestInstanceBuilder;
+	public final fun fakeProvider (Ljava/lang/String;Ljava/lang/Class;Lorg/itineradev/itinera/instance/testing/Fake;)Lorg/itineradev/itinera/instance/testing/TestInstanceBuilder;
+	public final fun initialData (Ljava/lang/Object;)Lorg/itineradev/itinera/instance/testing/TestInstanceBuilder;
+	public final fun initialData (Ljava/util/Map;)Lorg/itineradev/itinera/instance/testing/TestInstanceBuilder;
+	public static final fun of (Lorg/itineradev/itinera/workflow/ItineraWorkflow;)Lorg/itineradev/itinera/instance/testing/TestInstanceBuilder;
+	public static final fun of (Lorg/itineradev/itinera/workflow/WorkflowDescriptor;Ljava/lang/Object;)Lorg/itineradev/itinera/instance/testing/TestInstanceBuilder;
+	public final fun reporter (Lorg/itineradev/itinera/report/Reporter;)Lorg/itineradev/itinera/instance/testing/TestInstanceBuilder;
+	public final fun reporterFor (Lorg/itineradev/itinera/report/ReporterFactory;)Lorg/itineradev/itinera/instance/testing/TestInstanceBuilder;
+	public final fun reportersGlobalMetadata (Ljava/lang/String;Ljava/lang/Object;)Lorg/itineradev/itinera/instance/testing/TestInstanceBuilder;
+}
+
+public final class org/itineradev/itinera/instance/testing/TestInstanceBuilder$Companion {
+	public final fun of (Lorg/itineradev/itinera/workflow/ItineraWorkflow;)Lorg/itineradev/itinera/instance/testing/TestInstanceBuilder;
+	public final fun of (Lorg/itineradev/itinera/workflow/WorkflowDescriptor;Ljava/lang/Object;)Lorg/itineradev/itinera/instance/testing/TestInstanceBuilder;
+}
+
+public final class org/itineradev/itinera/journey/testing/Contributions {
+	public fun <init> ()V
+	public final fun getContributor ()Lorg/itineradev/itinera/journey/Contributor;
+	public final fun getKeys ()Ljava/util/Set;
+	public final fun read (Ljava/lang/String;Lorg/itineradev/itinera/value/TypeToken;)Lorg/itineradev/itinera/journey/Read;
+}
+
+public final class org/itineradev/itinera/journey/testing/TestDataBag {
+	public fun <init> ()V
+	public final fun getAccess ()Lorg/itineradev/itinera/journey/DataBagAccess;
+	public final fun with (Ljava/lang/String;Ljava/lang/Object;)Lorg/itineradev/itinera/journey/testing/TestDataBag;
+}
+
+public final class org/itineradev/itinera/policy/testing/AsyncHookEventReporter {
+	public static final field Companion Lorg/itineradev/itinera/policy/testing/AsyncHookEventReporter$Companion;
+	public fun <init> ()V
+	public static final fun failing ()Lorg/itineradev/itinera/policy/testing/AsyncHookEventReporter;
+	public final fun getEmitted ()Ljava/util/List;
+	public final fun getGlobalMetadata ()Ljava/util/Map;
+	public final fun getReporter ()Lorg/itineradev/itinera/policy/async/AsyncHookReporter;
+}
+
+public final class org/itineradev/itinera/policy/testing/AsyncHookEventReporter$Companion {
+	public final fun failing ()Lorg/itineradev/itinera/policy/testing/AsyncHookEventReporter;
+}
+
 public abstract interface class org/itineradev/itinera/policy/testing/FailureHookEnding : org/itineradev/itinera/policy/testing/HookEnding {
 	public fun onFailure ()Lorg/itineradev/itinera/policy/OnFailure;
 }
@@ -56,6 +126,19 @@ public final class org/itineradev/itinera/policy/testing/HookEnding$KeepDefault 
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class org/itineradev/itinera/policy/testing/HookEventReporter {
+	public static final field Companion Lorg/itineradev/itinera/policy/testing/HookEventReporter$Companion;
+	public fun <init> ()V
+	public static final fun failing ()Lorg/itineradev/itinera/policy/testing/HookEventReporter;
+	public final fun getEmitted ()Ljava/util/List;
+	public final fun getGlobalMetadata ()Ljava/util/Map;
+	public final fun getReporter ()Lorg/itineradev/itinera/policy/HookReporter;
+}
+
+public final class org/itineradev/itinera/policy/testing/HookEventReporter$Companion {
+	public final fun failing ()Lorg/itineradev/itinera/policy/testing/HookEventReporter;
+}
+
 public final class org/itineradev/itinera/policy/testing/StepPolicyMock {
 	public final fun onStepAbnormalTermination ()Lorg/itineradev/itinera/policy/OnFailure;
 	public final fun onStepFailure ()Lorg/itineradev/itinera/policy/OnFailure;
@@ -111,6 +194,30 @@ public final class org/itineradev/itinera/report/testing/AsyncRecordingReporter 
 	public synthetic fun setGlobalMetadata (Ljava/lang/String;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
+public final class org/itineradev/itinera/report/testing/Emitted : java/lang/Record {
+	public fun <init> (Lorg/itineradev/itinera/report/testing/Level;Ljava/lang/String;Ljava/lang/Object;)V
+	public final fun component1 ()Lorg/itineradev/itinera/report/testing/Level;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/Object;
+	public final fun copy (Lorg/itineradev/itinera/report/testing/Level;Ljava/lang/String;Ljava/lang/Object;)Lorg/itineradev/itinera/report/testing/Emitted;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/report/testing/Emitted;Lorg/itineradev/itinera/report/testing/Level;Ljava/lang/String;Ljava/lang/Object;ILjava/lang/Object;)Lorg/itineradev/itinera/report/testing/Emitted;
+	public final fun data ()Ljava/lang/Object;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public final fun level ()Lorg/itineradev/itinera/report/testing/Level;
+	public final fun message ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/report/testing/Level : java/lang/Enum {
+	public static final field ERROR Lorg/itineradev/itinera/report/testing/Level;
+	public static final field INFO Lorg/itineradev/itinera/report/testing/Level;
+	public static final field WARNING Lorg/itineradev/itinera/report/testing/Level;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/itineradev/itinera/report/testing/Level;
+	public static fun values ()[Lorg/itineradev/itinera/report/testing/Level;
+}
+
 public final class org/itineradev/itinera/report/testing/RecordingReporter : org/itineradev/itinera/report/Reporter {
 	public fun <init> ()V
 	public final fun getEvents ()Ljava/util/List;
@@ -129,6 +236,19 @@ public final class org/itineradev/itinera/step/testing/AsyncRescueStepMock : org
 public final class org/itineradev/itinera/step/testing/AsyncRescueStepMock$Companion {
 	public final fun failingToBuild (Ljava/lang/String;)Lorg/itineradev/itinera/step/testing/AsyncRescueStepMock;
 	public final fun playing (Lorg/itineradev/itinera/step/testing/RescueEnding;[Lorg/itineradev/itinera/step/testing/RescueEnding;)Lorg/itineradev/itinera/step/testing/AsyncRescueStepMock;
+}
+
+public final class org/itineradev/itinera/step/testing/AsyncStepEventReporter {
+	public static final field Companion Lorg/itineradev/itinera/step/testing/AsyncStepEventReporter$Companion;
+	public fun <init> ()V
+	public static final fun failing ()Lorg/itineradev/itinera/step/testing/AsyncStepEventReporter;
+	public final fun getEmitted ()Ljava/util/List;
+	public final fun getGlobalMetadata ()Ljava/util/Map;
+	public final fun getReporter ()Lorg/itineradev/itinera/step/async/AsyncStepReporter;
+}
+
+public final class org/itineradev/itinera/step/testing/AsyncStepEventReporter$Companion {
+	public final fun failing ()Lorg/itineradev/itinera/step/testing/AsyncStepEventReporter;
 }
 
 public final class org/itineradev/itinera/step/testing/AsyncStepMock : org/itineradev/itinera/step/async/AsyncStepFactory {
@@ -262,6 +382,19 @@ public final class org/itineradev/itinera/step/testing/RescueStepMock$Companion 
 	public final fun playing (Lorg/itineradev/itinera/step/testing/RescueEnding;[Lorg/itineradev/itinera/step/testing/RescueEnding;)Lorg/itineradev/itinera/step/testing/RescueStepMock;
 }
 
+public final class org/itineradev/itinera/step/testing/StepEventReporter {
+	public static final field Companion Lorg/itineradev/itinera/step/testing/StepEventReporter$Companion;
+	public fun <init> ()V
+	public static final fun failing ()Lorg/itineradev/itinera/step/testing/StepEventReporter;
+	public final fun getEmitted ()Ljava/util/List;
+	public final fun getGlobalMetadata ()Ljava/util/Map;
+	public final fun getReporter ()Lorg/itineradev/itinera/step/StepReporter;
+}
+
+public final class org/itineradev/itinera/step/testing/StepEventReporter$Companion {
+	public final fun failing ()Lorg/itineradev/itinera/step/testing/StepEventReporter;
+}
+
 public final class org/itineradev/itinera/step/testing/StepMock : org/itineradev/itinera/step/SyncStepFactory {
 	public static final field Companion Lorg/itineradev/itinera/step/testing/StepMock$Companion;
 	public fun build (Lorg/itineradev/itinera/request/Got;)Lorg/itineradev/itinera/step/SyncStepRun;
@@ -273,5 +406,239 @@ public final class org/itineradev/itinera/step/testing/StepMock : org/itineradev
 public final class org/itineradev/itinera/step/testing/StepMock$Companion {
 	public final fun failingToBuild (Ljava/lang/String;)Lorg/itineradev/itinera/step/testing/StepMock;
 	public final fun playing (Lorg/itineradev/itinera/step/testing/Ending;[Lorg/itineradev/itinera/step/testing/Ending;)Lorg/itineradev/itinera/step/testing/StepMock;
+}
+
+public abstract interface class org/itineradev/itinera/testing/Mistake {
+	public abstract fun getDescription ()Ljava/lang/String;
+	public abstract fun getKind ()Lorg/itineradev/itinera/testing/MistakeKind;
+}
+
+public final class org/itineradev/itinera/testing/Mistake$AnotherService : java/lang/Record, org/itineradev/itinera/testing/Mistake {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lorg/itineradev/itinera/testing/Mistake$AnotherService;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/testing/Mistake$AnotherService;Ljava/lang/String;ILjava/lang/Object;)Lorg/itineradev/itinera/testing/Mistake$AnotherService;
+	public fun description ()Ljava/lang/String;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getDescription ()Ljava/lang/String;
+	public synthetic fun getKind ()Lorg/itineradev/itinera/testing/MistakeKind;
+	public fun hashCode ()I
+	public fun kind ()Lorg/itineradev/itinera/testing/MistakeKind;
+	public final fun provider ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/testing/Mistake$AttemptLeftOut : java/lang/Record, org/itineradev/itinera/testing/Mistake {
+	public fun <init> (Ljava/lang/String;I)V
+	public final fun attempt ()I
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()I
+	public final fun copy (Ljava/lang/String;I)Lorg/itineradev/itinera/testing/Mistake$AttemptLeftOut;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/testing/Mistake$AttemptLeftOut;Ljava/lang/String;IILjava/lang/Object;)Lorg/itineradev/itinera/testing/Mistake$AttemptLeftOut;
+	public fun description ()Ljava/lang/String;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getDescription ()Ljava/lang/String;
+	public synthetic fun getKind ()Lorg/itineradev/itinera/testing/MistakeKind;
+	public fun hashCode ()I
+	public fun kind ()Lorg/itineradev/itinera/testing/MistakeKind;
+	public final fun step ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/testing/Mistake$AttemptScriptedTwice : java/lang/Record, org/itineradev/itinera/testing/Mistake {
+	public fun <init> (Ljava/lang/String;I)V
+	public final fun attempt ()I
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()I
+	public final fun copy (Ljava/lang/String;I)Lorg/itineradev/itinera/testing/Mistake$AttemptScriptedTwice;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/testing/Mistake$AttemptScriptedTwice;Ljava/lang/String;IILjava/lang/Object;)Lorg/itineradev/itinera/testing/Mistake$AttemptScriptedTwice;
+	public fun description ()Ljava/lang/String;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getDescription ()Ljava/lang/String;
+	public synthetic fun getKind ()Lorg/itineradev/itinera/testing/MistakeKind;
+	public fun hashCode ()I
+	public fun kind ()Lorg/itineradev/itinera/testing/MistakeKind;
+	public final fun step ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/testing/Mistake$GapInTheAttempts : java/lang/Record, org/itineradev/itinera/testing/Mistake {
+	public fun <init> (Ljava/lang/String;I)V
+	public final fun attempt ()I
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()I
+	public final fun copy (Ljava/lang/String;I)Lorg/itineradev/itinera/testing/Mistake$GapInTheAttempts;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/testing/Mistake$GapInTheAttempts;Ljava/lang/String;IILjava/lang/Object;)Lorg/itineradev/itinera/testing/Mistake$GapInTheAttempts;
+	public fun description ()Ljava/lang/String;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getDescription ()Ljava/lang/String;
+	public synthetic fun getKind ()Lorg/itineradev/itinera/testing/MistakeKind;
+	public fun hashCode ()I
+	public fun kind ()Lorg/itineradev/itinera/testing/MistakeKind;
+	public final fun step ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/testing/Mistake$NoContributor : java/lang/Record, org/itineradev/itinera/testing/Mistake {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lorg/itineradev/itinera/testing/Mistake$NoContributor;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/testing/Mistake$NoContributor;Ljava/lang/String;ILjava/lang/Object;)Lorg/itineradev/itinera/testing/Mistake$NoContributor;
+	public fun description ()Ljava/lang/String;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getDescription ()Ljava/lang/String;
+	public synthetic fun getKind ()Lorg/itineradev/itinera/testing/MistakeKind;
+	public fun hashCode ()I
+	public fun kind ()Lorg/itineradev/itinera/testing/MistakeKind;
+	public final fun step ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/testing/Mistake$NoReporter : java/lang/Record, org/itineradev/itinera/testing/Mistake {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lorg/itineradev/itinera/testing/Mistake$NoReporter;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/testing/Mistake$NoReporter;Ljava/lang/String;ILjava/lang/Object;)Lorg/itineradev/itinera/testing/Mistake$NoReporter;
+	public fun description ()Ljava/lang/String;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getDescription ()Ljava/lang/String;
+	public synthetic fun getKind ()Lorg/itineradev/itinera/testing/MistakeKind;
+	public fun hashCode ()I
+	public fun kind ()Lorg/itineradev/itinera/testing/MistakeKind;
+	public final fun step ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/testing/Mistake$NoSuchAttempt : java/lang/Record, org/itineradev/itinera/testing/Mistake {
+	public fun <init> (Ljava/lang/String;I)V
+	public final fun attempt ()I
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()I
+	public final fun copy (Ljava/lang/String;I)Lorg/itineradev/itinera/testing/Mistake$NoSuchAttempt;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/testing/Mistake$NoSuchAttempt;Ljava/lang/String;IILjava/lang/Object;)Lorg/itineradev/itinera/testing/Mistake$NoSuchAttempt;
+	public fun description ()Ljava/lang/String;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getDescription ()Ljava/lang/String;
+	public synthetic fun getKind ()Lorg/itineradev/itinera/testing/MistakeKind;
+	public fun hashCode ()I
+	public fun kind ()Lorg/itineradev/itinera/testing/MistakeKind;
+	public final fun step ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/testing/Mistake$RescueStepLeftOut : java/lang/Record, org/itineradev/itinera/testing/Mistake {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lorg/itineradev/itinera/testing/Mistake$RescueStepLeftOut;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/testing/Mistake$RescueStepLeftOut;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/itineradev/itinera/testing/Mistake$RescueStepLeftOut;
+	public fun description ()Ljava/lang/String;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getDescription ()Ljava/lang/String;
+	public synthetic fun getKind ()Lorg/itineradev/itinera/testing/MistakeKind;
+	public fun hashCode ()I
+	public fun kind ()Lorg/itineradev/itinera/testing/MistakeKind;
+	public final fun rescued ()Ljava/lang/String;
+	public final fun step ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/testing/Mistake$RescueStepSkips : java/lang/Record, org/itineradev/itinera/testing/Mistake {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lorg/itineradev/itinera/testing/Mistake$RescueStepSkips;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/testing/Mistake$RescueStepSkips;Ljava/lang/String;ILjava/lang/Object;)Lorg/itineradev/itinera/testing/Mistake$RescueStepSkips;
+	public fun description ()Ljava/lang/String;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getDescription ()Ljava/lang/String;
+	public synthetic fun getKind ()Lorg/itineradev/itinera/testing/MistakeKind;
+	public fun hashCode ()I
+	public fun kind ()Lorg/itineradev/itinera/testing/MistakeKind;
+	public final fun step ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/testing/Mistake$StepLeftOut : java/lang/Record, org/itineradev/itinera/testing/Mistake {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lorg/itineradev/itinera/testing/Mistake$StepLeftOut;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/testing/Mistake$StepLeftOut;Ljava/lang/String;ILjava/lang/Object;)Lorg/itineradev/itinera/testing/Mistake$StepLeftOut;
+	public fun description ()Ljava/lang/String;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getDescription ()Ljava/lang/String;
+	public synthetic fun getKind ()Lorg/itineradev/itinera/testing/MistakeKind;
+	public fun hashCode ()I
+	public fun kind ()Lorg/itineradev/itinera/testing/MistakeKind;
+	public final fun step ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/testing/Mistake$StepScriptedTwice : java/lang/Record, org/itineradev/itinera/testing/Mistake {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lorg/itineradev/itinera/testing/Mistake$StepScriptedTwice;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/testing/Mistake$StepScriptedTwice;Ljava/lang/String;ILjava/lang/Object;)Lorg/itineradev/itinera/testing/Mistake$StepScriptedTwice;
+	public fun description ()Ljava/lang/String;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getDescription ()Ljava/lang/String;
+	public synthetic fun getKind ()Lorg/itineradev/itinera/testing/MistakeKind;
+	public fun hashCode ()I
+	public fun kind ()Lorg/itineradev/itinera/testing/MistakeKind;
+	public final fun step ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/testing/Mistake$UnknownProvider : java/lang/Record, org/itineradev/itinera/testing/Mistake {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lorg/itineradev/itinera/testing/Mistake$UnknownProvider;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/testing/Mistake$UnknownProvider;Ljava/lang/String;ILjava/lang/Object;)Lorg/itineradev/itinera/testing/Mistake$UnknownProvider;
+	public fun description ()Ljava/lang/String;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getDescription ()Ljava/lang/String;
+	public synthetic fun getKind ()Lorg/itineradev/itinera/testing/MistakeKind;
+	public fun hashCode ()I
+	public fun kind ()Lorg/itineradev/itinera/testing/MistakeKind;
+	public final fun provider ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/testing/Mistake$UnknownStep : java/lang/Record, org/itineradev/itinera/testing/Mistake {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lorg/itineradev/itinera/testing/Mistake$UnknownStep;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/testing/Mistake$UnknownStep;Ljava/lang/String;ILjava/lang/Object;)Lorg/itineradev/itinera/testing/Mistake$UnknownStep;
+	public fun description ()Ljava/lang/String;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getDescription ()Ljava/lang/String;
+	public synthetic fun getKind ()Lorg/itineradev/itinera/testing/MistakeKind;
+	public fun hashCode ()I
+	public fun kind ()Lorg/itineradev/itinera/testing/MistakeKind;
+	public final fun step ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/testing/MistakeKind : java/lang/Enum {
+	public static final field ANOTHER_SERVICE Lorg/itineradev/itinera/testing/MistakeKind;
+	public static final field ATTEMPT_LEFT_OUT Lorg/itineradev/itinera/testing/MistakeKind;
+	public static final field ATTEMPT_SCRIPTED_TWICE Lorg/itineradev/itinera/testing/MistakeKind;
+	public static final field GAP_IN_THE_ATTEMPTS Lorg/itineradev/itinera/testing/MistakeKind;
+	public static final field NO_CONTRIBUTOR Lorg/itineradev/itinera/testing/MistakeKind;
+	public static final field NO_REPORTER Lorg/itineradev/itinera/testing/MistakeKind;
+	public static final field NO_SUCH_ATTEMPT Lorg/itineradev/itinera/testing/MistakeKind;
+	public static final field RESCUE_STEP_LEFT_OUT Lorg/itineradev/itinera/testing/MistakeKind;
+	public static final field RESCUE_STEP_SKIPS Lorg/itineradev/itinera/testing/MistakeKind;
+	public static final field STEP_LEFT_OUT Lorg/itineradev/itinera/testing/MistakeKind;
+	public static final field STEP_SCRIPTED_TWICE Lorg/itineradev/itinera/testing/MistakeKind;
+	public static final field UNKNOWN_PROVIDER Lorg/itineradev/itinera/testing/MistakeKind;
+	public static final field UNKNOWN_STEP Lorg/itineradev/itinera/testing/MistakeKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public fun toString ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/itineradev/itinera/testing/MistakeKind;
+	public static fun values ()[Lorg/itineradev/itinera/testing/MistakeKind;
+}
+
+public final class org/itineradev/itinera/testing/TestMistake : java/lang/RuntimeException {
+	public final fun getProblems ()Ljava/util/List;
 }
 

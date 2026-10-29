@@ -7,13 +7,16 @@ import org.itineradev.itinera.conformance.run.Admission;
 import org.itineradev.itinera.conformance.run.Ended;
 import org.itineradev.itinera.conformance.run.Journey;
 import org.itineradev.itinera.conformance.run.LocalJourneys;
+import org.itineradev.itinera.conformance.run.RanAlone;
 import org.itineradev.itinera.conformance.run.Recorders;
 import org.itineradev.itinera.conformance.run.Streams;
+import org.itineradev.itinera.conformance.run.Tested;
 import org.itineradev.itinera.conformance.run.Unmet;
 import org.itineradev.itinera.conformance.run.Witness;
 import org.itineradev.itinera.event.Event;
 import org.itineradev.itinera.journey.JourneyResult;
 import org.itineradev.itinera.workflow.ListedStep;
+import org.itineradev.itinera.workflow.Supplied;
 import org.itineradev.itinera.workflow.Violations;
 
 /**
@@ -24,7 +27,10 @@ public final class World {
   private final Model model = new Model();
   private final Recorders recorders = new Recorders(model.reporterFailures());
   private final Witness witness = new Witness();
+  private final Tested tested = new Tested(model.testing());
   private Admission admitted;
+  private RanAlone ranAlone;
+  private Supplied returned;
   private List<Journey> journeys = List.of();
 
   /** What the scenario declares. */
@@ -42,6 +48,37 @@ public final class World {
     return witness;
   }
 
+  /** The test support the scenario's journeys use. */
+  public Tested tested() {
+    return tested;
+  }
+
+  /** What the step or hook the scenario ran alone was lent and did. */
+  public RanAlone ranAlone() {
+    if (ranAlone == null) {
+      throw new ModelException("no step or hook ran alone");
+    }
+    return ranAlone;
+  }
+
+  /** Keeps what the step or hook the scenario ran alone was lent and did. */
+  public void ranAlone(RanAlone ran) {
+    ranAlone = ran;
+  }
+
+  /** What the input adapter the scenario called alone supplied. */
+  public Supplied returned() {
+    if (returned == null) {
+      throw new ModelException("no input adapter was called alone");
+    }
+    return returned;
+  }
+
+  /** Keeps what the input adapter the scenario called alone supplied. */
+  public void returned(Supplied supplied) {
+    returned = supplied;
+  }
+
   /** Every journey the scenario ran, in order. */
   public List<Journey> journeys() {
     return journeys;
@@ -57,7 +94,7 @@ public final class World {
 
   private Admission admitted() {
     try {
-      return new Admission.Admitted(LocalJourneys.of(model, recorders, witness));
+      return new Admission.Admitted(LocalJourneys.of(model, recorders, witness, tested));
     } catch (Violations violations) {
       return new Admission.Refused(violations);
     }
@@ -121,6 +158,10 @@ public final class World {
     if (ended instanceof Ended.Refused refused) {
       throw new Unmet(
           "expected a journey result; run was refused: " + refused.refusal().getMessage());
+    }
+    if (ended instanceof Ended.Stopped stopped) {
+      throw new Unmet(
+          "expected a journey result; the test was stopped: " + stopped.mistake().getMessage());
     }
     throw new Unmet(
         "expected a journey result; no instance was created: "
