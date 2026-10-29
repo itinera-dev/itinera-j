@@ -19,6 +19,9 @@ public sealed interface AdapterAnswer {
    */
   record Fails(String message) implements AdapterAnswer {}
 
+  /** Returns {@code null}, not what it supplies. */
+  record NoResult() implements AdapterAnswer {}
+
   /** Supplies what is not a value. */
   record NonValue() implements AdapterAnswer {}
 

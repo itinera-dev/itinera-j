@@ -9,7 +9,6 @@ import org.itineradev.itinera.conformance.model.ModelException
 import org.itineradev.itinera.conformance.model.PolicyModel
 import org.itineradev.itinera.conformance.model.ProviderModel
 import org.itineradev.itinera.conformance.model.ProviderScope
-import org.itineradev.itinera.conformance.model.StepScript
 import org.itineradev.itinera.conformance.record.dispatchers
 import org.itineradev.itinera.conformance.record.failingDispatchers
 import org.itineradev.itinera.executor.LocalExecutor
@@ -18,7 +17,6 @@ import org.itineradev.itinera.instance.instance
 import org.itineradev.itinera.policy.StepPolicyDescriptor
 import org.itineradev.itinera.request.Requests
 import org.itineradev.itinera.service.ProviderDescriptor
-import org.itineradev.itinera.step.SyncStepFactory
 import org.itineradev.itinera.workflow.InputAdapterDescriptor
 import org.itineradev.itinera.workflow.ListedStep
 import org.itineradev.itinera.workflow.RescueStepDescriptor
@@ -32,7 +30,6 @@ import org.itineradev.itinera.workflow.kotlin.builder
  * each step a step mock the witness watches, run on `LocalExecutor`.
  *
  * @throws org.itineradev.itinera.workflow.Violations when the builder refuses the workflow.
- * @throws NotRunYet when the scenario scripts what the runner cannot run yet.
  */
 internal fun localJourneys(model: Model, recorders: Recorders, witness: Witness): Journeys {
     val workflow = model.workflow
@@ -69,21 +66,18 @@ private fun stepOf(
         )
     }
     val scripted = Scripted(script, Requests.stepReporter())
-    val what = notRunYetIn(script)
-    val factory =
-        if (what == null) witness.watching(name, mockOf(script), scripted) else notRunYet(what)
+    val factory = witness.watching(name, mockOf(script), scripted)
     val builder = scripted.declaredOn(StepDescriptor.builder(name, factory).scriptedBy(script))
     for (policy in script.policies.orEmpty()) builder.policy(attached(policies, policy))
-    if (script.hasRescueStep) builder.rescue(rescueOf(model.step("${name}_rescue")))
+    if (script.hasRescueStep) builder.rescue(rescueOf("${name}_rescue", model, witness))
     return builder.build()
 }
 
-private fun notRunYet(what: String): SyncStepFactory = SyncStepFactory { throw NotRunYet(what) }
-
-private fun rescueOf(script: StepScript): RescueStepDescriptor<Sync> {
-    val builder = RescueStepDescriptor.builder { throw NotRunYet("rescue steps") }
-    script.services.map(::requestOf).forEach(builder::request)
-    return builder.build()
+private fun rescueOf(name: String, model: Model, witness: Witness): RescueStepDescriptor<Sync> {
+    val script = model.step(name)
+    val scripted = Scripted(script, Requests.stepReporter())
+    val factory = witness.watchingRescue(name, rescueMockOf(script), scripted)
+    return scripted.declaredOn(RescueStepDescriptor.builder(factory)).build()
 }
 
 private fun adapterOf(adapter: AdapterModel): InputAdapterDescriptor<Scenario, Sync> {

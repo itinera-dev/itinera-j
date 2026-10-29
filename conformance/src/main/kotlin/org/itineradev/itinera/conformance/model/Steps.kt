@@ -32,10 +32,21 @@ internal data class ScriptedAttempt(
 /** A required or optional input a step requests, of a type of the cases. */
 internal data class Input(val key: String, val type: ValueType, val optional: Boolean)
 
+/**
+ * What a rescue step requests of the step it rescues, written after [inputsBefore] of its inputs.
+ */
+internal data class RescuedStepRequest(val request: HookRequest, val inputsBefore: Int)
+
 /** What a scenario scripts for one step, a rescue step included, filled in as it is written. */
 internal class StepScript {
     val inputs = mutableListOf<Input>()
     val services = mutableListOf<RequestedService>()
+
+    /**
+     * What a rescue step requests of the step it rescues: its data, its failure reason or its
+     * error, in the order written.
+     */
+    val ofRescuedStep = mutableListOf<RescuedStepRequest>()
 
     /** What the step does on every attempt before it ends, in the order written. */
     val actions = mutableListOf<StepAction>()

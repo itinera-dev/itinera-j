@@ -44,11 +44,12 @@ internal class ScriptedHook<M : Mode, K : HookKind<M>, R>(
     }
 }
 
-/** [request], for a hook whose requests are of kind [K], which the case trusts it may make. */
+/** [request], for a part whose requests are of kind [K], which the case trusts it may make. */
 @Suppress("UNCHECKED_CAST")
-private fun <K> ofKind(request: Request<*, *>): Request<K, *> = request as Request<K, *>
+internal fun <K> ofKind(request: Request<*, *>): Request<K, *> = request as Request<K, *>
 
-private fun requestOf(request: HookRequest): Request<*, *> =
+/** The request [request] stands for. */
+internal fun requestOf(request: HookRequest): Request<*, *> =
     when (request) {
         is HookRequest.StepData ->
             if (request.optional) Requests.optionalFromStep(request.key, tokenOf(request.type))

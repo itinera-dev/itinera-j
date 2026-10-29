@@ -10,6 +10,7 @@ import java.util.stream.IntStream;
 public final class StepScript {
   private final List<Input> inputs = new ArrayList<>();
   private final List<RequestedService> services = new ArrayList<>();
+  private final List<RescuedStepRequest> ofRescuedStep = new ArrayList<>();
   private final List<StepAction> actions = new ArrayList<>();
   private final Map<String, Object> inputChanges = new LinkedHashMap<>();
   private List<ScriptedAttempt> attempts;
@@ -22,6 +23,8 @@ public final class StepScript {
   private boolean isAsynchronous;
   private List<String> policies;
   private boolean keepsHandles;
+  private boolean builtAsNull;
+  private boolean returnsNoOutcome;
 
   /** The inputs it requests, in the order written. */
   public List<Input> inputs() {
@@ -31,6 +34,14 @@ public final class StepScript {
   /** The services it requests, in the order written. */
   public List<RequestedService> services() {
     return services;
+  }
+
+  /**
+   * What a rescue step requests of the step it rescues: its data, its failure reason or its error,
+   * in the order written.
+   */
+  public List<RescuedStepRequest> ofRescuedStep() {
+    return ofRescuedStep;
   }
 
   /** What the step does on every attempt before it ends, in the order written. */
@@ -91,6 +102,26 @@ public final class StepScript {
   /** Whether the step keeps its contributor and step reporter after its attempt ends. */
   public boolean keepsHandles() {
     return keepsHandles;
+  }
+
+  /** Whether the step's factory returns {@code null}, not a step. */
+  public boolean builtAsNull() {
+    return builtAsNull;
+  }
+
+  /** Whether the step's run returns {@code null}, not an outcome. */
+  public boolean returnsNoOutcome() {
+    return returnsNoOutcome;
+  }
+
+  /** Says the step's factory returns {@code null}, not a step. */
+  public void buildAsNull() {
+    builtAsNull = true;
+  }
+
+  /** Says the step's run returns {@code null}, not an outcome. */
+  public void returnNoOutcome() {
+    returnsNoOutcome = true;
   }
 
   /** Attaches step policies to the step {@code name}, once. */

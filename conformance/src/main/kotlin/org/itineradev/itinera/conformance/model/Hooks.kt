@@ -109,6 +109,9 @@ internal sealed interface HookReturn {
 
     /** It fails, with [message] when the case writes one. */
     data class Fails(val message: String?) : HookReturn
+
+    /** It returns a value that is not a lifecycle. */
+    data object Value : HookReturn
 }
 
 /** The events a hook or a service provider emits through its reporter, as a case names them. */
@@ -136,6 +139,9 @@ internal class HookScript {
         private set
 
     private var returnStated = false
+
+    /** Whether the hook is asynchronous. */
+    var isAsynchronous = false
 
     /** Says how the hook ends, once. */
     fun returns(hook: Hook, policy: String, ending: HookReturn) {

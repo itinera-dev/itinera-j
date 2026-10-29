@@ -34,4 +34,9 @@ public final class HookEndingSentences {
   public void failsWith(String hook, String policy, String message) {
     ends(world, hook, policy, new HookReturn.Fails(message));
   }
+
+  @Given("the hook {string} of policy {string} returns a value")
+  public void returnsAValue(String hook, String policy) {
+    ends(world, hook, policy, new HookReturn.Value());
+  }
 }

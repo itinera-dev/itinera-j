@@ -15,7 +15,8 @@ import org.itineradev.itinera.workflow.Async
  * @sample org.itineradev.itinera.step.testing.samples.asyncMocks
  */
 @ExperimentalItineraApi
-public class AsyncStepMock private constructor(private val script: Script) : AsyncStepFactory {
+public class AsyncStepMock private constructor(private val script: Script<Ending>) :
+    AsyncStepFactory {
     /**
      * How many times a step was built from this mock, a build that failed not counted.
      *

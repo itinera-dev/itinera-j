@@ -67,13 +67,14 @@ final class ScriptedHook<K extends HookKind<Sync>> {
     return new HookReceived(received, got.get(contributor), got.get(reporter));
   }
 
-  /** {@code request}, for a hook whose requests are of kind {@code K}, which the case trusts. */
+  /** {@code request}, for a part whose requests are of kind {@code K}, which the case trusts. */
   @SuppressWarnings("unchecked")
-  private static <K> Request<? super K, ?> ofKind(Request<?, ?> request) {
+  static <K> Request<? super K, ?> ofKind(Request<?, ?> request) {
     return (Request<? super K, ?>) request;
   }
 
-  private static Request<?, ?> requestOf(HookRequest request) {
+  /** The request {@code request} stands for. */
+  static Request<?, ?> requestOf(HookRequest request) {
     if (request instanceof HookRequest.StepData data) {
       return data.optional()
           ? JavaRequests.optionalFromStep(data.key(), tokenOf(data.type()))

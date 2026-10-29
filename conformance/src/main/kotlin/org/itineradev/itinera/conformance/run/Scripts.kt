@@ -4,7 +4,6 @@ import org.itineradev.itinera.conformance.model.Ending as Written
 import org.itineradev.itinera.conformance.model.ModelException
 import org.itineradev.itinera.conformance.model.ScriptedAttempt
 import org.itineradev.itinera.conformance.model.StepScript
-import org.itineradev.itinera.conformance.model.WorkflowModel
 import org.itineradev.itinera.step.Reason
 import org.itineradev.itinera.step.testing.AsyncStepMock
 import org.itineradev.itinera.step.testing.Ending
@@ -13,7 +12,7 @@ import org.itineradev.itinera.workflow.Mode
 import org.itineradev.itinera.workflow.StepBuilder
 
 /** The message of an abnormal termination the case scripts with none. */
-private const val UNWRITTEN_MESSAGE = "the scripted step terminated abnormally"
+internal const val UNWRITTEN_MESSAGE = "the scripted step terminated abnormally"
 
 /** The synchronous step mock playing the step's script, one the runner can run. */
 internal fun mockOf(script: StepScript): StepMock =
@@ -22,21 +21,6 @@ internal fun mockOf(script: StepScript): StepMock =
 /** The asynchronous step mock playing the step's script, one the runner can run. */
 internal fun asyncMockOf(script: StepScript): AsyncStepMock =
     script.buildFailure?.let(AsyncStepMock::failingToBuild) ?: asyncPlaying(endingsOf(script))
-
-/**
- * What [model] scripts that the runner cannot run yet, or `null` when it can run all of it. A
- * workflow that holds any of it is still built, so its admission and its listing are checked, with
- * each such part a call that throws [NotRunYet], which no journey reaches.
- */
-internal fun notRunYetIn(model: WorkflowModel): String? =
-    model.scripts.values.firstNotNullOfOrNull(::notRunYetIn)
-
-/** What [script] asks for that the runner cannot run yet, or `null` when it can run it. */
-internal fun notRunYetIn(script: StepScript): String? =
-    when {
-        script.hasRescueStep || script.isRescueStep -> "rescue steps"
-        else -> null
-    }
 
 private fun playing(endings: List<Ending>): StepMock =
     StepMock.playing(endings.first(), *endings.drop(1).toTypedArray())
@@ -63,7 +47,7 @@ private fun endingOf(attempt: ScriptedAttempt): Ending =
         Written.ERROR -> Ending.abnormalTermination(attempt.message ?: UNWRITTEN_MESSAGE)
     }
 
-private fun failureReasonOf(attempt: ScriptedAttempt): Reason =
+internal fun failureReasonOf(attempt: ScriptedAttempt): Reason =
     reasonOf(
         attempt,
         attempt.code ?: throw ModelException("attempt ${attempt.number} fails with no code"),
