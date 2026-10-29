@@ -20,6 +20,8 @@ internal data class Built(val step: Any, val received: Received<*>)
 internal class Witness {
     private val built = linkedMapOf<String, MutableList<Built>>()
     private val calls = linkedMapOf<String, MutableList<Map<ProviderRequest, Any?>>>()
+    private val hookCalls = mutableListOf<HookCall>()
+    private val roleCalls = mutableListOf<Pair<String, String>>()
 
     /** How many built steps ran. */
     var ran = 0
@@ -31,6 +33,24 @@ internal class Witness {
     /** What the provider [provider] received on each call, in order. */
     fun calls(provider: String): List<Map<ProviderRequest, Any?>> =
         calls[provider].orEmpty().toList()
+
+    /** Every call of a hook, in the order made. */
+    val hooksCalled: List<HookCall>
+        get() = hookCalls.toList()
+
+    /** Records a call of a hook. */
+    fun hookCalled(call: HookCall) {
+        hookCalls += call
+    }
+
+    /** How many times [operation] of the role [role] was called. */
+    fun roleCalls(role: String, operation: String): Int =
+        roleCalls.count((role to operation)::equals)
+
+    /** Records a call of [operation] of the role [role]. */
+    fun roleCalled(role: String, operation: String) {
+        roleCalls += role to operation
+    }
 
     /** Records a call of the provider [provider], which received [received]. */
     fun called(provider: String, received: Map<ProviderRequest, Any?>) {

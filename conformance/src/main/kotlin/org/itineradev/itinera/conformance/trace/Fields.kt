@@ -10,7 +10,8 @@ private val notCompared = setOf("journeyId", "timestamp")
 internal fun apartFromIdAndTime(events: List<Event>): List<List<Any?>> =
     events.map(::apartFromIdAndTime)
 
-private fun apartFromIdAndTime(event: Event): List<Any?> =
+/** Every field of [event], its type included, apart from the journey ID and timestamp. */
+internal fun apartFromIdAndTime(event: Event): List<Any?> =
     listOf(event.javaClass) + componentsOf(event).filter(::isCompared).map { valueOf(event, it) }
 
 private fun componentsOf(event: Event): List<RecordComponent> =

@@ -27,4 +27,15 @@ public sealed interface StepAction {
    * @param value the value
    */
   record SetsGlobalMetadata(String key, Object value) implements StepAction {}
+
+  /**
+   * It contributes the value {@code written} under {@code key}, then changes that same object to
+   * {@code changed}, in place. Each attempt contributes a value of its own, read again from {@code
+   * written}.
+   *
+   * @param key the key
+   * @param written the value, as the case writes it
+   * @param changed what it changes it to
+   */
+  record ContributesThenChanges(String key, String written, Object changed) implements StepAction {}
 }
