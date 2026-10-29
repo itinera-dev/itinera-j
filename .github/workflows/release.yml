@@ -20,6 +20,7 @@ jobs:
       - uses: itinera-dev/actions/release-gate@v1
         with:
           manifest: gradle.properties
+          conformance: conformance.json conformance-java.json
           tier: 1
 
   # Checks on main do not block anything once a pull request has merged,
