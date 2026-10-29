@@ -2,7 +2,7 @@
 
 Tech spec for [proposal 0040](https://github.com/itinera-dev/spec/blob/main/proposals/0040-events-facts-and-decisions.md), implemented in [#12](https://github.com/itinera-dev/itinera-j/issues/12). [0011](0011-events.md) describes the events themselves.
 
-Status: started. Stage 1 added the types of decisions. The engine emits them once the stages that make each decision land.
+Status: done. Stage 1 added the types of decisions. From stage 3 the engine emits those the executor's rule makes, stage 7 those a hook decides, and 40 is listed in both manifests. `step_rescuing` and `step_rescued` are emitted from stage 9, with 0003.
 
 ## API
 
@@ -30,4 +30,4 @@ None.
 
 ## Done when
 
-40 is listed in both manifests once every scenario tagged `@proposal-0040` passes in both runners.
+40 is listed in both manifests by the pull request of stage 7 that lists the stage's proposals, which says `Closes #12`: every scenario tagged `@proposal-0040` passes in both runners and every column, but those that also name a proposal not listed yet.

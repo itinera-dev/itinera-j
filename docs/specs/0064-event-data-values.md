@@ -25,7 +25,7 @@ None.
 
 ## Conformance
 
-Of the two scenarios tagged `@proposal-0064`, "A failure whose details are not a value aborts the journey" runs once 64 is listed, and passes in both runners and every column. "Data that is not a value aborts the journey, and the event is not delivered" is also tagged `@proposal-0011`, so it runs once 11 is listed, in stage 7; `StepEmitsTest` checks its rule meanwhile.
+Of the two scenarios tagged `@proposal-0064`, "A failure whose details are not a value aborts the journey" runs once 64 is listed, and passes in both runners and every column. "Data that is not a value aborts the journey, and the event is not delivered" is also tagged `@proposal-0011`, so it runs from stage 7, which lists 11, and passes in both runners and every column; `StepEmitsTest` checks its rule too.
 
 ## Done when
 

@@ -2,7 +2,7 @@
 
 Tech spec for [proposal 0081](https://github.com/itinera-dev/spec/blob/main/proposals/0081-reporter-failure-stops-delivery.md), implemented in [#27](https://github.com/itinera-dev/itinera-j/issues/27). [0011](0011-events.md) describes reporters and dispatchers.
 
-Status: started. Stage 1 made the default dispatchers stop at a reporter that throws. Stage 3 added the executor's guard around each reporter, which records the abort and keeps the rules whatever the dispatcher.
+Status: done. Stage 1 made the default dispatchers stop at a reporter that throws. Stage 3 added the executor's guard around each reporter, which records the abort and keeps the rules whatever the dispatcher. Stage 7 runs the scenarios whose reporters fail on a hook's events, and lists 81 in both manifests.
 
 ## How it is built
 
@@ -24,4 +24,4 @@ None.
 
 ## Done when
 
-81 is listed in both manifests once every scenario tagged `@proposal-0081` passes in both runners.
+81 is listed in both manifests by the pull request of stage 7 that lists the stage's proposals, which says `Closes #27`: every scenario tagged `@proposal-0081` passes in both runners and every column, but those that also name a proposal not listed yet.
