@@ -38,6 +38,20 @@ public class InstanceBuilder internal constructor(private val draft: Draft<*, Sy
     }
 
     /**
+     * Puts each component of [data], a record or data class, in the initial data under its key, in
+     * the components' order, replacing what was put under its key before. The key is the
+     * component's name, unless `@Datum` names another, and an optional component, as `@Datum` says,
+     * gives no key when it holds `null` or an empty `Optional`.
+     *
+     * @throws IllegalArgumentException when [data] is not a record or a data class, or a Kotlin
+     *   data class without `itinera-kotlin`; when two of its components give one key; when it marks
+     *   an `Optional` component required, or has one without `itinera-java`; or when no value can
+     *   be of a component's type.
+     * @sample org.itineradev.itinera.instance.samples.typedInstances
+     */
+    public fun initialData(data: Any): InstanceBuilder = apply { draft.initialData(data) }
+
+    /**
      * Adds a reporter after those already added.
      *
      * @sample org.itineradev.itinera.instance.samples.instances
