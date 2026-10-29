@@ -60,6 +60,12 @@ class AsyncWorkflowsTest {
     }
 
     @Test
+    fun `a Java step in an asynchronous workflow is refused with mode not accepted`() {
+        val violations = assertThrows<Violations> { asyncDescriptorOf(JavaParcels::class) }
+        assertEquals(listOf(Violation.ModeNotAccepted("step pack", Async)), violations.violations)
+    }
+
+    @Test
     fun `each instance builds its own reporter of each class an annotated workflow lists`() {
         val first = Quietly().instance().create()
         val second = Quietly().instance().create()
