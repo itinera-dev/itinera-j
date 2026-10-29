@@ -53,9 +53,8 @@ internal class Written<M : Mode>(private val instance: WorkflowInstance<M>) {
 
     private fun rescueLeftOut(target: Target<*>): Mistake? {
         val rescue = (target as? StepTarget)?.rescue ?: return null
-        val scripted = named.any { other -> isNamed(other, rescue) }
-        return if (target.canFailFirst() && !scripted) {
-            Mistake.RescueStepLeftOut(rescue.toString(), target.name.toString())
+        return if (target.canFailFirst() && rescue !in named) {
+            Mistake.RescueStepLeftOut(rescue.name.toString(), target.name.toString())
         } else {
             null
         }
@@ -80,9 +79,9 @@ private fun hasName(target: Target<*>, name: String): Boolean = target.name.toSt
 
 private fun targetsOf(step: StepDescriptor<*>): List<Target<*>> {
     val rescue = step.rescue ?: return listOf(stepTarget(step, null))
-    val name = rescueOf(step.name)
-    return listOf(stepTarget(step, name), RescueTarget(name, rescue.requests))
+    val target = RescueTarget(rescueOf(step.name), rescue.requests)
+    return listOf(stepTarget(step, target), target)
 }
 
-private fun stepTarget(step: StepDescriptor<*>, rescue: StepName?): StepTarget =
+private fun stepTarget(step: StepDescriptor<*>, rescue: RescueTarget?): StepTarget =
     StepTarget(step.name, step.requests, step.retryBudget, step.retryOnAbnormalTermination, rescue)

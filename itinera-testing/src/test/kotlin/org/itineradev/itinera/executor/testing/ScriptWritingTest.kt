@@ -240,6 +240,24 @@ class ScriptWritingTest {
                     ),
                 ),
                 argumentSet(
+                    "the attempt after a rescue step that succeeds",
+                    script { script ->
+                        script.step("fix").willFail("broken").andStep("fix_rescue").willSucceed()
+                    },
+                    listOf(Mistake.AttemptLeftOut("fix", 2)),
+                ),
+                argumentSet(
+                    "the attempt after a rescue step that runs for real",
+                    script { script ->
+                        script
+                            .step("fix")
+                            .willTerminateAbnormally("broken")
+                            .andStep("fix_rescue")
+                            .willRunForReal()
+                    },
+                    listOf(Mistake.AttemptLeftOut("fix", 2)),
+                ),
+                argumentSet(
                     "every step not scripted, once all are asked for",
                     script { script -> script.step("charge").willSucceed().ensureAllScripted() },
                     listOf(
@@ -295,7 +313,27 @@ class ScriptWritingTest {
                             .onAttempt(2)
                             .willSucceed()
                             .andStep("fix_rescue")
+                            .willSucceed()
+                    },
+                ),
+                argumentSet(
+                    "a rescued step whose rescue step fails, with no attempt after it",
+                    script { script ->
+                        script
+                            .step("fix")
+                            .willFail("broken")
+                            .andStep("fix_rescue")
                             .willFail("beyond repair")
+                    },
+                ),
+                argumentSet(
+                    "a rescued step whose rescue step terminates abnormally, with no attempt after it",
+                    script { script ->
+                        script
+                            .step("fix")
+                            .willTerminateAbnormally("broken")
+                            .andStep("fix_rescue")
+                            .willTerminateAbnormally("crashed")
                     },
                 ),
                 argumentSet(

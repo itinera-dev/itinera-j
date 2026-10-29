@@ -89,8 +89,8 @@ internal class StepTarget(
     requests: List<Request<*, *>>,
     private val budget: Int,
     private val retryOnAbnormal: Boolean,
-    /** Its rescue step's name, if it has one. */
-    val rescue: StepName?,
+    /** Its rescue step, if it has one. */
+    val rescue: RescueTarget?,
 ) : Target<Ending>(name, requests) {
     override val mostAttempts: Int
         get() = budget + 1 + if (rescue == null) 0 else 1
@@ -105,11 +105,16 @@ internal class StepTarget(
         when (ending) {
             Ending.Success,
             is Ending.Skipped -> false
-            is Ending.Failure -> true
-            is Ending.AbnormalTermination -> retryOnAbnormal || rescuedAfter(attempt)
+            is Ending.Failure -> afterFailing(attempt, retried = true)
+            is Ending.AbnormalTermination -> afterFailing(attempt, retried = retryOnAbnormal)
         }
 
-    private fun rescuedAfter(attempt: Int): Boolean = attempt == 1 && rescue != null
+    /**
+     * Whether an attempt may follow attempt [attempt] once it failed: after attempt 1, only if its
+     * rescue step may succeed, since a failed rescue ends the journey; otherwise when [retried].
+     */
+    private fun afterFailing(attempt: Int, retried: Boolean): Boolean =
+        if (attempt == 1 && rescue != null) rescue.maySucceed() else retried
 
     /** Whether attempt 1, as described, can fail, so the rescue step may run. */
     fun canFailFirst(): Boolean =
@@ -129,6 +134,16 @@ internal class RescueTarget(name: StepName, requests: List<Request<*, *>>) :
         get() = 1
 
     override fun continuesAfter(attempt: Int, what: Described<RescueEnding>): Boolean = false
+
+    /**
+     * Whether its attempt may succeed: unless the script says it fails or terminates abnormally.
+     */
+    fun maySucceed(): Boolean =
+        when (val only = described(1)) {
+            null,
+            RealRun -> true
+            is Played -> only.ending == RescueEnding.Success
+        }
 
     override fun endingOf(ending: Ending): RescueEnding =
         when (ending) {
