@@ -2,10 +2,18 @@ package org.itineradev.itinera.policy;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.itineradev.itinera.event.ByStepHook;
+import org.itineradev.itinera.event.UnexpectedResult;
+import org.itineradev.itinera.executor.LocalExecutor;
+import org.itineradev.itinera.executor.Refusal;
+import org.itineradev.itinera.executor.Refused;
+import org.itineradev.itinera.instance.InstanceBuilder;
 import org.itineradev.itinera.journey.Contributor;
 import org.itineradev.itinera.journey.JourneyId;
 import org.itineradev.itinera.request.Answers;
@@ -19,9 +27,11 @@ import org.itineradev.itinera.request.StepHookKind;
 import org.itineradev.itinera.request.WorkflowHookKind;
 import org.itineradev.itinera.step.Outcome;
 import org.itineradev.itinera.step.Reason;
+import org.itineradev.itinera.step.StepName;
 import org.itineradev.itinera.value.TypeToken;
 import org.itineradev.itinera.workflow.StepDescriptor;
 import org.itineradev.itinera.workflow.Sync;
+import org.itineradev.itinera.workflow.WorkflowBuilder;
 import org.itineradev.itinera.workflow.WorkflowDescriptor;
 import org.junit.jupiter.api.Test;
 
@@ -122,5 +132,57 @@ final class JavaPoliciesTest {
         (policy, got) -> got.get(MESSAGES).tell("paid");
     notify.call(new Object(), new Answers<>(Map.of(MESSAGES, shop)));
     assertEquals(List.of("paid"), shop.told);
+  }
+
+  @Test
+  void aJavaHookRunsInAJourneyAndReachesTheWorkflowThroughARoleThatIsNotPublic() throws Refusal {
+    WorkflowPolicyDescriptor<Object, Sync> notify =
+        WorkflowPolicyDescriptor.builder("notify", Object::new)
+            .onWorkflowSuccess(List.of(MESSAGES), (policy, got) -> got.get(MESSAGES).tell("paid"))
+            .build();
+    Shop shop = new Shop();
+    var result =
+        new LocalExecutor()
+            .run(InstanceBuilder.of(charging().policy(notify).build(), shop).create());
+    assertTrue(result.isSucceeded());
+    assertEquals(List.of("paid"), shop.told);
+  }
+
+  @Test
+  void aJavaStepHookReturningNullAbortsTheJourneyWithUnexpectedResult() throws Refusal {
+    StepPolicyDescriptor<Audit, Sync> audit =
+        StepPolicyDescriptor.builder("audit", Audit::new)
+            .onStepSuccess((policy, got) -> null)
+            .build();
+    WorkflowDescriptor<Shop, Sync> shop =
+        WorkflowDescriptor.builder(Shop.class, "shop")
+            .step(StepDescriptor.builder("charge", got -> Outcome::success).policy(audit).build())
+            .build();
+    var result = new LocalExecutor().run(InstanceBuilder.of(shop, new Shop()).create());
+    assertEquals(
+        new UnexpectedResult(
+            StepName.of("charge"),
+            new ByStepHook(PolicyName.of("audit"), StepHook.ON_STEP_SUCCESS),
+            "the hook on step success of policy audit returned null, not keepDefault() or a"
+                + " lifecycle"),
+        result.abort().details());
+  }
+
+  @Test
+  void aJavaWorkflowPolicyBuiltAsNullRefusesTheInstance() {
+    WorkflowPolicyDescriptor<Object, Sync> notify =
+        WorkflowPolicyDescriptor.builder("notify", () -> null)
+            .onWorkflowSuccess((policy, got) -> {})
+            .build();
+    var instance = InstanceBuilder.of(charging().policy(notify).build(), new Shop()).create();
+    var refusal = assertThrows(Refusal.class, () -> new LocalExecutor().run(instance));
+    assertEquals(
+        new Refused.WorkflowPolicyReturnedNull(PolicyName.of("notify")), refusal.getRefused());
+  }
+
+  private static WorkflowBuilder<Shop, Sync> charging() {
+    return WorkflowDescriptor.builder(Shop.class, "shop")
+        .step(StepDescriptor.builder("charge", got -> Outcome::success).build())
+        .role(Messages.class);
   }
 }
