@@ -3,6 +3,7 @@ module org.itineradev.itinera.testing {
   requires transitive org.itineradev.itinera;
   requires static org.itineradev.itinera.kotlin;
 
+  exports org.itineradev.itinera.policy.testing;
   exports org.itineradev.itinera.report.testing;
   exports org.itineradev.itinera.step.testing;
 }
