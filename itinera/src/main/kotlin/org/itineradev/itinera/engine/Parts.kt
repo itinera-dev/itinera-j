@@ -5,11 +5,13 @@ import org.itineradev.itinera.policy.HookCall
 import org.itineradev.itinera.report.ReporterOf
 import org.itineradev.itinera.request.Got
 import org.itineradev.itinera.request.InputAdapterKind
+import org.itineradev.itinera.request.RescueKind
 import org.itineradev.itinera.request.StepKind
 import org.itineradev.itinera.service.Provided
 import org.itineradev.itinera.service.ProviderCall
 import org.itineradev.itinera.step.Outcome
 import org.itineradev.itinera.step.RescueFactory
+import org.itineradev.itinera.step.RescueOutcome
 import org.itineradev.itinera.step.StepFactory
 import org.itineradev.itinera.workflow.InputAdapterCall
 import org.itineradev.itinera.workflow.Mode
@@ -17,7 +19,7 @@ import org.itineradev.itinera.workflow.Supplied
 
 /**
  * What the engine calls in one mode: which parts it accepts, and how it makes the dispatcher, calls
- * input adapters, service providers and hooks, builds a step, makes the reporter handles and asks
+ * input adapters, service providers and hooks, builds steps, makes the reporter handles and asks
  * whether its journey was cancelled. [SyncParts] serves the synchronous mode, and `itinera-kotlin`
  * the asynchronous one.
  *
@@ -73,11 +75,8 @@ public interface Parts<M : Mode> {
         got: Got<*>,
     ): Provided<*>?
 
-    /**
-     * Builds the step for one attempt with [factory], from what it [got]: `null` when the factory
-     * returned `null`, which only Java code can. What the factory throws is thrown.
-     */
-    @JvmSynthetic public suspend fun build(factory: StepFactory<M>, got: Got<StepKind<M>>): Running?
+    /** How the steps and rescue steps of this mode are built. */
+    public val steps: StepCaller<M>
 
     /** What makes the reporter handles of this mode. */
     public val reporterHandles: ReporterHandles
@@ -109,6 +108,29 @@ public interface Delivery {
 }
 
 /**
+ * How the engine builds the steps and rescue steps of mode [M].
+ *
+ * Part of itinera's engine, not of its API.
+ */
+public interface StepCaller<M : Mode> {
+    /**
+     * Builds the step for one attempt with [factory], from what it [got]: `null` when the factory
+     * returned `null`, which only Java code can. What the factory throws is thrown.
+     */
+    @JvmSynthetic public suspend fun build(factory: StepFactory<M>, got: Got<StepKind<M>>): Running?
+
+    /**
+     * Builds a rescue step with [factory], from what it [got]: `null` when the factory returned
+     * `null`, which only Java code can. What the factory throws is thrown.
+     */
+    @JvmSynthetic
+    public suspend fun rescue(
+        factory: RescueFactory<M>,
+        got: Got<RescueKind<M>>,
+    ): RescueRunning?
+}
+
+/**
  * How the engine calls the hooks of one mode.
  *
  * Part of itinera's engine, not of its API.
@@ -137,6 +159,16 @@ public interface HookCaller {
 public fun interface Running {
     /** Runs the attempt: `null` when the step returned `null`, which only Java code can. */
     @JvmSynthetic public suspend fun run(): Outcome?
+}
+
+/**
+ * The run of a built rescue step, as the engine calls it in either mode.
+ *
+ * Part of itinera's engine, not of its API.
+ */
+public fun interface RescueRunning {
+    /** Runs the rescue step: `null` when it returned `null`, which only Java code can. */
+    @JvmSynthetic public suspend fun run(): RescueOutcome?
 }
 
 /**

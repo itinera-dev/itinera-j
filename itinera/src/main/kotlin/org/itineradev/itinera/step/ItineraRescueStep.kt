@@ -22,4 +22,18 @@ public interface ItineraRescueStep {
      * @sample org.itineradev.itinera.workflow.annotated.samples.renewing
      */
     public fun succeed(): RescueOutcome = RescueOutcome.success()
+
+    /**
+     * The outcome of a rescue that could not fix the cause, for [reason].
+     *
+     * @sample org.itineradev.itinera.workflow.annotated.samples.renewing
+     */
+    public fun fail(reason: Reason): RescueOutcome = RescueOutcome.failure(reason)
+
+    /**
+     * The outcome of a rescue that could not fix the cause, for a reason holding only [code].
+     *
+     * @sample org.itineradev.itinera.workflow.annotated.samples.renewing
+     */
+    public fun fail(code: String): RescueOutcome = RescueOutcome.failure(code)
 }

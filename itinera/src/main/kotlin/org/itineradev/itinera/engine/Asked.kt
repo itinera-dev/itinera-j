@@ -9,6 +9,9 @@ package org.itineradev.itinera.engine
  */
 public sealed interface Asked
 
+/** What a step or a rescue step is built with, besides its services and what the executor knows. */
+internal sealed interface BuiltWithAsked : Asked
+
 /** Data from the workflow that a step requests under [key], read as [type]. */
 internal data class InputAsked(
     /** The key. */
@@ -17,7 +20,7 @@ internal data class InputAsked(
     val type: ValueType,
     /** Whether a missing value aborts the journey, rather than being answered absent. */
     val required: Boolean,
-) : Asked {
+) : BuiltWithAsked {
     override fun toString(): String = (if (required) "" else "optional ") + "input $key: $type"
 }
 
@@ -39,7 +42,7 @@ internal data class FromStepAsked(
     val type: ValueType,
     /** Whether a missing value aborts the journey, rather than being answered absent. */
     val required: Boolean,
-) : Asked {
+) : BuiltWithAsked {
     override fun toString(): String =
         (if (required) "" else "optional ") + "data from the step $key: $type"
 }
@@ -61,7 +64,7 @@ internal data class FromWorkflowAsked(
 internal data class ReasonAsked(
     /** Whether a missing reason aborts the journey, rather than being answered absent. */
     val required: Boolean
-) : Asked {
+) : BuiltWithAsked {
     override fun toString(): String = (if (required) "" else "optional ") + "reason"
 }
 
@@ -69,7 +72,7 @@ internal data class ReasonAsked(
 internal data class ErrorAsked(
     /** Whether a missing error aborts the journey, rather than being answered absent. */
     val required: Boolean
-) : Asked {
+) : BuiltWithAsked {
     override fun toString(): String = (if (required) "" else "optional ") + "error"
 }
 
