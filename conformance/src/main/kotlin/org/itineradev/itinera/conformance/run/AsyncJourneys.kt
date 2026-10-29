@@ -18,6 +18,7 @@ import org.itineradev.itinera.instance.WorkflowInstance
 import org.itineradev.itinera.instance.async.instance
 import org.itineradev.itinera.policy.StepPolicyDescriptor
 import org.itineradev.itinera.request.Requests
+import org.itineradev.itinera.request.async.asyncProviderReporter
 import org.itineradev.itinera.request.async.asyncStepReporter
 import org.itineradev.itinera.service.ProviderDescriptor
 import org.itineradev.itinera.service.async.asyncPerAttemptProvider
@@ -118,23 +119,25 @@ private fun <T : Any> asyncProviderOf(
 ): ProviderDescriptor<Scenario, Async> =
     when (provider.scope) {
         ProviderScope.JOURNEY -> {
-            val providing = journeyProviding<Async>(provider, witness)
+            val providing =
+                journeyProviding<Async, _>(provider, witness, Requests.asyncProviderReporter())
             providing
                 .declaredOn(
                     asyncProvider<Scenario, T>(provider.name, provider.key, type) { _, got ->
-                        providing.provided(got, type)
+                        providing.providedAsync(got, type, ::performAsync)
                     }
                 )
                 .servingOnly(provider)
                 .build()
         }
         ProviderScope.ATTEMPT -> {
-            val providing = attemptProviding<Async>(provider, witness)
+            val providing =
+                attemptProviding<Async, _>(provider, witness, Requests.asyncProviderReporter())
             providing
                 .declaredOn(
                     asyncPerAttemptProvider<Scenario, T>(provider.name, provider.key, type) { _, got
                         ->
-                        providing.provided(got, type)
+                        providing.providedAsync(got, type, ::performAsync)
                     }
                 )
                 .servingOnly(provider)
