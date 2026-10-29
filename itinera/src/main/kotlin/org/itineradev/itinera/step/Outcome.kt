@@ -104,7 +104,7 @@ public sealed interface Outcome {
  * [reason] with a copy of its details, or [reason] itself when its details are not a value, which
  * the engine finds again once the attempt returns.
  */
-private fun captured(reason: Reason): Reason =
+internal fun captured(reason: Reason): Reason =
     when (val capture = Values.capture(reason.details)) {
         is Captured -> reason.copy(details = capture.value)
         is NotAValue -> reason

@@ -104,6 +104,37 @@ final class JavaRescueClassesTest {
   }
 
   @RescueStep
+  public static final class Refuse implements ItineraRescueStep {
+    private final Reason reason;
+
+    public Refuse(Reason reason) {
+      this.reason = reason;
+    }
+
+    public RescueOutcome run() {
+      return reason.code().equals("stolen")
+          ? fail(new Reason("stolen card", "Call the bank."))
+          : fail("no renewal");
+    }
+  }
+
+  @WithStep(step = Charge.class, name = "charge", rescue = Refuse.class)
+  public static final class Refusals implements ItineraWorkflow {}
+
+  @Test
+  void aJavaRescueStepFailsThroughItsInterfacesHelpers() {
+    var refusal = WorkflowDescriptor.of(Refusals.class).getSteps().get(0).getRescue();
+    var factory = (SyncRescueFactory) refusal.getFactory();
+    var reason = refusal.getRequests().get(0);
+    assertEquals(
+        RescueOutcome.failure(new Reason("stolen card", "Call the bank.")),
+        factory.build(new Answers<>(Map.of(reason, new Reason("stolen")))).run());
+    assertEquals(
+        RescueOutcome.failure("no renewal"),
+        factory.build(new Answers<>(Map.of(reason, new Reason("expired")))).run());
+  }
+
+  @RescueStep
   public static final class Renewal implements ItineraRescueStep {
     public RescueOutcome run() {
       return succeed();

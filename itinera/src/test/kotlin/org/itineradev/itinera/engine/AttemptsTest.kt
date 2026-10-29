@@ -1,23 +1,37 @@
+@file:OptIn(ExperimentalItineraApi::class)
+
 package org.itineradev.itinera.engine
 
+import org.itineradev.itinera.ExperimentalItineraApi
+import org.itineradev.itinera.engine.Hooking.audit
 import org.itineradev.itinera.engine.Journeys.contributing
 import org.itineradev.itinera.engine.Journeys.journeyOf
+import org.itineradev.itinera.engine.Journeys.playing
 import org.itineradev.itinera.engine.Journeys.ran
 import org.itineradev.itinera.engine.Journeys.succeeding
+import org.itineradev.itinera.engine.Renewals.renewing
 import org.itineradev.itinera.event.ContributionCommitted
 import org.itineradev.itinera.event.DataOverwritten
+import org.itineradev.itinera.event.GiveUpCause
+import org.itineradev.itinera.event.RescueCause
 import org.itineradev.itinera.event.StepFailed
+import org.itineradev.itinera.event.StepGivenUp
+import org.itineradev.itinera.event.StepRescuing
 import org.itineradev.itinera.event.StepRetrying
 import org.itineradev.itinera.event.StepSkipped
 import org.itineradev.itinera.event.StepSource
 import org.itineradev.itinera.journey.FailureCause
 import org.itineradev.itinera.journey.JourneyStatus
+import org.itineradev.itinera.policy.OnFailure
 import org.itineradev.itinera.policy.RetryCause
+import org.itineradev.itinera.policy.StepPolicyDescriptor
+import org.itineradev.itinera.policy.SyncHook
 import org.itineradev.itinera.step.Attempt
 import org.itineradev.itinera.step.Outcome
 import org.itineradev.itinera.step.Reason
 import org.itineradev.itinera.step.StepName
 import org.itineradev.itinera.value.TypeToken
+import org.itineradev.itinera.workflow.Sync
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -204,6 +218,95 @@ class AttemptsTest {
             log.events.filterIsInstance<ContributionCommitted>(),
         )
         assertEquals(emptySet<String>(), (result.status as JourneyStatus.Failed).dataBag.keys)
+    }
+
+    @Test
+    fun `an abnormal termination is rescued, though the step retries abnormal terminations`() {
+        val log = Log()
+        val charging = playing("charge", IllegalStateException("down"), null).rescue(renewing())
+        val result = ran(journeyOf(charging).reporter(log).create())
+        assertEquals(
+            RescueCause.ABNORMAL_TERMINATION,
+            log.events.filterIsInstance<StepRescuing>().single().cause,
+        )
+        assertTrue(result.isSucceeded)
+    }
+
+    @Test
+    fun `on step abnormal termination is called before the step is rescued, and on step retry never`() {
+        val log = Log()
+        val charging =
+            playing("charge", IllegalStateException("down"), null)
+                .rescue(renewing())
+                .policy(watching(OnFailure.keepDefault()))
+        ran(journeyOf(charging).reporter(log).create())
+        assertEquals(
+            listOf("step_abnormal_termination", "hook_called", "step_rescuing"),
+            log.kinds.subList(2, 5),
+        )
+        assertEquals(listOf("on step abnormal termination"), called)
+    }
+
+    @Test
+    fun `FailWorkflow from on step abnormal termination gives the step up instead of rescuing it`() {
+        val log = Log()
+        val charging =
+            playing("charge", IllegalStateException("down"))
+                .rescue(renewing())
+                .policy(watching(OnFailure.failWorkflow("stop")))
+        val result = ran(journeyOf(charging).reporter(log).create())
+        assertEquals(emptyList<StepRescuing>(), log.events.filterIsInstance<StepRescuing>())
+        assertEquals(
+            GiveUpCause.FailWorkflow::class,
+            log.events.filterIsInstance<StepGivenUp>().single().cause::class,
+        )
+        assertEquals(Reason("stop"), result.failure?.reason)
+    }
+
+    @Test
+    fun `a step that fails again after its rescue is given up, calls on step failure, and is not rescued again`() {
+        val log = Log()
+        val charging =
+            contributing("charge", { Outcome.failure("expired") }, { Outcome.failure("declined") })
+                .rescue(renewing())
+                .policy(watching(OnFailure.keepDefault()))
+        val result = ran(journeyOf(charging).reporter(log).create())
+        assertEquals(1, log.events.filterIsInstance<StepRescuing>().size)
+        assertEquals(
+            StepGivenUp(
+                10,
+                Journeys.clock.instant(),
+                result.journeyId,
+                log.events[9].workflow,
+                charge,
+                Attempt.of(2),
+                GiveUpCause.Failure,
+            ),
+            log.events[9],
+        )
+        assertEquals(listOf("on step failure"), called)
+        assertEquals(Reason("declined"), result.failure?.reason)
+    }
+
+    private val called = mutableListOf<String>()
+
+    /**
+     * A policy whose `on step abnormal termination`, `on step retry` and `on step failure` each
+     * record their call, then return [returned].
+     */
+    private fun watching(returned: OnFailure): StepPolicyDescriptor<*, Sync> =
+        audit()
+            .onStepAbnormalTermination(recording("on step abnormal termination", returned))
+            .onStepRetry(recording("on step retry", returned))
+            .onStepFailure(recording("on step failure", returned))
+            .build()
+
+    private fun <K> recording(
+        hook: String,
+        returned: OnFailure,
+    ): SyncHook<Hooking.Audit, K, OnFailure> = SyncHook { _, _ ->
+        called += hook
+        returned
     }
 
     private fun dataBagOf(status: JourneyStatus) = (status as JourneyStatus.Succeeded).dataBag

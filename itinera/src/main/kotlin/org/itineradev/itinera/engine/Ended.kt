@@ -21,3 +21,18 @@ internal sealed interface Ended {
      */
     data class Terminated(val error: Throwable) : Ended
 }
+
+/**
+ * How the one attempt of a rescue step ended, with what it contributed when it succeeded. It never
+ * skips, since a rescue step's run cannot report a skip.
+ */
+internal sealed interface RescueEnded {
+    /** The rescue step reported Success. */
+    data class Succeeded(val contributions: Map<String, Captured>) : RescueEnded
+
+    /** The rescue step reported Failure, for [reason]. */
+    data class Failed(val reason: Reason) : RescueEnded
+
+    /** [error] escaped the running rescue step: an abnormal termination. */
+    data class Terminated(val error: Throwable) : RescueEnded
+}

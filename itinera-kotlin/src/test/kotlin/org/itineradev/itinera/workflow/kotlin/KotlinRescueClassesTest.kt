@@ -58,18 +58,16 @@ class KotlinRescueClassesTest {
     @FieldSource("declined")
     fun `a Kotlin rescue step is built from its answers and run`(
         reason: Reason?,
-        contributed: String,
+        outcome: RescueOutcome,
+        contributed: List<Pair<String, Any?>>,
     ) {
         val renewal = renewing().rescue
         val renewed = mutableListOf<Pair<String, Any?>>()
         val contributor = Contributor { key, value -> renewed += key to value }
         val answers = listOf("visa", "declined", reason, contributor)
         val got = Answers<RescueKind<Sync>>(renewal?.requests.orEmpty().zip(answers).toMap())
-        assertEquals(
-            RescueOutcome.Success,
-            (renewal?.factory as SyncRescueFactory).build(got).run(),
-        )
-        assertEquals(listOf("card" to contributed), renewed)
+        assertEquals(outcome, (renewal?.factory as SyncRescueFactory).build(got).run())
+        assertEquals(contributed, renewed)
     }
 
     @Test
@@ -131,8 +129,24 @@ class KotlinRescueClassesTest {
         @JvmField
         val declined =
             listOf(
-                argumentSet("with the reason", Reason("expired"), "visa renewed after expired"),
-                argumentSet("without a reason", null, "visa renewed after declined"),
+                argumentSet(
+                    "with the reason",
+                    Reason("expired"),
+                    RescueOutcome.Success,
+                    listOf("card" to "visa renewed after expired"),
+                ),
+                argumentSet(
+                    "without a reason",
+                    null,
+                    RescueOutcome.Success,
+                    listOf("card" to "visa renewed after declined"),
+                ),
+                argumentSet(
+                    "for a stolen card",
+                    Reason("stolen"),
+                    RescueOutcome.failure("stolen card"),
+                    emptyList<Pair<String, Any?>>(),
+                ),
             )
 
         @JvmField

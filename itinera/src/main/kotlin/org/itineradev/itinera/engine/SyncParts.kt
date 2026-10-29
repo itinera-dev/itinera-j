@@ -10,6 +10,7 @@ import org.itineradev.itinera.report.Reporter
 import org.itineradev.itinera.report.ReporterOf
 import org.itineradev.itinera.request.Got
 import org.itineradev.itinera.request.InputAdapterKind
+import org.itineradev.itinera.request.RescueKind
 import org.itineradev.itinera.request.StepKind
 import org.itineradev.itinera.service.Provided
 import org.itineradev.itinera.service.ProviderCall
@@ -64,9 +65,8 @@ public class SyncParts(private val factory: DispatcherFactory) : Parts<Sync> {
     ): Provided<*>? =
         nullable(returned<SyncProvider<Any?, Any?, Any>>(provider).provide(workflow, returned(got)))
 
-    @JvmSynthetic
-    override suspend fun build(factory: StepFactory<Sync>, got: Got<StepKind<Sync>>): Running? =
-        nullable((factory as SyncStepFactory).build(got))?.let { run -> Running(run::run) }
+    override val steps: StepCaller<Sync>
+        get() = SyncSteps
 
     override val reporterHandles: ReporterHandles
         get() = SyncReporterHandles
@@ -114,6 +114,20 @@ private object SyncReporterHandles : ReporterHandles {
 
     override fun providerReporter(emits: Emits): ReporterHandle =
         EmittingReporter(emits, Handle.PROVIDER_REPORTER)
+}
+
+/** Builds the synchronous mode's steps and rescue steps. */
+private object SyncSteps : StepCaller<Sync> {
+    @JvmSynthetic
+    override suspend fun build(factory: StepFactory<Sync>, got: Got<StepKind<Sync>>): Running? =
+        nullable((factory as SyncStepFactory).build(got))?.let { run -> Running(run::run) }
+
+    @JvmSynthetic
+    override suspend fun rescue(
+        factory: RescueFactory<Sync>,
+        got: Got<RescueKind<Sync>>,
+    ): RescueRunning? =
+        nullable((factory as SyncRescueFactory).build(got))?.let { run -> RescueRunning(run::run) }
 }
 
 /** Calls the synchronous mode's hooks. */

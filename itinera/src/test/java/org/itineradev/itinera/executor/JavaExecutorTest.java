@@ -26,11 +26,14 @@ import org.itineradev.itinera.service.ProviderDescriptor;
 import org.itineradev.itinera.service.ProviderName;
 import org.itineradev.itinera.step.Outcome;
 import org.itineradev.itinera.step.Reason;
+import org.itineradev.itinera.step.RescueOutcome;
 import org.itineradev.itinera.step.StepName;
+import org.itineradev.itinera.step.SyncRescueFactory;
 import org.itineradev.itinera.step.SyncStepFactory;
 import org.itineradev.itinera.value.TypeToken;
 import org.itineradev.itinera.workflow.AdapterName;
 import org.itineradev.itinera.workflow.InputAdapterDescriptor;
+import org.itineradev.itinera.workflow.RescueStepDescriptor;
 import org.itineradev.itinera.workflow.StepDescriptor;
 import org.itineradev.itinera.workflow.Sync;
 import org.itineradev.itinera.workflow.WorkflowBuilder;
@@ -50,6 +53,18 @@ final class JavaExecutorTest {
 
   private static InstanceBuilder oneStep(SyncStepFactory factory) {
     return InstanceBuilder.of(packing(factory).build(), new Shop());
+  }
+
+  /**
+   * A step {@code pack} that fails once, then succeeds, rescued by the rescue step that {@code
+   * rescue} builds.
+   */
+  private static InstanceBuilder rescued(SyncRescueFactory rescue) {
+    var attempts = new ArrayList<>(List.of(Outcome.failure("torn"), Outcome.success()));
+    var pack =
+        StepDescriptor.builder("pack", got -> () -> attempts.remove(0))
+            .rescue(RescueStepDescriptor.builder(rescue).build());
+    return InstanceBuilder.of(shop().step(pack.build()).build(), new Shop());
   }
 
   @Test
@@ -244,5 +259,40 @@ final class JavaExecutorTest {
     var listing = packing(got -> Outcome::success).reporter(id -> null).build();
     assertThrows(
         IllegalStateException.class, () -> InstanceBuilder.of(listing, new Shop()).create());
+  }
+
+  @Test
+  void aJavaRescueStepRescuesItsStepWhichThenRunsAgain() throws Refusal {
+    var result = new LocalExecutor().run(rescued(got -> RescueOutcome::success).create());
+    assertTrue(result.isSucceeded());
+  }
+
+  @Test
+  void aJavaRescueStepThatFailsFailsTheJourneyWithItsReason() throws Refusal {
+    var result =
+        new LocalExecutor().run(rescued(got -> () -> RescueOutcome.failure("no tape")).create());
+    assertEquals(new Reason("no tape"), result.failure().reason());
+  }
+
+  @Test
+  void aRescueStepFactoryReturningNullAbortsTheJourneyWithAnUnexpectedResult() throws Refusal {
+    var result = new LocalExecutor().run(rescued(got -> null).create());
+    assertEquals(
+        new UnexpectedResult(
+            StepName.of("pack_rescue"),
+            ByStep.INSTANCE,
+            "the rescue step's factory returned null, not a rescue step"),
+        result.abort().details());
+  }
+
+  @Test
+  void aRescueStepRunReturningNullAbortsTheJourneyWithAnUnexpectedResult() throws Refusal {
+    var result = new LocalExecutor().run(rescued(got -> () -> null).create());
+    assertEquals(
+        new UnexpectedResult(
+            StepName.of("pack_rescue"),
+            ByStep.INSTANCE,
+            "the rescue step's run returned null, not an outcome"),
+        result.abort().details());
   }
 }

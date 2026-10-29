@@ -32,7 +32,7 @@ fun renewing(): StepDescriptor<Sync> {
 
     /**
      * Renews the card when its charge fails, from the bank's answer the failed charge noted, and
-     * the failure's reason when there is one.
+     * the failure's reason when there is one, unless the card was stolen.
      */
     @RescueStep
     class Renew(
@@ -41,6 +41,7 @@ fun renewing(): StepDescriptor<Sync> {
         private val reason: Reason?,
     ) : ItineraRescueStep {
         fun run(contributor: Contributor): RescueOutcome {
+            if (reason?.code == "stolen") return fail("stolen card")
             contributor.contribute("card", "$card renewed after ${reason?.code ?: answer}")
             return succeed()
         }
