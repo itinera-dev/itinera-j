@@ -6,14 +6,18 @@ plugins {
 }
 
 description =
-    "Itinera's compile-time checks: annotated workflows' mistakes as compile errors, through javac in Java."
+    "Itinera's compile-time checks: annotated workflows' mistakes as compile errors, through KSP in Kotlin and javac in Java."
 
 dependencies {
+    // KSP gives its processors its own API, so applications never receive it from the checker.
+    compileOnly(libs.ksp.api)
     testImplementation(project(":itinera-kotlin"))
     testImplementation(libs.jspecify)
     "compileFailTestImplementation"(project(":itinera-kotlin"))
     "compileFailTestImplementation"(project(":itinera-java"))
     "compileFailTestImplementation"(libs.jspecify)
+    "compileFailTestImplementation"(libs.kctfork)
+    "compileFailTestImplementation"(libs.kctfork.ksp)
 }
 
 // The checker reads itinera's annotations by name, so it uses none of itinera's API.
@@ -25,4 +29,22 @@ tasks.named<JavaCompile>("compileCompileFailTestJava") { options.compilerArgs.ad
 
 tasks.named<Test>("compileFailTest") {
     systemProperty("itinera.checker.sources", file("src/compileFailTest").path)
+}
+
+// KSP's API is no Java module, so the descriptor reads it as an automatic module, which Gradle
+// would leave on the class path.
+tasks.named<JavaCompile>("compileJava") {
+    modularity.inferModulePath = false
+    options.compilerArgumentProviders.add(
+        objects.newInstance<ModulePath>().apply { jars.from(configurations.compileClasspath) }
+    )
+}
+
+// The Kotlin sample compiles with KSP, which runs only in the compile-fail tests, where the
+// compiler
+// is on the class path.
+dokka {
+    dokkaSourceSets.configureEach {
+        samples.from(fileTree("src/compileFailTest/kotlin") { include("**/samples/*.kt") })
+    }
 }
