@@ -1,6 +1,5 @@
 package org.itineradev.itinera.engine
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Journeys.packing
 import org.itineradev.itinera.engine.Journeys.ran
 import org.itineradev.itinera.event.Event
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-@OptIn(ExperimentalItineraApi::class)
 class GuardTest {
     @Test
     fun `a reporter that fails aborts the journey with reporter failed, naming the step it failed in`() {
@@ -99,7 +97,6 @@ class GuardTest {
 }
 
 /** Throws [thrown] on the first event of [kind], and keeps the kinds it received before. */
-@OptIn(ExperimentalItineraApi::class)
 private class FailingOn(private val kind: EventKind, private val thrown: Throwable) : Reporter {
     val received = mutableListOf<String>()
 
@@ -110,7 +107,6 @@ private class FailingOn(private val kind: EventKind, private val thrown: Throwab
 }
 
 /** Delivers every event to every reporter, ignoring what each throws. */
-@OptIn(ExperimentalItineraApi::class)
 private class Careless : Dispatcher {
     private val reporters = mutableListOf<Reporter>()
 
@@ -128,7 +124,6 @@ private class Careless : Dispatcher {
 }
 
 /** Throws [thrown] when asked to dispatch `attempt_started`, as a dispatcher must not. */
-@OptIn(ExperimentalItineraApi::class)
 private class Refusing(private val thrown: Throwable) : Dispatcher {
     override fun add(reporter: Reporter) = Unit
 

@@ -1,7 +1,6 @@
 package org.itineradev.itinera.instance.async
 
 import kotlinx.coroutines.runBlocking
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.executor.async.AsyncLocalExecutor
 import org.itineradev.itinera.instance.async.samples.asyncInstances
 import org.itineradev.itinera.instance.async.samples.asyncPerJourney
@@ -11,7 +10,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-@OptIn(ExperimentalItineraApi::class)
 class AsyncInstanceBuilderTest {
     @Test
     fun `an instance holds what it was created with`() {

@@ -1,6 +1,5 @@
 package org.itineradev.itinera.workflow
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Described
 import org.itineradev.itinera.engine.listingOf
 import org.itineradev.itinera.policy.WorkflowPolicyDescriptor
@@ -44,7 +43,7 @@ public interface WorkflowDescriptor<W, M : Mode> {
     public val inputAdapters: List<InputAdapterDescriptor<W, M>>
 
     /** The service providers, which supply the services the steps request. */
-    @ExperimentalItineraApi public val providers: List<ProviderDescriptor<W, M>>
+    public val providers: List<ProviderDescriptor<W, M>>
 
     /**
      * The factories of the reporters the workflow lists, with which each instance makes its own, in

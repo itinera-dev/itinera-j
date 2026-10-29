@@ -1,6 +1,5 @@
 package org.itineradev.itinera.instance.async
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Draft
 import org.itineradev.itinera.instance.WorkflowInstance
 import org.itineradev.itinera.report.async.AsyncReporter
@@ -77,7 +76,6 @@ public class AsyncInstanceBuilder internal constructor(private val draft: Draft<
      *
      * @sample org.itineradev.itinera.instance.async.samples.asyncInstances
      */
-    @ExperimentalItineraApi
     public fun reportersGlobalMetadata(key: String, value: Any?): AsyncInstanceBuilder = apply {
         draft.metadata(key, value)
     }

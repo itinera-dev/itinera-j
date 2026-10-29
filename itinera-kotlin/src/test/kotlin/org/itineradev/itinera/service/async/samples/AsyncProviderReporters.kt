@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.service.async.samples
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.service.async.AsyncProviderReporter
 
 suspend fun asyncProviderReporters(reporter: AsyncProviderReporter) {

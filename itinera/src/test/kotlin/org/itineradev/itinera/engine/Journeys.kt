@@ -3,7 +3,6 @@ package org.itineradev.itinera.engine
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.event.Event
 import org.itineradev.itinera.instance.InstanceBuilder
 import org.itineradev.itinera.instance.WorkflowInstance
@@ -25,7 +24,6 @@ import org.itineradev.itinera.workflow.WorkflowBuilder
 import org.itineradev.itinera.workflow.WorkflowDescriptor
 
 /** Workflows, reporters and journeys for the tests of the engine and the executor. */
-@OptIn(ExperimentalItineraApi::class)
 object Journeys {
     /** The workflow object of every workflow the tests build. */
     class Shop
@@ -94,7 +92,6 @@ object Journeys {
 }
 
 /** Keeps every event and entry of global metadata it receives, in order. */
-@OptIn(ExperimentalItineraApi::class)
 class Log : Reporter {
     val events = mutableListOf<Event>()
     val metadata = mutableListOf<Pair<String, Any?>>()
@@ -111,5 +108,4 @@ class Log : Reporter {
     }
 }
 
-@OptIn(ExperimentalItineraApi::class)
 private fun kindOf(event: Event): String = event.kind.toString()

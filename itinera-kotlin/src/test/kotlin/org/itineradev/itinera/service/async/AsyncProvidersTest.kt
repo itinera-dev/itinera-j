@@ -1,9 +1,6 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.service.async
 
 import kotlinx.coroutines.runBlocking
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.request.Answers
 import org.itineradev.itinera.request.AttemptProviderKind
 import org.itineradev.itinera.request.JourneyProviderKind

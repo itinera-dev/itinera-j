@@ -1,6 +1,5 @@
 package org.itineradev.itinera.service
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.request.AttemptProviderKind
 import org.itineradev.itinera.request.JourneyProviderKind
 import org.itineradev.itinera.request.Request
@@ -15,7 +14,6 @@ import org.itineradev.itinera.workflow.Mode
  * @param K the kind of the provider, of journey or of attempt scope.
  * @sample org.itineradev.itinera.service.samples.providers
  */
-@ExperimentalItineraApi
 public class ProviderBuilder<W, M : Mode, K>
 private constructor(
     private val name: ProviderName,

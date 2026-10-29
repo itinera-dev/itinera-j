@@ -320,7 +320,6 @@ class AsyncPartsTest {
 }
 
 /** Keeps the kind of every event and the key of every entry it receives, yielding first. */
-@OptIn(ExperimentalItineraApi::class)
 private class Yielding : AsyncReporter {
     val kinds = mutableListOf<String>()
     val keys = mutableListOf<String>()

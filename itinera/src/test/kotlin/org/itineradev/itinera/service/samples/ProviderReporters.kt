@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.service.samples
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.service.ProviderReporter
 
 fun providerReporters(reporter: ProviderReporter) {

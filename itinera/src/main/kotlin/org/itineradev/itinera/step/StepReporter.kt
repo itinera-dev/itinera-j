@@ -1,7 +1,5 @@
 package org.itineradev.itinera.step
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * What a synchronous step emits its own events through, `step_info`, `step_warning` and
  * `step_error`, and sets global metadata through, made for one attempt and closed when it ends.
@@ -67,5 +65,5 @@ public interface StepReporter {
      * @throws IllegalStateException when its attempt has ended.
      * @sample org.itineradev.itinera.step.samples.reporters
      */
-    @ExperimentalItineraApi public fun setGlobalMetadata(key: String, value: Any?)
+    public fun setGlobalMetadata(key: String, value: Any?)
 }
