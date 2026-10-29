@@ -11,6 +11,7 @@ import java.lang.reflect.Modifier
 internal fun markedMethods(type: Class<*>, mark: Class<out Annotation>): Sequence<Method> =
     generateSequence(type, Class<*>::getSuperclass)
         .flatMap(::byName)
+        .map(::bridged)
         .distinctBy(::overridden)
         .filter(::isDeclared)
         .filter { method -> method.isAnnotationPresent(mark) }

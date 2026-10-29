@@ -24,6 +24,15 @@ dependencies {
 }
 ```
 
+A Java application can also have javac report the mistakes of its annotated workflows as compile errors, such as a hook declared to return what its kind does not, by adding `itinera-checker` to its annotation processors; without it, the same mistakes are refused when the workflow is first described:
+
+```kotlin
+dependencies {
+    annotationProcessor(platform("org.itinera-dev:itinera-bom:VERSION"))
+    annotationProcessor("org.itinera-dev:itinera-checker")
+}
+```
+
 The artifacts run on JDK 17 and later. Java applications write synchronous workflows, and Kotlin applications synchronous ones or asynchronous ones on coroutines.
 
 ## Contributing
