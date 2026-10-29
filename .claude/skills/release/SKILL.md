@@ -37,7 +37,7 @@ One pull request, titled "Release <version>" with a release commit `chore(releas
 1. Give the maintainer the commands that make the tag docs/contributing.md "Releasing" describes, at `main`'s merge commit:
    1. `git fetch origin`
    2. `git switch --detach <commit>`
-   3. `./gradlew check dokkaGenerate publishAllPublicationsToPackageRepository`
+   3. `./gradlew check dokkaGenerate examples`
    4. `git tag -a v<version> <commit> -m "itinera-j <version>"`
    5. `git push origin v<version>`
 
