@@ -1,6 +1,5 @@
 package org.itineradev.itinera.step.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.report.testing.complete
 import org.itineradev.itinera.step.testing.samples.asyncStepEventReporter
 import org.itineradev.itinera.step.testing.samples.failingAsyncStepEventReporter
@@ -11,7 +10,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-@OptIn(ExperimentalItineraApi::class)
 class StepEventReporterTest {
     @Test
     fun `a step event reporter keeps every event emitted, in order`() {

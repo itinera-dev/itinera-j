@@ -1,6 +1,5 @@
 package org.itineradev.itinera.policy.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Lone
 import org.itineradev.itinera.policy.async.AsyncHookReporter
 import org.itineradev.itinera.report.testing.Emitted
@@ -14,7 +13,6 @@ import org.itineradev.itinera.report.testing.emittedOf
  *
  * @sample org.itineradev.itinera.policy.testing.samples.asyncHookEventReporter
  */
-@ExperimentalItineraApi
 public class AsyncHookEventReporter private constructor(private val lone: Lone) {
     /**
      * A recorder whose reporter keeps what it is given.

@@ -1,6 +1,5 @@
 package org.itineradev.itinera.policy.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.policy.PolicyFactory
 import org.itineradev.itinera.step.testing.ScriptedError
 
@@ -12,7 +11,6 @@ import org.itineradev.itinera.step.testing.ScriptedError
  *
  * @sample org.itineradev.itinera.policy.testing.samples.workflowPolicies
  */
-@ExperimentalItineraApi
 public class WorkflowPolicyScript
 private constructor(
     internal val onWorkflowSuccess: WorkflowHookEnding,

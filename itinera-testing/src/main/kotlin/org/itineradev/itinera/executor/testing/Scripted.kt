@@ -2,7 +2,6 @@
 
 package org.itineradev.itinera.executor.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.instance.WorkflowInstance
 import org.itineradev.itinera.testing.TestMistake
 import org.itineradev.itinera.workflow.Async
@@ -19,7 +18,6 @@ import org.itineradev.itinera.workflow.Sync
  *
  * @sample org.itineradev.itinera.executor.testing.samples.scriptedRuns
  */
-@ExperimentalItineraApi
 public fun scripted(instance: WorkflowInstance<Sync>): Script = WrittenScript(Written(instance))
 
 /**
@@ -28,7 +26,6 @@ public fun scripted(instance: WorkflowInstance<Sync>): Script = WrittenScript(Wr
  *
  * @sample org.itineradev.itinera.executor.testing.samples.asyncScriptedRuns
  */
-@ExperimentalItineraApi
 @JvmName("scriptedAsync")
 @JvmSynthetic
 public fun scripted(instance: WorkflowInstance<Async>): AsyncScript =

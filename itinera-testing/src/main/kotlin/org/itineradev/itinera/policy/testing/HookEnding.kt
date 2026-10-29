@@ -1,6 +1,5 @@
 package org.itineradev.itinera.policy.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.policy.OnFailure
 import org.itineradev.itinera.policy.OnSuccess
 import org.itineradev.itinera.step.Reason
@@ -15,7 +14,6 @@ import org.itineradev.itinera.step.testing.ScriptedError
  *
  * @sample org.itineradev.itinera.policy.testing.samples.endings
  */
-@ExperimentalItineraApi
 public sealed interface HookEnding {
     /**
      * What `on step success` returns to end this way.
@@ -113,7 +111,6 @@ public sealed interface HookEnding {
  *
  * @sample org.itineradev.itinera.policy.testing.samples.endings
  */
-@ExperimentalItineraApi
 public sealed interface FailureHookEnding : HookEnding {
     /**
      * What the hook returns to end this way.
@@ -135,7 +132,6 @@ public sealed interface FailureHookEnding : HookEnding {
  *
  * @sample org.itineradev.itinera.policy.testing.samples.endings
  */
-@ExperimentalItineraApi
 public sealed interface WorkflowHookEnding {
     /**
      * Ends the call this way: returns, or throws.

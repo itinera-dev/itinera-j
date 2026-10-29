@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.testing.samples.mistakes
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

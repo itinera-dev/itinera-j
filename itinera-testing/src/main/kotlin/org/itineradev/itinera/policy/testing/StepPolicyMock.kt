@@ -1,6 +1,5 @@
 package org.itineradev.itinera.policy.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.policy.OnFailure
 import org.itineradev.itinera.policy.OnSuccess
 
@@ -13,7 +12,6 @@ import org.itineradev.itinera.policy.OnSuccess
  *
  * @sample org.itineradev.itinera.policy.testing.samples.stepPolicies
  */
-@ExperimentalItineraApi
 public class StepPolicyMock internal constructor(private val script: StepPolicyScript) {
     /**
      * Ends a call of `on step success` as the script says.

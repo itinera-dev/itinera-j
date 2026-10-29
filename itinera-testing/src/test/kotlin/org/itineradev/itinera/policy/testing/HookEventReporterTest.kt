@@ -1,6 +1,5 @@
 package org.itineradev.itinera.policy.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.policy.testing.samples.asyncHookEventReporter
 import org.itineradev.itinera.policy.testing.samples.failingAsyncHookEventReporter
 import org.itineradev.itinera.policy.testing.samples.failingHookEventReporter
@@ -11,7 +10,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-@OptIn(ExperimentalItineraApi::class)
 class HookEventReporterTest {
     @Test
     fun `a hook event reporter keeps every event emitted`() {

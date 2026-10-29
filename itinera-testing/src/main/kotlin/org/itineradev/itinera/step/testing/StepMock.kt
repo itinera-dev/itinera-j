@@ -1,6 +1,5 @@
 package org.itineradev.itinera.step.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.request.Got
 import org.itineradev.itinera.request.StepKind
 import org.itineradev.itinera.step.SyncStepFactory
@@ -16,7 +15,6 @@ import org.itineradev.itinera.workflow.Sync
  *
  * @sample org.itineradev.itinera.step.testing.samples.mocks
  */
-@ExperimentalItineraApi
 public class StepMock private constructor(private val script: Script<Ending>) : SyncStepFactory {
     /**
      * How many times a step was built from this mock, a build that failed not counted.

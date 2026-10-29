@@ -1,6 +1,5 @@
 package org.itineradev.itinera.instance.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Draft
 import org.itineradev.itinera.instance.WorkflowInstance
 import org.itineradev.itinera.report.Reporter
@@ -24,7 +23,6 @@ import org.itineradev.itinera.workflow.WorkflowDescriptor
  *
  * @sample org.itineradev.itinera.instance.testing.samples.fakes
  */
-@ExperimentalItineraApi
 public class TestInstanceBuilder
 private constructor(private val draft: Draft<*, Sync>, descriptor: WorkflowDescriptor<*, Sync>) {
     private val fakes = Fakes(descriptor)

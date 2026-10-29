@@ -1,6 +1,5 @@
 package org.itineradev.itinera.step.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.step.Reason
 import org.itineradev.itinera.step.RescueOutcome
 
@@ -12,7 +11,6 @@ import org.itineradev.itinera.step.RescueOutcome
  *
  * @sample org.itineradev.itinera.step.testing.samples.rescueEndings
  */
-@ExperimentalItineraApi
 public sealed interface RescueEnding {
     /**
      * The outcome a rescue step's run returns to end this way.

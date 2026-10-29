@@ -1,6 +1,5 @@
 package org.itineradev.itinera.step.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.request.Got
 import org.itineradev.itinera.request.RescueKind
 import org.itineradev.itinera.step.SyncRescueFactory
@@ -16,7 +15,6 @@ import org.itineradev.itinera.workflow.Sync
  *
  * @sample org.itineradev.itinera.step.testing.samples.rescueMocks
  */
-@ExperimentalItineraApi
 public class RescueStepMock private constructor(private val script: Script<RescueEnding>) :
     SyncRescueFactory {
     /**

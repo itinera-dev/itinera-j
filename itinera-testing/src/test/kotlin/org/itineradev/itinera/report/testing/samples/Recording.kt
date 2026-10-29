@@ -1,9 +1,6 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.report.testing.samples
 
 import java.time.Instant
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.event.DecidedBy
 import org.itineradev.itinera.event.Event
 import org.itineradev.itinera.event.EventKind
