@@ -51,7 +51,7 @@ internal fun asyncJourneys(model: Model, recorders: Recorders, witness: Witness)
     for (adapter in workflow.adapters) builder.inputAdapter(asyncAdapterOf(adapter))
     for (provider in workflow.providers) builder.provider(asyncProviderOf(provider, witness))
     for (name in workflow.reporters.orEmpty()) {
-        builder.reporter { AsyncScenarioReporter(recorders.make(name)) }
+        builder.reporter { journeyId -> AsyncScenarioReporter(recorders.make(name, journeyId)) }
     }
     val generator = workflow.idGenerator
     if (generator is IdGenerator.Returns) builder.idGenerator { _, _ -> generator.id }
