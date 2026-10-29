@@ -1,6 +1,5 @@
 package org.itineradev.itinera.report.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.event.Event
 import org.itineradev.itinera.report.async.AsyncReporter
 
@@ -12,7 +11,6 @@ import org.itineradev.itinera.report.async.AsyncReporter
  *
  * @sample org.itineradev.itinera.report.testing.samples.asyncRecording
  */
-@ExperimentalItineraApi
 public class AsyncRecordingReporter : AsyncReporter {
     private val recording = Recording()
 

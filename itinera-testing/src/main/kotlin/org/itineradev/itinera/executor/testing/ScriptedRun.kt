@@ -1,6 +1,5 @@
 package org.itineradev.itinera.executor.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Captured
 import org.itineradev.itinera.engine.DataBags
 import org.itineradev.itinera.journey.JourneyResult
@@ -17,7 +16,6 @@ import org.itineradev.itinera.value.TypeToken
  *
  * @sample org.itineradev.itinera.executor.testing.samples.scriptedRuns
  */
-@ExperimentalItineraApi
 public class ScriptedRun
 internal constructor(
     /** The journey's result, as the executor's `run` returns it. */
@@ -45,7 +43,6 @@ internal constructor(
  *
  * @sample org.itineradev.itinera.executor.testing.samples.scriptedRuns
  */
-@ExperimentalItineraApi
 public class StepRecord internal constructor(name: StepName, built: List<Built>) {
     /** Its attempts, in order. */
     public val attempts: List<AttemptRecord> =
@@ -67,7 +64,6 @@ public class StepRecord internal constructor(name: StepName, built: List<Built>)
  *
  * @sample org.itineradev.itinera.executor.testing.samples.scriptedRuns
  */
-@ExperimentalItineraApi
 public class AttemptRecord internal constructor(built: Built) {
     /** The attempt it records. */
     public val attempt: Attempt = built.attempt

@@ -1,6 +1,5 @@
 package org.itineradev.itinera.report.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.event.AttemptStarted
 import org.itineradev.itinera.event.ContributionCommitted
 import org.itineradev.itinera.event.ContributionsDiscarded
@@ -39,7 +38,6 @@ import org.itineradev.itinera.event.WorkflowHookCalled
  *
  * @sample org.itineradev.itinera.step.testing.samples.stepEventReporter
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class Emitted(
     /** How serious the event is. */
@@ -56,7 +54,6 @@ public data class Emitted(
  *
  * @sample org.itineradev.itinera.step.testing.samples.stepEventReporter
  */
-@ExperimentalItineraApi
 public enum class Level {
     /** Information. */
     INFO,

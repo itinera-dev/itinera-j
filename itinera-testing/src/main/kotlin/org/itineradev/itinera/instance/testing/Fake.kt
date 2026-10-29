@@ -1,6 +1,5 @@
 package org.itineradev.itinera.instance.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.service.Provided
 
 /**
@@ -12,7 +11,6 @@ import org.itineradev.itinera.service.Provided
  * @param T the service's type.
  * @sample org.itineradev.itinera.instance.testing.samples.fakes
  */
-@ExperimentalItineraApi
 public fun interface Fake<out T : Any> {
     /**
      * Provides an instance of the service, or [Provided.NoInstance].
@@ -29,7 +27,6 @@ public fun interface Fake<out T : Any> {
  * @param T the service's type.
  * @sample org.itineradev.itinera.instance.testing.samples.asyncFakes
  */
-@ExperimentalItineraApi
 public fun interface AsyncFake<out T : Any> {
     /**
      * Provides an instance of the service, or [Provided.NoInstance].

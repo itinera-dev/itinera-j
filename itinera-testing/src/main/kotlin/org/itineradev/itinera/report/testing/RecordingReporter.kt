@@ -1,6 +1,5 @@
 package org.itineradev.itinera.report.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.event.Event
 import org.itineradev.itinera.report.Reporter
 
@@ -11,7 +10,6 @@ import org.itineradev.itinera.report.Reporter
  *
  * @sample org.itineradev.itinera.report.testing.samples.recording
  */
-@ExperimentalItineraApi
 public class RecordingReporter : Reporter {
     private val recording = Recording()
 

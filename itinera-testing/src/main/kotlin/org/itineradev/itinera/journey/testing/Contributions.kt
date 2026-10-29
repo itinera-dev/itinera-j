@@ -1,6 +1,5 @@
 package org.itineradev.itinera.journey.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.DataBags
 import org.itineradev.itinera.engine.Lone
 import org.itineradev.itinera.journey.Contributor
@@ -15,7 +14,6 @@ import org.itineradev.itinera.value.TypeToken
  *
  * @sample org.itineradev.itinera.journey.testing.samples.contributions
  */
-@ExperimentalItineraApi
 public class Contributions {
     private val lone = Lone(false)
 

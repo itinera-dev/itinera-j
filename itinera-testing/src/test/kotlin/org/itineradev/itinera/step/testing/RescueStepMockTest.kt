@@ -1,6 +1,5 @@
 package org.itineradev.itinera.step.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.executor.LocalExecutor
 import org.itineradev.itinera.instance.instance
 import org.itineradev.itinera.journey.AbortReason
@@ -26,7 +25,6 @@ import org.junit.jupiter.api.Assertions.assertNotSame
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-@OptIn(ExperimentalItineraApi::class)
 class RescueStepMockTest {
     @Test
     fun `a rescue step mock that succeeds lets its step run again`() {

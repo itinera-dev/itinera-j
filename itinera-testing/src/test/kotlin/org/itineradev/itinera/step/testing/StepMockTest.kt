@@ -1,6 +1,5 @@
 package org.itineradev.itinera.step.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.executor.LocalExecutor
 import org.itineradev.itinera.instance.instance
 import org.itineradev.itinera.journey.AbortReason
@@ -28,7 +27,6 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments.argumentSet
 import org.junit.jupiter.params.provider.FieldSource
 
-@OptIn(ExperimentalItineraApi::class)
 class StepMockTest {
     @Test
     fun `each attempt ends with the next ending, and every later one with the last`() {
