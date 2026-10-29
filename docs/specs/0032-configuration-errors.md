@@ -6,7 +6,7 @@ Status: done. Stage 3 added the refusals before a journey and the abort of a jou
 
 ## API
 
-32 is listed in both manifests, but every public item below keeps `@ExperimentalItineraApi`, as AGENTS.md allows, since each names API of a proposal not listed yet: `Violation` lists the violations of 0003, 0010, 0060 and 0095, and `Abort` carries the details of 0083.
+32 is listed in both manifests, and from stage 7 no public item below carries `@ExperimentalItineraApi`, but for the violations of rescue steps (0003), of services (0095) and of global metadata (0102), and the details of aborts that belong to 0003, 0102 and 0122. Until then, every item kept it, as AGENTS.md allows, since `Violation` listed the violations of 0010 and 0060, and `Abort` carried the details of 0083.
 
 - **`Violations`**, in `org.itineradev.itinera.workflow`, an unchecked exception, is what `build()`, `WorkflowDescriptor.of(...)` and `asyncDescriptorOf(...)` throw when a workflow is put together wrongly. It lists every `Violation` found at once, so a test that describes a workflow, or builds it, checks its declaration without running anything.
 - **`Refusal`**, in `org.itineradev.itinera.executor`, is what `run` throws for a hand-written descriptor with a violation, with every one listed in `Refused.Inadmissible`, before any journey and any event, as [0042](0042-configuration-errors-before-the-journey.md) says.
@@ -28,7 +28,7 @@ Status: done. Stage 3 added the refusals before a journey and the abort of a jou
 
 ## Conformance
 
-Of the three scenarios tagged `@proposal-0032`, "A configuration error found partway through a journey ends the stream with journey_aborted" runs once 32 is listed, and "A configuration error in how the workflow is put together is refused before any journey, with no event" once 42 is listed too, in the same pull request; both pass in both runners and every column. "An abort that no error caused carries no error" is also tagged `@proposal-0083`, so it runs once 83 is listed, in stage 7; it already passes locally in both runners.
+Of the three scenarios tagged `@proposal-0032`, "A configuration error found partway through a journey ends the stream with journey_aborted" runs once 32 is listed, and "A configuration error in how the workflow is put together is refused before any journey, with no event" once 42 is listed too, in the same pull request; both pass in both runners and every column. "An abort that no error caused carries no error" is also tagged `@proposal-0083`, so it runs from stage 7, which lists 83, and passes in both runners and every column.
 
 ## Dependencies
 
