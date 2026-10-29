@@ -108,8 +108,6 @@ class ScriptedRunTest {
                 .step("fix")
                 .willContribute("tried", 1L)
                 .willFail("broken")
-                .onAttempt(2)
-                .willSucceed()
                 .andStep("fix_rescue")
                 .willFail("beyond repair")
                 .run()
