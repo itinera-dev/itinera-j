@@ -1,3 +1,87 @@
+public abstract interface class org/itineradev/itinera/executor/testing/AsyncScript {
+	public abstract fun ensureAllScripted ()Lorg/itineradev/itinera/executor/testing/AsyncScript;
+	public abstract synthetic fun run (Lorg/itineradev/itinera/executor/async/AsyncLocalExecutor;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun run$default (Lorg/itineradev/itinera/executor/testing/AsyncScript;Lorg/itineradev/itinera/executor/async/AsyncLocalExecutor;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public abstract fun step (Ljava/lang/String;)Lorg/itineradev/itinera/executor/testing/NamedStep;
+}
+
+public abstract interface class org/itineradev/itinera/executor/testing/AsyncStepScript : org/itineradev/itinera/executor/testing/AttemptChoice {
+	public abstract fun andStep (Ljava/lang/String;)Lorg/itineradev/itinera/executor/testing/NamedStep;
+	public abstract fun ensureAllScripted ()Lorg/itineradev/itinera/executor/testing/AsyncStepScript;
+	public abstract synthetic fun run (Lorg/itineradev/itinera/executor/async/AsyncLocalExecutor;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun run$default (Lorg/itineradev/itinera/executor/testing/AsyncStepScript;Lorg/itineradev/itinera/executor/async/AsyncLocalExecutor;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public abstract interface class org/itineradev/itinera/executor/testing/AttemptChoice {
+	public abstract fun onAttempt (I)Lorg/itineradev/itinera/executor/testing/AttemptScript;
+	public abstract fun onEveryAttempt ()Lorg/itineradev/itinera/executor/testing/AttemptScript;
+	public abstract fun onRemainingAttempts ()Lorg/itineradev/itinera/executor/testing/AttemptScript;
+}
+
+public abstract interface class org/itineradev/itinera/executor/testing/AttemptContributing : org/itineradev/itinera/executor/testing/AttemptEmitting {
+	public abstract fun willContribute (Ljava/lang/String;Ljava/lang/Object;)Lorg/itineradev/itinera/executor/testing/AttemptContributing;
+}
+
+public abstract interface class org/itineradev/itinera/executor/testing/AttemptEmitting : org/itineradev/itinera/executor/testing/AttemptSettingGlobalMetadata {
+	public abstract fun willEmit (Lorg/itineradev/itinera/report/testing/Level;Ljava/lang/String;)Lorg/itineradev/itinera/executor/testing/AttemptEmitting;
+	public abstract fun willEmit (Lorg/itineradev/itinera/report/testing/Level;Ljava/lang/String;Ljava/lang/Object;)Lorg/itineradev/itinera/executor/testing/AttemptEmitting;
+}
+
+public abstract interface class org/itineradev/itinera/executor/testing/AttemptEndings {
+	public abstract fun willFail (Ljava/lang/String;)Ljava/lang/Object;
+	public abstract fun willFail (Lorg/itineradev/itinera/step/Reason;)Ljava/lang/Object;
+	public abstract fun willSkip ()Ljava/lang/Object;
+	public abstract fun willSkipBecause (Ljava/lang/String;)Ljava/lang/Object;
+	public abstract fun willSkipBecause (Lorg/itineradev/itinera/step/Reason;)Ljava/lang/Object;
+	public abstract fun willSucceed ()Ljava/lang/Object;
+	public abstract fun willTerminateAbnormally (Ljava/lang/String;)Ljava/lang/Object;
+}
+
+public final class org/itineradev/itinera/executor/testing/AttemptRecord {
+	public final fun getAttempt ()Lorg/itineradev/itinera/step/Attempt;
+	public final fun input (Ljava/lang/String;Lorg/itineradev/itinera/value/TypeToken;)Lorg/itineradev/itinera/journey/Read;
+}
+
+public abstract interface class org/itineradev/itinera/executor/testing/AttemptScript : org/itineradev/itinera/executor/testing/AttemptContributing {
+	public abstract fun willRunForReal ()Ljava/lang/Object;
+}
+
+public abstract interface class org/itineradev/itinera/executor/testing/AttemptSettingGlobalMetadata : org/itineradev/itinera/executor/testing/AttemptEndings {
+	public abstract fun willSetGlobalMetadata (Ljava/lang/String;Ljava/lang/Object;)Lorg/itineradev/itinera/executor/testing/AttemptSettingGlobalMetadata;
+}
+
+public abstract interface class org/itineradev/itinera/executor/testing/NamedStep : org/itineradev/itinera/executor/testing/AttemptChoice, org/itineradev/itinera/executor/testing/AttemptScript {
+}
+
+public abstract interface class org/itineradev/itinera/executor/testing/Script {
+	public abstract fun ensureAllScripted ()Lorg/itineradev/itinera/executor/testing/Script;
+	public abstract fun run ()Lorg/itineradev/itinera/executor/testing/ScriptedRun;
+	public abstract fun run (Lorg/itineradev/itinera/executor/LocalExecutor;)Lorg/itineradev/itinera/executor/testing/ScriptedRun;
+	public abstract fun step (Ljava/lang/String;)Lorg/itineradev/itinera/executor/testing/NamedStep;
+}
+
+public final class org/itineradev/itinera/executor/testing/Scripted {
+	public static final fun scripted (Lorg/itineradev/itinera/instance/WorkflowInstance;)Lorg/itineradev/itinera/executor/testing/Script;
+	public static final synthetic fun scriptedAsync (Lorg/itineradev/itinera/instance/WorkflowInstance;)Lorg/itineradev/itinera/executor/testing/AsyncScript;
+}
+
+public final class org/itineradev/itinera/executor/testing/ScriptedRun {
+	public final fun getResult ()Lorg/itineradev/itinera/journey/JourneyResult;
+	public final fun step (Ljava/lang/String;)Lorg/itineradev/itinera/executor/testing/StepRecord;
+}
+
+public final class org/itineradev/itinera/executor/testing/StepRecord {
+	public final fun attempt (I)Lorg/itineradev/itinera/executor/testing/AttemptRecord;
+	public final fun getAttempts ()Ljava/util/List;
+}
+
+public abstract interface class org/itineradev/itinera/executor/testing/StepScript : org/itineradev/itinera/executor/testing/AttemptChoice {
+	public abstract fun andStep (Ljava/lang/String;)Lorg/itineradev/itinera/executor/testing/NamedStep;
+	public abstract fun ensureAllScripted ()Lorg/itineradev/itinera/executor/testing/StepScript;
+	public abstract fun run ()Lorg/itineradev/itinera/executor/testing/ScriptedRun;
+	public abstract fun run (Lorg/itineradev/itinera/executor/LocalExecutor;)Lorg/itineradev/itinera/executor/testing/ScriptedRun;
+}
+
 public abstract interface class org/itineradev/itinera/instance/testing/AsyncFake {
 	public abstract synthetic fun provide (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }

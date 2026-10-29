@@ -112,6 +112,12 @@ final class RunTest {
   }
 
   @Test
+  void everyScenarioThatRunsAWorkflowWithAScriptPasses() {
+    assertTrue(runs("@scripting"), errors().toString());
+    assertEquals(3, scenarios().size());
+  }
+
+  @Test
   void aJourneyThatDidNotDoWhatTheCaseExpectsFailsAsUnmet() {
     assertFalse(runs("@unmet"));
     assertTrue(errors().stream().allMatch(RunTest::isUnmet), errors().toString());

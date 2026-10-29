@@ -3,6 +3,7 @@ package org.itineradev.itinera.conformance.run
 import java.util.concurrent.atomic.AtomicInteger
 import org.itineradev.itinera.conformance.model.HookRequest
 import org.itineradev.itinera.conformance.model.Input
+import org.itineradev.itinera.conformance.model.ModelException
 import org.itineradev.itinera.conformance.model.RescuedStepRequest
 import org.itineradev.itinera.conformance.model.ScriptedAttempt
 import org.itineradev.itinera.conformance.model.StepAction
@@ -81,6 +82,7 @@ internal class Scripted<M : Mode, R>(
     ) {
         first.forEach(request)
         services.forEach(request)
+        if (script.declaresNoHandles) return
         request(contributor)
         request(reporter)
     }
@@ -106,8 +108,11 @@ internal class Scripted<M : Mode, R>(
     private fun <K : StepKind<M>> received(
         got: Got<K>,
         ofRescuedStep: Map<HookRequest, Any?>,
-    ): Received<R> =
-        Received(
+    ): Received<R> {
+        if (script.declaresNoHandles) {
+            throw ModelException("the cases never build a step that declares no handles")
+        }
+        return Received(
             inputs.mapValues { entry -> got[entry.value] },
             services.associateBy(ServiceRequest<*>::key) { service -> got[service] },
             got[contributor],
@@ -115,6 +120,7 @@ internal class Scripted<M : Mode, R>(
             built.getAndIncrement(),
             ofRescuedStep,
         )
+    }
 
     /**
      * Uses each service the step received, whose failure escapes, changes its inputs in place, and

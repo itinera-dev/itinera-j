@@ -15,7 +15,7 @@ import org.itineradev.itinera.workflow.Sync;
 /** The step mocks and rescue step mocks that play each script. */
 public final class Scripts {
   /** The message of an abnormal termination the case scripts with none. */
-  private static final String UNWRITTEN_MESSAGE = "the scripted step terminated abnormally";
+  static final String UNWRITTEN_MESSAGE = "the scripted step terminated abnormally";
 
   private Scripts() {}
 

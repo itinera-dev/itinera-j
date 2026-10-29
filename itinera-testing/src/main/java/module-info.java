@@ -4,6 +4,7 @@ module org.itineradev.itinera.testing {
   requires static org.itineradev.itinera.kotlin;
   requires static kotlinx.coroutines.core;
 
+  exports org.itineradev.itinera.executor.testing;
   exports org.itineradev.itinera.instance.testing;
   exports org.itineradev.itinera.journey.testing;
   exports org.itineradev.itinera.policy.testing;

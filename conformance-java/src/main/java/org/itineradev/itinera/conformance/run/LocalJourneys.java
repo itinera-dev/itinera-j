@@ -77,6 +77,9 @@ public final class LocalJourneys implements Journeys {
     for (var provider : workflow.providers()) {
       builder.provider(providerOf(provider, witness));
     }
+    if (model.testing().script() != null) {
+      builder.reporter(journeyId -> recorders.make(Recorders.RUNNERS_RECORDER, journeyId));
+    }
     var reporters = workflow.reporters();
     for (var name : reporters == null ? List.<String>of() : reporters) {
       builder.reporter(journeyId -> recorders.make(name, journeyId));
@@ -208,6 +211,27 @@ public final class LocalJourneys implements Journeys {
       return new Ended.Returned(executor.run(instance));
     } catch (Refusal refusal) {
       return new Ended.Refused(refusal);
+    }
+  }
+
+  @Override
+  public ScriptedJourney runScripted() {
+    WorkflowInstance<Sync> instance;
+    try {
+      instance = instance();
+    } catch (IllegalStateException failure) {
+      return new ScriptedJourney(new Journey(null, new Ended.NotCreated(failure)), null);
+    } catch (TestMistake mistake) {
+      return new ScriptedJourney(new Journey(null, new Ended.Stopped(mistake)), null);
+    }
+    var id = instance.getJourneyId().toString();
+    try {
+      var run = ScriptWriting.scriptedRunOf(instance, model.testing());
+      return new ScriptedJourney(new Journey(id, new Ended.Returned(run.getResult())), run);
+    } catch (Refusal refusal) {
+      return new ScriptedJourney(new Journey(id, new Ended.Refused(refusal)), null);
+    } catch (TestMistake mistake) {
+      return new ScriptedJourney(new Journey(id, new Ended.Stopped(mistake)), null);
     }
   }
 

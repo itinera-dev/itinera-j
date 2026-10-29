@@ -29,20 +29,27 @@ internal class Inputs<M : Mode>(
 ) {
     /**
      * The receiver's own copy of [input] for [step]'s [attempt], or `null` when an optional input
-     * has no value.
+     * has no value, keeping in [found] the value it is a copy of.
      *
      * @throws JourneyAbortSignal when resolving it aborts the journey.
      */
     @JvmSynthetic
-    suspend fun of(step: StepName, attempt: Attempt, input: InputAsked): Any? {
+    suspend fun of(
+        step: StepName,
+        attempt: Attempt,
+        input: InputAsked,
+        found: MutableMap<String, Captured>,
+    ): Any? {
         val adapter =
             instance.descriptor.inputAdapters.find { adapter -> isAttachedTo(adapter, step) }
         val adapting = adapter?.let { attached -> Adapting(attached, step, attempt, input.key) }
         val supplied = adapting?.supplied()
         if (adapting == null || supplied == null) {
+            journey.data.stored(input.key)?.let { stored -> found[input.key] = stored }
             val by = RequestedBy(step, ByStep, StepSource(step, attempt))
             return journey.fromWorkflow(input.key, input.type, input.required, by)
         }
+        found[input.key] = supplied
         return journey.typed(supplied, input.key, input.type, adapting.call.by)
     }
 
