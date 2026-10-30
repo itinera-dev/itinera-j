@@ -7,12 +7,13 @@
 @SuppressWarnings("requires-automatic")
 module org.itineradev.itinera.checker {
   requires java.compiler;
+  requires jdk.compiler;
   requires kotlin.stdlib;
   requires static symbol.processing.api;
 
   exports org.itineradev.itinera.workflow.checker;
 
-  provides javax.annotation.processing.Processor with
+  provides com.sun.source.util.Plugin with
       org.itineradev.itinera.workflow.checker.JavacChecker;
   provides com.google.devtools.ksp.processing.SymbolProcessorProvider with
       org.itineradev.itinera.workflow.checker.KspChecker;

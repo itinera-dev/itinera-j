@@ -1,12 +1,12 @@
 package org.itineradev.itinera.workflow.checker.samples
 
 import java.net.URI
+import java.nio.file.Files
 import javax.tools.Diagnostic
 import javax.tools.DiagnosticCollector
 import javax.tools.JavaFileObject
 import javax.tools.SimpleJavaFileObject
 import javax.tools.ToolProvider
-import org.itineradev.itinera.workflow.checker.JavacChecker
 
 fun checkingJava(): List<String> {
     val shop =
@@ -35,11 +35,13 @@ fun checkingJava(): List<String> {
             override fun getCharContent(ignoreEncodingErrors: Boolean): CharSequence = shop
         }
     val reported = DiagnosticCollector<JavaFileObject>()
-    val options = listOf("-proc:only", "-classpath", System.getProperty("java.class.path"))
+    val classes = Files.createTempDirectory("classes").toFile()
+    val classPath = System.getProperty("java.class.path")
+    // itinera-checker is on the processor path, where javac finds the checker and starts it.
+    val options = listOf("-d", classes.path, "-classpath", classPath, "-processorpath", classPath)
     val javac = ToolProvider.getSystemJavaCompiler()
-    val compiling = javac.getTask(null, null, reported, options, null, listOf(source))
-    compiling.setProcessors(listOf(JavacChecker()))
-    compiling.call()
+    javac.getTask(null, null, reported, options, null, listOf(source)).call()
+    classes.deleteRecursively()
     return reported.diagnostics.map(::message)
 }
 
