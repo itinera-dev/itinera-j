@@ -1,0 +1,171 @@
+public abstract interface annotation class org/itineradev/itinera/ExperimentalItineraApi : java/lang/annotation/Annotation {
+}
+
+public final class org/itineradev/itinera/engine/AnyValueType : org/itineradev/itinera/engine/ValueType {
+	public static final field INSTANCE Lorg/itineradev/itinera/engine/AnyValueType;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class org/itineradev/itinera/engine/Capture {
+}
+
+public final class org/itineradev/itinera/engine/Captured : org/itineradev/itinera/engine/Capture {
+	public final fun getValue ()Ljava/lang/Object;
+}
+
+public final class org/itineradev/itinera/engine/ClassType : org/itineradev/itinera/engine/ValueType {
+	public fun <init> (Ljava/lang/Class;Ljava/util/List;Z)V
+	public final fun component1 ()Ljava/lang/Class;
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Z
+	public final fun copy (Ljava/lang/Class;Ljava/util/List;Z)Lorg/itineradev/itinera/engine/ClassType;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/engine/ClassType;Ljava/lang/Class;Ljava/util/List;ZILjava/lang/Object;)Lorg/itineradev/itinera/engine/ClassType;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getArguments ()Ljava/util/List;
+	public final fun getNullable ()Z
+	public final fun getRaw ()Ljava/lang/Class;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/engine/Component {
+	public fun <init> (Ljava/lang/reflect/Field;Lorg/itineradev/itinera/engine/ValueType;)V
+	public final fun getField ()Ljava/lang/reflect/Field;
+	public final fun getType ()Lorg/itineradev/itinera/engine/ValueType;
+}
+
+public final class org/itineradev/itinera/engine/DataBags {
+	public static final field INSTANCE Lorg/itineradev/itinera/engine/DataBags;
+	public static final fun of (Ljava/util/Map;)Lorg/itineradev/itinera/journey/DataBag;
+}
+
+public final class org/itineradev/itinera/engine/DataClass : org/itineradev/itinera/engine/KotlinShape {
+	public fun <init> (Ljava/util/List;Ljava/lang/reflect/Constructor;)V
+	public final fun getComponents ()Ljava/util/List;
+	public final fun getConstructor ()Ljava/lang/reflect/Constructor;
+}
+
+public final class org/itineradev/itinera/engine/DataObject : org/itineradev/itinera/engine/KotlinShape {
+	public fun <init> (Ljava/util/List;)V
+	public final fun getComponents ()Ljava/util/List;
+}
+
+public abstract interface class org/itineradev/itinera/engine/KotlinClasses {
+	public abstract fun shapeOf (Ljava/lang/Class;)Lorg/itineradev/itinera/engine/KotlinShape;
+}
+
+public abstract interface class org/itineradev/itinera/engine/KotlinShape {
+}
+
+public final class org/itineradev/itinera/engine/NotAValue : org/itineradev/itinera/engine/Capture {
+	public final fun getError ()Ljava/lang/Throwable;
+}
+
+public final class org/itineradev/itinera/engine/NotData : org/itineradev/itinera/engine/KotlinShape {
+	public static final field INSTANCE Lorg/itineradev/itinera/engine/NotData;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/engine/Nullness : java/lang/Enum {
+	public static final field NON_NULL Lorg/itineradev/itinera/engine/Nullness;
+	public static final field NULLABLE Lorg/itineradev/itinera/engine/Nullness;
+	public static final field PARAMETRIC Lorg/itineradev/itinera/engine/Nullness;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/itineradev/itinera/engine/Nullness;
+	public static fun values ()[Lorg/itineradev/itinera/engine/Nullness;
+}
+
+public abstract interface class org/itineradev/itinera/engine/Receipt {
+}
+
+public final class org/itineradev/itinera/engine/Received : org/itineradev/itinera/engine/Receipt {
+	public final fun getValue ()Ljava/lang/Object;
+}
+
+public abstract interface class org/itineradev/itinera/engine/ValueType {
+}
+
+public final class org/itineradev/itinera/engine/Values {
+	public static final field INSTANCE Lorg/itineradev/itinera/engine/Values;
+	public static final fun capture (Ljava/lang/Object;)Lorg/itineradev/itinera/engine/Capture;
+	public static final fun receive (Lorg/itineradev/itinera/engine/Captured;Lorg/itineradev/itinera/value/TypeToken;)Lorg/itineradev/itinera/engine/Receipt;
+	public static final fun token (Lorg/itineradev/itinera/engine/ValueType;)Lorg/itineradev/itinera/value/TypeToken;
+}
+
+public final class org/itineradev/itinera/engine/VariableType : org/itineradev/itinera/engine/ValueType {
+	public fun <init> (Ljava/lang/String;Lorg/itineradev/itinera/engine/Nullness;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lorg/itineradev/itinera/engine/Nullness;
+	public final fun copy (Ljava/lang/String;Lorg/itineradev/itinera/engine/Nullness;)Lorg/itineradev/itinera/engine/VariableType;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/engine/VariableType;Ljava/lang/String;Lorg/itineradev/itinera/engine/Nullness;ILjava/lang/Object;)Lorg/itineradev/itinera/engine/VariableType;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getName ()Ljava/lang/String;
+	public final fun getNullness ()Lorg/itineradev/itinera/engine/Nullness;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/engine/WrongType : org/itineradev/itinera/engine/Receipt {
+	public final fun getError ()Ljava/lang/Throwable;
+}
+
+public final class org/itineradev/itinera/journey/DataBag {
+	public final fun contains (Ljava/lang/String;)Z
+	public final fun getKeys ()Ljava/util/Set;
+	public final fun read (Ljava/lang/String;Lorg/itineradev/itinera/value/TypeToken;)Lorg/itineradev/itinera/journey/Read;
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class org/itineradev/itinera/journey/Read {
+	public abstract fun orNull ()Ljava/lang/Object;
+}
+
+public final class org/itineradev/itinera/journey/Read$Absent : org/itineradev/itinera/journey/Read {
+	public static final field INSTANCE Lorg/itineradev/itinera/journey/Read$Absent;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public synthetic fun orNull ()Ljava/lang/Object;
+	public fun orNull ()Ljava/lang/Void;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/journey/Read$OtherType : org/itineradev/itinera/journey/Read {
+	public static final field INSTANCE Lorg/itineradev/itinera/journey/Read$OtherType;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public synthetic fun orNull ()Ljava/lang/Object;
+	public fun orNull ()Ljava/lang/Void;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/journey/Read$Present : java/lang/Record, org/itineradev/itinera/journey/Read {
+	public fun <init> (Ljava/lang/Object;)V
+	public final fun component1 ()Ljava/lang/Object;
+	public final fun copy (Ljava/lang/Object;)Lorg/itineradev/itinera/journey/Read$Present;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/journey/Read$Present;Ljava/lang/Object;ILjava/lang/Object;)Lorg/itineradev/itinera/journey/Read$Present;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun orNull ()Ljava/lang/Object;
+	public fun toString ()Ljava/lang/String;
+	public final fun value ()Ljava/lang/Object;
+}
+
+public abstract class org/itineradev/itinera/value/TypeToken {
+	public static final field Companion Lorg/itineradev/itinera/value/TypeToken$Companion;
+	protected fun <init> ()V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public static final fun of (Ljava/lang/Class;)Lorg/itineradev/itinera/value/TypeToken;
+	public static final fun ofNullable (Ljava/lang/Class;)Lorg/itineradev/itinera/value/TypeToken;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/value/TypeToken$Companion {
+	public final fun of (Ljava/lang/Class;)Lorg/itineradev/itinera/value/TypeToken;
+	public final fun ofNullable (Ljava/lang/Class;)Lorg/itineradev/itinera/value/TypeToken;
+}
+

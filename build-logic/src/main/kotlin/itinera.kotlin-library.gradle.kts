@@ -40,6 +40,11 @@ kotlin {
     }
 }
 
+// itinera's own code uses its API whatever its proposal; applications and tests opt in.
+tasks.named<KotlinCompile>("compileKotlin") {
+    compilerOptions.optIn.add("org.itineradev.itinera.ExperimentalItineraApi")
+}
+
 tasks.withType<JavaCompile>().configureEach {
     options.release = oldestJdk
     options.compilerArgs.addAll(listOf("-Xlint:all", "-Werror"))
@@ -105,6 +110,12 @@ dokka {
         reportUndocumented = true
         jdkVersion = oldestJdk
         includes.from(fileTree(projectDir) { include("Module.md") })
+        // Samples are functions in the tests, which run them.
+        samples.from(fileTree("src/test/kotlin") { include("**/samples/*.kt") })
+        perPackageOption {
+            matchingRegex = """org\.itineradev\.itinera\.engine(\..*)?"""
+            suppress = true
+        }
     }
 }
 

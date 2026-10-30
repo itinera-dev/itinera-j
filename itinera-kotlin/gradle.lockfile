@@ -72,6 +72,7 @@ org.jetbrains.kotlin:kotlin-daemon-embeddable:2.4.21=kotlinBuildToolsApiClasspat
 org.jetbrains.kotlin:kotlin-klib-commonizer-embeddable:2.4.21=kotlinKlibCommonizerClasspath
 org.jetbrains.kotlin:kotlin-reflect:1.6.10=kotlinAbiValidationCompatClasspath,kotlinBuildToolsApiClasspath,kotlinCompilerClasspath,kotlinKlibCommonizerClasspath
 org.jetbrains.kotlin:kotlin-reflect:2.0.21=dokkaHtmlGeneratorRuntimeResolver~internal
+org.jetbrains.kotlin:kotlin-reflect:2.3.21=compileClasspath,runtimeClasspath,testCompileClasspath,testRuntimeClasspath
 org.jetbrains.kotlin:kotlin-reflect:2.4.10=detekt
 org.jetbrains.kotlin:kotlin-script-runtime:2.4.0=kotlinAbiValidationCompatClasspath
 org.jetbrains.kotlin:kotlin-script-runtime:2.4.10=detekt

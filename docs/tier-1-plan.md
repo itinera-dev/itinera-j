@@ -103,7 +103,7 @@ Decided by the maintainer on 2026-10-21 (decision 5): a value is the application
   1. `null`, a `Boolean`, a `String` or a `Char`;
   2. a number: `Byte`, `Short`, `Int`, `Long`, a finite `Float` or `Double`, or a `BigInteger` or `BigDecimal` of exactly that class, since both can be subclassed;
   3. an immutable value type of the JDK whose natural form is a string, such as `UUID`, and the dates, times and durations of `java.time`; the tech spec lists them;
-  4. an enum constant, or, with `itinera-kotlin`, a Kotlin `data object`, whose fields are all final and hold values; an enum constant with a body of its own is recognised as an `Enum`, not by `Class.isEnum()`, which is false for it;
+  4. an enum constant, or, with `itinera-kotlin`, a Kotlin `data object`, whose fields are all final and hold immutable values: shared ones, finite numbers, other such constants and objects, and records and data classes holding only those, since every receiver shares the constant itself; an enum constant with a body of its own is recognised as an `Enum`, not by `Class.isEnum()`, which is false for it;
   5. a `List` or a `Set` of values, or a `Map` whose keys are strings and whose values are values;
   6. a JVM record whose components are values, whether a Java record or a `@JvmRecord` data class, or, with `itinera-kotlin`, a Kotlin data class whose only fields, its superclasses' included, are the `val` properties of its primary constructor, and hold values.
 
