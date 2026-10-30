@@ -110,9 +110,9 @@ internal class StepTarget(
         }
 
     /**
-     * Whether an attempt may follow attempt [attempt] once it may have failed: after attempt 1,
-     * only if its rescue step may succeed, since a failed rescue ends the journey; otherwise when
-     * [retried].
+     * Whether an attempt may follow attempt [attempt] once it may have failed: after attempt 1 of a
+     * step with a rescue step, only if its rescue step may succeed, since a failed rescue ends the
+     * journey; otherwise when [retried].
      */
     private fun afterFailing(attempt: Int, retried: Boolean): Boolean =
         if (attempt == 1 && rescue != null) rescue.maySucceed() else retried
