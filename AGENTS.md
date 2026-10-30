@@ -25,7 +25,7 @@ The plan is implemented in stages, tracked in [#1](https://github.com/itinera-de
 9. Rescue steps and unexpected results; tier 1 complete.
 10. Test support: the rest of `itinera-testing`, both runners' test support sentences, `testing` claimed in both manifests.
 11. Later cases: any newer cases candidate.
-12. Compile-time checks: `itinera-checker`, a KSP processor and a javac processor over shared rules.
+12. Compile-time checks: `itinera-checker`, a KSP processor and a javac plugin over shared rules.
 13. Release preparation: the API reference, the overview, examples, the release workflow, ready for the first release, published only after the maintainer merges the stack.
 14. The book: the Kotlin edition of [itinera-dev/book](https://github.com/itinera-dev/book), as a stack of its own.
 

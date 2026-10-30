@@ -35,7 +35,7 @@ dependencies {
 // The oldest JVM the artifacts run on, so that Gradle refuses one that needs a newer.
 tasks.withType<JavaCompile>().configureEach {
     options.release = 17
-    options.compilerArgs.add("-Werror")
+    options.compilerArgs.addAll(listOf("-Xlint:all", "-Werror"))
 }
 
 dependencyLocking {

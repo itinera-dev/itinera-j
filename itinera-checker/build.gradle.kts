@@ -24,8 +24,13 @@ dependencies {
 tasks.named<KotlinCompile>("compileKotlin") { compilerOptions.optIn.empty() }
 
 // The fixtures are compiled as an application compiles them, keeping its parameters' names, and
-// the parity tests compile their sources again, with the checker.
-tasks.named<JavaCompile>("compileCompileFailTestJava") { options.compilerArgs.add("-parameters") }
+// the parity tests compile their sources again, with the checker. javac starts the checker on its
+// own wherever it finds it, so it stays off the class path the fixtures are first compiled with,
+// as an application's checker stays off its class path.
+tasks.named<JavaCompile>("compileCompileFailTestJava") {
+    options.compilerArgs.add("-parameters")
+    classpath -= files(tasks.named("jar"))
+}
 
 tasks.named<Test>("compileFailTest") {
     systemProperty("itinera.checker.sources", file("src/compileFailTest").path)
