@@ -46,10 +46,6 @@ public object Values {
     }
         .onFailure(::rethrowError)
 
-    private fun rethrowError(thrown: Throwable) {
-        if (thrown is Error) throw thrown
-    }
-
     private fun notAValue(thrown: Throwable): NotAValue = NotAValue(thrownByCustomCode(thrown))
 
     private fun wrongType(thrown: Throwable): WrongType = WrongType(thrownByCustomCode(thrown))
