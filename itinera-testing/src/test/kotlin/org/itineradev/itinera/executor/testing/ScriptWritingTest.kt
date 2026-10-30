@@ -347,6 +347,28 @@ class ScriptWritingTest {
                     },
                 ),
                 argumentSet(
+                    "a rescued step run for real whose rescue step terminates abnormally, with no attempt after it",
+                    script { script ->
+                        script
+                            .step("fix")
+                            .willRunForReal()
+                            .andStep("fix_rescue")
+                            .willTerminateAbnormally("crashed")
+                    },
+                ),
+                argumentSet(
+                    "a rescued step whose rescue step fails, with the attempt after it described anyway",
+                    script { script ->
+                        script
+                            .step("fix")
+                            .willFail("broken")
+                            .onAttempt(2)
+                            .willSucceed()
+                            .andStep("fix_rescue")
+                            .willFail("beyond repair")
+                    },
+                ),
+                argumentSet(
                     "every step, once all are asked for",
                     script { script ->
                         script
