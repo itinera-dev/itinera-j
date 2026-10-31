@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.event.samples
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.event.AdapterSource
 import org.itineradev.itinera.event.ByWorkflowHook
 import org.itineradev.itinera.event.DecidedBy

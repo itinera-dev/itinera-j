@@ -4,7 +4,6 @@ import java.time.Instant
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.coroutines.startCoroutine
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.JourneyId
 import org.itineradev.itinera.policy.PolicyName
 import org.itineradev.itinera.step.Attempt
@@ -13,7 +12,6 @@ import org.itineradev.itinera.step.StepName
 import org.itineradev.itinera.workflow.WorkflowName
 
 /** The fixed fields and parts every test event shares. */
-@OptIn(ExperimentalItineraApi::class)
 object Fixtures {
     const val SEQUENCE = 3L
     val timestamp: Instant = Instant.parse("2026-10-28T02:00:00Z")

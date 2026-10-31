@@ -2,7 +2,7 @@
 
 Tech spec for [proposal 0104](https://github.com/itinera-dev/spec/blob/main/proposals/0104-service-implementation-on-events.md), implemented in [#34](https://github.com/itinera-dev/itinera-j/issues/34). [0095](0095-services-provided-to-steps.md) says when a provider is called and `service_provided` emitted.
 
-Status: started. Stage 5 emits `service_provided` with the implementation and the data. 104 is listed with 95, in stage 8.
+Status: done. Stage 5 emits `service_provided` with the implementation and the data. Stage 8 lists 104 with [0095](0095-services-provided-to-steps.md), so `ServiceProvided` and the rest of 104's API no longer carry `@ExperimentalItineraApi`.
 
 ## The implementation
 
@@ -24,6 +24,10 @@ None.
 
 - `itinera/src/test/kotlin/org/itineradev/itinera/engine/LendingTest.kt`: "service_provided names the provider, its implementation and the data it gave", "the implementation of an instance with no class of its own is the declared service" and "data a provider gives that is not a value aborts the journey".
 
+## Conformance
+
+Both runners' scripted providers make instances of the implementation the case names, `first labeller` or `second labeller`, and supply the data it gives, as [0095](0095-services-provided-to-steps.md) says. At the cases pinned, every scenario tagged `@proposal-0104` passes in both runners, in every column.
+
 ## Done when
 
-104 is listed in both manifests once every scenario tagged `@proposal-0104` passes in both runners.
+104 is listed in both manifests by the pull request of stage 8 that lists 95, 102 and 104, which says `Closes #34`: every scenario tagged `@proposal-0104` passes in both runners and every column.

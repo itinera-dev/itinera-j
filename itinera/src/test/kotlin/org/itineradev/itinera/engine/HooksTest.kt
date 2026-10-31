@@ -1,7 +1,6 @@
 package org.itineradev.itinera.engine
 
 import java.io.IOException
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Hooking.audit
 import org.itineradev.itinera.engine.Hooking.ledger
 import org.itineradev.itinera.engine.Journeys.contributing
@@ -56,7 +55,6 @@ import org.junit.jupiter.api.Assertions.assertNotSame
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Test
 
-@OptIn(ExperimentalItineraApi::class)
 class HooksTest {
     private val charge = StepName.of("charge")
     private val audit = PolicyName.of("audit")

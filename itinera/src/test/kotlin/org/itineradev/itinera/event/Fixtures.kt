@@ -1,7 +1,6 @@
 package org.itineradev.itinera.event
 
 import java.time.Instant
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.JourneyId
 import org.itineradev.itinera.policy.PolicyName
 import org.itineradev.itinera.policy.StepHook
@@ -14,7 +13,6 @@ import org.itineradev.itinera.workflow.AdapterName
 import org.itineradev.itinera.workflow.WorkflowName
 
 /** The fixed fields and parts every test event shares. */
-@OptIn(ExperimentalItineraApi::class)
 object Fixtures {
     const val SEQUENCE = 7L
     val timestamp: Instant = Instant.parse("2026-10-27T18:00:00Z")

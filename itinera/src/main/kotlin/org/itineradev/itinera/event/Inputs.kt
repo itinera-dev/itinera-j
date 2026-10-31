@@ -1,7 +1,6 @@
 package org.itineradev.itinera.event
 
 import java.time.Instant
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.JourneyId
 import org.itineradev.itinera.service.ProviderName
 import org.itineradev.itinera.step.Attempt
@@ -82,7 +81,6 @@ public data class OptionalInputAbsent(
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class ServiceProvided(
     override val sequence: Long,
@@ -114,7 +112,6 @@ public data class ServiceProvided(
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class ServiceProviderFailed(
     override val sequence: Long,

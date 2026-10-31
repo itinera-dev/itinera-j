@@ -1,9 +1,6 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.workflow.kotlin
 
 import kotlinx.coroutines.runBlocking
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.DataBags
 import org.itineradev.itinera.journey.Contributor
 import org.itineradev.itinera.journey.JourneyId

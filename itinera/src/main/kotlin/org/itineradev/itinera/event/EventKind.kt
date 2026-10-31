@@ -21,11 +21,11 @@ public enum class EventKind {
     /** An optional request had no value. */
     OPTIONAL_INPUT_ABSENT,
     /** A service provider made an instance of a step's service. */
-    @ExperimentalItineraApi SERVICE_PROVIDED,
+    SERVICE_PROVIDED,
     /** A service provider failed for a step's service. */
-    @ExperimentalItineraApi SERVICE_PROVIDER_FAILED,
+    SERVICE_PROVIDER_FAILED,
     /** A step, hook or service provider set an entry of global metadata. */
-    @ExperimentalItineraApi GLOBAL_METADATA_SET,
+    GLOBAL_METADATA_SET,
     /** An attempt reported Success. */
     STEP_SUCCEEDED,
     /** An attempt reported Failure. */

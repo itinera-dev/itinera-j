@@ -2,7 +2,6 @@ package org.itineradev.itinera.report.async
 
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.executor.async.AsyncLocalExecutor
 import org.itineradev.itinera.instance.async.instance
 import org.itineradev.itinera.report.async.Fixtures.started
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 
-@OptIn(ExperimentalItineraApi::class)
 class AsyncReporterTest {
     @Test
     fun `a reporter accepts every entry of global metadata unless it overrides it`() {

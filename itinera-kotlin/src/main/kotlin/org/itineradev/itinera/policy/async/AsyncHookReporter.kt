@@ -1,7 +1,5 @@
 package org.itineradev.itinera.policy.async
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * What an asynchronous hook emits its own events through, `journey_info`, `journey_warning` and
  * `journey_error`, which name its policy and hook, and sets global metadata through, made for one
@@ -69,7 +67,5 @@ public interface AsyncHookReporter {
      * @throws IllegalStateException when its hook has returned.
      * @sample org.itineradev.itinera.policy.async.samples.asyncHookReporters
      */
-    @ExperimentalItineraApi
-    @JvmSynthetic
-    public suspend fun setGlobalMetadata(key: String, value: Any?)
+    @JvmSynthetic public suspend fun setGlobalMetadata(key: String, value: Any?)
 }

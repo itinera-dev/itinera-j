@@ -1,7 +1,5 @@
 package org.itineradev.itinera.policy
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * What a synchronous hook emits its own events through, `journey_info`, `journey_warning` and
  * `journey_error`, which name its policy and hook, and sets global metadata through, made for one
@@ -68,5 +66,5 @@ public interface HookReporter {
      * @throws IllegalStateException when its hook has returned.
      * @sample org.itineradev.itinera.policy.samples.hookReporters
      */
-    @ExperimentalItineraApi public fun setGlobalMetadata(key: String, value: Any?)
+    public fun setGlobalMetadata(key: String, value: Any?)
 }

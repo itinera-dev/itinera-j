@@ -1,6 +1,5 @@
 package org.itineradev.itinera.service.async
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Builders
 import org.itineradev.itinera.request.AttemptProviderKind
 import org.itineradev.itinera.request.JourneyProviderKind
@@ -14,7 +13,6 @@ import org.itineradev.itinera.workflow.Async
  * @throws IllegalArgumentException when [name] is empty.
  * @sample org.itineradev.itinera.service.async.samples.asyncProviders
  */
-@ExperimentalItineraApi
 public fun <W, T : Any> asyncProvider(
     name: String,
     key: String,
@@ -30,7 +28,6 @@ public fun <W, T : Any> asyncProvider(
  * @throws IllegalArgumentException when [name] is empty.
  * @sample org.itineradev.itinera.service.async.samples.asyncProviders
  */
-@ExperimentalItineraApi
 public fun <W, T : Any> asyncPerAttemptProvider(
     name: String,
     key: String,
