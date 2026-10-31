@@ -17,9 +17,9 @@ import org.itineradev.itinera.workflow.Supplied
 
 /**
  * What the engine calls in one mode: which parts it accepts, and how it makes the dispatcher, calls
- * input adapters and service providers, builds a step, makes the reporter handles and asks whether
- * its journey was cancelled. [SyncParts] serves the synchronous mode, and `itinera-kotlin` the
- * asynchronous one.
+ * input adapters, service providers and hooks, builds a step, makes the reporter handles and asks
+ * whether its journey was cancelled. [SyncParts] serves the synchronous mode, and `itinera-kotlin`
+ * the asynchronous one.
  *
  * Part of itinera's engine, not of its API.
  */
@@ -82,6 +82,9 @@ public interface Parts<M : Mode> {
     /** What makes the reporter handles of this mode. */
     public val reporterHandles: ReporterHandles
 
+    /** How the hooks of this mode are called. */
+    public val hooks: HookCaller
+
     /**
      * Throws a `CancellationException` when the coroutine running the journey was cancelled, and
      * does nothing otherwise, or in a mode that cannot be cancelled.
@@ -103,6 +106,27 @@ public interface Delivery {
 
     /** Sets global metadata on every reporter. */
     @JvmSynthetic public suspend fun setGlobalMetadata(key: String, value: Any?)
+}
+
+/**
+ * How the engine calls the hooks of one mode.
+ *
+ * Part of itinera's engine, not of its API.
+ */
+public interface HookCaller {
+    /**
+     * Calls the step hook [hook], which [Parts.accepts] took, on [policy] with what it [got], and
+     * gives what it returned: possibly `null` or of another type, since Kotlin does not check what
+     * Java code returns. What it throws is thrown.
+     */
+    @JvmSynthetic
+    public suspend fun step(hook: HookCall<*, *, *, *>, policy: Any?, got: Got<*>): Any?
+
+    /**
+     * Calls the workflow hook [hook], which [Parts.accepts] took, on [policy] with what it [got].
+     * What it throws is thrown.
+     */
+    @JvmSynthetic public suspend fun workflow(hook: HookCall<*, *, *, *>, policy: Any?, got: Got<*>)
 }
 
 /**
