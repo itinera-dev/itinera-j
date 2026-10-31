@@ -6,6 +6,7 @@ import java.lang.reflect.Method
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
+import kotlin.reflect.KTypeProjection
 import kotlin.reflect.jvm.kotlinFunction
 import org.itineradev.itinera.engine.DeclaredParameter
 import org.itineradev.itinera.engine.KotlinFunction
@@ -39,9 +40,13 @@ private fun declared(executable: Executable, function: KFunction<*>): KotlinFunc
         returnType =
             (function.returnType.classifier as? KClass<*>)?.javaObjectType ?: Any::class.java,
         returnsNullable = function.returnType.isMarkedNullable,
+        returnArguments = function.returnType.arguments.map(::classOf),
         parameters = values.zip(java, ::parameter),
     )
 }
+
+private fun classOf(argument: KTypeProjection): Class<*>? =
+    (argument.type?.classifier as? KClass<*>)?.javaObjectType
 
 private fun isValue(parameter: KParameter): Boolean = parameter.kind == KParameter.Kind.VALUE
 

@@ -44,7 +44,8 @@ private fun forUnknownStep(provider: ProviderName, step: StepName): Violation =
 private fun requestsTheAttempt(provider: ProviderDescriptor<*, *>): Boolean =
     provider is JourneyProviderDescriptor && provider.requests.map(::askedBy).any(::isOfTheAttempt)
 
-private fun isOfTheAttempt(asked: Asked): Boolean =
+/** Whether [asked] is what only a provider of attempt scope receives. */
+internal fun isOfTheAttempt(asked: Asked): Boolean =
     asked == Known.STEP_NAME || asked == Known.ATTEMPT
 
 private fun attemptInJourneyScope(provider: ProviderDescriptor<*, *>): Violation =

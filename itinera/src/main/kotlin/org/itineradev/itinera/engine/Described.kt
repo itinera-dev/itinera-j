@@ -5,9 +5,13 @@ import org.itineradev.itinera.policy.HookReporter
 import org.itineradev.itinera.policy.SyncHook
 import org.itineradev.itinera.policy.SyncWorkflowHook
 import org.itineradev.itinera.request.HookReporterKind
+import org.itineradev.itinera.request.ProviderReporterKind
 import org.itineradev.itinera.request.Request
 import org.itineradev.itinera.request.Requests
 import org.itineradev.itinera.request.StepKind
+import org.itineradev.itinera.service.ProviderCall
+import org.itineradev.itinera.service.ProviderReporter
+import org.itineradev.itinera.service.SyncProvider
 import org.itineradev.itinera.step.StepFactory
 import org.itineradev.itinera.step.StepReporter
 import org.itineradev.itinera.step.SyncStepFactory
@@ -29,7 +33,14 @@ public object Described {
     private val synchronous =
         object : ClassValue<WorkflowDescriptor<*, Sync>>() {
             override fun computeValue(type: Class<*>): WorkflowDescriptor<*, Sync> =
-                read<Any?, Sync>(type, Sync, SynchronousSteps, SynchronousHooks, ::synchronous)
+                read<Any?, Sync>(
+                    type,
+                    Sync,
+                    SynchronousSteps,
+                    SynchronousHooks,
+                    ::synchronous,
+                    SynchronousProviders,
+                )
         }
 
     /**
@@ -42,7 +53,8 @@ public object Described {
 
     /**
      * Reads the workflow [type] declares in [mode], whose steps [steps] makes factories for, whose
-     * policies' hooks [hooks] calls, and whose input adapters [adapters] calls.
+     * policies' hooks [hooks] calls, whose input adapters [adapters] calls, and whose service
+     * providers [providers] calls.
      *
      * @throws Violations with every mistake in its declaration.
      */
@@ -52,7 +64,9 @@ public object Described {
         steps: StepFactories<M>,
         hooks: HookCalls<M>,
         adapters: AdapterCalls<M>,
-    ): WorkflowDescriptor<W, M> = Reading(type, mode, steps, hooks, adapters).descriptor()
+        providers: ProviderCalls<M>,
+    ): WorkflowDescriptor<W, M> =
+        Reading(type, mode, steps, hooks, adapters, providers).descriptor()
 }
 
 /**
@@ -120,3 +134,19 @@ private fun synchronous(adapter: AdapterMethod): InputAdapterCall<Any?, Sync> =
     SyncInputAdapter { workflow, got ->
         returned(invoked(adapter.method, workflow, *adapter.arguments(got)))
     }
+
+private object SynchronousProviders : ProviderCalls<Sync> {
+    override val handles: Map<Class<*>, Request<ProviderReporterKind<Sync>, *>> =
+        mapOf(ProviderReporter::class.java to Requests.providerReporter())
+
+    override val otherModes: Map<String, String> =
+        mapOf(
+            "org.itineradev.itinera.service.async.AsyncProviderReporter" to
+                "requests AsyncProviderReporter, which only an asynchronous provider can"
+        )
+
+    override fun <K> of(provider: ProviderMethod<K>): ProviderCall<Sync, Any?, K, Any> =
+        SyncProvider { workflow, got ->
+            returned(invoked(provider.method, workflow, *provider.arguments(got)))
+        }
+}
