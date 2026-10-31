@@ -46,6 +46,15 @@ internal class DataRequests(private val problems: Problems) {
         return key
     }
 
+    /**
+     * The request of what [failed] names, optional or not as [form] is written, or `null` when
+     * [declaration] requests it as an `Optional` without `itinera-java`.
+     */
+    fun <K> failed(declaration: Executable, form: WrittenRequest, failed: Failed): Request<K, *>? {
+        val answer = form.answer() ?: return javaOptional(declaration)
+        return requestOf<K, Any?>(failed.asked(form.required()), answer)
+    }
+
     /** Records that [declaration] requests an `Optional` without `itinera-java`. */
     fun <K> javaOptional(declaration: Executable): Request<K, *>? =
         refused(
