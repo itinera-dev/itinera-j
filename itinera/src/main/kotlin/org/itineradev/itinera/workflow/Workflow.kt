@@ -1,6 +1,8 @@
 package org.itineradev.itinera.workflow
 
+import kotlin.reflect.KClass
 import org.itineradev.itinera.ExperimentalItineraApi
+import org.itineradev.itinera.policy.ItineraWorkflowPolicy
 
 /**
  * Declares an [ItineraWorkflow] or an `ItineraAsyncWorkflow` class as a workflow and names it;
@@ -15,5 +17,9 @@ import org.itineradev.itinera.ExperimentalItineraApi
 @MustBeDocumented
 public annotation class Workflow(
     /** The workflow's name, which is never empty. */
-    val name: String
+    val name: String,
+    /**
+     * The workflow's policies, each a class marked `@WorkflowPolicy`, in the order their hooks run.
+     */
+    val policies: Array<KClass<out ItineraWorkflowPolicy>> = [],
 )

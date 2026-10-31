@@ -32,6 +32,9 @@ public fun constructed(constructor: Constructor<*>, vararg arguments: Any?): Any
  */
 @Suppress("UNCHECKED_CAST") public fun <T> returned(value: Any?): T = value as T
 
+/** The methods [type] itself declares, of every visibility. */
+internal fun declaredMethods(type: Class<*>): Sequence<Method> = type.declaredMethods.asSequence()
+
 private inline fun <T> unwrapped(call: () -> T): T =
     try {
         call()

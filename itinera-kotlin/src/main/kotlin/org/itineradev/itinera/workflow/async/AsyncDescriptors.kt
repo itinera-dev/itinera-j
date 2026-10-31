@@ -6,13 +6,22 @@ import kotlin.reflect.KClass
 import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Builders
 import org.itineradev.itinera.engine.Described
+import org.itineradev.itinera.engine.HookCalls
+import org.itineradev.itinera.engine.HookMethod
 import org.itineradev.itinera.engine.StepClass
 import org.itineradev.itinera.engine.StepFactories
 import org.itineradev.itinera.engine.invoked
 import org.itineradev.itinera.engine.returned
+import org.itineradev.itinera.policy.HookCall
+import org.itineradev.itinera.policy.HookReporter
+import org.itineradev.itinera.policy.async.AsyncHook
+import org.itineradev.itinera.policy.async.AsyncHookReporter
+import org.itineradev.itinera.policy.async.AsyncWorkflowHook
+import org.itineradev.itinera.request.HookReporterKind
 import org.itineradev.itinera.request.Request
 import org.itineradev.itinera.request.Requests
 import org.itineradev.itinera.request.StepKind
+import org.itineradev.itinera.request.async.asyncHookReporter
 import org.itineradev.itinera.request.async.asyncStepReporter
 import org.itineradev.itinera.step.StepFactory
 import org.itineradev.itinera.step.StepReporter
@@ -62,7 +71,7 @@ public fun <W : ItineraAsyncWorkflow> asyncDescriptorOf(
 private val asynchronous =
     object : ClassValue<WorkflowDescriptor<*, Async>>() {
         override fun computeValue(type: Class<*>): WorkflowDescriptor<*, Async> =
-            Described.read<Any?, Async>(type, Async, AsynchronousSteps)
+            Described.read<Any?, Async>(type, Async, AsynchronousSteps, AsynchronousHooks)
     }
 
 private object AsynchronousSteps : StepFactories<Async> {
@@ -80,6 +89,27 @@ private object AsynchronousSteps : StepFactories<Async> {
         val arguments = step.arguments(got)
         AsyncStepRun { returned(suspended(step.run, built, arguments)) }
     }
+}
+
+private object AsynchronousHooks : HookCalls<Async> {
+    override val handles: Map<Class<*>, Request<HookReporterKind<Async>, *>> =
+        mapOf(AsyncHookReporter::class.java to Requests.asyncHookReporter())
+
+    override val otherModes: Map<String, String> =
+        mapOf(
+            HookReporter::class.java.name to
+                "requests HookReporter, which only a synchronous hook can"
+        )
+
+    override fun <K, R> stepHook(hook: HookMethod): HookCall<Async, Any, K, R> =
+        AsyncHook { policy, got ->
+            returned(suspended(hook.method, policy, hook.arguments(got)))
+        }
+
+    override fun <K> workflowHook(hook: HookMethod): HookCall<Async, Any, K, Unit> =
+        AsyncWorkflowHook { policy, got ->
+            suspended(hook.method, policy, hook.arguments(got))
+        }
 }
 
 /**

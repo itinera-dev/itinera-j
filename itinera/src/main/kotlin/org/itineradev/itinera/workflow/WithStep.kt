@@ -2,6 +2,7 @@ package org.itineradev.itinera.workflow
 
 import kotlin.reflect.KClass
 import org.itineradev.itinera.ExperimentalItineraApi
+import org.itineradev.itinera.policy.ItineraStepPolicy
 import org.itineradev.itinera.step.ItineraStep
 
 /**
@@ -24,4 +25,6 @@ public annotation class WithStep(
     val retryBudget: Int = 0,
     /** Whether an abnormal termination fails the step at once, whatever its retry budget. */
     val noRetryOnAbnormalTermination: Boolean = false,
+    /** The step's policies, each a class marked `@StepPolicy`, in the order their hooks run. */
+    val policies: Array<KClass<out ItineraStepPolicy>> = [],
 )
