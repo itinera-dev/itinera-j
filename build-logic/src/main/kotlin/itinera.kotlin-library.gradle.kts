@@ -2,52 +2,27 @@ import com.github.jk1.license.filter.LicenseBundleNormalizer
 import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.KotlinJvm
 import com.vanniktech.maven.publish.SourcesJar
-import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+// An artifact of itinera: published, documented and with its public API recorded.
 plugins {
-    id("org.jetbrains.kotlin.jvm")
+    id("itinera.kotlin-jvm")
     id("org.jetbrains.dokka")
-    id("dev.detekt")
-    id("com.diffplug.spotless")
     id("itinera.published")
-    id("itinera.raised-dependencies")
     id("com.github.jk1.dependency-license-report")
 }
 
 val libs = versionCatalogs.named("libs")
 
-fun version(alias: String): String = libs.findVersion(alias).get().requiredVersion
-
-// The newest LTS builds; applications may run on JDK 17 or later.
-val buildJdk = 25
-val oldestJdk = 17
-
 kotlin {
-    jvmToolchain(buildJdk)
     explicitApi()
     @OptIn(ExperimentalAbiValidation::class) abiValidation()
-    coreLibrariesVersion = version("kotlin-stdlib")
-    compilerOptions {
-        jvmTarget = JvmTarget.fromTarget(oldestJdk.toString())
-        apiVersion = KotlinVersion.fromVersion(version("kotlin-api"))
-        allWarningsAsErrors = true
-        jvmDefault = JvmDefaultMode.NO_COMPATIBILITY
-        freeCompilerArgs.add("-Xjdk-release=$oldestJdk")
-    }
 }
 
 // itinera's own code uses its API whatever its proposal; applications and tests opt in.
 tasks.named<KotlinCompile>("compileKotlin") {
     compilerOptions.optIn.add("org.itineradev.itinera.ExperimentalItineraApi")
-}
-
-tasks.withType<JavaCompile>().configureEach {
-    options.release = oldestJdk
-    options.compilerArgs.addAll(listOf("-Xlint:all", "-Werror"))
 }
 
 // Each artifact is a Java module, named after it, whose descriptor javac compiles
@@ -61,28 +36,12 @@ val patchModule =
 tasks.named<JavaCompile>("compileJava") { options.compilerArgumentProviders.add(patchModule) }
 
 dependencies {
-    testImplementation(platform(libs.findLibrary("junit-bom").get()))
-    testImplementation(libs.findLibrary("junit-jupiter").get())
-    testRuntimeOnly(libs.findLibrary("junit-platform-launcher").get())
     dokkaHtmlGeneratorRuntime(platform(libs.findLibrary("jackson-bom").get()))
     constraints {
         dokkaHtmlGeneratorRuntime(libs.findLibrary("freemarker").get())
         dokkaHtmlGeneratorRuntime(libs.findLibrary("jsoup").get())
     }
 }
-
-// The tests run on the JDK this property names, so CI can run them on each
-// JDK applications may use.
-val testJdk = providers.gradleProperty("itinera.test-jdk").map(String::toInt).orElse(buildJdk)
-
-tasks.test {
-    useJUnitPlatform()
-    javaLauncher = javaToolchains.launcherFor {
-        languageVersion = testJdk.map(JavaLanguageVersion::of)
-    }
-}
-
-dependencyLocking { lockAllConfigurations() }
 
 // What applications receive from this artifact.
 licenseReport {
@@ -93,22 +52,11 @@ licenseReport {
 
 tasks.check { dependsOn(tasks.named("checkLicense")) }
 
-detekt {
-    buildUponDefaultConfig = true
-    config.setFrom(rootProject.file("config/detekt/detekt.yml"))
-}
-
-spotless {
-    kotlin { ktfmt(version("ktfmt")).kotlinlangStyle() }
-    kotlinGradle { ktfmt(version("ktfmt")).kotlinlangStyle() }
-    java { googleJavaFormat(version("google-java-format")) }
-}
-
 dokka {
     dokkaPublications.html { failOnWarning = true }
     dokkaSourceSets.configureEach {
         reportUndocumented = true
-        jdkVersion = oldestJdk
+        jdkVersion = OLDEST_JDK
         includes.from(fileTree(projectDir) { include("Module.md") })
         // Samples are functions in the tests, which run them.
         samples.from(fileTree("src/test/kotlin") { include("**/samples/*.kt") })

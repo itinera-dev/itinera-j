@@ -2,7 +2,7 @@
 
 Tech spec for [proposal 0121](https://github.com/itinera-dev/spec/blob/main/proposals/0121-read-only-copies.md), implemented in [#39](https://github.com/itinera-dev/itinera-j/issues/39). The [tier 1 plan](../tier-1-plan.md) holds what crosses proposals, sections 2 and 3 above all, and [0056](0056-data-bag-values.md) what a value is and how it is read.
 
-Status: built in stage 1, and listed in both manifests by the pull request of stage 2 that adds the Kotlin runner, which closes #39. The proposal adds no scenario, so its tests are the Kotlin and Java tests below.
+Status: done. Built in stage 1, and listed in both manifests in stage 2, with the Kotlin runner. The proposal adds no scenario, so its tests are the Kotlin and Java tests below.
 
 ## Where itinera copies a value
 
