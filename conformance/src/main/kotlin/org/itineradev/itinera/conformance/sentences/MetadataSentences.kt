@@ -8,6 +8,7 @@ import org.itineradev.itinera.conformance.run.Entry
 import org.itineradev.itinera.conformance.run.ScenarioReporter
 import org.itineradev.itinera.conformance.run.holds
 import org.itineradev.itinera.conformance.run.holdsOfStream
+import org.itineradev.itinera.conformance.trace.apartFromIdAndTime
 import org.itineradev.itinera.event.Event
 import org.itineradev.itinera.event.EventKind
 
@@ -72,7 +73,7 @@ private fun agreesInValue(cell: String?, found: Any?): Boolean =
     cell == null || value(cell) == found
 
 /** Whether [event] is one the engine emits, not one a step, hook or provider emits. */
-private fun isEngineEvent(event: Event): Boolean = event.kind !in emittedByCustomCode
+internal fun isEngineEvent(event: Event): Boolean = event.kind !in emittedByCustomCode
 
 private val emittedByCustomCode =
     setOf(
@@ -89,6 +90,7 @@ private fun carriesAny(event: Event, entries: List<Entry>): Boolean = entries.an
     shows(event, entry)
 }
 
-private fun shows(event: Event, entry: Entry): Boolean = "${entry.value}" in event.toString()
+private fun shows(event: Event, entry: Entry): Boolean =
+    "${entry.value}" in "${apartFromIdAndTime(event)}"
 
 private fun isUnder(entry: Entry, key: String): Boolean = entry.key == key

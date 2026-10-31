@@ -1,26 +1,20 @@
 package org.itineradev.itinera.conformance.sentences;
 
-import static org.itineradev.itinera.conformance.model.Values.value;
 import static org.itineradev.itinera.conformance.run.Verdicts.holds;
 import static org.itineradev.itinera.conformance.run.Verdicts.holdsOfStream;
 import static org.itineradev.itinera.conformance.sentences.JourneySentences.statusOf;
-import static org.itineradev.itinera.conformance.sentences.Tables.cell;
 
-import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Then;
-import java.util.Objects;
 import org.itineradev.itinera.conformance.World;
 import org.itineradev.itinera.conformance.run.Unmet;
 import org.itineradev.itinera.conformance.trace.Status;
+import org.itineradev.itinera.event.Event;
+import org.itineradev.itinera.event.JourneyFailed;
 import org.itineradev.itinera.journey.Abort;
-import org.itineradev.itinera.journey.DataBag;
-import org.itineradev.itinera.journey.JourneyStatus;
-import org.itineradev.itinera.value.TypeToken;
+import org.itineradev.itinera.journey.FailureCause;
 
-/** The sentences that read the result's abort and data bag. */
+/** The sentences that read the result's abort and failure. */
 public final class ResultSentences {
-  private static final TypeToken<Object> ANYTHING = TypeToken.ofNullable(Object.class);
-
   private final World world;
 
   /** The sentences of the scenario sharing {@code world}. */
@@ -63,40 +57,21 @@ public final class ResultSentences {
     return result.abort();
   }
 
-  @Then("the result's data bag contains:")
-  public void dataBagContains(DataTable table) {
-    var bag = dataBag();
-    for (var row : table.asMaps()) {
-      var key = cell(row, "key");
-      var expected = value(cell(row, "value"));
-      var found = bag.read(key, ANYTHING).orNull();
-      holds(
-          bag.getKeys().contains(key) && Objects.equals(found, expected),
-          "\"" + key + "\" = " + expected + " in the data bag",
-          String.valueOf(found));
-    }
+  @Then("the result names the step {string} whose hook failed the journey, with the code {string}")
+  public void namesTheStepWhoseHookFailed(String step, String code) {
+    var failure = world.result().failure();
+    var events = world.stream();
+    holdsOfStream(
+        failure != null
+            && failure.cause() == FailureCause.FAIL_WORKFLOW
+            && failure.reason() != null
+            && failure.reason().code().equals(code)
+            && events.stream().anyMatch(event -> names(event, step)),
+        "FailWorkflow with \"" + code + "\", whose journey_failed names \"" + step + "\"",
+        events);
   }
 
-  @Then("the result's data bag has no key {string}")
-  public void dataBagHasNoKey(String key) {
-    var keys = dataBag().getKeys();
-    holds(!keys.contains(key), "no \"" + key + "\" in the data bag", keys.toString());
-  }
-
-  @Then("the result carries no data bag")
-  public void carriesNoDataBag() {
-    var result = world.result();
-    holds(result.isAborted(), "no data bag", "the data bag of a journey that " + statusOf(result));
-  }
-
-  private DataBag dataBag() {
-    var status = world.result().status();
-    if (status instanceof JourneyStatus.Succeeded succeeded) {
-      return succeeded.dataBag();
-    }
-    if (status instanceof JourneyStatus.Failed failed) {
-      return failed.dataBag();
-    }
-    throw new Unmet("expected a data bag; the journey was aborted");
+  private static boolean names(Event event, String step) {
+    return event instanceof JourneyFailed failed && String.valueOf(failed.step()).equals(step);
   }
 }
