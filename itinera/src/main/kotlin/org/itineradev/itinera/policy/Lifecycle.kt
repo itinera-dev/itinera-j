@@ -5,7 +5,8 @@ import org.itineradev.itinera.step.Reason
 
 /**
  * A lifecycle a step hook returned, which decides what happens next, as `hook_called` records it:
- * [FinishWorkflow] or [FailWorkflow]. A hook that keeps the default returns no lifecycle.
+ * [FinishWorkflow] or [FailWorkflow]. A hook that keeps the default returns [KeepDefault], which is
+ * no lifecycle.
  *
  * @sample org.itineradev.itinera.policy.samples.hooks
  */
@@ -16,7 +17,16 @@ public sealed interface Lifecycle {
      *
      * @sample org.itineradev.itinera.policy.samples.hooks
      */
-    public data object FinishWorkflow : Lifecycle
+    public data object FinishWorkflow : Lifecycle, OnSuccess {
+        override val keepsDefault: Boolean
+            get() = false
+
+        override val finishesWorkflow: Boolean
+            get() = true
+
+        override val failsWorkflow: Reason?
+            get() = null
+    }
 
     /**
      * The journey fails at once, for a reason.
@@ -27,5 +37,14 @@ public sealed interface Lifecycle {
     public data class FailWorkflow(
         /** Why the journey fails. */
         val reason: Reason
-    ) : Lifecycle
+    ) : Lifecycle, OnSuccess, OnFailure {
+        override val keepsDefault: Boolean
+            get() = false
+
+        override val finishesWorkflow: Boolean
+            get() = false
+
+        override val failsWorkflow: Reason
+            get() = reason
+    }
 }

@@ -27,7 +27,14 @@ internal class Reading<M : Mode>(
         val generator = IdGenerators(problems).of<W>(type)
         problems += duplicateStepNames(declared.mapNotNull(Declared<M>::name))
         if (problems.found || name == null) throw Violations(problems.violations)
-        return Checked.of(name, mode, declared.mapNotNull(Declared<M>::descriptor), generator)
+        return Checked.of(
+            name,
+            mode,
+            declared.mapNotNull(Declared<M>::descriptor),
+            emptyList(),
+            emptyList(),
+            generator,
+        )
     }
 
     private fun named(): WorkflowName? {

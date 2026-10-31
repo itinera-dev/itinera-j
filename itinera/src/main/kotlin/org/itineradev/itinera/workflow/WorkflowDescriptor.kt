@@ -2,11 +2,13 @@ package org.itineradev.itinera.workflow
 
 import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Described
+import org.itineradev.itinera.policy.WorkflowPolicyDescriptor
 
 /**
  * A workflow's declaration, fixed once built and shared by every instance: its name, its mode, its
- * steps in order, and how each instance's journey ID is produced. It holds descriptions and ways to
- * build each part, never the parts themselves, which the executor builds for every journey.
+ * steps in order, its workflow policies, the roles it provides, and how each instance's journey ID
+ * is produced. It holds descriptions and ways to build each part, never the parts themselves, which
+ * the executor builds for every journey.
  *
  * [builder] makes one for a synchronous workflow, and [of] reads one from an annotated class. Any
  * other implementation runs too: the executor checks it for every violation before the journey.
@@ -25,6 +27,15 @@ public interface WorkflowDescriptor<W, M : Mode> {
 
     /** The step descriptors, in the order the steps run. */
     public val steps: List<StepDescriptor<M>>
+
+    /** The workflow policies attached to the workflow, in the order their hooks are called. */
+    public val policies: List<WorkflowPolicyDescriptor<*, M>>
+
+    /**
+     * The roles the workflow provides: interfaces marked `@Role`, which every workflow object of
+     * its instances implements, and whose operations its policies' hooks may call.
+     */
+    public val roles: List<Class<in W>>
 
     /** How each instance's journey ID is produced; `null` for a UUID version 4. */
     public val idGenerator: JourneyIdGenerator<W>?

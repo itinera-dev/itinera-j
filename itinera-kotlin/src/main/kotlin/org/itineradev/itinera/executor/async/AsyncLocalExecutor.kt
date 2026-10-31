@@ -27,9 +27,21 @@ import org.itineradev.itinera.workflow.Async
  */
 @ExperimentalItineraApi
 public class AsyncLocalExecutor
-/** An executor whose journeys deliver their events through dispatchers [factory] makes. */
+/**
+ * An executor whose journeys deliver their events through dispatchers [factory] makes.
+ *
+ * @throws IllegalArgumentException when [factory] is a class written in Java, which cannot write
+ *   its `suspend` operation.
+ */
 public constructor(private val factory: AsyncDispatcherFactory = AsyncDefaultDispatcherFactory()) {
     private val running = AtomicBoolean()
+
+    init {
+        require(writtenInKotlin(factory)) {
+            "The dispatcher factory ${factory.javaClass.name} is written in Java, which cannot " +
+                "write an asynchronous dispatcher factory's suspend operation."
+        }
+    }
 
     /**
      * Runs the one journey of [instance] and returns its result: it succeeded or failed, with its

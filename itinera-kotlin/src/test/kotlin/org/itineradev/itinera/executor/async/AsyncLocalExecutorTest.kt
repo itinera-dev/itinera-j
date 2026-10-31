@@ -131,6 +131,20 @@ class AsyncLocalExecutorTest {
         }
 
     @Test
+    fun `a dispatcher factory written in Java is refused`() {
+        val refused =
+            assertThrows<IllegalArgumentException> {
+                AsyncLocalExecutor(WrittenInJava.DispatcherFactory())
+            }
+        assertEquals(
+            "The dispatcher factory ${WrittenInJava.DispatcherFactory::class.java.name} is " +
+                "written in Java, which cannot write an asynchronous dispatcher factory's " +
+                "suspend operation.",
+            refused.message,
+        )
+    }
+
+    @Test
     fun `an instance of another mode is refused with mode not accepted`() =
         runBlocking<Unit> {
             val synchronous =

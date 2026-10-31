@@ -10,10 +10,20 @@ import org.itineradev.itinera.executor.Refusal
 import org.itineradev.itinera.executor.Refused
 import org.itineradev.itinera.instance.WorkflowInstance
 import org.itineradev.itinera.journey.JourneyId
+import org.itineradev.itinera.policy.HookCall
+import org.itineradev.itinera.policy.HookDefinition
+import org.itineradev.itinera.policy.OnSuccess
+import org.itineradev.itinera.policy.PolicyFactory
+import org.itineradev.itinera.policy.PolicyName
+import org.itineradev.itinera.policy.StepPolicyDescriptor
+import org.itineradev.itinera.policy.WorkflowPolicyDescriptor
+import org.itineradev.itinera.policy.samples.Messages
 import org.itineradev.itinera.report.Dispatcher
 import org.itineradev.itinera.report.DispatcherFactory
 import org.itineradev.itinera.report.Reporter
 import org.itineradev.itinera.report.ReporterOf
+import org.itineradev.itinera.request.Request
+import org.itineradev.itinera.request.StepHookKind
 import org.itineradev.itinera.step.StepFactory
 import org.itineradev.itinera.value.Fragile
 import org.itineradev.itinera.workflow.Async
@@ -117,6 +127,53 @@ class StartTest {
     }
 
     @Test
+    fun `a hook of no mode the executor accepts is refused with mode not accepted`() {
+        val audit =
+            object : StepPolicyDescriptor<Any?, Sync> {
+                override val name: PolicyName = PolicyName.of("audit")
+                override val factory: PolicyFactory<Any?> = PolicyFactory { null }
+                override val onStepSuccess:
+                    HookDefinition<Sync, Any?, StepHookKind<Sync>, OnSuccess> =
+                    object : HookDefinition<Sync, Any?, StepHookKind<Sync>, OnSuccess> {
+                        override val requests: List<Request<StepHookKind<Sync>, *>> = emptyList()
+                        override val call: HookCall<Sync, Any?, StepHookKind<Sync>, OnSuccess> =
+                            object : HookCall<Sync, Any?, StepHookKind<Sync>, OnSuccess> {}
+                    }
+                override val onStepFailure = null
+                override val onStepRetry = null
+                override val onStepAbnormalTermination = null
+            }
+        val step = succeeding("pack").policy(audit).build()
+        val refused = refused { ran(HandWritten(Written(listOf(step)), emptyList())) }
+        assertEquals(
+            Refused.Inadmissible(
+                listOf(Violation.ModeNotAccepted("hook on step success of policy audit", Sync))
+            ),
+            refused,
+        )
+    }
+
+    @Test
+    fun `a workflow object that does not implement a role its descriptor provides is refused`() {
+        val step = succeeding("pack").build()
+        val refused = refused {
+            ran(HandWritten(Written(listOf(step), listOf(unimplemented())), emptyList()))
+        }
+        assertEquals(
+            Refused.Inadmissible(
+                listOf(
+                    Violation.Misdeclared(
+                        "workflow written",
+                        "provides role ${Messages::class.java.name}, which its workflow object " +
+                            "does not implement",
+                    )
+                )
+            ),
+            refused,
+        )
+    }
+
+    @Test
     fun `a part of another mode is refused with mode not accepted`() {
         val step = StepDescriptor.builder("pack") { error("never built") }.build()
         val foreign =
@@ -182,13 +239,19 @@ class StartTest {
     }
 
     private fun refused(run: () -> Unit): Refused = assertThrows<Refusal>(run).refused
+
+    /** A role the shop does not implement, as only an unchecked cast hands over. */
+    private fun unimplemented(): Class<in Shop> = returned(Messages::class.java)
 }
 
 @OptIn(ExperimentalItineraApi::class)
-private class Written(override val steps: List<StepDescriptor<Sync>>) :
-    WorkflowDescriptor<Shop, Sync> {
+private class Written(
+    override val steps: List<StepDescriptor<Sync>>,
+    override val roles: List<Class<in Shop>> = emptyList(),
+) : WorkflowDescriptor<Shop, Sync> {
     override val name: WorkflowName = WorkflowName.of("written")
     override val mode: Sync = Sync
+    override val policies: List<WorkflowPolicyDescriptor<*, Sync>> = emptyList()
     override val idGenerator: JourneyIdGenerator<Shop>? = null
 }
 
@@ -198,6 +261,8 @@ private class Asynchronous : WorkflowDescriptor<Shop, Async> {
     override val name: WorkflowName = WorkflowName.of("written")
     override val mode: Async = Async
     override val steps: List<StepDescriptor<Async>> = emptyList()
+    override val policies: List<WorkflowPolicyDescriptor<*, Async>> = emptyList()
+    override val roles: List<Class<in Shop>> = emptyList()
     override val idGenerator: JourneyIdGenerator<Shop>? = null
 }
 

@@ -36,7 +36,13 @@ public fun <K, T> excludingNull(request: Request<K, *>, answer: Answer): Request
 private fun excludingNull(asked: Asked): Asked =
     when (asked) {
         is InputAsked -> asked.copy(type = excludingNull(asked.type))
+        is FromStepAsked -> asked.copy(type = excludingNull(asked.type))
+        is FromWorkflowAsked -> asked.copy(type = excludingNull(asked.type))
         is ServiceAsked,
+        is ReasonAsked,
+        is ErrorAsked,
+        is RoleAsked,
+        is Known,
         is Handle -> asked
     }
 

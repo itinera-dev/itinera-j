@@ -1,6 +1,9 @@
 package org.itineradev.itinera.engine
 
 import org.itineradev.itinera.event.Event
+import org.itineradev.itinera.policy.HookCall
+import org.itineradev.itinera.policy.SyncHook
+import org.itineradev.itinera.policy.SyncWorkflowHook
 import org.itineradev.itinera.report.Dispatcher
 import org.itineradev.itinera.report.DispatcherFactory
 import org.itineradev.itinera.report.Reporter
@@ -21,6 +24,9 @@ public class SyncParts(private val factory: DispatcherFactory) : Parts<Sync> {
         get() = Sync
 
     override fun accepts(factory: StepFactory<*>?): Boolean = factory is SyncStepFactory
+
+    override fun accepts(hook: HookCall<*, *, *, *>?): Boolean =
+        hook is SyncHook<*, *, *> || hook is SyncWorkflowHook<*, *>
 
     override fun accepts(reporter: ReporterOf<*>?): Boolean = reporter is Reporter
 
