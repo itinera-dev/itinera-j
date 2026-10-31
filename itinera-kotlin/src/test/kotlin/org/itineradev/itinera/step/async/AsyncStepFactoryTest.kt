@@ -1,0 +1,17 @@
+package org.itineradev.itinera.step.async
+
+import kotlinx.coroutines.runBlocking
+import org.itineradev.itinera.ExperimentalItineraApi
+import org.itineradev.itinera.step.Outcome
+import org.itineradev.itinera.step.async.samples.asyncFactories
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+
+@OptIn(ExperimentalItineraApi::class)
+class AsyncStepFactoryTest {
+    @Test
+    fun `a factory builds a run whose outcome the caller awaits`() =
+        runBlocking<Unit> {
+            assertEquals(Outcome.success(), asyncFactories())
+        }
+}

@@ -2,6 +2,8 @@ package org.itineradev.itinera.report.async
 
 import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.event.Event
+import org.itineradev.itinera.report.ReporterOf
+import org.itineradev.itinera.workflow.Async
 
 /**
  * Receives the events of an asynchronous workflow's journeys and the entries of their global
@@ -17,7 +19,7 @@ import org.itineradev.itinera.event.Event
  * @sample org.itineradev.itinera.report.async.samples.asyncPrinter
  */
 @ExperimentalItineraApi
-public fun interface AsyncReporter {
+public fun interface AsyncReporter : ReporterOf<Async> {
     /**
      * Receives one event of the journey, in sequence order; the journey goes on once it returns.
      *

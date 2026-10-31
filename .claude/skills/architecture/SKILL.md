@@ -18,9 +18,9 @@ Paths are relative to each artifact's `src/main/kotlin/org/itineradev/itinera/`,
 | Section | Code it describes | Also untrue when |
 |---|---|---|
 | The artifacts | the Gradle projects and each `module-info.java` | an artifact, a package, a dependency between artifacts or a `ServiceLoader` service is added, removed or renamed |
-| What a workflow is made of | `workflow/`, `step/`, `instance/`, `engine/Checked.kt`, `engine/Described.kt`, `engine/Reading.kt`, `engine/StepClasses.kt`, `engine/IdGenerators.kt`, `engine/Problems.kt`, `engine/Reflection.kt`, `engine/Draft.kt`, `engine/Initial.kt`; `itinera-kotlin: workflow/kotlin/KotlinFunctions.kt`, `value/kotlin/KotlinDataClasses.kt` | a descriptor, an annotation or a builder method is added, removed or renamed, or what an instance holds changes |
-| How a journey runs | `executor/`, `engine/Driven.kt`, `engine/Engine.kt`, `engine/Start.kt`, `engine/Admission.kt`, `engine/Attempts.kt`, `engine/Decision.kt`, `engine/Journey.kt`, `engine/Emitter.kt`, `journey/JourneyResult.kt`, `journey/Failure.kt`, `journey/Abort.kt` | an event, an abort reason, a refusal or a step of what comes before the journey is added, removed or reordered |
-| The engine's seams | `engine/Parts.kt`, `engine/SyncParts.kt`, `engine/Guard.kt` | a mode's parts, the delivery or the guard change |
+| What a workflow is made of | `workflow/`, `step/`, `instance/`, `engine/Checked.kt`, `engine/Described.kt`, `engine/Reading.kt`, `engine/StepClasses.kt`, `engine/IdGenerators.kt`, `engine/Problems.kt`, `engine/Reflection.kt`, `engine/Draft.kt`, `engine/Initial.kt`, `engine/Builders.kt`; `itinera-kotlin: workflow/kotlin/`, `workflow/async/`, `step/async/`, `instance/async/`, `value/kotlin/KotlinDataClasses.kt` | a descriptor, an annotation or a builder method is added, removed or renamed, or what an instance holds changes |
+| How a journey runs | `executor/`, `engine/Driven.kt`, `engine/Engine.kt`, `engine/Start.kt`, `engine/Admission.kt`, `engine/Attempts.kt`, `engine/Decision.kt`, `engine/Journey.kt`, `engine/Emitter.kt`, `journey/JourneyResult.kt`, `journey/Failure.kt`, `journey/Abort.kt`; `itinera-kotlin: executor/async/AsyncLocalExecutor.kt` | an event, an abort reason, a refusal or a step of what comes before the journey is added, removed or reordered |
+| The engine's seams | `engine/Parts.kt`, `engine/SyncParts.kt`, `engine/Guard.kt`; `itinera-kotlin: executor/async/AsyncParts.kt` | a mode's parts, the delivery or the guard change |
 
 ## Checking a change
 
