@@ -111,6 +111,9 @@ private object SyncReporterHandles : ReporterHandles {
 
     override fun hookReporter(emits: Emits): ReporterHandle =
         EmittingReporter(emits, Handle.HOOK_REPORTER)
+
+    override fun providerReporter(emits: Emits): ReporterHandle =
+        EmittingReporter(emits, Handle.PROVIDER_REPORTER)
 }
 
 /** Calls the synchronous mode's hooks. */

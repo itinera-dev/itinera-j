@@ -15,6 +15,7 @@ public final class ProviderModel {
   private final ProviderScope scope;
   private List<String> steps;
   private final List<ProviderRequest> requests = new ArrayList<>();
+  private final List<ProviderAction> actions = new ArrayList<>();
   private String labelledBy;
   private ProviderFailure failure;
   private Implementation implementation = Implementation.FIRST;
@@ -66,6 +67,11 @@ public final class ProviderModel {
   /** What it requests, in the order written. */
   public List<ProviderRequest> requests() {
     return requests;
+  }
+
+  /** What it does on every call before it returns, in the order written. */
+  public List<ProviderAction> actions() {
+    return actions;
   }
 
   /** The key of the request whose string labels each instance, or {@code null}. */

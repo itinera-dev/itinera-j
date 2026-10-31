@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-/** The events a hook emits through its hook reporter, as a case names them. */
+/** The events a hook or a service provider emits through its reporter, as a case names them. */
 public enum JourneyEmitted {
   JOURNEY_INFO("journey_info"),
   JOURNEY_WARNING("journey_warning"),
@@ -25,7 +25,7 @@ public enum JourneyEmitted {
   public static JourneyEmitted named(String written) {
     var emitted = BY_WRITTEN.get(written);
     if (emitted == null) {
-      throw new ModelException("a hook cannot emit " + written);
+      throw new ModelException("a hook or a provider cannot emit " + written);
     }
     return emitted;
   }
