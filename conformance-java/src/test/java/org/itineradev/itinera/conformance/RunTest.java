@@ -94,6 +94,12 @@ final class RunTest {
   }
 
   @Test
+  void everyScenarioWhoseStepsEmitAndSetGlobalMetadataPasses() {
+    assertTrue(runs("@reporting"), errors().toString());
+    assertEquals(3, scenarios().size());
+  }
+
+  @Test
   void aJourneyThatDidNotDoWhatTheCaseExpectsFailsAsUnmet() {
     assertFalse(runs("@unmet"));
     assertTrue(errors().stream().allMatch(RunTest::isUnmet), errors().toString());
