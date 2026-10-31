@@ -7,11 +7,11 @@ import org.itineradev.itinera.conformance.model.Ending
 import org.itineradev.itinera.conformance.model.Input
 import org.itineradev.itinera.conformance.model.ScriptedAttempt
 import org.itineradev.itinera.conformance.model.ValueType
-import org.itineradev.itinera.conformance.model.value
+import org.itineradev.itinera.conformance.run.NotAValue
 
 /**
- * The sentences that declare the workflow, its steps and rescue steps, what each step requests and
- * contributes, how each attempt ends and how often a step may retry.
+ * The sentences that declare the workflow, its steps and rescue steps, what each step requests, how
+ * each attempt ends and how often a step may retry.
  */
 internal class WorkflowSentences(private val world: World) {
     private val model
@@ -32,19 +32,16 @@ internal class WorkflowSentences(private val world: World) {
         model.step(step).inputs += Input(key, ValueType.named(type), optional = true)
     }
 
-    @Given("""^step "([^"]*)" contributes "([^"]*)" = (?!.* and then changes it to )(.+)$""")
-    fun contributes(step: String, key: String, written: String) {
-        model.step(step).contributions += key to value(written)
-    }
-
-    @Given("""^step "([^"]*)" changes its input "([^"]*)" to (.+)$""")
-    fun changesItsInput(step: String, key: String, written: String) {
-        model.step(step).inputChanges[key] = value(written)
-    }
-
     @Given("step {string} succeeds")
     fun succeeds(step: String) {
         model.step(step).attempts(step, listOf(ScriptedAttempt(1, Ending.SUCCESS)))
+    }
+
+    @Given("step {string} fails with code {string} and details that are not a value")
+    fun failsWithANonValue(step: String, code: String) {
+        model
+            .step(step)
+            .attempts(step, listOf(ScriptedAttempt(1, Ending.FAILURE, code, null, NotAValue)))
     }
 
     @Given("step {string} attempts:")

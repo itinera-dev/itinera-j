@@ -2,7 +2,6 @@ package org.itineradev.itinera.value.kotlin
 
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Values
 import org.itineradev.itinera.value.TypeToken
 
@@ -14,10 +13,7 @@ import org.itineradev.itinera.value.TypeToken
  *   `LinkedList` or a map whose keys are not strings.
  * @sample org.itineradev.itinera.value.kotlin.samples.typeTokens
  */
-@ExperimentalItineraApi
 public inline fun <reified T> typeToken(): TypeToken<T> = tokenOf(typeOf<T>())
 
 /** The token of a Kotlin type, which [typeToken] inlines a call to. */
-@PublishedApi
-@ExperimentalItineraApi
-internal fun <T> tokenOf(type: KType): TypeToken<T> = Values.token(valueType(type))
+@PublishedApi internal fun <T> tokenOf(type: KType): TypeToken<T> = Values.token(valueType(type))

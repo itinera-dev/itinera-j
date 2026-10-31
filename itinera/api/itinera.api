@@ -2811,16 +2811,47 @@ public abstract interface class org/itineradev/itinera/step/ItineraRescueStep {
 }
 
 public abstract interface class org/itineradev/itinera/step/ItineraStep {
+	public fun fail (Ljava/lang/String;)Lorg/itineradev/itinera/step/Outcome;
+	public fun fail (Lorg/itineradev/itinera/step/Reason;)Lorg/itineradev/itinera/step/Outcome;
+	public fun skip ()Lorg/itineradev/itinera/step/Outcome;
+	public fun skipBecause (Ljava/lang/String;)Lorg/itineradev/itinera/step/Outcome;
+	public fun skipBecause (Lorg/itineradev/itinera/step/Reason;)Lorg/itineradev/itinera/step/Outcome;
 	public fun succeed ()Lorg/itineradev/itinera/step/Outcome;
 }
 
 public abstract interface class org/itineradev/itinera/step/Outcome {
 	public static final field Companion Lorg/itineradev/itinera/step/Outcome$Companion;
+	public static fun failure (Ljava/lang/String;)Lorg/itineradev/itinera/step/Outcome;
+	public static fun failure (Lorg/itineradev/itinera/step/Reason;)Lorg/itineradev/itinera/step/Outcome;
+	public static fun skipped ()Lorg/itineradev/itinera/step/Outcome;
+	public static fun skipped (Ljava/lang/String;)Lorg/itineradev/itinera/step/Outcome;
+	public static fun skipped (Lorg/itineradev/itinera/step/Reason;)Lorg/itineradev/itinera/step/Outcome;
 	public static fun success ()Lorg/itineradev/itinera/step/Outcome;
 }
 
 public final class org/itineradev/itinera/step/Outcome$Companion {
+	public final fun failure (Ljava/lang/String;)Lorg/itineradev/itinera/step/Outcome;
+	public final fun failure (Lorg/itineradev/itinera/step/Reason;)Lorg/itineradev/itinera/step/Outcome;
+	public final fun skipped ()Lorg/itineradev/itinera/step/Outcome;
+	public final fun skipped (Ljava/lang/String;)Lorg/itineradev/itinera/step/Outcome;
+	public final fun skipped (Lorg/itineradev/itinera/step/Reason;)Lorg/itineradev/itinera/step/Outcome;
 	public final fun success ()Lorg/itineradev/itinera/step/Outcome;
+}
+
+public final class org/itineradev/itinera/step/Outcome$Failure : org/itineradev/itinera/step/Outcome {
+	public final fun component1 ()Lorg/itineradev/itinera/step/Reason;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getReason ()Lorg/itineradev/itinera/step/Reason;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/step/Outcome$Skipped : org/itineradev/itinera/step/Outcome {
+	public final fun component1 ()Lorg/itineradev/itinera/step/Reason;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getReason ()Lorg/itineradev/itinera/step/Reason;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class org/itineradev/itinera/step/Outcome$Success : org/itineradev/itinera/step/Outcome {

@@ -1,7 +1,6 @@
 package org.itineradev.itinera.value
 
 import java.util.LinkedList
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.samples.optingIn
 import org.itineradev.itinera.value.samples.genericTypeTokens
 import org.itineradev.itinera.value.samples.typeTokens
@@ -14,7 +13,6 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments.argumentSet
 import org.junit.jupiter.params.provider.FieldSource
 
-@OptIn(ExperimentalItineraApi::class)
 class TypeTokenTest {
     @Test
     fun `a primitive class gives its wrapper's token`() {
