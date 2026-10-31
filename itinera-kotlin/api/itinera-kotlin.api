@@ -129,6 +129,14 @@ public final class org/itineradev/itinera/service/async/AsyncProvidersKt {
 	public static final fun asyncProvider (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Class;Lorg/itineradev/itinera/service/async/AsyncProvider;)Lorg/itineradev/itinera/service/ProviderBuilder;
 }
 
+public abstract interface class org/itineradev/itinera/step/async/AsyncRescueFactory : org/itineradev/itinera/step/RescueFactory {
+	public abstract fun build (Lorg/itineradev/itinera/request/Got;)Lorg/itineradev/itinera/step/async/AsyncRescueRun;
+}
+
+public abstract interface class org/itineradev/itinera/step/async/AsyncRescueRun {
+	public abstract synthetic fun run (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
 public abstract interface class org/itineradev/itinera/step/async/AsyncStepFactory : org/itineradev/itinera/step/StepFactory {
 	public abstract fun build (Lorg/itineradev/itinera/request/Got;)Lorg/itineradev/itinera/step/async/AsyncStepRun;
 }
@@ -155,6 +163,7 @@ public final class org/itineradev/itinera/workflow/async/AsyncDescriptorsKt {
 	public static final fun asyncBuilder (Ljava/lang/String;)Lorg/itineradev/itinera/workflow/WorkflowBuilder;
 	public static final fun asyncDescriptorOf (Lkotlin/reflect/KClass;)Lorg/itineradev/itinera/workflow/WorkflowDescriptor;
 	public static final fun asyncInputAdapter (Ljava/lang/String;Ljava/lang/String;Lorg/itineradev/itinera/workflow/async/AsyncInputAdapter;)Lorg/itineradev/itinera/workflow/InputAdapterBuilder;
+	public static final fun asyncRescueStep (Lorg/itineradev/itinera/step/async/AsyncRescueFactory;)Lorg/itineradev/itinera/workflow/RescueStepBuilder;
 	public static final fun asyncStep (Ljava/lang/String;Lorg/itineradev/itinera/step/async/AsyncStepFactory;)Lorg/itineradev/itinera/workflow/StepBuilder;
 }
 

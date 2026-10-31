@@ -7,6 +7,7 @@ import org.itineradev.itinera.request.Got
 import org.itineradev.itinera.request.StepKind
 import org.itineradev.itinera.service.ProviderCall
 import org.itineradev.itinera.step.Outcome
+import org.itineradev.itinera.step.RescueFactory
 import org.itineradev.itinera.step.StepFactory
 import org.itineradev.itinera.workflow.InputAdapterCall
 import org.itineradev.itinera.workflow.Mode
@@ -24,6 +25,9 @@ public interface Parts<M : Mode> {
 
     /** Whether [factory] builds a step of this mode. */
     public fun accepts(factory: StepFactory<*>?): Boolean
+
+    /** Whether [rescue] builds a rescue step of this mode. */
+    public fun accepts(rescue: RescueFactory<*>?): Boolean
 
     /** Whether [hook] is a hook of this mode. */
     public fun accepts(hook: HookCall<*, *, *, *>?): Boolean

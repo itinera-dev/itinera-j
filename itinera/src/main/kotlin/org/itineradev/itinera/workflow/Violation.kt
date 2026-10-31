@@ -25,7 +25,8 @@ public sealed interface Violation {
     public val named: String?
 
     /**
-     * Two steps of the workflow have this name.
+     * Two steps of the workflow have this name, counting each rescue step under its own name,
+     * `<step name>_rescue`.
      *
      * @sample org.itineradev.itinera.workflow.samples.violations
      */
@@ -36,6 +37,21 @@ public sealed interface Violation {
     ) : Violation {
         override val named: String
             get() = "duplicate step name"
+    }
+
+    /**
+     * A step has both a rescue step and a retry budget above 0, though a step with a rescue step is
+     * never retried.
+     *
+     * @sample org.itineradev.itinera.workflow.samples.misrescued
+     */
+    @JvmRecord
+    public data class RescuedStepRetried(
+        /** The step. */
+        val step: StepName
+    ) : Violation {
+        override val named: String
+            get() = "rescued step retried"
     }
 
     /**
@@ -105,8 +121,8 @@ public sealed interface Violation {
     }
 
     /**
-     * A step has several input adapters: two adapters are attached to it, or one adapter is
-     * attached to it more than once.
+     * A step, or a rescue step by its name, has several input adapters: two adapters are attached
+     * to it, or one adapter is attached to it more than once.
      *
      * @sample org.itineradev.itinera.workflow.samples.misadapted
      */
@@ -122,7 +138,8 @@ public sealed interface Violation {
     }
 
     /**
-     * An input adapter is attached to a step the workflow does not have.
+     * An input adapter is attached to a step the workflow does not have, such as `<step
+     * name>_rescue` when the step has no rescue step.
      *
      * @sample org.itineradev.itinera.workflow.samples.misadapted
      */
@@ -138,7 +155,7 @@ public sealed interface Violation {
     }
 
     /**
-     * A step requests this key twice among its services.
+     * A step, or a rescue step, requests this key twice among its services.
      *
      * @sample org.itineradev.itinera.workflow.samples.violations
      */
@@ -154,7 +171,7 @@ public sealed interface Violation {
     }
 
     /**
-     * A step requests a service under this key that no provider serves for it.
+     * A step, or a rescue step, requests a service under this key that no provider serves for it.
      *
      * @sample org.itineradev.itinera.workflow.samples.violations
      */
@@ -205,7 +222,8 @@ public sealed interface Violation {
     }
 
     /**
-     * A service provider is attached to a step the workflow does not have.
+     * A service provider is attached to a step the workflow does not have, such as `<step
+     * name>_rescue` when the step has no rescue step.
      *
      * @sample org.itineradev.itinera.service.samples.misprovided
      */

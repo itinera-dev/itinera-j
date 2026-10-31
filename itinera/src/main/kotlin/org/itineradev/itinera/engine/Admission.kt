@@ -9,7 +9,8 @@ import org.itineradev.itinera.workflow.WorkflowDescriptor
 
 /** The violations of how [descriptor] is put together, which need only its declaration. */
 internal fun violationsOf(descriptor: WorkflowDescriptor<*, *>): List<Violation> =
-    duplicateStepNames(descriptor.steps.map(StepDescriptor<*>::name)) +
+    duplicateStepNames(stepNamesOf(descriptor)) +
+        rescuedStepsRetried(descriptor.steps) +
         descriptor.steps.filter(::overdrawn).map(::overdrawnBudget) +
         serviceViolations(descriptor) +
         providerViolations(descriptor) +
