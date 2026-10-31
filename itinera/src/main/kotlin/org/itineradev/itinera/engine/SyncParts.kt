@@ -5,6 +5,8 @@ import org.itineradev.itinera.report.Dispatcher
 import org.itineradev.itinera.report.DispatcherFactory
 import org.itineradev.itinera.report.Reporter
 import org.itineradev.itinera.report.ReporterOf
+import org.itineradev.itinera.request.Got
+import org.itineradev.itinera.request.StepKind
 import org.itineradev.itinera.step.StepFactory
 import org.itineradev.itinera.step.SyncStepFactory
 import org.itineradev.itinera.workflow.Sync
@@ -26,8 +28,8 @@ public class SyncParts(private val factory: DispatcherFactory) : Parts<Sync> {
     override suspend fun dispatcher(): Delivery? = nullable(factory.create())?.let(::SyncDelivery)
 
     @JvmSynthetic
-    override suspend fun build(factory: StepFactory<Sync>): Running? =
-        nullable((factory as SyncStepFactory).build())?.let { run -> Running(run::run) }
+    override suspend fun build(factory: StepFactory<Sync>, got: Got<StepKind<Sync>>): Running? =
+        nullable((factory as SyncStepFactory).build(got))?.let { run -> Running(run::run) }
 
     @JvmSynthetic override suspend fun ensureActive(): Unit = Unit
 }

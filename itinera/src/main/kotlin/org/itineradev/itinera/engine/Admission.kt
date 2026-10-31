@@ -11,7 +11,8 @@ import org.itineradev.itinera.workflow.WorkflowDescriptor
 /** The violations of how [descriptor] is put together, which need only its declaration. */
 internal fun violationsOf(descriptor: WorkflowDescriptor<*, *>): List<Violation> =
     duplicateStepNames(descriptor.steps.map(StepDescriptor<*>::name)) +
-        descriptor.steps.filter(::overdrawn).map(::overdrawnBudget)
+        descriptor.steps.filter(::overdrawn).map(::overdrawnBudget) +
+        descriptor.steps.flatMap(::serviceViolations)
 
 /** A `duplicate step name` for each name shared by several of [names]. */
 internal fun duplicateStepNames(names: List<StepName>): List<Violation> =
@@ -22,9 +23,11 @@ internal fun duplicateStepNames(names: List<StepName>): List<Violation> =
         .keys
         .map(Violation::DuplicateStepName)
 
-private fun itself(name: StepName): StepName = name
+/** [value] itself, to group values by. */
+internal fun <T> itself(value: T): T = value
 
-private fun isShared(count: Int): Boolean = count > 1
+/** Whether a value counted [count] times is shared. */
+internal fun isShared(count: Int): Boolean = count > 1
 
 private fun overdrawn(step: StepDescriptor<*>): Boolean = step.retryBudget < 0
 

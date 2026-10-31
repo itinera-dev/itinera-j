@@ -1,7 +1,10 @@
 package org.itineradev.itinera.engine
 
 import java.lang.reflect.AccessibleObject
+import java.lang.reflect.Constructor
+import java.lang.reflect.Executable
 import java.lang.reflect.Method
+import java.lang.reflect.Parameter
 import org.itineradev.itinera.value.kotlinClasses
 import org.itineradev.itinera.workflow.Violation
 
@@ -61,19 +64,28 @@ internal class Problems {
     }
 }
 
-private fun isKotlin(type: Class<*>): Boolean = type.isAnnotationPresent(Metadata::class.java)
+internal fun isKotlin(type: Class<*>): Boolean = type.isAnnotationPresent(Metadata::class.java)
 
 /**
- * What [method] declares: read by `itinera-kotlin` for a Kotlin class, and by Java reflection
+ * What [executable] declares: read by `itinera-kotlin` for a Kotlin class, and by Java reflection
  * otherwise.
  */
-internal fun functionOf(method: Method): KotlinFunction =
-    kotlinClasses?.takeIf { isKotlin(method.declaringClass) }?.functionOf(method)
-        ?: KotlinFunction.ofJava(method)
+internal fun functionOf(executable: Executable): KotlinFunction {
+    val kotlin = kotlinClasses?.takeIf { isKotlin(executable.declaringClass) }
+    return when {
+        kotlin == null -> KotlinFunction.ofJava(executable)
+        executable is Method -> kotlin.functionOf(executable)
+        else -> kotlin.functionOf(executable as Constructor<*>)
+    }
+}
 
 /**
- * The parameters of [method] as its declaration writes them, without a `suspend` function's
- * continuation.
+ * Whether [executable] declares parameters of its own only, rather than capturing what its class's
+ * enclosing code holds, as an inner or local class does.
  */
-internal fun declaredParameters(method: Method, function: KotlinFunction): List<Class<*>> =
-    method.parameterTypes.dropLast(if (function.isSuspend) 1 else 0)
+internal fun ownsParameters(executable: Executable, function: KotlinFunction): Boolean =
+    function.parameters.size == executable.parameterCount - if (function.isSuspend) 1 else 0
+
+/** The classes of [function]'s parameters, as its declaration writes them. */
+internal fun parameterClasses(function: KotlinFunction): List<Class<*>> =
+    function.parameters.map(DeclaredParameter::parameter).map(Parameter::getType)

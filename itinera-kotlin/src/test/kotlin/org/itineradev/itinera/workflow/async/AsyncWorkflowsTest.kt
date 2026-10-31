@@ -9,6 +9,7 @@ import org.itineradev.itinera.executor.async.AsyncLocalExecutor
 import org.itineradev.itinera.journey.JourneyId
 import org.itineradev.itinera.step.ItineraStep
 import org.itineradev.itinera.step.Outcome
+import org.itineradev.itinera.step.Step
 import org.itineradev.itinera.step.StepName
 import org.itineradev.itinera.workflow.Async
 import org.itineradev.itinera.workflow.StepDescriptor
@@ -76,6 +77,7 @@ class AsyncWorkflowsTest {
 }
 
 /** Runs without `suspend`, as an asynchronous step must not. */
+@Step
 class Wait : ItineraStep {
     fun run(): Outcome = succeed()
 }
@@ -83,6 +85,7 @@ class Wait : ItineraStep {
 @WithStep(Wait::class, name = "wait") class Blocking : ItineraAsyncWorkflow
 
 /** Throws before it ever suspends. */
+@Step
 class AtOnce : ItineraStep {
     suspend fun run(): Outcome = throw IllegalStateException("at once")
 }
@@ -90,6 +93,7 @@ class AtOnce : ItineraStep {
 @WithStep(AtOnce::class, name = "at once") class Hasty : ItineraAsyncWorkflow
 
 /** Throws once it has suspended. */
+@Step
 class Later : ItineraStep {
     suspend fun run(): Outcome {
         delay(1)

@@ -1,14 +1,16 @@
 package org.itineradev.itinera.workflow
 
 import org.itineradev.itinera.ExperimentalItineraApi
+import org.itineradev.itinera.request.Request
+import org.itineradev.itinera.request.StepKind
 import org.itineradev.itinera.step.StepFactory
 import org.itineradev.itinera.step.StepName
 import org.itineradev.itinera.step.SyncStepFactory
 
 /**
- * How one step of a workflow of mode [M] is declared: its name, how it is built for each attempt,
- * and how its failed attempts are retried. Every step states its own retry budget and whether it
- * retries abnormal terminations, so the declaration shows everything.
+ * How one step of a workflow of mode [M] is declared: its name, what it requests, how it is built
+ * for each attempt, and how its failed attempts are retried. Every step states its own retry budget
+ * and whether it retries abnormal terminations, so the declaration shows everything.
  *
  * [builder] makes one for a synchronous workflow, `asyncStep` from `itinera-kotlin` for an
  * asynchronous one, and annotated workflows get theirs from `@WithStep`. Any other implementation
@@ -21,6 +23,12 @@ import org.itineradev.itinera.step.SyncStepFactory
 public interface StepDescriptor<M : Mode> {
     /** The step's name, unique in its workflow. */
     public val name: StepName
+
+    /**
+     * What the step requests, in the order declared, which its factory reads: its inputs are
+     * resolved first, in this order, then its services.
+     */
+    public val requests: List<Request<StepKind<M>, *>>
 
     /** How the step is built for each attempt. */
     public val factory: StepFactory<M>
@@ -57,8 +65,18 @@ public interface StepDescriptor<M : Mode> {
 @ExperimentalItineraApi
 public class StepBuilder<M : Mode>
 internal constructor(private val name: StepName, private val factory: StepFactory<M>) {
+    private val requests = mutableListOf<Request<StepKind<M>, *>>()
     private var retryBudget = 0
     private var retryOnAbnormalTermination = true
+
+    /**
+     * Declares a request after those already declared, which the step's factory then reads.
+     *
+     * @sample org.itineradev.itinera.request.samples.requests
+     */
+    public fun request(request: Request<StepKind<M>, *>): StepBuilder<M> = apply {
+        requests += request
+    }
 
     /**
      * Allows this many retries after the first attempt.
@@ -87,10 +105,11 @@ internal constructor(private val name: StepName, private val factory: StepFactor
      * @sample org.itineradev.itinera.workflow.samples.steps
      */
     public fun build(): StepDescriptor<M> =
-        Described(name, factory, retryBudget, retryOnAbnormalTermination)
+        Described(name, requests.toList(), factory, retryBudget, retryOnAbnormalTermination)
 
     private class Described<M : Mode>(
         override val name: StepName,
+        override val requests: List<Request<StepKind<M>, *>>,
         override val factory: StepFactory<M>,
         override val retryBudget: Int,
         override val retryOnAbnormalTermination: Boolean,

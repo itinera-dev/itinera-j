@@ -8,6 +8,7 @@ import org.itineradev.itinera.executor.async.AsyncLocalExecutor
 import org.itineradev.itinera.journey.JourneyResult
 import org.itineradev.itinera.step.ItineraStep
 import org.itineradev.itinera.step.Outcome
+import org.itineradev.itinera.step.Step
 import org.itineradev.itinera.workflow.Async
 import org.itineradev.itinera.workflow.IdGenerator
 import org.itineradev.itinera.workflow.WithStep
@@ -18,6 +19,7 @@ import org.itineradev.itinera.workflow.async.asyncDescriptorOf
 
 suspend fun asyncShipping(): JourneyResult {
     /** Packs the parcel. */
+    @Step
     class Pack : ItineraStep {
         suspend fun run(): Outcome {
             delay(1)
@@ -41,6 +43,7 @@ suspend fun asyncShipping(): JourneyResult {
 class AsyncReturns : ItineraAsyncWorkflow
 
 /** Unpacks a returned parcel. */
+@Step
 class AsyncUnpack : ItineraStep {
     suspend fun run(): Outcome = succeed()
 }

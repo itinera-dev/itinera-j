@@ -8,6 +8,7 @@ import org.itineradev.itinera.journey.DataBag
 import org.itineradev.itinera.journey.JourneyResult
 import org.itineradev.itinera.step.ItineraStep
 import org.itineradev.itinera.step.Outcome
+import org.itineradev.itinera.step.Step
 import org.itineradev.itinera.value.TypeToken
 import org.itineradev.itinera.workflow.IdGenerator
 import org.itineradev.itinera.workflow.ItineraWorkflow
@@ -18,11 +19,13 @@ import org.itineradev.itinera.workflow.WorkflowDescriptor
 
 fun shipping(): JourneyResult {
     /** Packs the parcel. */
+    @Step
     class Pack : ItineraStep {
         fun run(): Outcome = succeed()
     }
 
     /** Ships the parcel, trying twice more if the carrier fails. */
+    @Step
     class Ship : ItineraStep {
         fun run(): Outcome = succeed()
     }
@@ -46,6 +49,7 @@ fun shipping(): JourneyResult {
 class Returns : ItineraWorkflow
 
 /** Unpacks a returned parcel. */
+@Step
 class Unpack : ItineraStep {
     fun run(): Outcome = succeed()
 }

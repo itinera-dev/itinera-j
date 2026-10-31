@@ -2,6 +2,7 @@ package org.itineradev.itinera.value
 
 import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.AnnotatedType
+import java.lang.reflect.Executable
 import java.lang.reflect.Type
 import org.itineradev.itinera.engine.Nullness
 
@@ -10,6 +11,13 @@ private const val JSPECIFY = "org.jspecify.annotations."
 /** Whether a class is null-marked, by JSpecify's rules: its innermost mark decides. */
 internal fun isNullMarked(type: Class<*>): Boolean =
     enclosingScopes(type).firstNotNullOfOrNull(::mark) ?: false
+
+/**
+ * Whether a constructor or a method is null-marked, by JSpecify's rules: its own mark, or else its
+ * class's.
+ */
+internal fun isNullMarked(executable: Executable): Boolean =
+    mark(executable) ?: isNullMarked(executable.declaringClass)
 
 private fun enclosingScopes(type: Class<*>): Sequence<AnnotatedElement> =
     generateSequence(type, Class<*>::getEnclosingClass).flatMap(::scopesOf) +

@@ -112,7 +112,7 @@ internal class Attempts<M : Mode>(private val journey: Journey, private val part
 
     private suspend fun built(step: StepDescriptor<M>): Running =
         parts
-            .calling { parts.build(step.factory) }
+            .calling { parts.build(step.factory, Unresolved()) }
             .getOrElse { thrown -> throw notBuilt(step, thrown) }
             ?: throw unexpected(step, "the step's factory returned null, not a step")
 

@@ -1,0 +1,5 @@
+public final class org/itineradev/itinera/request/java/JavaRequests {
+	public static final field INSTANCE Lorg/itineradev/itinera/request/java/JavaRequests;
+	public static final fun optionalInput (Ljava/lang/String;Lorg/itineradev/itinera/value/TypeToken;)Lorg/itineradev/itinera/request/Request;
+}
+

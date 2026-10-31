@@ -1,8 +1,11 @@
 package org.itineradev.itinera.step.testing
 
 import org.itineradev.itinera.ExperimentalItineraApi
+import org.itineradev.itinera.request.Got
+import org.itineradev.itinera.request.StepKind
 import org.itineradev.itinera.step.async.AsyncStepFactory
 import org.itineradev.itinera.step.async.AsyncStepRun
+import org.itineradev.itinera.workflow.Async
 
 /**
  * The twin of [StepMock] for asynchronous workflows: the factory of an asynchronous step that ends
@@ -22,12 +25,13 @@ public class AsyncStepMock private constructor(private val script: Script) : Asy
         get() = script.builds
 
     /**
-     * Builds a new asynchronous step, which ends its attempt with the next ending of the script.
+     * Builds a new asynchronous step, which ends its attempt with the next ending of the script and
+     * reads nothing it [got].
      *
      * @throws RuntimeException carrying the message of the script's build failure, when it has one.
      * @sample org.itineradev.itinera.step.testing.samples.asyncMocks
      */
-    override fun build(): AsyncStepRun = runEnding(script.build())
+    override fun build(got: Got<StepKind<Async>>): AsyncStepRun = runEnding(script.build())
 
     /** Makes asynchronous step mocks. */
     public companion object {

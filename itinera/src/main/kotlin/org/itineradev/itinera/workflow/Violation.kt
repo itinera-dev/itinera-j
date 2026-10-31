@@ -35,6 +35,38 @@ public sealed interface Violation {
     }
 
     /**
+     * A step requests this key twice among its services.
+     *
+     * @sample org.itineradev.itinera.workflow.samples.violations
+     */
+    @JvmRecord
+    public data class ServiceRequestedTwice(
+        /** The step. */
+        val step: StepName,
+        /** The key it requests twice. */
+        val key: String,
+    ) : Violation {
+        override val named: String
+            get() = "service requested twice"
+    }
+
+    /**
+     * A step requests a service under this key that no provider serves for it.
+     *
+     * @sample org.itineradev.itinera.workflow.samples.violations
+     */
+    @JvmRecord
+    public data class ServiceNotProvided(
+        /** The step. */
+        val step: StepName,
+        /** The key no provider serves for it. */
+        val key: String,
+    ) : Violation {
+        override val named: String
+            get() = "service not provided"
+    }
+
+    /**
      * A part of the workflow is in a mode the executor, or the workflow itself, does not accept,
      * such as an asynchronous step in a synchronous workflow.
      *

@@ -1,8 +1,10 @@
 package org.itineradev.itinera.engine
 
-import java.lang.reflect.Constructor
-import java.lang.reflect.Method
+import org.itineradev.itinera.request.Request
+import org.itineradev.itinera.request.Requests
+import org.itineradev.itinera.request.StepKind
 import org.itineradev.itinera.step.StepFactory
+import org.itineradev.itinera.step.StepReporter
 import org.itineradev.itinera.step.SyncStepFactory
 import org.itineradev.itinera.step.SyncStepRun
 import org.itineradev.itinera.workflow.ItineraWorkflow
@@ -20,7 +22,7 @@ public object Described {
     private val synchronous =
         object : ClassValue<WorkflowDescriptor<*, Sync>>() {
             override fun computeValue(type: Class<*>): WorkflowDescriptor<*, Sync> =
-                read<Any?, Sync>(type, Sync, ::synchronousStep)
+                read<Any?, Sync>(type, Sync, SynchronousSteps)
         }
 
     /**
@@ -44,18 +46,41 @@ public object Described {
 }
 
 /**
- * Makes the factory of a step class that a workflow class declares, which builds the step with
- * [constructor][StepFactories.of] and runs it with its method `run`.
+ * What reading step classes takes in one mode: the handles of that mode a step's `run` requests by
+ * their types, and the factory of each step class, which builds the step with its constructor and
+ * runs it with its method `run`.
  *
  * Part of itinera's engine, not of its API.
  */
-public fun interface StepFactories<M : Mode> {
-    /** The factory of a step built with [constructor] and run with [run]. */
-    public fun of(constructor: Constructor<*>, run: Method): StepFactory<M>
+public interface StepFactories<M : Mode> {
+    /**
+     * The handles of this mode that a step's `run` requests by their types, beside the contributor.
+     */
+    public val handles: Map<Class<*>, Request<StepKind<M>, *>>
+
+    /**
+     * Why a step's `run` cannot request each handle of the other mode, by the handle's class name,
+     * since this mode's artifact may not hold the class.
+     */
+    public val otherModes: Map<String, String>
+
+    /** The factory of [step]. */
+    public fun of(step: StepClass<M>): StepFactory<M>
 }
 
-private fun synchronousStep(constructor: Constructor<*>, run: Method): StepFactory<Sync> =
-    SyncStepFactory {
-        val step = constructed(constructor)
-        SyncStepRun { returned(invoked(run, step)) }
+private object SynchronousSteps : StepFactories<Sync> {
+    override val handles: Map<Class<*>, Request<StepKind<Sync>, *>> =
+        mapOf(StepReporter::class.java to Requests.stepReporter())
+
+    override val otherModes: Map<String, String> =
+        mapOf(
+            "org.itineradev.itinera.step.async.AsyncStepReporter" to
+                "requests AsyncStepReporter, which only an asynchronous step can"
+        )
+
+    override fun of(step: StepClass<Sync>): StepFactory<Sync> = SyncStepFactory { got ->
+        val built = step.built(got)
+        val arguments = step.arguments(got)
+        SyncStepRun { returned(invoked(step.run, built, *arguments)) }
     }
+}

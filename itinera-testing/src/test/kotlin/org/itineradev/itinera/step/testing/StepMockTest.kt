@@ -8,6 +8,7 @@ import org.itineradev.itinera.journey.FailureCause
 import org.itineradev.itinera.journey.JourneyResult
 import org.itineradev.itinera.report.testing.RecordingReporter
 import org.itineradev.itinera.report.testing.complete
+import org.itineradev.itinera.request.Answers
 import org.itineradev.itinera.step.Outcome
 import org.itineradev.itinera.step.testing.samples.Shop
 import org.itineradev.itinera.step.testing.samples.asyncFailingToBuild
@@ -60,8 +61,8 @@ class StepMockTest {
     @Test
     fun `each build makes a new step and is counted`() {
         val charge = StepMock.playing(Ending.success())
-        val first = charge.build()
-        assertNotSame(first, charge.build())
+        val first = charge.build(Answers(emptyMap()))
+        assertNotSame(first, charge.build(Answers(emptyMap())))
         assertEquals(2, charge.builds)
     }
 

@@ -5,10 +5,12 @@ package org.itineradev.itinera.step.samples
 import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.step.ItineraStep
 import org.itineradev.itinera.step.Outcome
+import org.itineradev.itinera.step.Step
 import org.itineradev.itinera.step.SyncStepFactory
 import org.itineradev.itinera.step.SyncStepRun
 
 /** Ships the order. */
+@Step
 class Ship : ItineraStep {
     fun run(): Outcome = succeed()
 }
