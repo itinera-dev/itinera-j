@@ -1,11 +1,17 @@
 package org.itineradev.itinera.workflow
 
 import org.itineradev.itinera.ExperimentalItineraApi
+import org.itineradev.itinera.journey.DataBagAccess
+import org.itineradev.itinera.journey.DataBags
+import org.itineradev.itinera.request.Answers
+import org.itineradev.itinera.request.InputAdapterKind
+import org.itineradev.itinera.request.Request
 import org.itineradev.itinera.request.Requests
 import org.itineradev.itinera.request.samples.PaymentGateway
 import org.itineradev.itinera.request.samples.requests
 import org.itineradev.itinera.step.StepName
 import org.itineradev.itinera.workflow.samples.Orders
+import org.itineradev.itinera.workflow.samples.adapters
 import org.itineradev.itinera.workflow.samples.building
 import org.itineradev.itinera.workflow.samples.ids
 import org.itineradev.itinera.workflow.samples.modes
@@ -17,6 +23,9 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments.argumentSet
+import org.junit.jupiter.params.provider.FieldSource
 
 @OptIn(ExperimentalItineraApi::class)
 class WorkflowBuilderTest {
@@ -79,10 +88,49 @@ class WorkflowBuilderTest {
     }
 
     @Test
+    fun `a built input adapter keeps its name, steps and requests, in order`() {
+        val pricing = adapters().inputAdapters.single()
+        assertEquals(AdapterName.of("pricing"), pricing.name)
+        assertEquals(listOf(StepName.of("charge")), pricing.steps)
+        assertEquals(
+            listOf("key", "data from the workflow price: Long", "data bag access"),
+            pricing.requests.map(Request<*, *>::toString),
+        )
+    }
+
+    @ParameterizedTest
+    @FieldSource("supplies")
+    fun `an input adapter's call supplies what its function returns`(
+        key: String,
+        supplied: Supplied,
+    ) {
+        val pricing = adapters().inputAdapters.single()
+        val (asked, price, access) = pricing.requests
+        val got =
+            Answers<InputAdapterKind>(
+                mapOf(
+                    asked to key,
+                    price to 40L,
+                    access to DataBagAccess(DataBags.of("discount", 5L)),
+                )
+            )
+        assertEquals(supplied, (pricing.call as SyncInputAdapter).adapt(Orders("corner"), got))
+    }
+
+    @Test
     fun `violations say what refused the workflow`() {
         assertEquals(
             "The workflow is refused: DuplicateStepName(step=charge)",
             Violations(violations()).message,
         )
+    }
+
+    companion object {
+        @JvmField
+        val supplies =
+            listOf(
+                argumentSet("the amount, less the discount", "amount", Supplied.Value(35L)),
+                argumentSet("any other input, from the data bag", "currency", Supplied.FromDataBag),
+            )
     }
 }

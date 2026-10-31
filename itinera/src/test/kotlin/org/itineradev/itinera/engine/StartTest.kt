@@ -22,14 +22,21 @@ import org.itineradev.itinera.report.Dispatcher
 import org.itineradev.itinera.report.DispatcherFactory
 import org.itineradev.itinera.report.Reporter
 import org.itineradev.itinera.report.ReporterOf
+import org.itineradev.itinera.request.InputAdapterKind
 import org.itineradev.itinera.request.Request
 import org.itineradev.itinera.request.StepHookKind
 import org.itineradev.itinera.step.StepFactory
+import org.itineradev.itinera.step.StepName
 import org.itineradev.itinera.value.Fragile
+import org.itineradev.itinera.workflow.AdapterName
 import org.itineradev.itinera.workflow.Async
+import org.itineradev.itinera.workflow.InputAdapterCall
+import org.itineradev.itinera.workflow.InputAdapterDescriptor
 import org.itineradev.itinera.workflow.JourneyIdGenerator
 import org.itineradev.itinera.workflow.StepDescriptor
+import org.itineradev.itinera.workflow.Supplied
 import org.itineradev.itinera.workflow.Sync
+import org.itineradev.itinera.workflow.SyncInputAdapter
 import org.itineradev.itinera.workflow.Violation
 import org.itineradev.itinera.workflow.WorkflowDescriptor
 import org.itineradev.itinera.workflow.WorkflowName
@@ -195,6 +202,45 @@ class StartTest {
     }
 
     @Test
+    fun `a hand-written descriptor's input adapters are checked before the journey`() {
+        val pricing =
+            object : InputAdapterDescriptor<Shop, Sync> {
+                override val name: AdapterName = AdapterName.of("pricing")
+                override val steps: List<StepName> = listOf(StepName.of("ship"))
+                override val requests: List<Request<InputAdapterKind, *>> = emptyList()
+                override val call: InputAdapterCall<Shop, Sync> =
+                    object : InputAdapterCall<Shop, Sync> {}
+            }
+        val discounts =
+            object : InputAdapterDescriptor<Shop, Sync> {
+                override val name: AdapterName = AdapterName.of("discounts")
+                override val steps: List<StepName> = emptyList()
+                override val requests: List<Request<InputAdapterKind, *>> = emptyList()
+                override val call: InputAdapterCall<Shop, Sync> = SyncInputAdapter { _, _ ->
+                    Supplied.FromDataBag
+                }
+            }
+        val pack = succeeding("pack").build()
+        val adapters = listOf(pricing, discounts)
+        val refused = refused {
+            ran(HandWritten(Written(listOf(pack), inputAdapters = adapters), emptyList()))
+        }
+        assertEquals(
+            Refused.Inadmissible(
+                listOf(
+                    Violation.Misdeclared("input adapter discounts", "is attached to no step"),
+                    Violation.InputAdapterForUnknownStep(pricing.name, StepName.of("ship")),
+                    Violation.Misdeclared(
+                        "input adapter pricing",
+                        "is not of the mode Sync, which the executor runs",
+                    ),
+                )
+            ),
+            refused,
+        )
+    }
+
+    @Test
     fun `a workflow of another mode is refused with mode not accepted`() {
         val asynchronous: WorkflowDescriptor<Shop, Sync> = returned(Asynchronous())
         val refused = refused { ran(HandWritten(asynchronous, emptyList())) }
@@ -248,6 +294,7 @@ class StartTest {
 private class Written(
     override val steps: List<StepDescriptor<Sync>>,
     override val roles: List<Class<in Shop>> = emptyList(),
+    override val inputAdapters: List<InputAdapterDescriptor<Shop, Sync>> = emptyList(),
 ) : WorkflowDescriptor<Shop, Sync> {
     override val name: WorkflowName = WorkflowName.of("written")
     override val mode: Sync = Sync
@@ -262,6 +309,7 @@ private class Asynchronous : WorkflowDescriptor<Shop, Async> {
     override val mode: Async = Async
     override val steps: List<StepDescriptor<Async>> = emptyList()
     override val policies: List<WorkflowPolicyDescriptor<*, Async>> = emptyList()
+    override val inputAdapters: List<InputAdapterDescriptor<Shop, Async>> = emptyList()
     override val roles: List<Class<in Shop>> = emptyList()
     override val idGenerator: JourneyIdGenerator<Shop>? = null
 }

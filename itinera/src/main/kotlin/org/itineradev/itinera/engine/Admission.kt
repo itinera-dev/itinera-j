@@ -3,6 +3,7 @@ package org.itineradev.itinera.engine
 import org.itineradev.itinera.instance.WorkflowInstance
 import org.itineradev.itinera.report.ReporterOf
 import org.itineradev.itinera.step.StepName
+import org.itineradev.itinera.workflow.InputAdapterDescriptor
 import org.itineradev.itinera.workflow.Mode
 import org.itineradev.itinera.workflow.StepDescriptor
 import org.itineradev.itinera.workflow.Violation
@@ -13,22 +14,12 @@ internal fun violationsOf(descriptor: WorkflowDescriptor<*, *>): List<Violation>
     duplicateStepNames(descriptor.steps.map(StepDescriptor<*>::name)) +
         descriptor.steps.filter(::overdrawn).map(::overdrawnBudget) +
         descriptor.steps.flatMap(::serviceViolations) +
-        policyViolations(descriptor)
+        policyViolations(descriptor) +
+        adapterViolations(descriptor)
 
 /** A `duplicate step name` for each name shared by several of [names]. */
 internal fun duplicateStepNames(names: List<StepName>): List<Violation> =
-    names
-        .groupingBy(::itself)
-        .eachCount()
-        .filterValues(::isShared)
-        .keys
-        .map(Violation::DuplicateStepName)
-
-/** [value] itself, to group values by. */
-internal fun <T> itself(value: T): T = value
-
-/** Whether a value counted [count] times is shared. */
-internal fun isShared(count: Int): Boolean = count > 1
+    shared(names).map(Violation::DuplicateStepName)
 
 private fun overdrawn(step: StepDescriptor<*>): Boolean = step.retryBudget < 0
 
@@ -79,6 +70,7 @@ private class Modes<M : Mode>(private val parts: Parts<M>) {
         workflow(instance.descriptor) +
             instance.descriptor.steps.filterNot(::accepts).map(::step) +
             hooksOf(instance.descriptor).filterNot(::accepts).map(::hook) +
+            instance.descriptor.inputAdapters.filterNot(::accepts).map(::adapter) +
             instance.reporters.withIndex().filterNot(::accepts).map(::reporter)
 
     private fun workflow(descriptor: WorkflowDescriptor<*, *>): List<Violation> =
@@ -89,6 +81,9 @@ private class Modes<M : Mode>(private val parts: Parts<M>) {
 
     private fun accepts(hook: DefinedHook<*>): Boolean = parts.accepts(hook.definition.call)
 
+    private fun accepts(adapter: InputAdapterDescriptor<*, *>): Boolean =
+        parts.accepts(adapter.call)
+
     private fun accepts(reporter: IndexedValue<ReporterOf<*>?>): Boolean =
         parts.accepts(reporter.value)
 
@@ -97,6 +92,12 @@ private class Modes<M : Mode>(private val parts: Parts<M>) {
 
     private fun hook(hook: DefinedHook<*>): Violation =
         Violation.ModeNotAccepted(hook.toString(), parts.mode)
+
+    private fun adapter(adapter: InputAdapterDescriptor<*, *>): Violation =
+        Violation.Misdeclared(
+            "input adapter ${adapter.name}",
+            "is not of the mode ${parts.mode}, which the executor runs",
+        )
 
     private fun reporter(reporter: IndexedValue<ReporterOf<*>?>): Violation =
         Violation.ModeNotAccepted("reporter ${reporter.index + 1}", parts.mode)

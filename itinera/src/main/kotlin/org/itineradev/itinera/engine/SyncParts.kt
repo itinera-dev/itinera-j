@@ -12,7 +12,9 @@ import org.itineradev.itinera.request.Got
 import org.itineradev.itinera.request.StepKind
 import org.itineradev.itinera.step.StepFactory
 import org.itineradev.itinera.step.SyncStepFactory
+import org.itineradev.itinera.workflow.InputAdapterCall
 import org.itineradev.itinera.workflow.Sync
+import org.itineradev.itinera.workflow.SyncInputAdapter
 
 /**
  * The synchronous mode's parts, whose dispatchers [factory] makes.
@@ -27,6 +29,8 @@ public class SyncParts(private val factory: DispatcherFactory) : Parts<Sync> {
 
     override fun accepts(hook: HookCall<*, *, *, *>?): Boolean =
         hook is SyncHook<*, *, *> || hook is SyncWorkflowHook<*, *>
+
+    override fun accepts(adapter: InputAdapterCall<*, *>?): Boolean = adapter is SyncInputAdapter
 
     override fun accepts(reporter: ReporterOf<*>?): Boolean = reporter is Reporter
 

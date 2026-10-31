@@ -134,7 +134,12 @@ public final class org/itineradev/itinera/value/kotlin/TypeTokensKt {
 public final class org/itineradev/itinera/workflow/async/AsyncDescriptorsKt {
 	public static final fun asyncBuilder (Ljava/lang/String;)Lorg/itineradev/itinera/workflow/WorkflowBuilder;
 	public static final fun asyncDescriptorOf (Lkotlin/reflect/KClass;)Lorg/itineradev/itinera/workflow/WorkflowDescriptor;
+	public static final fun asyncInputAdapter (Ljava/lang/String;Ljava/lang/String;Lorg/itineradev/itinera/workflow/async/AsyncInputAdapter;)Lorg/itineradev/itinera/workflow/InputAdapterBuilder;
 	public static final fun asyncStep (Ljava/lang/String;Lorg/itineradev/itinera/step/async/AsyncStepFactory;)Lorg/itineradev/itinera/workflow/StepBuilder;
+}
+
+public abstract interface class org/itineradev/itinera/workflow/async/AsyncInputAdapter : org/itineradev/itinera/workflow/InputAdapterCall {
+	public abstract synthetic fun adapt (Ljava/lang/Object;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class org/itineradev/itinera/workflow/async/ItineraAsyncWorkflow {
