@@ -16,6 +16,9 @@ import org.itineradev.itinera.policy.PolicyFactory
 import org.itineradev.itinera.policy.StepPolicyDescriptor
 import org.itineradev.itinera.policy.SyncHook
 import org.itineradev.itinera.policy.async.asyncStepPolicy
+import org.itineradev.itinera.service.Provided
+import org.itineradev.itinera.service.ProviderDescriptor
+import org.itineradev.itinera.service.async.asyncProvider
 import org.itineradev.itinera.workflow.Async
 import org.itineradev.itinera.workflow.InputAdapterDescriptor
 import org.itineradev.itinera.workflow.Supplied
@@ -85,6 +88,42 @@ class AsyncPartsTest {
                     .create()
             assertEquals(
                 Refused.Inadmissible(listOf(notOfTheMode("pricing"), notOfTheMode("discounts"))),
+                refused { AsyncLocalExecutor().run(instance) },
+            )
+        }
+
+    @Test
+    fun `a synchronous service provider, or one written in Java, is a part of the other mode`() =
+        runBlocking<Unit> {
+            val synchronous: ProviderDescriptor<Any?, Async> =
+                returned(
+                    ProviderDescriptor.builder<Any?, String>(
+                            "labels",
+                            "labels",
+                            String::class.java,
+                        ) { _, _ ->
+                            Provided.NoInstance
+                        }
+                        .build()
+                )
+            val java =
+                asyncProvider("gateway", "payments", String::class.java, WrittenInJava.Provider())
+                    .build()
+            val instance =
+                asyncBuilder<Shop>("shop")
+                    .step(succeeding("pack").build())
+                    .provider(synchronous)
+                    .provider(java)
+                    .build()
+                    .instance(Shop())
+                    .create()
+            assertEquals(
+                Refused.Inadmissible(
+                    listOf(
+                        Violation.ModeNotAccepted("service provider labels", Async),
+                        Violation.ModeNotAccepted("service provider gateway", Async),
+                    )
+                ),
                 refused { AsyncLocalExecutor().run(instance) },
             )
         }

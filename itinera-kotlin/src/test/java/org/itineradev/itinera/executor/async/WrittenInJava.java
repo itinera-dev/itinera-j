@@ -4,7 +4,9 @@ import org.itineradev.itinera.policy.OnSuccess;
 import org.itineradev.itinera.policy.async.AsyncHook;
 import org.itineradev.itinera.report.async.AsyncDispatcherFactory;
 import org.itineradev.itinera.report.async.AsyncReporter;
+import org.itineradev.itinera.request.JourneyProviderKind;
 import org.itineradev.itinera.request.StepHookKind;
+import org.itineradev.itinera.service.async.AsyncProvider;
 import org.itineradev.itinera.workflow.Async;
 import org.itineradev.itinera.workflow.async.AsyncInputAdapter;
 
@@ -22,4 +24,7 @@ final class WrittenInJava {
   static final class DispatcherFactory implements AsyncDispatcherFactory {}
 
   static final class Adapter implements AsyncInputAdapter<Object> {}
+
+  static final class Provider
+      implements AsyncProvider<Object, JourneyProviderKind<Async>, String> {}
 }

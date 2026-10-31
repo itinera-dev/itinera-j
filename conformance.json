@@ -13,6 +13,16 @@
         }
       }
     ],
+    "journey-scope-request": [
+      {
+        "feature": "cases/tier-1/0095-services-provided-to-steps/admission.feature",
+        "scenario": "A provider of journey scope requesting the attempt number is refused",
+        "proof": {
+          "test": "a provider of journey scope cannot request the attempt",
+          "file": "itinera/src/compileFailTest/kotlin/org/itineradev/itinera/service/ProviderTypesTest.kt"
+        }
+      }
+    ],
     "non-string-journey-id": [
       {
         "feature": "cases/tier-1/0061-instance-carries-journey-id-and-reporters/journey-id-values.feature",
