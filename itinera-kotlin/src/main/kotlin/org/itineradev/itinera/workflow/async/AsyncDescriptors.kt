@@ -9,6 +9,8 @@ import org.itineradev.itinera.engine.Builders
 import org.itineradev.itinera.engine.Described
 import org.itineradev.itinera.engine.HookCalls
 import org.itineradev.itinera.engine.HookMethod
+import org.itineradev.itinera.engine.ProviderCalls
+import org.itineradev.itinera.engine.ProviderMethod
 import org.itineradev.itinera.engine.StepClass
 import org.itineradev.itinera.engine.StepFactories
 import org.itineradev.itinera.engine.invoked
@@ -19,11 +21,17 @@ import org.itineradev.itinera.policy.async.AsyncHook
 import org.itineradev.itinera.policy.async.AsyncHookReporter
 import org.itineradev.itinera.policy.async.AsyncWorkflowHook
 import org.itineradev.itinera.request.HookReporterKind
+import org.itineradev.itinera.request.ProviderReporterKind
 import org.itineradev.itinera.request.Request
 import org.itineradev.itinera.request.Requests
 import org.itineradev.itinera.request.StepKind
 import org.itineradev.itinera.request.async.asyncHookReporter
+import org.itineradev.itinera.request.async.asyncProviderReporter
 import org.itineradev.itinera.request.async.asyncStepReporter
+import org.itineradev.itinera.service.ProviderCall
+import org.itineradev.itinera.service.ProviderReporter
+import org.itineradev.itinera.service.async.AsyncProvider
+import org.itineradev.itinera.service.async.AsyncProviderReporter
 import org.itineradev.itinera.step.StepFactory
 import org.itineradev.itinera.step.StepReporter
 import org.itineradev.itinera.step.async.AsyncStepFactory
@@ -94,6 +102,7 @@ private val asynchronous =
                 AsynchronousSteps,
                 AsynchronousHooks,
                 ::asynchronous,
+                AsynchronousProviders,
             )
     }
 
@@ -132,6 +141,22 @@ private object AsynchronousHooks : HookCalls<Async> {
     override fun <K> workflowHook(hook: HookMethod): HookCall<Async, Any, K, Unit> =
         AsyncWorkflowHook { policy, got ->
             suspended(hook.method, policy, hook.arguments(got))
+        }
+}
+
+private object AsynchronousProviders : ProviderCalls<Async> {
+    override val handles: Map<Class<*>, Request<ProviderReporterKind<Async>, *>> =
+        mapOf(AsyncProviderReporter::class.java to Requests.asyncProviderReporter())
+
+    override val otherModes: Map<String, String> =
+        mapOf(
+            ProviderReporter::class.java.name to
+                "requests ProviderReporter, which only a synchronous provider can"
+        )
+
+    override fun <K> of(provider: ProviderMethod<K>): ProviderCall<Async, Any?, K, Any> =
+        AsyncProvider { workflow, got ->
+            returned(suspended(provider.method, workflow, provider.arguments(got)))
         }
 }
 
