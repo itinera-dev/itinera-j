@@ -2978,7 +2978,71 @@ public abstract interface class org/itineradev/itinera/workflow/JourneyIdGenerat
 public abstract interface annotation class org/itineradev/itinera/workflow/Key : java/lang/annotation/Annotation {
 }
 
+public final class org/itineradev/itinera/workflow/ListedRescue : java/lang/Record {
+	public fun <init> (Lorg/itineradev/itinera/step/StepName;Lorg/itineradev/itinera/workflow/AdapterName;Ljava/util/List;)V
+	public final fun adapter ()Lorg/itineradev/itinera/workflow/AdapterName;
+	public final fun component1 ()Lorg/itineradev/itinera/step/StepName;
+	public final fun component2 ()Lorg/itineradev/itinera/workflow/AdapterName;
+	public final fun component3 ()Ljava/util/List;
+	public final fun copy (Lorg/itineradev/itinera/step/StepName;Lorg/itineradev/itinera/workflow/AdapterName;Ljava/util/List;)Lorg/itineradev/itinera/workflow/ListedRescue;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/workflow/ListedRescue;Lorg/itineradev/itinera/step/StepName;Lorg/itineradev/itinera/workflow/AdapterName;Ljava/util/List;ILjava/lang/Object;)Lorg/itineradev/itinera/workflow/ListedRescue;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public final fun services ()Ljava/util/List;
+	public final fun step ()Lorg/itineradev/itinera/step/StepName;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/workflow/ListedService : java/lang/Record {
+	public fun <init> (Ljava/lang/String;Lorg/itineradev/itinera/service/ProviderName;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lorg/itineradev/itinera/service/ProviderName;
+	public final fun copy (Ljava/lang/String;Lorg/itineradev/itinera/service/ProviderName;)Lorg/itineradev/itinera/workflow/ListedService;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/workflow/ListedService;Ljava/lang/String;Lorg/itineradev/itinera/service/ProviderName;ILjava/lang/Object;)Lorg/itineradev/itinera/workflow/ListedService;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public final fun key ()Ljava/lang/String;
+	public final fun provider ()Lorg/itineradev/itinera/service/ProviderName;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/workflow/ListedStep : java/lang/Record {
+	public fun <init> (Lorg/itineradev/itinera/step/StepName;Lorg/itineradev/itinera/workflow/Position;Ljava/util/List;Lorg/itineradev/itinera/workflow/AdapterName;Ljava/util/List;Lorg/itineradev/itinera/workflow/ListedRescue;)V
+	public final fun adapter ()Lorg/itineradev/itinera/workflow/AdapterName;
+	public final fun component1 ()Lorg/itineradev/itinera/step/StepName;
+	public final fun component2 ()Lorg/itineradev/itinera/workflow/Position;
+	public final fun component3 ()Ljava/util/List;
+	public final fun component4 ()Lorg/itineradev/itinera/workflow/AdapterName;
+	public final fun component5 ()Ljava/util/List;
+	public final fun component6 ()Lorg/itineradev/itinera/workflow/ListedRescue;
+	public final fun copy (Lorg/itineradev/itinera/step/StepName;Lorg/itineradev/itinera/workflow/Position;Ljava/util/List;Lorg/itineradev/itinera/workflow/AdapterName;Ljava/util/List;Lorg/itineradev/itinera/workflow/ListedRescue;)Lorg/itineradev/itinera/workflow/ListedStep;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/workflow/ListedStep;Lorg/itineradev/itinera/step/StepName;Lorg/itineradev/itinera/workflow/Position;Ljava/util/List;Lorg/itineradev/itinera/workflow/AdapterName;Ljava/util/List;Lorg/itineradev/itinera/workflow/ListedRescue;ILjava/lang/Object;)Lorg/itineradev/itinera/workflow/ListedStep;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public final fun policies ()Ljava/util/List;
+	public final fun position ()Lorg/itineradev/itinera/workflow/Position;
+	public final fun rescue ()Lorg/itineradev/itinera/workflow/ListedRescue;
+	public final fun services ()Ljava/util/List;
+	public final fun step ()Lorg/itineradev/itinera/step/StepName;
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract interface class org/itineradev/itinera/workflow/Mode {
+}
+
+public final class org/itineradev/itinera/workflow/Position : java/lang/Comparable {
+	public static final field Companion Lorg/itineradev/itinera/workflow/Position$Companion;
+	public synthetic fun compareTo (Ljava/lang/Object;)I
+	public fun compareTo (Lorg/itineradev/itinera/workflow/Position;)I
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getNumber ()I
+	public fun hashCode ()I
+	public static final fun of (I)Lorg/itineradev/itinera/workflow/Position;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/workflow/Position$Companion {
+	public final fun of (I)Lorg/itineradev/itinera/workflow/Position;
 }
 
 public final class org/itineradev/itinera/workflow/RescueStepBuilder {
@@ -3386,6 +3450,7 @@ public abstract interface class org/itineradev/itinera/workflow/WorkflowDescript
 	public abstract fun getProviders ()Ljava/util/List;
 	public abstract fun getRoles ()Ljava/util/List;
 	public abstract fun getSteps ()Ljava/util/List;
+	public fun listing ()Ljava/util/List;
 	public static fun of (Ljava/lang/Class;)Lorg/itineradev/itinera/workflow/WorkflowDescriptor;
 }
 
