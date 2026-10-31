@@ -97,7 +97,7 @@ private fun isFinite(value: Any): Boolean =
     }
 
 /** Builds a record or data class, throwing what its constructor throws. */
-private fun construct(shape: Shape.Composite, arguments: List<Any?>): Any =
+internal fun construct(shape: Shape.Composite, arguments: List<Any?>): Any =
     try {
         shape.constructor.newInstance(*arguments.toTypedArray())
     } catch (thrown: InvocationTargetException) {

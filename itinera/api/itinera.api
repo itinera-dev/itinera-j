@@ -139,6 +139,7 @@ public final class org/itineradev/itinera/engine/Draft {
 	public fun <init> (Lorg/itineradev/itinera/workflow/WorkflowDescriptor;Ljava/lang/Object;)V
 	public final fun create ()Lorg/itineradev/itinera/instance/WorkflowInstance;
 	public final fun data (Ljava/lang/String;Ljava/lang/Object;)V
+	public final fun initialData (Ljava/lang/Object;)V
 	public final fun metadata (Ljava/lang/String;Ljava/lang/Object;)V
 	public final fun reporter (Lorg/itineradev/itinera/report/ReporterFactoryOf;)V
 }
@@ -2102,6 +2103,7 @@ public final class org/itineradev/itinera/instance/InstanceBuilder {
 	public static final field Companion Lorg/itineradev/itinera/instance/InstanceBuilder$Companion;
 	public final fun create ()Lorg/itineradev/itinera/instance/WorkflowInstance;
 	public final fun data (Ljava/lang/String;Ljava/lang/Object;)Lorg/itineradev/itinera/instance/InstanceBuilder;
+	public final fun initialData (Ljava/lang/Object;)Lorg/itineradev/itinera/instance/InstanceBuilder;
 	public final fun initialData (Ljava/util/Map;)Lorg/itineradev/itinera/instance/InstanceBuilder;
 	public static final fun of (Lorg/itineradev/itinera/workflow/WorkflowDescriptor;Ljava/lang/Object;)Lorg/itineradev/itinera/instance/InstanceBuilder;
 	public final fun reporter (Lorg/itineradev/itinera/report/Reporter;)Lorg/itineradev/itinera/instance/InstanceBuilder;
@@ -2176,6 +2178,11 @@ public final class org/itineradev/itinera/journey/DataBagAccess {
 	public final fun read (Ljava/lang/String;Lorg/itineradev/itinera/value/TypeToken;)Lorg/itineradev/itinera/journey/Read;
 }
 
+public abstract interface annotation class org/itineradev/itinera/journey/Datum : java/lang/annotation/Annotation {
+	public abstract fun key ()Ljava/lang/String;
+	public abstract fun required ()Z
+}
+
 public final class org/itineradev/itinera/journey/Failure : java/lang/Record {
 	public fun <init> (Lorg/itineradev/itinera/event/JourneyFailure;Ljava/lang/Throwable;)V
 	public final fun cause ()Lorg/itineradev/itinera/journey/FailureCause;
@@ -2229,6 +2236,7 @@ public final class org/itineradev/itinera/journey/JourneyResult : java/lang/Reco
 	public final fun isFailed ()Z
 	public final fun isSucceeded ()Z
 	public final fun journeyId ()Lorg/itineradev/itinera/journey/JourneyId;
+	public final fun output (Lorg/itineradev/itinera/value/TypeToken;)Ljava/lang/Object;
 	public final fun status ()Lorg/itineradev/itinera/journey/JourneyStatus;
 	public fun toString ()Ljava/lang/String;
 }
@@ -2268,6 +2276,43 @@ public final class org/itineradev/itinera/journey/JourneyStatus$Succeeded : java
 	public final fun dataBag ()Lorg/itineradev/itinera/journey/DataBag;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/journey/OutputException : java/lang/RuntimeException {
+	public fun <init> (Lorg/itineradev/itinera/journey/OutputProblem;)V
+	public final fun getProblem ()Lorg/itineradev/itinera/journey/OutputProblem;
+}
+
+public abstract interface class org/itineradev/itinera/journey/OutputProblem {
+}
+
+public final class org/itineradev/itinera/journey/OutputProblem$Aborted : org/itineradev/itinera/journey/OutputProblem {
+	public static final field INSTANCE Lorg/itineradev/itinera/journey/OutputProblem$Aborted;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/journey/OutputProblem$Absent : java/lang/Record, org/itineradev/itinera/journey/OutputProblem {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lorg/itineradev/itinera/journey/OutputProblem$Absent;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/journey/OutputProblem$Absent;Ljava/lang/String;ILjava/lang/Object;)Lorg/itineradev/itinera/journey/OutputProblem$Absent;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public final fun key ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/journey/OutputProblem$OtherType : java/lang/Record, org/itineradev/itinera/journey/OutputProblem {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lorg/itineradev/itinera/journey/OutputProblem$OtherType;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/journey/OutputProblem$OtherType;Ljava/lang/String;ILjava/lang/Object;)Lorg/itineradev/itinera/journey/OutputProblem$OtherType;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public final fun key ()Ljava/lang/String;
 	public fun toString ()Ljava/lang/String;
 }
 
