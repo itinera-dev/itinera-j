@@ -3,8 +3,10 @@ package org.itineradev.itinera.report
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 import org.itineradev.itinera.ExperimentalItineraApi
+import org.itineradev.itinera.executor.LocalExecutor
 import org.itineradev.itinera.report.Fixtures.started
 import org.itineradev.itinera.report.samples.debugging
+import org.itineradev.itinera.report.samples.perJourney
 import org.itineradev.itinera.report.samples.printer
 import org.itineradev.itinera.report.samples.tenants
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -36,5 +38,13 @@ class ReporterTest {
             printer().report(started)
             debugging()
         }
+    }
+
+    @Test
+    fun `a reporter factory makes a reporter for each journey, given its ID`() {
+        val lines = mutableListOf<String>()
+        val instance = perJourney(lines)
+        LocalExecutor().run(instance)
+        assertEquals("${instance.journeyId} journey_started", lines.first())
     }
 }

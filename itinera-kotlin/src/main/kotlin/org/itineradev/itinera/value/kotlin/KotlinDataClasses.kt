@@ -1,6 +1,7 @@
 package org.itineradev.itinera.value.kotlin
 
 import java.lang.reflect.Field
+import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
@@ -15,15 +16,17 @@ import org.itineradev.itinera.engine.Component
 import org.itineradev.itinera.engine.DataClass
 import org.itineradev.itinera.engine.DataObject
 import org.itineradev.itinera.engine.KotlinClasses
+import org.itineradev.itinera.engine.KotlinFunction
 import org.itineradev.itinera.engine.KotlinShape
 import org.itineradev.itinera.engine.NotData
 import org.itineradev.itinera.engine.rethrowError
+import org.itineradev.itinera.workflow.kotlin.kotlinFunctionOf
 
 /**
  * Reads Kotlin classes for the core, which finds it through `java.util.ServiceLoader`: a data class
  * whose only fields, its superclasses' included, are the `val` properties of its primary
  * constructor, none of a value class, and a `data object` whose fields and properties are all
- * final.
+ * final; and what a method of an annotated class declares.
  */
 internal class KotlinDataClasses : KotlinClasses {
     override fun shapeOf(type: Class<*>): KotlinShape =
@@ -37,6 +40,8 @@ internal class KotlinDataClasses : KotlinClasses {
             type.objectInstance != null -> dataObject(type)
             else -> dataClass(type)
         }
+
+    override fun functionOf(method: Method): KotlinFunction = kotlinFunctionOf(method)
 }
 
 /**
