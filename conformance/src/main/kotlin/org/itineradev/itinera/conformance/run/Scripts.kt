@@ -27,17 +27,11 @@ internal fun asyncMockOf(script: StepScript): AsyncStepMock =
  * each such part a call that throws [NotRunYet], which no journey reaches.
  */
 internal fun notRunYetIn(model: WorkflowModel): String? =
-    when {
-        model.adapters.isNotEmpty() -> "input adapters"
-        model.providers.isNotEmpty() -> "service providers"
-        else -> model.scripts.values.firstNotNullOfOrNull(::notRunYetIn)
-    }
+    model.scripts.values.firstNotNullOfOrNull(::notRunYetIn)
 
 /** What [script] asks for that the runner cannot run yet, or `null` when it can run it. */
 internal fun notRunYetIn(script: StepScript): String? =
     when {
-        script.inputs.isNotEmpty() -> "inputs"
-        script.services.isNotEmpty() -> "services"
         script.contributions.isNotEmpty() -> "contributions"
         script.hasRescueStep || script.isRescueStep -> "rescue steps"
         script.attempts.orEmpty().any(::contributes) -> "contributions"

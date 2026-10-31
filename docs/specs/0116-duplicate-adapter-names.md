@@ -23,7 +23,7 @@ Every rule is checked when a workflow is built or described, by the builders' `b
 
 ## Conformance
 
-The six scenarios tagged `@proposal-0116` are each tagged with a proposal that completes later, 0060, 0095 or 0003, so the selection of either runner leaves them out until the last of those is listed, as #37 says: 116 is listed at the end of stage 4, as the plan's table of stages says, before all six pass. Locally, at the cases pinned, both runners pass the five that only declare a workflow, in every column. The sixth, "An adapter and a service provider may have the same name", does not pass yet: it uses three sentences the runners define from stage 5, an adapter's value, the input a step was built with and how often a provider was called, and runs in CI once 0060 and 0095 are listed. Until then, the core's test above shows the rule it checks.
+The six scenarios tagged `@proposal-0116` are each tagged with a proposal that completes later, 0060, 0095 or 0003, so the selection of either runner leaves them out until the last of those is listed, as #37 says: 116 is listed at the end of stage 4, as the plan's table of stages says, before all six pass. Locally, at the cases pinned, both runners pass the five that only declare a workflow, in every column. The sixth, "An adapter and a service provider may have the same name", passes locally in both runners from stage 5, which defines the three sentences it uses, an adapter's value, the input a step was built with and how often a provider was called, and runs in CI once 0060 and 0095 are listed. Until then, the core's test above shows the rule it checks in CI.
 
 ## Dependencies
 

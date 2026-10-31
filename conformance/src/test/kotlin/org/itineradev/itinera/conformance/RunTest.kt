@@ -82,6 +82,12 @@ class RunTest {
     }
 
     @Test
+    fun `every scenario that builds steps from inputs and services passes in both columns`() {
+        assertTrue(runs("@building"), errors().toString())
+        assertEquals(18, scenarios().size)
+    }
+
+    @Test
     fun `a journey that did not do what the case expects fails as unmet`() {
         assertFalse(runs("@unmet"))
         assertTrue(errors().all { "Unmet" in it }, errors().toString())
@@ -92,8 +98,6 @@ class RunTest {
         assertFalse(runs("@not-run-yet"))
         assertEquals(
             listOf(
-                "the runner cannot run input adapters yet",
-                "the runner cannot run input adapters yet",
                 "the runner cannot run an attempt that fails or is skipped yet",
                 "the runner cannot run an attempt that fails or is skipped yet",
             ),

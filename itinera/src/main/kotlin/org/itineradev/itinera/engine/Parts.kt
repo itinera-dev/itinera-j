@@ -4,18 +4,21 @@ import org.itineradev.itinera.event.Event
 import org.itineradev.itinera.policy.HookCall
 import org.itineradev.itinera.report.ReporterOf
 import org.itineradev.itinera.request.Got
+import org.itineradev.itinera.request.InputAdapterKind
 import org.itineradev.itinera.request.StepKind
+import org.itineradev.itinera.service.Provided
 import org.itineradev.itinera.service.ProviderCall
 import org.itineradev.itinera.step.Outcome
 import org.itineradev.itinera.step.RescueFactory
 import org.itineradev.itinera.step.StepFactory
 import org.itineradev.itinera.workflow.InputAdapterCall
 import org.itineradev.itinera.workflow.Mode
+import org.itineradev.itinera.workflow.Supplied
 
 /**
- * What the engine calls in one mode: which parts it accepts, and how it makes the dispatcher,
- * builds a step and asks whether its journey was cancelled. [SyncParts] serves the synchronous
- * mode, and `itinera-kotlin` the asynchronous one.
+ * What the engine calls in one mode: which parts it accepts, and how it makes the dispatcher, calls
+ * input adapters and service providers, builds a step and asks whether its journey was cancelled.
+ * [SyncParts] serves the synchronous mode, and `itinera-kotlin` the asynchronous one.
  *
  * Part of itinera's engine, not of its API.
  */
@@ -46,6 +49,28 @@ public interface Parts<M : Mode> {
      * factory returned `null`, which only Java code can. What the factory throws is thrown.
      */
     @JvmSynthetic public suspend fun dispatcher(): Delivery?
+
+    /**
+     * Calls [adapter], which [accepts] took, with [workflow] and what it [got]: `null` when it
+     * returned `null`, which only Java code can. What it throws is thrown.
+     */
+    @JvmSynthetic
+    public suspend fun adapt(
+        adapter: InputAdapterCall<*, M>,
+        workflow: Any?,
+        got: Got<InputAdapterKind>,
+    ): Supplied?
+
+    /**
+     * Calls [provider], which [accepts] took, with [workflow] and what it [got]: `null` when it
+     * returned `null`, which only Java code can. What it throws is thrown.
+     */
+    @JvmSynthetic
+    public suspend fun provide(
+        provider: ProviderCall<*, *, *, *>?,
+        workflow: Any?,
+        got: Got<*>,
+    ): Provided<*>?
 
     /**
      * Builds the step for one attempt with [factory], from what it [got]: `null` when the factory

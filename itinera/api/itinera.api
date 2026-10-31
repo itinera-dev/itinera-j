@@ -262,10 +262,12 @@ public abstract interface class org/itineradev/itinera/engine/Parts {
 	public abstract fun accepts (Lorg/itineradev/itinera/step/RescueFactory;)Z
 	public abstract fun accepts (Lorg/itineradev/itinera/step/StepFactory;)Z
 	public abstract fun accepts (Lorg/itineradev/itinera/workflow/InputAdapterCall;)Z
+	public abstract synthetic fun adapt (Lorg/itineradev/itinera/workflow/InputAdapterCall;Ljava/lang/Object;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract synthetic fun build (Lorg/itineradev/itinera/step/StepFactory;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract synthetic fun dispatcher (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract synthetic fun ensureActive (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun getMode ()Lorg/itineradev/itinera/workflow/Mode;
+	public abstract synthetic fun provide (Lorg/itineradev/itinera/service/ProviderCall;Ljava/lang/Object;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class org/itineradev/itinera/engine/PolicyDraft {
@@ -340,11 +342,13 @@ public final class org/itineradev/itinera/engine/SyncParts : org/itineradev/itin
 	public fun accepts (Lorg/itineradev/itinera/step/RescueFactory;)Z
 	public fun accepts (Lorg/itineradev/itinera/step/StepFactory;)Z
 	public fun accepts (Lorg/itineradev/itinera/workflow/InputAdapterCall;)Z
+	public synthetic fun adapt (Lorg/itineradev/itinera/workflow/InputAdapterCall;Ljava/lang/Object;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public synthetic fun build (Lorg/itineradev/itinera/step/StepFactory;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public synthetic fun dispatcher (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public synthetic fun ensureActive (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public synthetic fun getMode ()Lorg/itineradev/itinera/workflow/Mode;
 	public fun getMode ()Lorg/itineradev/itinera/workflow/Sync;
+	public synthetic fun provide (Lorg/itineradev/itinera/service/ProviderCall;Ljava/lang/Object;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class org/itineradev/itinera/engine/ValueType {

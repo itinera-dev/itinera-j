@@ -9,7 +9,9 @@ import org.itineradev.itinera.report.DispatcherFactory
 import org.itineradev.itinera.report.Reporter
 import org.itineradev.itinera.report.ReporterOf
 import org.itineradev.itinera.request.Got
+import org.itineradev.itinera.request.InputAdapterKind
 import org.itineradev.itinera.request.StepKind
+import org.itineradev.itinera.service.Provided
 import org.itineradev.itinera.service.ProviderCall
 import org.itineradev.itinera.service.SyncProvider
 import org.itineradev.itinera.step.RescueFactory
@@ -17,6 +19,7 @@ import org.itineradev.itinera.step.StepFactory
 import org.itineradev.itinera.step.SyncRescueFactory
 import org.itineradev.itinera.step.SyncStepFactory
 import org.itineradev.itinera.workflow.InputAdapterCall
+import org.itineradev.itinera.workflow.Supplied
 import org.itineradev.itinera.workflow.Sync
 import org.itineradev.itinera.workflow.SyncInputAdapter
 
@@ -45,6 +48,21 @@ public class SyncParts(private val factory: DispatcherFactory) : Parts<Sync> {
 
     @JvmSynthetic
     override suspend fun dispatcher(): Delivery? = nullable(factory.create())?.let(::SyncDelivery)
+
+    @JvmSynthetic
+    override suspend fun adapt(
+        adapter: InputAdapterCall<*, Sync>,
+        workflow: Any?,
+        got: Got<InputAdapterKind>,
+    ): Supplied? = nullable(returned<SyncInputAdapter<Any?>>(adapter).adapt(workflow, got))
+
+    @JvmSynthetic
+    override suspend fun provide(
+        provider: ProviderCall<*, *, *, *>?,
+        workflow: Any?,
+        got: Got<*>,
+    ): Provided<*>? =
+        nullable(returned<SyncProvider<Any?, Any?, Any>>(provider).provide(workflow, returned(got)))
 
     @JvmSynthetic
     override suspend fun build(factory: StepFactory<Sync>, got: Got<StepKind<Sync>>): Running? =

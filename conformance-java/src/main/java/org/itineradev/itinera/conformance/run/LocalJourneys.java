@@ -60,7 +60,7 @@ public final class LocalJourneys implements Journeys {
       builder.inputAdapter(adapterOf(adapter));
     }
     for (var provider : workflow.providers()) {
-      builder.provider(providerOf(provider, Services.classOf(provider.type())));
+      builder.provider(providerOf(provider, witness));
     }
     var reporters = workflow.reporters();
     for (var name : reporters == null ? List.<String>of() : reporters) {
@@ -78,10 +78,12 @@ public final class LocalJourneys implements Journeys {
       throw new ModelException(
           "Java hands no asynchronous step to LocalExecutor: it writes synchronous workflows only");
     }
+    var scripted = new Scripted(script);
     var what = Scripts.notRunYetIn(script);
-    var factory = what == null ? witness.watching(name, Scripts.mockOf(script)) : notRunYet(what);
-    var builder = Scripts.scriptedBy(StepDescriptor.builder(name, factory), script);
-    script.services().stream().map(Services::requestOf).forEach(builder::request);
+    var factory =
+        what == null ? witness.watching(name, Scripts.mockOf(script), scripted) : notRunYet(what);
+    var builder =
+        scripted.declaredOn(Scripts.scriptedBy(StepDescriptor.builder(name, factory), script));
     if (script.hasRescueStep()) {
       builder.rescue(rescueOf(model.step(name + "_rescue")));
     }
@@ -110,43 +112,52 @@ public final class LocalJourneys implements Journeys {
           "Java hands no asynchronous input adapter to LocalExecutor: it writes synchronous"
               + " workflows only");
     }
+    var adapting = new Adapting(adapter);
     var steps = adapter.steps();
     InputAdapterBuilder<Scenario, Sync> builder =
         InputAdapterDescriptor.builder(
-            adapter.name(),
-            steps.get(0),
-            (scenario, got) -> {
-              throw new NotRunYet("input adapters");
-            });
+            adapter.name(), steps.get(0), (scenario, got) -> adapting.supplied(got));
     steps.subList(1, steps.size()).forEach(builder::step);
-    return builder.build();
+    return adapting.declaredOn(builder).build();
+  }
+
+  private static ProviderDescriptor<Scenario, Sync> providerOf(
+      ProviderModel provider, Witness witness) {
+    if (provider.isAsynchronous()) {
+      throw new ModelException(
+          "Java hands no asynchronous service provider to LocalExecutor: it writes synchronous"
+              + " workflows only");
+    }
+    return providerOf(provider, witness, Services.classOf(provider.type()));
   }
 
   private static <T> ProviderDescriptor<Scenario, Sync> providerOf(
-      ProviderModel provider, Class<T> type) {
+      ProviderModel provider, Witness witness, Class<T> type) {
     return switch (provider.scope()) {
-      case JOURNEY ->
-          Services.servingOnly(
-                  ProviderDescriptor.<Scenario, T>builder(
-                      provider.name(),
-                      provider.key(),
-                      type,
-                      (scenario, got) -> {
-                        throw new NotRunYet("service providers");
-                      }),
-                  provider)
-              .build();
-      case ATTEMPT ->
-          Services.servingOnly(
-                  ProviderDescriptor.<Scenario, T>perAttempt(
-                      provider.name(),
-                      provider.key(),
-                      type,
-                      (scenario, got) -> {
-                        throw new NotRunYet("service providers");
-                      }),
-                  provider)
-              .build();
+      case JOURNEY -> {
+        var providing = Providing.ofJourney(provider, witness);
+        yield Services.servingOnly(
+                providing.declaredOn(
+                    ProviderDescriptor.<Scenario, T>builder(
+                        provider.name(),
+                        provider.key(),
+                        type,
+                        (scenario, got) -> providing.provided(got, type))),
+                provider)
+            .build();
+      }
+      case ATTEMPT -> {
+        var providing = Providing.ofAttempt(provider, witness);
+        yield Services.servingOnly(
+                providing.declaredOn(
+                    ProviderDescriptor.<Scenario, T>perAttempt(
+                        provider.name(),
+                        provider.key(),
+                        type,
+                        (scenario, got) -> providing.provided(got, type))),
+                provider)
+            .build();
+      }
     };
   }
 
