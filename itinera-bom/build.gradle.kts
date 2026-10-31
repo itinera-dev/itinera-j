@@ -6,6 +6,7 @@ dependencies {
     constraints {
         api(project(":itinera"))
         api(project(":itinera-kotlin"))
+        api(project(":itinera-java"))
         api(project(":itinera-testing"))
     }
 }

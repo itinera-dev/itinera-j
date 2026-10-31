@@ -15,4 +15,12 @@ dependencyResolutionManagement {
 
 rootProject.name = "itinera-j"
 
-include("itinera", "itinera-kotlin", "itinera-testing", "itinera-bom", "conformance")
+include(
+    "itinera",
+    "itinera-kotlin",
+    "itinera-java",
+    "itinera-testing",
+    "itinera-bom",
+    "conformance",
+    "conformance-java",
+)

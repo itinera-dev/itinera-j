@@ -25,23 +25,25 @@ One Gradle build, with the Kotlin DSL, a module per artifact, and every artifact
 |---|---|---|
 | `itinera` | yes | The core, written in Kotlin, which every application depends on: values, events, the synchronous parts, the builder, descriptors, the engine and `LocalExecutor`. It brings Kotlin's standard library only |
 | `itinera-kotlin` | yes | What Kotlin applications add: asynchronous workflows on coroutines, the reader and value walk for Kotlin classes, and the reified forms. It brings kotlin-reflect and kotlinx.coroutines |
-| `itinera-java` | yes, from stage 3 | What Java applications add: the Java face of the core |
+| `itinera-java` | yes | What Java applications add: the Java face of the core, which grows from stage 3 with whatever Java finds awkward in the core |
 | `itinera-testing` | yes | Test support, which an application adds to its tests only |
 | `itinera-checker` | yes, from stage 12 | Compile-time checks of the annotations, for KSP and javac |
 | `itinera-bom` | yes | The bill of materials: the version of every artifact above |
 | `conformance` | no | The Kotlin conformance runner |
-| `conformance-java` | no, from stage 3 | The Java conformance runner, written wholly in Java |
+| `conformance-java` | no | The Java conformance runner, written wholly in Java |
 
 Each published artifact is a Java module named after it, such as `org.itineradev.itinera` and `org.itineradev.itinera.kotlin`, with its descriptor in `src/main/java/module-info.java`. Kotlin compiles the module's classes, and javac then compiles the descriptor with those classes patched into the module.
 
 What the modules share lives in `build-logic`, a build included by `settings.gradle.kts`, as convention plugins:
 
-- `itinera.kotlin-jvm`, what every Kotlin project shares, published or not: Kotlin on the JDK 25 toolchain, compiled for JVM 17 with `apiVersion` one release behind the compiler and the matching standard library, warnings as errors in Kotlin and javac, JUnit, Spotless, detekt and dependency locking;
+- `itinera.jvm`, what every project compiled for the JVM shares, in Java or Kotlin, published or not: the JDK 25 toolchain, javac compiling for JVM 17 with every warning an error, JUnit on the JDK `-Pitinera.test-jdk` names, Spotless for Java and the build script, and dependency locking;
+- `itinera.kotlin-jvm`, applied by every Kotlin project on top of `itinera.jvm`: Kotlin compiled for JVM 17 with `apiVersion` one release behind the compiler and the matching standard library, warnings as errors, ktfmt and detekt;
 - `itinera.kotlin-library`, applied by every published library on top of `itinera.kotlin-jvm`: explicit API mode, the module descriptor, Dokka, the ABI dump and the licence check;
 - `itinera.conformance-runner`, applied by the Kotlin runner on top of `itinera.kotlin-jvm`: the `application` plugin, the opt-in to `@ExperimentalItineraApi`, and `run` started from the repository's root, so the paths a runner reads are relative to where the command runs;
+- `itinera.java-conformance-runner`, applied by the Java runner on top of `itinera.jvm`: the `application` plugin, and `run` started from the repository's root;
 - `itinera.published`, applied by every published artifact: Maven Central through the `com.vanniktech.maven.publish` plugin, the POM Central requires, signing when a key is given, and the `Package` repository under `build/package`;
 - `itinera.bom`, applied by `itinera-bom`;
-- `itinera.raised-dependencies`, applied by `itinera.kotlin-jvm`, `itinera.bom` and `itinera.root`: `RaiseGuava`, which raises Guava wherever it is resolved, as "Dependencies" says;
+- `itinera.raised-dependencies`, applied by `itinera.jvm`, `itinera.bom` and `itinera.root`: `RaiseGuava`, which raises Guava wherever it is resolved, as "Dependencies" says;
 - `itinera.root`, applied by the root project: the formatting of the build's own files and the check that the two manifests agree, `CheckManifests` over `ManifestAgreement`, which `build-logic`'s own tests check.
 
 `gradle/libs.versions.toml` holds every version: Kotlin, the standard library applications get, and every plugin and library, but for two that Gradle reads before the catalogue exists: the toolchain resolver plugin in `settings.gradle.kts`, and Gradle itself in `gradle/wrapper/gradle-wrapper.properties`.
@@ -63,7 +65,7 @@ Every one of these is a required check in CI, each one Gradle task:
 - `./gradlew checkManifests`: the Kotlin and the Java manifests agree, as "Conformance" says;
 - `./gradlew :build-logic:check`: the tests of the build's own code.
 
-`./gradlew check dokkaGenerate publishAllPublicationsToPackageRepository` runs all of them, the tests on JDK 25. CI also runs `advisories`, [OSV-Scanner](https://google.github.io/osv-scanner/) over the lock files and the verification metadata through its GitHub action, and `Kotlin conformance`. Each week, CI also runs the tests on the newest Kotlin, pre-releases included, and on the newest JDK.
+`./gradlew check dokkaGenerate publishAllPublicationsToPackageRepository` runs all of them, the tests on JDK 25. CI also runs `advisories`, [OSV-Scanner](https://google.github.io/osv-scanner/) over the lock files and the verification metadata through its GitHub action, `Kotlin conformance` and `Java conformance`. Each week, CI also runs the tests on the newest Kotlin, pre-releases included, and on the newest JDK.
 
 ## Dependencies
 
@@ -71,7 +73,7 @@ Every configuration of every project is locked, in `gradle.lockfile` beside its 
 
 A change to a version, a dependency or a plugin rewrites both in the same commit:
 
-1. `./gradlew :itinera:dependencies :itinera-kotlin:dependencies :itinera-testing:dependencies :itinera-bom:dependencies :conformance:dependencies :build-logic:dependencies dependencies --write-locks`, with every new project added to the list;
+1. `./gradlew :itinera:dependencies :itinera-kotlin:dependencies :itinera-java:dependencies :itinera-testing:dependencies :itinera-bom:dependencies :conformance:dependencies :conformance-java:dependencies :build-logic:dependencies dependencies --write-locks`, with every new project added to the list;
 2. `GRADLE_USER_HOME=$(mktemp -d) ./gradlew --write-verification-metadata sha256 check dokkaGenerate publishAllPublicationsToPackageRepository --rerun-tasks`, which fetches every artifact the build uses and records it. The empty Gradle home matters: with a warm cache, Gradle never fetches the parent POMs and BOMs it already holds, so it never records them, and CI, which starts empty, then fails verification.
 
 Read the diff of both files: every new entry is a dependency the change meant to add.
@@ -84,9 +86,11 @@ Two manifests, each of the shape the conformance cases' FORMAT.md describes: `co
 
 The two must agree, which `./gradlew checkManifests` checks: the same `cases`; the same `proposals`; Kotlin's `capabilities` are Java's with `async`, which only Kotlin claims; and under `impossible`, Java lists Kotlin's tags but `unexpected-result` and `non-string-journey-id`, which Java can write and never lists, each shared tag with the same scenarios, by `feature` and `scenario`. Each manifest names its own language's proof.
 
-In CI, the `Kotlin conformance` job runs the `run-conformance` action of [itinera-dev/actions](https://github.com/itinera-dev/actions) with `language: kotlin`: it reads `conformance.json`, checks the excluded scenarios, starts the Kotlin runner, `./gradlew :conformance:run`, on the scenarios whose proposals are all listed, and uploads the report, `cucumber-kotlin.json` and `exclusions-kotlin.json`, as the artifact `conformance-report-kotlin`. The Java runner, `./gradlew :conformance-java:run`, follows in stage 3, in a job of its own giving `manifest: conformance-java.json` and `language: java`.
+In CI, the `Kotlin conformance` job runs the `run-conformance` action of [itinera-dev/actions](https://github.com/itinera-dev/actions) with `language: kotlin`: it reads `conformance.json`, checks the excluded scenarios, starts the Kotlin runner, `./gradlew :conformance:run`, on the scenarios whose proposals are all listed, and uploads the report, `cucumber-kotlin.json` and `exclusions-kotlin.json`, as the artifact `conformance-report-kotlin`. The `Java conformance` job does the same with `manifest: conformance-java.json` and `language: java`: it reads `conformance-java.json`, starts the Java runner, `./gradlew :conformance-java:run`, and uploads `cucumber-java.json` and `exclusions-java.json` as the artifact `conformance-report-java`.
 
 The Kotlin runner runs Cucumber-JVM twice, once for each column: the synchronous column, on `LocalExecutor`, and the asynchronous one, on `AsyncLocalExecutor`. A scenario tagged `@capability-async` runs only in the asynchronous column, and one tagged `@capability-sync` only in the synchronous one. The runner merges the two reports into one, each scenario tagged with its column, `@executor-local` or `@executor-async`, the second copy of a scenario that ran in both with a line of its own, and fails when a scenario, in either column, fails or uses a sentence the runner does not define. Its Given sentences fill a plain scenario model, in `conformance/src/main/kotlin/org/itineradev/itinera/conformance/model`, and its tests run it over the features under `conformance/src/test/resources/features`.
+
+The Java runner, written wholly in Java against `itinera-java` and `itinera-testing`, runs Cucumber-JVM once, on `LocalExecutor`, since Java writes synchronous workflows only: the action never selects a scenario tagged `@capability-async`, which `conformance-java.json` does not claim, so its report has one line per scenario and no column tags. It fails as the Kotlin runner does. Its Given sentences fill a scenario model of its own, in `conformance-java/src/main/java/org/itineradev/itinera/conformance/model`, and its tests run it over the features under `conformance-java/src/test/resources/features`.
 
 To run the cases yourself, check out [itinera-dev/conformance](https://github.com/itinera-dev/conformance) at the tag the manifests pin, then run a runner from this repository with:
 
@@ -125,9 +129,9 @@ Pull requests merge with a merge commit, never squashed, because a squash folds 
 Every artifact is published to [Maven Central](https://central.sonatype.com/) under the group `org.itinera-dev`, at one version. A maintainer requests a release by pushing, on `main`, an annotated tag `v` followed by its version, such as `v0.1.0-beta.1`, with the message `itinera-j <version>`, after the pull request that sets the version and adds its section to `CHANGELOG.md` has merged. The release workflow, `.github/workflows/release.yml`, then runs four jobs, each waiting for the one before:
 
 1. **release gate**: the `release-gate` action of itinera-dev/actions refuses the tag unless it matches the version in `gradle.properties`, the commit is on `main`, `CHANGELOG.md` has a section for the version, and the manifests list every tier 1 proposal of the pinned cases, except one whose every case needs a capability the manifest does not claim. The action reads `Cargo.toml` and `package.json` today; it learns to read `gradle.properties` and the second manifest before the first release;
-2. **CI**: the whole of `.github/workflows/ci.yml` runs again on the tagged commit, since its run on `main` after a merge blocks nothing, and its conformance job keeps the Kotlin report;
+2. **CI**: the whole of `.github/workflows/ci.yml` runs again on the tagged commit, since its run on `main` after a merge blocks nothing, and its conformance jobs keep the Kotlin and the Java reports;
 3. **Maven Central**: in the `maven-central` environment, whose deployment rule lets only tags `v*` use it, `./gradlew publishAndReleaseToMavenCentral` signs every artifact, uploads them to the Central Portal as one deployment and releases it, with the portal's user token and the signing key taken from the environment's secrets `MAVEN_CENTRAL_USERNAME`, `MAVEN_CENTRAL_PASSWORD`, `SIGNING_KEY` and `SIGNING_KEY_PASSWORD`;
-4. **GitHub release**: the `create-release` action of itinera-dev/actions creates the release with the notes of the version's changelog section, as a pre-release for a version such as `0.1.0-beta.1`, and attaches the Kotlin conformance report of the CI run, `cucumber-kotlin.json` and `exclusions-kotlin.json`; once the Java runner lands in stage 3, its report, `cucumber-java.json` and `exclusions-java.json`, is attached beside it.
+4. **GitHub release**: the `create-release` action of itinera-dev/actions creates the release with the notes of the version's changelog section, as a pre-release for a version such as `0.1.0-beta.1`, and attaches both conformance reports of the CI run: the Kotlin one, `cucumber-kotlin.json` and `exclusions-kotlin.json`, and the Java one, `cucumber-java.json` and `exclusions-java.json`.
 
 A version published to Maven Central can never be deleted or replaced, which is why the gate and CI come first. Before pushing the tag, the maintainer runs `./gradlew check dokkaGenerate publishAllPublicationsToPackageRepository` at the commit to be tagged.
 
