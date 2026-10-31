@@ -1,6 +1,5 @@
 package org.itineradev.itinera.step.async
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.request.Got
 import org.itineradev.itinera.request.StepKind
 import org.itineradev.itinera.step.Outcome
@@ -14,7 +13,6 @@ import org.itineradev.itinera.workflow.Async
  *
  * @sample org.itineradev.itinera.step.async.samples.asyncFactories
  */
-@ExperimentalItineraApi
 public fun interface AsyncStepFactory : StepFactory<Async> {
     /**
      * Builds the step for one attempt, from the answers to the requests its descriptor declares.
@@ -31,7 +29,6 @@ public fun interface AsyncStepFactory : StepFactory<Async> {
  *
  * @sample org.itineradev.itinera.step.async.samples.asyncFactories
  */
-@ExperimentalItineraApi
 public fun interface AsyncStepRun {
     /**
      * Runs the attempt.

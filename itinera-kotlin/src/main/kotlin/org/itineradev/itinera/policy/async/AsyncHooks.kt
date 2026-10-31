@@ -1,6 +1,5 @@
 package org.itineradev.itinera.policy.async
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.policy.HookCall
 import org.itineradev.itinera.request.Got
 import org.itineradev.itinera.workflow.Async
@@ -15,7 +14,6 @@ import org.itineradev.itinera.workflow.Async
  * @param R what it returns: `OnSuccess` or `OnFailure`.
  * @sample org.itineradev.itinera.policy.async.samples.asyncPolicies
  */
-@ExperimentalItineraApi
 public fun interface AsyncHook<in P, K, out R> : HookCall<Async, P, K, R> {
     /**
      * Calls the hook.
@@ -33,7 +31,6 @@ public fun interface AsyncHook<in P, K, out R> : HookCall<Async, P, K, R> {
  * @param K the kind of the hook, which says what it may request.
  * @sample org.itineradev.itinera.policy.async.samples.asyncPolicies
  */
-@ExperimentalItineraApi
 public fun interface AsyncWorkflowHook<in P, K> : HookCall<Async, P, K, Unit> {
     /**
      * Calls the hook.

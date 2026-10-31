@@ -1,6 +1,5 @@
 package org.itineradev.itinera.workflow
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.Name
 
 /**
@@ -8,7 +7,6 @@ import org.itineradev.itinera.Name
  *
  * @sample org.itineradev.itinera.samples.names
  */
-@ExperimentalItineraApi
 public class AdapterName private constructor(name: String) : Name(name, "input adapter") {
     /** Makes input adapter names. */
     public companion object {

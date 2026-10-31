@@ -1,7 +1,6 @@
 package org.itineradev.itinera.report
 
 import java.io.PrintStream
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.event.Event
 
 /**
@@ -10,7 +9,6 @@ import org.itineradev.itinera.event.Event
  *
  * @sample org.itineradev.itinera.report.samples.debugging
  */
-@ExperimentalItineraApi
 public class DebugReporter internal constructor(private val out: PrintStream) : Reporter {
     /**
      * A reporter printing on standard output.

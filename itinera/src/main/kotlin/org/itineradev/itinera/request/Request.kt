@@ -1,6 +1,5 @@
 package org.itineradev.itinera.request
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Answer
 import org.itineradev.itinera.engine.Asked
 
@@ -17,7 +16,6 @@ import org.itineradev.itinera.engine.Asked
  * @param T the type of its answer.
  * @sample org.itineradev.itinera.request.samples.requests
  */
-@ExperimentalItineraApi
 public sealed class Request<in K, out T>(internal val asked: Asked, internal val answer: Answer) {
     /**
      * What the request asks for, such as `input amount: Long` or `contributor`.

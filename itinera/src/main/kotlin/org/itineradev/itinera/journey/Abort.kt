@@ -1,6 +1,5 @@
 package org.itineradev.itinera.journey
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.event.JourneyAbort
 import org.itineradev.itinera.step.StepName
 
@@ -10,7 +9,6 @@ import org.itineradev.itinera.step.StepName
  *
  * @sample org.itineradev.itinera.journey.samples.results
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class Abort(
     /** The abort reason and what it carries, as `journey_aborted` carries them. */

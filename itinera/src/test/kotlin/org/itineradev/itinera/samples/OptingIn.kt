@@ -1,7 +1,6 @@
 package org.itineradev.itinera.samples
 
 import org.itineradev.itinera.ExperimentalItineraApi
-import org.itineradev.itinera.value.TypeToken
+import org.itineradev.itinera.service.ProviderName
 
-@OptIn(ExperimentalItineraApi::class)
-fun optingIn(): TypeToken<Long> = TypeToken.of(Long::class.java)
+@OptIn(ExperimentalItineraApi::class) fun optingIn(): ProviderName = ProviderName.of("stock")

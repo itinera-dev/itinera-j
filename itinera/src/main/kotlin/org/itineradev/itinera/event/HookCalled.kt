@@ -1,7 +1,6 @@
 package org.itineradev.itinera.event
 
 import java.time.Instant
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.JourneyId
 import org.itineradev.itinera.policy.Lifecycle
 import org.itineradev.itinera.workflow.WorkflowName
@@ -12,7 +11,6 @@ import org.itineradev.itinera.workflow.WorkflowName
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 public sealed interface HookCalled : Event {
     /** The hook. */
     public val source: HookSource
@@ -23,7 +21,6 @@ public sealed interface HookCalled : Event {
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class StepHookCalled(
     override val sequence: Long,
@@ -43,7 +40,6 @@ public data class StepHookCalled(
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class WorkflowHookCalled(
     override val sequence: Long,

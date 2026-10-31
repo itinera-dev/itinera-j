@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.request.kotlin
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.policy.KeepDefault
 import org.itineradev.itinera.policy.SyncHook
 import org.itineradev.itinera.request.Answers

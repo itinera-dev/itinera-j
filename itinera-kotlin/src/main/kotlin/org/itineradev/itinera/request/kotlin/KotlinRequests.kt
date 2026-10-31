@@ -17,7 +17,6 @@ import org.itineradev.itinera.value.kotlin.typeToken
  * @throws IllegalArgumentException when no value can be of [T].
  * @sample org.itineradev.itinera.request.kotlin.samples.reifiedRequests
  */
-@ExperimentalItineraApi
 public inline fun <reified T> Requests.input(key: String): Request<BuildKind, T> =
     input(key, typeToken<T>())
 
@@ -29,7 +28,6 @@ public inline fun <reified T> Requests.input(key: String): Request<BuildKind, T>
  * @throws IllegalArgumentException when no value can be of [T].
  * @sample org.itineradev.itinera.request.kotlin.samples.reifiedRequests
  */
-@ExperimentalItineraApi
 public inline fun <reified T> Requests.optionalInput(key: String): Request<BuildKind, T?> =
     optionalInput(key, typeToken<T>())
 
@@ -49,7 +47,6 @@ public inline fun <reified T : Any> Requests.service(key: String): ServiceReques
  * @throws IllegalArgumentException when no value can be of [T].
  * @sample org.itineradev.itinera.request.kotlin.samples.reifiedHookRequests
  */
-@ExperimentalItineraApi
 public inline fun <reified T> Requests.fromStep(key: String): Request<FromStepKind, T> =
     fromStep(key, typeToken<T>())
 
@@ -61,7 +58,6 @@ public inline fun <reified T> Requests.fromStep(key: String): Request<FromStepKi
  * @throws IllegalArgumentException when no value can be of [T].
  * @sample org.itineradev.itinera.request.kotlin.samples.reifiedHookRequests
  */
-@ExperimentalItineraApi
 public inline fun <reified T> Requests.optionalFromStep(key: String): Request<FromStepKind, T?> =
     optionalFromStep(key, typeToken<T>())
 
@@ -72,7 +68,6 @@ public inline fun <reified T> Requests.optionalFromStep(key: String): Request<Fr
  * @throws IllegalArgumentException when no value can be of [T].
  * @sample org.itineradev.itinera.request.kotlin.samples.reifiedHookRequests
  */
-@ExperimentalItineraApi
 public inline fun <reified T> Requests.fromWorkflow(key: String): Request<WorkflowDataKind, T> =
     fromWorkflow(key, typeToken<T>())
 
@@ -84,7 +79,6 @@ public inline fun <reified T> Requests.fromWorkflow(key: String): Request<Workfl
  * @throws IllegalArgumentException when no value can be of [T].
  * @sample org.itineradev.itinera.request.kotlin.samples.reifiedHookRequests
  */
-@ExperimentalItineraApi
 public inline fun <reified T> Requests.optionalFromWorkflow(
     key: String
 ): Request<WorkflowDataKind, T?> = optionalFromWorkflow(key, typeToken<T>())
@@ -95,5 +89,4 @@ public inline fun <reified T> Requests.optionalFromWorkflow(
  * @throws IllegalArgumentException when [R] is not an interface marked `@Role`.
  * @sample org.itineradev.itinera.request.kotlin.samples.reifiedHookRequests
  */
-@ExperimentalItineraApi
 public inline fun <reified R : Any> Requests.role(): Request<RoleKind, R> = role(R::class.java)

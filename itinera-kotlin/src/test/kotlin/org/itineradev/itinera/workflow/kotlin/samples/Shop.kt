@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.workflow.kotlin.samples
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.step.Outcome
 import org.itineradev.itinera.step.SyncStepRun
 import org.itineradev.itinera.workflow.StepDescriptor

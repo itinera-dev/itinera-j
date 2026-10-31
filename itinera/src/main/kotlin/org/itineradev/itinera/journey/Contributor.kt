@@ -1,7 +1,5 @@
 package org.itineradev.itinera.journey
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * What a step or a hook contributes data to the data bag through, made for one attempt or one call
  * and closed when it ends. A step's contributions are committed only when its attempt succeeds; a
@@ -12,7 +10,6 @@ import org.itineradev.itinera.ExperimentalItineraApi
  *
  * @sample org.itineradev.itinera.journey.samples.contributors
  */
-@ExperimentalItineraApi
 public fun interface Contributor {
     /**
      * Contributes [value] under [key].

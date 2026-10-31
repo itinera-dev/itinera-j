@@ -9,7 +9,6 @@ import org.itineradev.itinera.step.StepName
  *
  * @sample org.itineradev.itinera.event.samples.aborts
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class InvalidLifecycle(override val step: StepName) : JourneyAbort {
     override val reason: AbortReason
@@ -24,7 +23,6 @@ public data class InvalidLifecycle(override val step: StepName) : JourneyAbort {
  *
  * @sample org.itineradev.itinera.event.samples.aborts
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class HookFailed(override val step: StepName?, override val errorMessage: String) :
     JourneyAbort {
@@ -37,7 +35,6 @@ public data class HookFailed(override val step: StepName?, override val errorMes
  *
  * @sample org.itineradev.itinera.event.samples.aborts
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class ReporterFailed(override val step: StepName?, override val errorMessage: String) :
     JourneyAbort {

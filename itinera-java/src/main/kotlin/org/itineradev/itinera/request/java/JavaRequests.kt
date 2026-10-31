@@ -1,7 +1,6 @@
 package org.itineradev.itinera.request.java
 
 import java.util.Optional
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.excludingNull
 import org.itineradev.itinera.request.BuildKind
 import org.itineradev.itinera.request.ErrorKind
@@ -18,7 +17,6 @@ import org.itineradev.itinera.value.TypeToken
  *
  * @sample org.itineradev.itinera.request.java.samples.javaRequests
  */
-@ExperimentalItineraApi
 public object JavaRequests {
     /**
      * An optional input: data from the workflow under [key], read as [type], whose answer is an

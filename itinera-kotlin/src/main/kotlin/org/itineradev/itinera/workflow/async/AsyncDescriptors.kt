@@ -58,7 +58,6 @@ import org.itineradev.itinera.workflow.WorkflowDescriptor
  * @throws IllegalArgumentException when [name] is empty.
  * @sample org.itineradev.itinera.workflow.async.samples.asyncBuilding
  */
-@ExperimentalItineraApi
 public fun <W> asyncBuilder(name: String): WorkflowBuilder<W, Async> =
     Builders.workflow(name, Async)
 
@@ -69,7 +68,6 @@ public fun <W> asyncBuilder(name: String): WorkflowBuilder<W, Async> =
  * @throws IllegalArgumentException when [name] is empty.
  * @sample org.itineradev.itinera.workflow.async.samples.asyncBuilding
  */
-@ExperimentalItineraApi
 public fun asyncStep(name: String, factory: AsyncStepFactory): StepBuilder<Async> =
     Builders.step(name, factory)
 
@@ -89,7 +87,6 @@ public fun asyncRescueStep(factory: AsyncRescueFactory): RescueStepBuilder<Async
  * @throws IllegalArgumentException when [name] or [step] is empty.
  * @sample org.itineradev.itinera.workflow.async.samples.asyncAdapters
  */
-@ExperimentalItineraApi
 public fun <W> asyncInputAdapter(
     name: String,
     step: String,
@@ -103,7 +100,6 @@ public fun <W> asyncInputAdapter(
  * @throws Violations with every mistake in the class's declaration.
  * @sample org.itineradev.itinera.workflow.async.samples.asyncDescribing
  */
-@ExperimentalItineraApi
 public fun <W : ItineraAsyncWorkflow> asyncDescriptorOf(
     type: KClass<W>
 ): WorkflowDescriptor<W, Async> = returned(asynchronous.get(type.java))

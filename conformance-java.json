@@ -1,6 +1,6 @@
 {
   "cases": "v0.1.0-rc.19",
-  "proposals": [12, 32, 42, 56, 61, 62, 63, 64, 65, 116, 121],
+  "proposals": [2, 8, 9, 10, 11, 12, 24, 27, 32, 40, 41, 42, 49, 54, 55, 56, 57, 58, 60, 61, 62, 63, 64, 65, 81, 83, 85, 91, 106, 116, 121],
   "capabilities": ["sync"],
   "impossible": {
     "bag-write": [
@@ -10,6 +10,16 @@
         "proof": {
           "test": "aJavaAdaptersAccessToTheDataBagHasNoMethodThatWrites",
           "file": "itinera-java/src/compileFailTest/java/org/itineradev/itinera/workflow/JavaAdapterTypesTest.java"
+        }
+      }
+    ],
+    "invalid-lifecycle": [
+      {
+        "feature": "cases/tier-1/0010-hooks-lifecycles-and-roles/order-and-lifecycles.feature",
+        "scenario": "A lifecycle a hook may not return aborts the journey",
+        "proof": {
+          "test": "aJavaFailureHookNeverFinishesTheWorkflow",
+          "file": "itinera-java/src/compileFailTest/java/org/itineradev/itinera/policy/JavaPolicyTypesTest.java"
         }
       }
     ],
