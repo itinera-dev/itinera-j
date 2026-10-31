@@ -5,6 +5,9 @@ package org.itineradev.itinera.engine
 import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Journeys.Shop
 import org.itineradev.itinera.engine.Journeys.succeeding
+import org.itineradev.itinera.service.Provided
+import org.itineradev.itinera.service.ProviderDescriptor
+import org.itineradev.itinera.service.ProviderName
 import org.itineradev.itinera.step.StepName
 import org.itineradev.itinera.workflow.AdapterName
 import org.itineradev.itinera.workflow.InputAdapterBuilder
@@ -53,6 +56,20 @@ class AdaptersTest {
         assertEquals(listOf(adapter), shop().inputAdapter(adapter).build().inputAdapters)
     }
 
+    @Test
+    fun `an adapter and a service provider may have the same name`() {
+        val workflow =
+            shop()
+                .inputAdapter(adapter("pricing", "charge").build())
+                .provider(provider("pricing"))
+                .build()
+        assertEquals(
+            listOf(pricing) to listOf(ProviderName.of("pricing")),
+            workflow.inputAdapters.map(InputAdapterDescriptor<Shop, Sync>::name) to
+                workflow.providers.map(ProviderDescriptor<Shop, Sync>::name),
+        )
+    }
+
     companion object {
         private val pricing = AdapterName.of("pricing")
         private val charge = StepName.of("charge")
@@ -93,6 +110,12 @@ class AdaptersTest {
 
         private fun adapter(name: String, step: String): InputAdapterBuilder<Shop, Sync> =
             InputAdapterDescriptor.builder(name, step) { _, _ -> Supplied.FromDataBag }
+
+        private fun provider(name: String): ProviderDescriptor<Shop, Sync> =
+            ProviderDescriptor.builder<Shop, String>(name, "labels", String::class.java) { _, _ ->
+                    Provided.Instance("label")
+                }
+                .build()
 
         private fun shop(): WorkflowBuilder<Shop, Sync> =
             WorkflowDescriptor.builder(Shop::class.java, "shop")
