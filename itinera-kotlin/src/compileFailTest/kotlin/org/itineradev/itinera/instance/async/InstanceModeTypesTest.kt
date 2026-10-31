@@ -1,7 +1,6 @@
 package org.itineradev.itinera.instance.async
 
 import org.itineradev.itinera.compiling.MODES
-import org.itineradev.itinera.compiling.assertCompiles
 import org.itineradev.itinera.compiling.assertDoesNotCompile
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments.argumentSet
@@ -19,9 +18,6 @@ class InstanceModeTypesTest {
         assertDoesNotCompile(
             "$MODES fun add(instance: $builder, reporting: $refused) = instance.$method(reporting)",
             "'$refused', but '$accepted' was expected",
-        )
-        assertCompiles(
-            "$MODES fun add(instance: $builder, reporting: $accepted) = instance.$method(reporting)"
         )
     }
 

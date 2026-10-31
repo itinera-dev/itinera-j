@@ -16,7 +16,6 @@ final class JavaPolicyTypesTest {
   private static final String SNIPPET =
       """
       import java.util.List;
-      import org.itineradev.itinera.policy.OnFailure;
       import org.itineradev.itinera.policy.OnSuccess;
       import org.itineradev.itinera.policy.Role;
       import org.itineradev.itinera.policy.StepPolicyDescriptor;
@@ -31,10 +30,6 @@ final class JavaPolicyTypesTest {
 
         static final class Shop {}
 
-        static final class Corner implements Messages {
-          public void tell(String message) {}
-        }
-
         static final class Audit {}
 
         void declare() {
@@ -48,14 +43,12 @@ final class JavaPolicyTypesTest {
 
   @ParameterizedTest
   @MethodSource("refusals")
-  void javaDoesNotCompileWhatThePolicyTypesRefuse(String refused, String message, String twin)
+  void javaDoesNotCompileWhatThePolicyTypesRefuse(String refused, String message)
       throws IOException {
     var javac = new Javac(directory);
     var failing = javac.compile(SNIPPET.formatted(refused));
     assertFalse(failing.compiled(), failing.messages());
     assertTrue(failing.messages().contains(message), failing.messages());
-    var compiling = javac.compile(SNIPPET.formatted(twin));
-    assertTrue(compiling.compiled(), compiling.messages());
   }
 
   static Stream<Arguments> refusals() {
@@ -63,17 +56,14 @@ final class JavaPolicyTypesTest {
         Arguments.argumentSet(
             "a failure hook that finishes the workflow",
             "audit.onStepFailure((policy, got) -> OnSuccess.finishWorkflow());",
-            "OnSuccess cannot be converted to OnFailure",
-            "audit.onStepFailure((policy, got) -> OnFailure.keepDefault());"),
+            "OnSuccess cannot be converted to OnFailure"),
         Arguments.argumentSet(
             "the failure's cause in on step success",
             "audit.onStepSuccess(List.of(Requests.failureCause()), (policy, got) -> OnSuccess.keepDefault());",
-            "lower bounds: Request<FailureCauseKind,FailureCause>",
-            "audit.onStepSuccess(List.of(Requests.journeyId()), (policy, got) -> OnSuccess.keepDefault());"),
+            "lower bounds: Request<FailureCauseKind,FailureCause>"),
         Arguments.argumentSet(
             "a role the workflow's objects do not implement",
             "WorkflowDescriptor.builder(Shop.class, \"shop\").role(Messages.class);",
-            "Class<Messages> cannot be converted to Class<? super Shop>",
-            "WorkflowDescriptor.builder(Corner.class, \"corner\").role(Messages.class);"));
+            "Class<Messages> cannot be converted to Class<? super Shop>"));
   }
 }

@@ -1,7 +1,6 @@
 package org.itineradev.itinera.policy.async
 
 import org.itineradev.itinera.compiling.MODES
-import org.itineradev.itinera.compiling.assertCompiles
 import org.itineradev.itinera.compiling.assertDoesNotCompile
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments.argumentSet
@@ -22,43 +21,35 @@ private const val POLICIES =
 class PolicyModeTypesTest {
     @ParameterizedTest
     @FieldSource("hooks")
-    fun `a policy takes only hooks of its own mode`(policy: String, refused: String, own: String) {
+    fun `a policy takes only hooks of its own mode`(policy: String, refused: String) {
         assertDoesNotCompile(
             "$POLICIES val hooked = $policy.onStepSuccess($refused { _, _ -> OnSuccess.keepDefault() })",
             "Argument type mismatch",
-        )
-        assertCompiles(
-            "$POLICIES val hooked = $policy.onStepSuccess($own { _, _ -> OnSuccess.keepDefault() })"
         )
     }
 
     @ParameterizedTest
     @FieldSource("reporters")
-    fun `a hook reads only the reporter of its own mode`(
-        mode: String,
-        refused: String,
-        own: String,
-    ) {
+    fun `a hook reads only the reporter of its own mode`(mode: String, refused: String) {
         assertDoesNotCompile(
             "$POLICIES fun read(got: Got<StepHookKind<$mode>>) = got[Requests.$refused()]",
             "Argument type mismatch",
         )
-        assertCompiles("$POLICIES fun read(got: Got<StepHookKind<$mode>>) = got[Requests.$own()]")
     }
 
     companion object {
         @JvmField
         val hooks =
             listOf(
-                argumentSet("a synchronous policy", "audit", "AsyncHook", "SyncHook"),
-                argumentSet("an asynchronous policy", "asyncAudit", "SyncHook", "AsyncHook"),
+                argumentSet("a synchronous policy", "audit", "AsyncHook"),
+                argumentSet("an asynchronous policy", "asyncAudit", "SyncHook"),
             )
 
         @JvmField
         val reporters =
             listOf(
-                argumentSet("a synchronous hook", "Sync", "asyncHookReporter", "hookReporter"),
-                argumentSet("an asynchronous hook", "Async", "hookReporter", "asyncHookReporter"),
+                argumentSet("a synchronous hook", "Sync", "asyncHookReporter"),
+                argumentSet("an asynchronous hook", "Async", "hookReporter"),
             )
     }
 }

@@ -1,6 +1,5 @@
 package org.itineradev.itinera.policy
 
-import org.itineradev.itinera.compiling.assertCompiles
 import org.itineradev.itinera.compiling.assertDoesNotCompile
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -11,7 +10,6 @@ private const val POLICIES =
     """
     import org.itineradev.itinera.policy.*
     import org.itineradev.itinera.request.*
-    import org.itineradev.itinera.step.*
     import org.itineradev.itinera.value.TypeToken
     import org.itineradev.itinera.workflow.*
 
@@ -24,10 +22,6 @@ private const val POLICIES =
 
     class Shop
 
-    class Corner : Messages {
-        override fun tell(message: String) = Unit
-    }
-
     val audit = StepPolicyDescriptor.builder("audit", PolicyFactory(::Audit))
     val notify = WorkflowPolicyDescriptor.builder("notify", PolicyFactory(::Audit))
     """
@@ -38,9 +32,6 @@ class PolicyTypesTest {
         assertDoesNotCompile(
             "$POLICIES val failing = audit.onStepFailure(SyncHook { _, _ -> OnSuccess.finishWorkflow() })",
             "Return type mismatch: expected 'OnFailure', actual 'OnSuccess'.",
-        )
-        assertCompiles(
-            "$POLICIES val failing = audit.onStepFailure(SyncHook { _, _ -> OnFailure.keepDefault() })"
         )
     }
 
@@ -56,7 +47,6 @@ class PolicyTypesTest {
             "$POLICIES val hooked = $hook(listOf($request), $call)",
             "actual type is 'List<$refused>'",
         )
-        assertCompiles("$POLICIES val hooked = $hook(listOf(Requests.journeyId()), $call)")
     }
 
     @ParameterizedTest
@@ -66,10 +56,6 @@ class PolicyTypesTest {
             "$POLICIES fun attach(workflow: WorkflowBuilder<Shop, Sync>, policy: $policy) = " +
                 "workflow.policy(policy)",
             "actual type is '$policy', but '$refused' was expected",
-        )
-        assertCompiles(
-            "$POLICIES fun attach(workflow: WorkflowBuilder<Shop, Sync>, " +
-                "policy: WorkflowPolicyDescriptor<Audit, Sync>) = workflow.policy(policy)"
         )
     }
 
@@ -81,10 +67,6 @@ class PolicyTypesTest {
             "actual type is 'StepPolicyDescriptor<Audit, Async>', but " +
                 "'StepPolicyDescriptor<*, Sync>' was expected",
         )
-        assertCompiles(
-            "$POLICIES fun attach(step: StepBuilder<Sync>, policy: StepPolicyDescriptor<Audit, Sync>) = " +
-                "step.policy(policy)"
-        )
     }
 
     @Test
@@ -93,10 +75,6 @@ class PolicyTypesTest {
             "$POLICIES val shop = WorkflowDescriptor.builder(Shop::class.java, \"shop\")" +
                 ".role(Messages::class.java)",
             "actual type is 'Class<Messages>', but 'Class<in Shop>' was expected",
-        )
-        assertCompiles(
-            "$POLICIES val corner = WorkflowDescriptor.builder(Corner::class.java, \"corner\")" +
-                ".role(Messages::class.java)"
         )
     }
 

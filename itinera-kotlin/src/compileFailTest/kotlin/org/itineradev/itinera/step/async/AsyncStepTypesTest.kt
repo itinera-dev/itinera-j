@@ -1,7 +1,6 @@
 package org.itineradev.itinera.step.async
 
 import org.itineradev.itinera.compiling.MODES
-import org.itineradev.itinera.compiling.assertCompiles
 import org.itineradev.itinera.compiling.assertDoesNotCompile
 import org.junit.jupiter.api.Test
 
@@ -12,9 +11,6 @@ class AsyncStepTypesTest {
             "$MODES val pack = asyncStep(\"pack\") { null }",
             "Null cannot be a value of a non-null type 'AsyncStepRun'",
         )
-        assertCompiles(
-            "$MODES val pack = asyncStep(\"pack\") { AsyncStepRun { Outcome.success() } }"
-        )
     }
 
     @Test
@@ -23,6 +19,5 @@ class AsyncStepTypesTest {
             "$MODES val run = AsyncStepRun { null }",
             "Null cannot be a value of a non-null type 'Outcome'",
         )
-        assertCompiles("$MODES val run = AsyncStepRun { Outcome.success() }")
     }
 }

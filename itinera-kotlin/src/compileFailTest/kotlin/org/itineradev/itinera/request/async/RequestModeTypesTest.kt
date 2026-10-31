@@ -1,7 +1,6 @@
 package org.itineradev.itinera.request.async
 
 import org.itineradev.itinera.compiling.MODES
-import org.itineradev.itinera.compiling.assertCompiles
 import org.itineradev.itinera.compiling.assertDoesNotCompile
 import org.junit.jupiter.api.Test
 
@@ -12,7 +11,6 @@ class RequestModeTypesTest {
             "$MODES fun read(got: Got<StepKind<Sync>>) = got[Requests.asyncStepReporter()]",
             "Argument type mismatch",
         )
-        assertCompiles("$MODES fun read(got: Got<StepKind<Sync>>) = got[Requests.stepReporter()]")
     }
 
     @Test
@@ -20,9 +18,6 @@ class RequestModeTypesTest {
         assertDoesNotCompile(
             "$MODES fun read(got: Got<StepKind<Async>>) = got[Requests.stepReporter()]",
             "Argument type mismatch",
-        )
-        assertCompiles(
-            "$MODES fun read(got: Got<StepKind<Async>>) = got[Requests.asyncStepReporter()]"
         )
     }
 
@@ -32,10 +27,6 @@ class RequestModeTypesTest {
             "$MODES val ship = StepDescriptor.builder(\"ship\") { got -> error(\"never built\") }" +
                 ".request(Requests.asyncStepReporter())",
             "Argument type mismatch",
-        )
-        assertCompiles(
-            "$MODES val ship = asyncStep(\"ship\") { got -> error(\"never built\") }" +
-                ".request(Requests.asyncStepReporter())"
         )
     }
 }

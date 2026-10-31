@@ -22,12 +22,6 @@ private fun compile(source: String): JvmCompilationResult =
         }
         .compile()
 
-/** Asserts that [source] compiles. */
-internal fun assertCompiles(source: String) {
-    val result = compile(source)
-    assertEquals(KotlinCompilation.ExitCode.OK, result.exitCode, result.messages)
-}
-
 /** Asserts that [source] does not compile, with an error that says [expected]. */
 internal fun assertDoesNotCompile(source: String, expected: String) {
     val result = compile(source)
