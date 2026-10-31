@@ -7,6 +7,15 @@ public abstract class org/itineradev/itinera/Name {
 	public final fun toString ()Ljava/lang/String;
 }
 
+public abstract interface class org/itineradev/itinera/engine/AdapterCalls {
+	public abstract fun of (Lorg/itineradev/itinera/engine/AdapterMethod;)Lorg/itineradev/itinera/workflow/InputAdapterCall;
+}
+
+public final class org/itineradev/itinera/engine/AdapterMethod {
+	public final fun arguments (Lorg/itineradev/itinera/request/Got;)[Ljava/lang/Object;
+	public final fun getMethod ()Ljava/lang/reflect/Method;
+}
+
 public abstract interface class org/itineradev/itinera/engine/Answer {
 	public static final field Companion Lorg/itineradev/itinera/engine/Answer$Companion;
 	public abstract fun of (Ljava/lang/Object;)Ljava/lang/Object;
@@ -117,7 +126,7 @@ public final class org/itineradev/itinera/engine/DeliveryKt {
 
 public final class org/itineradev/itinera/engine/Described {
 	public static final field INSTANCE Lorg/itineradev/itinera/engine/Described;
-	public final fun read (Ljava/lang/Class;Lorg/itineradev/itinera/workflow/Mode;Lorg/itineradev/itinera/engine/StepFactories;Lorg/itineradev/itinera/engine/HookCalls;)Lorg/itineradev/itinera/workflow/WorkflowDescriptor;
+	public final fun read (Ljava/lang/Class;Lorg/itineradev/itinera/workflow/Mode;Lorg/itineradev/itinera/engine/StepFactories;Lorg/itineradev/itinera/engine/HookCalls;Lorg/itineradev/itinera/engine/AdapterCalls;)Lorg/itineradev/itinera/workflow/WorkflowDescriptor;
 	public final fun synchronous (Ljava/lang/Class;)Lorg/itineradev/itinera/workflow/WorkflowDescriptor;
 }
 
@@ -195,7 +204,8 @@ public abstract interface class org/itineradev/itinera/engine/KotlinClasses {
 
 public final class org/itineradev/itinera/engine/KotlinFunction {
 	public static final field Companion Lorg/itineradev/itinera/engine/KotlinFunction$Companion;
-	public fun <init> (ZLjava/lang/Class;ZLjava/util/List;)V
+	public fun <init> (Ljava/lang/String;ZLjava/lang/Class;ZLjava/util/List;)V
+	public final fun getName ()Ljava/lang/String;
 	public final fun getParameters ()Ljava/util/List;
 	public final fun getReturnType ()Ljava/lang/Class;
 	public final fun getReturnsNullable ()Z
@@ -2759,6 +2769,11 @@ public final class org/itineradev/itinera/workflow/Async : org/itineradev/itiner
 public abstract interface annotation class org/itineradev/itinera/workflow/IdGenerator : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class org/itineradev/itinera/workflow/InputAdapter : java/lang/annotation/Annotation {
+	public abstract fun name ()Ljava/lang/String;
+	public abstract fun steps ()[Ljava/lang/String;
+}
+
 public final class org/itineradev/itinera/workflow/InputAdapterBuilder {
 	public final fun build ()Lorg/itineradev/itinera/workflow/InputAdapterDescriptor;
 	public final fun request (Lorg/itineradev/itinera/request/Request;)Lorg/itineradev/itinera/workflow/InputAdapterBuilder;
@@ -2782,11 +2797,16 @@ public final class org/itineradev/itinera/workflow/InputAdapterDescriptor$Compan
 }
 
 public abstract interface class org/itineradev/itinera/workflow/ItineraWorkflow {
+	public fun fromDataBag ()Lorg/itineradev/itinera/workflow/Supplied;
 	public fun instance ()Lorg/itineradev/itinera/instance/InstanceBuilder;
+	public fun supply (Ljava/lang/Object;)Lorg/itineradev/itinera/workflow/Supplied;
 }
 
 public abstract interface class org/itineradev/itinera/workflow/JourneyIdGenerator {
 	public abstract fun generate (Ljava/lang/Object;Lorg/itineradev/itinera/journey/DataBag;)Ljava/lang/String;
+}
+
+public abstract interface annotation class org/itineradev/itinera/workflow/Key : java/lang/annotation/Annotation {
 }
 
 public abstract interface class org/itineradev/itinera/workflow/Mode {

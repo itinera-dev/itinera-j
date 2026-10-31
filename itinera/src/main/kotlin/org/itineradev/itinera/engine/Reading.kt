@@ -19,6 +19,7 @@ internal class Reading<M : Mode>(
     private val mode: M,
     private val factories: StepFactories<M>,
     hooks: HookCalls<M>,
+    private val adapters: AdapterCalls<M>,
 ) {
     private val problems = Problems()
     private val steps = StepClasses(mode, factories, problems)
@@ -31,6 +32,7 @@ internal class Reading<M : Mode>(
         val name = named(workflow)
         val declared = type.getAnnotationsByType(WithStep::class.java).map(::step)
         val attached = workflow?.policies.orEmpty().map(::workflowPolicy)
+        val adapted = AdapterMethods(mode, adapters, problems).of<W>(type)
         val generator = IdGenerators(problems).of<W>(type)
         problems += duplicateStepNames(declared.mapNotNull(Declared<M>::name))
         if (problems.found || name == null) throw Violations(problems.violations)
@@ -40,7 +42,7 @@ internal class Reading<M : Mode>(
             declared.mapNotNull(Declared<M>::descriptor),
             attached.filterNotNull(),
             rolesOf<W>(type),
-            emptyList(),
+            adapted,
             generator,
         )
     }

@@ -5,7 +5,7 @@ import org.itineradev.itinera.ExperimentalItineraApi
 /**
  * What an input adapter returns for the input it is asked for: [Value], which the input takes, or
  * [FromDataBag], which leaves the input to be read from the data bag, as if the step had no
- * adapter.
+ * adapter. An annotated workflow makes them with `supply` and `fromDataBag`.
  *
  * @sample org.itineradev.itinera.workflow.samples.adapters
  */
