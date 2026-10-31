@@ -4,9 +4,12 @@ import org.itineradev.itinera.conformance.model.Ending
 import org.itineradev.itinera.conformance.model.ModelException
 import org.itineradev.itinera.conformance.model.ScriptedAttempt
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
+// Cucumber reads every class of this glue package, and the class Kotlin writes for an inlined
+// assertThrows<T> names this one as its outer class without being listed in it, which makes the
+// read fail; the Java form needs no class of its own.
 class TablesTest {
     @Test
     fun `a sentence lists names, each quoted, separated by commas`() {
@@ -47,14 +50,14 @@ class TablesTest {
 
     @Test
     fun `contributions that are not a JSON object are an error in the case`() {
-        assertThrows<ModelException> {
+        assertThrows(ModelException::class.java) {
             attemptOf(mapOf("attempt" to "1", "outcome" to "success", "contributes" to "[1]"))
         }
     }
 
     @Test
     fun `a row of attempts without a number is an error in the case`() {
-        assertThrows<ModelException> {
+        assertThrows(ModelException::class.java) {
             attemptOf(mapOf("attempt" to "first", "outcome" to "success"))
         }
     }

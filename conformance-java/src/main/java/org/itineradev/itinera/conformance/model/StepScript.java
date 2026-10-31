@@ -12,6 +12,7 @@ public final class StepScript {
   private List<ScriptedAttempt> attempts;
   private Integer retries;
   private boolean retryOnAbnormalTermination = true;
+  private String buildFailure;
   private boolean hasRescueStep;
   private boolean isRescueStep;
   private boolean isAsynchronous;
@@ -39,6 +40,11 @@ public final class StepScript {
   /** Whether an abnormal termination is retried while the retry budget lasts. */
   public boolean retryOnAbnormalTermination() {
     return retryOnAbnormalTermination;
+  }
+
+  /** The message the step's build fails with, or {@code null} until stated. */
+  public String buildFailure() {
+    return buildFailure;
   }
 
   /** Whether the step has a rescue step. */
@@ -77,6 +83,14 @@ public final class StepScript {
       throw new ModelException("\"" + name + "\" cannot allow " + budget + " retries");
     }
     retries = budget;
+  }
+
+  /** Says that building the step fails with {@code message}, once. */
+  public void cannotBeBuilt(String name, String message) {
+    if (buildFailure != null) {
+      throw new ModelException("how \"" + name + "\" fails to build is stated twice");
+    }
+    buildFailure = message;
   }
 
   /** Turns {@code retry on abnormal termination} off. */

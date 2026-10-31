@@ -17,8 +17,13 @@ class RunTest {
 
     private fun runs(tags: String): Boolean = run(Environment(cases, tags, report))
 
-    private fun scenarios(): List<String> =
-        JsonMapper.builder().build().readTree(report.toFile()).values().flatMap(::scenariosOf)
+    private fun scenarios(): List<String> = features().flatMap(::scenariosOf)
+
+    private fun errors(): List<String> =
+        features().flatMap(::errorsOf).ifEmpty { listOf("no error") }
+
+    private fun features(): List<JsonNode> =
+        JsonMapper.builder().build().readTree(report.toFile()).values().toList()
 
     @Test
     fun `every selected scenario runs once in each column that accepts it`() {
@@ -65,6 +70,27 @@ class RunTest {
     }
 
     @Test
+    fun `every scenario that runs journeys passes in both columns`() {
+        assertTrue(runs("@journeys"))
+        assertEquals(24, scenarios().size)
+    }
+
+    @Test
+    fun `a journey that did not do what the case expects fails as unmet`() {
+        assertFalse(runs("@unmet"))
+        assertTrue(errors().all { "Unmet" in it }, errors().toString())
+    }
+
+    @Test
+    fun `a script the runner cannot run yet fails saying so`() {
+        assertFalse(runs("@not-run-yet"))
+        assertTrue(
+            errors().all { "cannot run an attempt that fails or is skipped yet" in it },
+            errors().toString(),
+        )
+    }
+
+    @Test
     fun `a scenario whose sentences do not make a model fails`() {
         assertFalse(runs("@wrong-case"))
     }
@@ -86,3 +112,12 @@ private fun scenariosOf(feature: JsonNode): List<String> =
 
 private fun nameAndColumn(scenario: JsonNode): String =
     "${scenario.path("name").asString()} ${scenario.path("tags").last().path("name").asString()}"
+
+/** The error of each failed step of a feature in the report. */
+private fun errorsOf(feature: JsonNode): List<String> =
+    feature.path("elements").values().flatMap(::stepsOf).mapNotNull(::errorOf)
+
+private fun stepsOf(scenario: JsonNode): Iterable<JsonNode> = scenario.path("steps").values()
+
+private fun errorOf(step: JsonNode): String? =
+    step.path("result").path("error_message").asString().ifEmpty { null }
