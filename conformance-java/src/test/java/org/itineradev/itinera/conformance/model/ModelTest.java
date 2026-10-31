@@ -59,6 +59,15 @@ final class ModelTest {
   }
 
   @Test
+  void aSentenceAboutAnInputAdapterNeedsExactlyOneOfItsNameDeclared() {
+    var model = orders();
+    model.workflow().adapt("pricing", List.of("charge"));
+    assertThrows(ModelException.class, () -> model.workflow().adapter("discounts"));
+    model.workflow().adapt("pricing", List.of("charge"));
+    assertThrows(ModelException.class, () -> model.workflow().adapter("pricing"));
+  }
+
+  @Test
   void theStepsAProviderServesAreStatedOnce() {
     var model = orders();
     model.workflow().provide("stock", "stock", ServiceType.LABELLER, ProviderScope.JOURNEY);

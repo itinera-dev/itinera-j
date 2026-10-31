@@ -58,6 +58,14 @@ internal class ModelTest {
     }
 
     @Test
+    fun `a sentence about an input adapter needs exactly one of its name declared`() {
+        val model = orders().apply { workflow.adapt("pricing", listOf("charge")) }
+        assertThrows<ModelException> { model.workflow.adapter("discounts") }
+        model.workflow.adapt("pricing", listOf("charge"))
+        assertThrows<ModelException> { model.workflow.adapter("pricing") }
+    }
+
+    @Test
     fun `the steps a provider serves are stated once`() {
         val model =
             orders().apply {

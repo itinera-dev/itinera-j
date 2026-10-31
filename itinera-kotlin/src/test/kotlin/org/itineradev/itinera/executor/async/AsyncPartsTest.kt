@@ -70,7 +70,7 @@ class AsyncPartsTest {
         }
 
     @Test
-    fun `a synchronous input adapter, or one written in Java, is not of the executor's mode`() =
+    fun `a synchronous input adapter, or one written in Java, is a part of the other mode`() =
         runBlocking<Unit> {
             val synchronous: InputAdapterDescriptor<Any?, Async> =
                 returned(
@@ -147,10 +147,7 @@ class AsyncPartsTest {
         }
 
     private fun notOfTheMode(adapter: String): Violation =
-        Violation.Misdeclared(
-            "input adapter $adapter",
-            "is not of the mode Async, which the executor runs",
-        )
+        Violation.ModeNotAccepted("input adapter $adapter", Async)
 
     private suspend fun refused(run: suspend () -> Unit): Refused =
         try {

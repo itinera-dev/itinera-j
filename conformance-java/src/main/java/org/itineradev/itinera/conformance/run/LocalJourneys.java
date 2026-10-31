@@ -105,6 +105,11 @@ public final class LocalJourneys implements Journeys {
   }
 
   private static InputAdapterDescriptor<Scenario, Sync> adapterOf(AdapterModel adapter) {
+    if (adapter.isAsynchronous()) {
+      throw new ModelException(
+          "Java hands no asynchronous input adapter to LocalExecutor: it writes synchronous"
+              + " workflows only");
+    }
     var steps = adapter.steps();
     InputAdapterBuilder<Scenario, Sync> builder =
         InputAdapterDescriptor.builder(
