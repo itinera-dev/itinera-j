@@ -1,6 +1,13 @@
-plugins { id("itinera.kotlin-library") }
+plugins {
+    id("itinera.kotlin-library")
+    id("itinera.compile-fail-tests")
+}
 
 description =
     "Itinera for Java: the core, and what makes its API read naturally from Java, for synchronous workflows."
 
-dependencies { api(project(":itinera")) }
+dependencies {
+    api(project(":itinera"))
+    // The compile-fail test shows that Java cannot call what itinera-kotlin keeps from it.
+    "compileFailTestImplementation"(project(":itinera-kotlin"))
+}

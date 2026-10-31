@@ -1,9 +1,15 @@
-plugins { id("itinera.kotlin-library") }
+plugins {
+    id("itinera.kotlin-library")
+    id("itinera.compile-fail-tests")
+}
 
 description =
     "Itinera's core: values, events, the builder, descriptors, the engine and the synchronous executor."
 
-dependencies { testImplementation(libs.jspecify) }
+dependencies {
+    testImplementation(libs.jspecify)
+    "compileFailTestImplementation"(libs.kctfork)
+}
 
 // The samples of annotated Kotlin classes run in itinera-kotlin's tests, where Kotlin classes are
 // read.

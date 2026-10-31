@@ -17,6 +17,9 @@ jspecify = "1.0.0"
 # AsyncLocalExecutor asks its coroutine whether it was cancelled.
 kotlinx-coroutines = "1.11.0"
 cucumber = "8.0.4"
+# The compile-fail tests compile Kotlin snippets with it, and with the Kotlin
+# compiler it brings.
+kctfork = "0.14.0"
 # The conformance runners read the cases' JSON with it.
 jackson-runners = "3.2.3"
 # Dokka 2.2.0 brings releases of these, and ktfmt and google-java-format one
@@ -41,6 +44,7 @@ junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 jackson-bom = { module = "com.fasterxml.jackson:jackson-bom", version.ref = "jackson" }
+kctfork = { module = "dev.zacsweers.kctfork:core", version.ref = "kctfork" }
 cucumber-bom = { module = "io.cucumber:cucumber-bom", version.ref = "cucumber" }
 cucumber-java = { module = "io.cucumber:cucumber-java" }
 cucumber-picocontainer = { module = "io.cucumber:cucumber-picocontainer" }
