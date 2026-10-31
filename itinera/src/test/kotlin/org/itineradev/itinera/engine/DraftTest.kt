@@ -12,6 +12,7 @@ import org.itineradev.itinera.report.Reporter
 import org.itineradev.itinera.value.TypeToken
 import org.itineradev.itinera.workflow.JourneyIdGenerator
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotSame
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -66,6 +67,17 @@ class DraftTest {
                 packing().reporterFor { throw error }.create()
             }
         assertSame(error, thrown.cause)
+    }
+
+    @Test
+    fun `each instance makes its own reporters the workflow lists, before those it is given`() {
+        val listing = shop().step(succeeding("pack").build()).reporter { Log() }.build()
+        val given = Log()
+        val first = instanceOf(listing).reporter(given).create()
+        val second = instanceOf(listing).create()
+        assertEquals(listOf(Log::class.java, Log::class.java), first.reporters.map(Any::javaClass))
+        assertSame(given, first.reporters.last())
+        assertNotSame(first.reporters.first(), second.reporters.single())
     }
 
     @Test

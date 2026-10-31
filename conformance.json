@@ -1,6 +1,6 @@
 {
   "cases": "v0.1.0-rc.18",
-  "proposals": [116, 121],
+  "proposals": [62, 116, 121],
   "capabilities": ["sync", "async"],
   "impossible": {
     "bag-write": [

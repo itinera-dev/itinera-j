@@ -3,6 +3,8 @@ package org.itineradev.itinera.engine
 import kotlin.reflect.KClass
 import org.itineradev.itinera.policy.StepPolicyDescriptor
 import org.itineradev.itinera.policy.WorkflowPolicyDescriptor
+import org.itineradev.itinera.report.ReporterFactoryOf
+import org.itineradev.itinera.report.ReporterOf
 import org.itineradev.itinera.step.ItineraRescueStep
 import org.itineradev.itinera.step.StepName
 import org.itineradev.itinera.workflow.Mode
@@ -16,7 +18,10 @@ import org.itineradev.itinera.workflow.Workflow
 import org.itineradev.itinera.workflow.WorkflowDescriptor
 import org.itineradev.itinera.workflow.WorkflowName
 
-/** Reads the workflow an annotated class declares in [mode], finding every mistake at once. */
+/**
+ * Reads the workflow an annotated class declares in [mode], whose reporters implement [reporters],
+ * finding every mistake at once.
+ */
 internal class Reading<M : Mode>(
     private val type: Class<*>,
     private val mode: M,
@@ -24,11 +29,13 @@ internal class Reading<M : Mode>(
     hooks: HookCalls<M>,
     private val adapters: AdapterCalls<M>,
     private val providers: ProviderCalls<M>,
+    reporters: Class<out ReporterOf<M>>,
 ) {
     private val problems = Problems()
     private val steps = StepClasses(mode, factories, problems)
     private val rescues = RescueClasses(mode, factories, problems)
     private val policies = PolicyClasses(mode, hooks, problems)
+    private val reporters = ReporterClasses(mode, reporters, problems)
 
     /** @throws Violations with every mistake found. */
     fun <W> descriptor(): WorkflowDescriptor<W, M> {
@@ -37,6 +44,7 @@ internal class Reading<M : Mode>(
         val name = named(workflow)
         val declared = type.getAnnotationsByType(WithStep::class.java).map(::step)
         val attached = workflow?.policies.orEmpty().map(::workflowPolicy)
+        val listed = workflow?.reporters.orEmpty().map(::reporter)
         val adapted = AdapterMethods(mode, adapters, problems).of<W>(type)
         val provided = ProviderMethods(mode, providers, problems).of<W>(type)
         val generator = IdGenerators(problems).of<W>(type)
@@ -50,12 +58,15 @@ internal class Reading<M : Mode>(
             rolesOf<W>(type),
             adapted,
             provided,
+            listed.filterNotNull(),
             generator,
         )
     }
 
     private fun workflowPolicy(policy: KClass<*>): WorkflowPolicyDescriptor<Any, M>? =
         policies.workflowPolicy(policy.java)
+
+    private fun reporter(reporter: KClass<*>): ReporterFactoryOf<M>? = reporters.read(reporter.java)
 
     private fun stepPolicy(policy: KClass<*>): StepPolicyDescriptor<Any, M>? =
         policies.stepPolicy(policy.java)

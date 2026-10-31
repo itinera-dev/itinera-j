@@ -60,12 +60,13 @@ public final class org/itineradev/itinera/engine/Checked : org/itineradev/itiner
 	public fun getName ()Lorg/itineradev/itinera/workflow/WorkflowName;
 	public fun getPolicies ()Ljava/util/List;
 	public fun getProviders ()Ljava/util/List;
+	public fun getReporters ()Ljava/util/List;
 	public fun getRoles ()Ljava/util/List;
 	public fun getSteps ()Ljava/util/List;
 }
 
 public final class org/itineradev/itinera/engine/Checked$Companion {
-	public final fun of (Lorg/itineradev/itinera/workflow/WorkflowName;Lorg/itineradev/itinera/workflow/Mode;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lorg/itineradev/itinera/workflow/JourneyIdGenerator;)Lorg/itineradev/itinera/engine/Checked;
+	public final fun of (Lorg/itineradev/itinera/workflow/WorkflowName;Lorg/itineradev/itinera/workflow/Mode;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lorg/itineradev/itinera/workflow/JourneyIdGenerator;)Lorg/itineradev/itinera/engine/Checked;
 }
 
 public final class org/itineradev/itinera/engine/ClassType : org/itineradev/itinera/engine/ValueType {
@@ -130,7 +131,7 @@ public final class org/itineradev/itinera/engine/DeliveryKt {
 
 public final class org/itineradev/itinera/engine/Described {
 	public static final field INSTANCE Lorg/itineradev/itinera/engine/Described;
-	public final fun read (Ljava/lang/Class;Lorg/itineradev/itinera/workflow/Mode;Lorg/itineradev/itinera/engine/StepFactories;Lorg/itineradev/itinera/engine/HookCalls;Lorg/itineradev/itinera/engine/AdapterCalls;Lorg/itineradev/itinera/engine/ProviderCalls;)Lorg/itineradev/itinera/workflow/WorkflowDescriptor;
+	public final fun read (Ljava/lang/Class;Lorg/itineradev/itinera/workflow/Mode;Lorg/itineradev/itinera/engine/StepFactories;Lorg/itineradev/itinera/engine/HookCalls;Lorg/itineradev/itinera/engine/AdapterCalls;Lorg/itineradev/itinera/engine/ProviderCalls;Ljava/lang/Class;)Lorg/itineradev/itinera/workflow/WorkflowDescriptor;
 	public final fun synchronous (Ljava/lang/Class;)Lorg/itineradev/itinera/workflow/WorkflowDescriptor;
 }
 
@@ -139,7 +140,7 @@ public final class org/itineradev/itinera/engine/Draft {
 	public final fun create ()Lorg/itineradev/itinera/instance/WorkflowInstance;
 	public final fun data (Ljava/lang/String;Ljava/lang/Object;)V
 	public final fun metadata (Ljava/lang/String;Ljava/lang/Object;)V
-	public final fun reporter (Lkotlin/jvm/functions/Function1;)V
+	public final fun reporter (Lorg/itineradev/itinera/report/ReporterFactoryOf;)V
 }
 
 public final class org/itineradev/itinera/engine/DrivenKt {
@@ -2543,8 +2544,13 @@ public abstract interface class org/itineradev/itinera/report/Reporter : org/iti
 	public fun setGlobalMetadata (Ljava/lang/String;Ljava/lang/Object;)V
 }
 
-public abstract interface class org/itineradev/itinera/report/ReporterFactory {
+public abstract interface class org/itineradev/itinera/report/ReporterFactory : org/itineradev/itinera/report/ReporterFactoryOf {
 	public abstract fun create (Lorg/itineradev/itinera/journey/JourneyId;)Lorg/itineradev/itinera/report/Reporter;
+	public synthetic fun create (Lorg/itineradev/itinera/journey/JourneyId;)Lorg/itineradev/itinera/report/ReporterOf;
+}
+
+public abstract interface class org/itineradev/itinera/report/ReporterFactoryOf {
+	public abstract fun create (Lorg/itineradev/itinera/journey/JourneyId;)Lorg/itineradev/itinera/report/ReporterOf;
 }
 
 public abstract interface class org/itineradev/itinera/report/ReporterOf {
@@ -3427,6 +3433,7 @@ public abstract interface annotation class org/itineradev/itinera/workflow/WithS
 public abstract interface annotation class org/itineradev/itinera/workflow/Workflow : java/lang/annotation/Annotation {
 	public abstract fun name ()Ljava/lang/String;
 	public abstract fun policies ()[Ljava/lang/Class;
+	public abstract fun reporters ()[Ljava/lang/Class;
 }
 
 public final class org/itineradev/itinera/workflow/WorkflowBuilder {
@@ -3435,6 +3442,7 @@ public final class org/itineradev/itinera/workflow/WorkflowBuilder {
 	public final fun inputAdapter (Lorg/itineradev/itinera/workflow/InputAdapterDescriptor;)Lorg/itineradev/itinera/workflow/WorkflowBuilder;
 	public final fun policy (Lorg/itineradev/itinera/policy/WorkflowPolicyDescriptor;)Lorg/itineradev/itinera/workflow/WorkflowBuilder;
 	public final fun provider (Lorg/itineradev/itinera/service/ProviderDescriptor;)Lorg/itineradev/itinera/workflow/WorkflowBuilder;
+	public final fun reporter (Lorg/itineradev/itinera/report/ReporterFactoryOf;)Lorg/itineradev/itinera/workflow/WorkflowBuilder;
 	public final fun role (Ljava/lang/Class;)Lorg/itineradev/itinera/workflow/WorkflowBuilder;
 	public final fun step (Lorg/itineradev/itinera/workflow/StepDescriptor;)Lorg/itineradev/itinera/workflow/WorkflowBuilder;
 }
@@ -3448,6 +3456,7 @@ public abstract interface class org/itineradev/itinera/workflow/WorkflowDescript
 	public abstract fun getName ()Lorg/itineradev/itinera/workflow/WorkflowName;
 	public abstract fun getPolicies ()Ljava/util/List;
 	public abstract fun getProviders ()Ljava/util/List;
+	public abstract fun getReporters ()Ljava/util/List;
 	public abstract fun getRoles ()Ljava/util/List;
 	public abstract fun getSteps ()Ljava/util/List;
 	public fun listing ()Ljava/util/List;

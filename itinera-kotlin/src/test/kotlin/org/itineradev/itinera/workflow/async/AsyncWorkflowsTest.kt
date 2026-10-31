@@ -5,8 +5,11 @@ package org.itineradev.itinera.workflow.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.itineradev.itinera.ExperimentalItineraApi
+import org.itineradev.itinera.event.Event
 import org.itineradev.itinera.executor.async.AsyncLocalExecutor
 import org.itineradev.itinera.journey.JourneyId
+import org.itineradev.itinera.report.Reporter
+import org.itineradev.itinera.report.async.AsyncReporter
 import org.itineradev.itinera.step.ItineraStep
 import org.itineradev.itinera.step.Outcome
 import org.itineradev.itinera.step.Step
@@ -16,11 +19,13 @@ import org.itineradev.itinera.workflow.StepDescriptor
 import org.itineradev.itinera.workflow.Violation
 import org.itineradev.itinera.workflow.Violations
 import org.itineradev.itinera.workflow.WithStep
+import org.itineradev.itinera.workflow.Workflow
 import org.itineradev.itinera.workflow.async.samples.AsyncReturns
 import org.itineradev.itinera.workflow.async.samples.asyncBuilding
 import org.itineradev.itinera.workflow.async.samples.asyncDescribing
 import org.itineradev.itinera.workflow.async.samples.asyncShipping
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotSame
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -52,6 +57,23 @@ class AsyncWorkflowsTest {
     fun `a run without suspend in an asynchronous workflow is refused with mode not accepted`() {
         val violations = assertThrows<Violations> { asyncDescriptorOf(Blocking::class) }
         assertEquals(listOf(Violation.ModeNotAccepted("step wait", Async)), violations.violations)
+    }
+
+    @Test
+    fun `each instance builds its own reporter of each class an annotated workflow lists`() {
+        val first = Quietly().instance().create()
+        val second = Quietly().instance().create()
+        assertEquals(listOf(Quiet::class.java), first.reporters.map(Any::javaClass))
+        assertNotSame(first.reporters.single(), second.reporters.single())
+    }
+
+    @Test
+    fun `a synchronous reporter class in an asynchronous workflow is refused with mode not accepted`() {
+        val violations = assertThrows<Violations> { asyncDescriptorOf(Loudly::class) }
+        assertEquals(
+            listOf(Violation.ModeNotAccepted("reporter ${Loud::class.java.name}", Async)),
+            violations.violations,
+        )
     }
 
     @ParameterizedTest
@@ -102,3 +124,21 @@ class Later : ItineraStep {
 }
 
 @WithStep(Later::class, name = "later") class Tardy : ItineraAsyncWorkflow
+
+/** Reports nothing, as an asynchronous reporter. */
+class Quiet : AsyncReporter {
+    override suspend fun report(event: Event) = Unit
+}
+
+@Workflow(name = "quietly", reporters = [Quiet::class])
+@WithStep(AtOnce::class, name = "at once")
+class Quietly : ItineraAsyncWorkflow
+
+/** Reports nothing, as a synchronous reporter, which an asynchronous workflow cannot list. */
+class Loud : Reporter {
+    override fun report(event: Event) = Unit
+}
+
+@Workflow(name = "loudly", reporters = [Loud::class])
+@WithStep(AtOnce::class, name = "at once")
+class Loudly : ItineraAsyncWorkflow

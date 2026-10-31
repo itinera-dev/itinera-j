@@ -62,6 +62,10 @@ public final class LocalJourneys implements Journeys {
     for (var provider : workflow.providers()) {
       builder.provider(providerOf(provider, Services.classOf(provider.type())));
     }
+    var reporters = workflow.reporters();
+    for (var name : reporters == null ? List.<String>of() : reporters) {
+      builder.reporter(journeyId -> recorders.make(name));
+    }
     if (workflow.idGenerator() instanceof IdGenerator.Returns generator) {
       builder.idGenerator((scenario, data) -> generator.id());
     }
@@ -174,10 +178,6 @@ public final class LocalJourneys implements Journeys {
     var builder = InstanceBuilder.of(descriptor, new Scenario()).initialData(model.initialData());
     for (var entry : model.initialGlobalMetadata()) {
       builder.reportersGlobalMetadata(entry.getKey(), entry.getValue());
-    }
-    var reporters = model.workflow().reporters();
-    for (var name : reporters == null ? List.<String>of() : reporters) {
-      builder.reporter(recorders.make(name));
     }
     return builder.create();
   }
