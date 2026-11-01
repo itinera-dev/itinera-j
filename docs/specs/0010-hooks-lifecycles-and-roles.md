@@ -4,7 +4,7 @@ Tech spec for [proposal 0010](https://github.com/itinera-dev/spec/blob/main/prop
 
 Status: done. Stage 4 declared policies, hooks and roles, in the builders and in annotated classes, and refused what is misdeclared. Stage 7 builds the policies, calls the hooks as a journey runs, lends the roles, runs the cases in both runners, and lists 10 in both manifests.
 
-10 is listed in both manifests, so its public items carry no `@ExperimentalItineraApi`, but for `setGlobalMetadata` on `HookReporter` and `AsyncHookReporter`, which belongs to [0102](0102-global-metadata.md), not listed yet.
+10 is listed in both manifests, so its public items carry no `@ExperimentalItineraApi`. `setGlobalMetadata` on `HookReporter` and `AsyncHookReporter`, which belongs to [0102](0102-global-metadata.md), kept it until stage 8 listed 102.
 
 ## API
 

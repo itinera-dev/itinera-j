@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.policy.samples
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.policy.HookReporter
 
 fun hookReporters(reporter: HookReporter) {

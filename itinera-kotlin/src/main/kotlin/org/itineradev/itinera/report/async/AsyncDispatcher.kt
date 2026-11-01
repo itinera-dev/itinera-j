@@ -1,6 +1,5 @@
 package org.itineradev.itinera.report.async
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.event.Event
 
 /**
@@ -39,9 +38,7 @@ public interface AsyncDispatcher {
      *
      * @sample org.itineradev.itinera.report.async.samples.asyncDispatching
      */
-    @ExperimentalItineraApi
-    @JvmSynthetic
-    public suspend fun setGlobalMetadata(key: String, value: Any?)
+    @JvmSynthetic public suspend fun setGlobalMetadata(key: String, value: Any?)
 }
 
 /**

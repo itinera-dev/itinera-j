@@ -60,7 +60,7 @@ public data class ListedStep(
     /** The name of the input adapter attached to the step, or `null` when none is. */
     val adapter: AdapterName?,
     /** The services the step requests, in the order it requests them. */
-    @ExperimentalItineraApi val services: List<ListedService>,
+    val services: List<ListedService>,
     /** The step's rescue section, or `null` when the step has no rescue step. */
     @ExperimentalItineraApi val rescue: ListedRescue?,
 )
@@ -87,7 +87,6 @@ public data class ListedRescue(
  *
  * @sample org.itineradev.itinera.workflow.samples.listing
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class ListedService(
     /** The key the service is requested by. */

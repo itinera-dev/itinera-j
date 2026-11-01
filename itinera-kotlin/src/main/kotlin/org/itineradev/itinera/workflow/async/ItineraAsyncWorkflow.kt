@@ -1,6 +1,5 @@
 package org.itineradev.itinera.workflow.async
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.instance.async.AsyncInstanceBuilder
 import org.itineradev.itinera.service.Provided
 import org.itineradev.itinera.workflow.IdGenerator
@@ -50,7 +49,6 @@ public interface ItineraAsyncWorkflow {
      *
      * @sample org.itineradev.itinera.workflow.async.samples.asyncProviding
      */
-    @ExperimentalItineraApi
     public fun <T : Any> provide(instance: T): Provided<T> = Provided.Instance(instance)
 
     /**
@@ -59,7 +57,6 @@ public interface ItineraAsyncWorkflow {
      *
      * @sample org.itineradev.itinera.workflow.async.samples.asyncProviding
      */
-    @ExperimentalItineraApi
     public fun <T : Any> provide(instance: T, data: Any?): Provided<T> =
         Provided.Instance(instance, data)
 
@@ -68,5 +65,5 @@ public interface ItineraAsyncWorkflow {
      *
      * @sample org.itineradev.itinera.workflow.async.samples.asyncProviding
      */
-    @ExperimentalItineraApi public fun <T : Any> noInstance(): Provided<T> = Provided.NoInstance
+    public fun <T : Any> noInstance(): Provided<T> = Provided.NoInstance
 }
