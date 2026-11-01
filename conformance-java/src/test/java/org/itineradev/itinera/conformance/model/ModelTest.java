@@ -50,6 +50,30 @@ final class ModelTest {
   }
 
   @Test
+  void aSentenceAboutAProviderNeedsExactlyOneOfItsNameDeclared() {
+    var model = orders();
+    model.workflow().provide("stock", "stock", ServiceType.LABELLER, ProviderScope.JOURNEY);
+    assertThrows(ModelException.class, () -> model.workflow().provider("payments"));
+    model.workflow().provide("stock", "labels", ServiceType.LABELLER, ProviderScope.ATTEMPT);
+    assertThrows(ModelException.class, () -> model.workflow().provider("stock"));
+  }
+
+  @Test
+  void theStepsAProviderServesAreStatedOnce() {
+    var model = orders();
+    model.workflow().provide("stock", "stock", ServiceType.LABELLER, ProviderScope.JOURNEY);
+    model.workflow().provider("stock").servesOnly(List.of("charge"));
+    var provider = model.workflow().provider("stock");
+    var ship = List.of("ship");
+    assertThrows(ModelException.class, () -> provider.servesOnly(ship));
+  }
+
+  @Test
+  void aCaseNamesOnlyTheServiceTypesOfTheCases() {
+    assertThrows(ModelException.class, () -> ServiceType.named("printer"));
+  }
+
+  @Test
   void aRescueStepSharesTheScriptOfAStepOfTheSameName() {
     var model = new Model();
     model.declare("orders", List.of("charge", "charge_rescue"));
