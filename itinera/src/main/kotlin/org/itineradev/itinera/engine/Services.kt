@@ -1,5 +1,6 @@
 package org.itineradev.itinera.engine
 
+import org.itineradev.itinera.request.Request
 import org.itineradev.itinera.service.ProviderDescriptor
 import org.itineradev.itinera.step.StepName
 import org.itineradev.itinera.value.boxed
@@ -8,14 +9,27 @@ import org.itineradev.itinera.workflow.Violation
 import org.itineradev.itinera.workflow.WorkflowDescriptor
 
 /**
- * The violations of the services the steps of [descriptor] request, step by step: each key a step
- * requests twice, then each key no provider serves for it, or whose provider supplies another type.
+ * The violations of the services the steps of [descriptor] request, step by step, each followed by
+ * its rescue step: each key a step requests twice, then each key no provider serves for it, or
+ * whose provider supplies another type.
  */
 internal fun serviceViolations(descriptor: WorkflowDescriptor<*, *>): List<Violation> =
-    descriptor.steps.flatMap { step -> serviceViolations(step, descriptor.providers) }
+    descriptor.steps.flatMap(::requesting).flatMap { step ->
+        serviceViolations(step, descriptor.providers)
+    }
+
+/** A step, or a rescue step, by its name and what it requests. */
+private class Requesting(val name: StepName, val requests: List<Request<*, *>>)
+
+private fun requesting(step: StepDescriptor<*>): List<Requesting> {
+    val rescue = step.rescue
+    val requesting = Requesting(step.name, step.requests)
+    return if (rescue == null) listOf(requesting)
+    else listOf(requesting, Requesting(rescueOf(step.name), rescue.requests))
+}
 
 private fun serviceViolations(
-    step: StepDescriptor<*>,
+    step: Requesting,
     providers: List<ProviderDescriptor<*, *>>,
 ): List<Violation> {
     val services = step.requests.map(::askedBy).filterIsInstance<ServiceAsked>()

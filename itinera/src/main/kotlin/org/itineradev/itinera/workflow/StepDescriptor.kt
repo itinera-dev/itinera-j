@@ -10,9 +10,9 @@ import org.itineradev.itinera.step.SyncStepFactory
 
 /**
  * How one step of a workflow of mode [M] is declared: its name, what it requests, how it is built
- * for each attempt, how its failed attempts are retried, and the policies attached to it. Every
- * step states its own retry budget and whether it retries abnormal terminations, so the declaration
- * shows everything.
+ * for each attempt, how its failed attempts are retried, the policies attached to it and its rescue
+ * step. Every step states its own retry budget, whether it retries abnormal terminations and
+ * whether it has a rescue step, so the declaration shows everything.
  *
  * [builder] makes one for a synchronous workflow, `asyncStep` from `itinera-kotlin` for an
  * asynchronous one, and annotated workflows get theirs from `@WithStep`. Any other implementation
@@ -44,6 +44,13 @@ public interface StepDescriptor<M : Mode> {
     /** The step policies attached to the step, in the order their hooks are called. */
     public val policies: List<StepPolicyDescriptor<*, M>>
 
+    /**
+     * The step's rescue step, named `<step name>_rescue`, which runs once when an attempt fails,
+     * the step being attempted once more if it succeeds, or `null` when the step has none. A step
+     * with both a rescue step and a retry budget above 0 is refused, as `rescued step retried`.
+     */
+    public val rescue: RescueStepDescriptor<M>?
+
     /** Makes step descriptors. */
     public companion object {
         /**
@@ -74,6 +81,7 @@ internal constructor(private val name: StepName, private val factory: StepFactor
     private val policies = mutableListOf<StepPolicyDescriptor<*, M>>()
     private var retryBudget = 0
     private var retryOnAbnormalTermination = true
+    private var rescue: RescueStepDescriptor<M>? = null
 
     /**
      * Declares a request after those already declared, which the step's factory then reads.
@@ -115,6 +123,20 @@ internal constructor(private val name: StepName, private val factory: StepFactor
     }
 
     /**
+     * Gives the step its rescue step, which runs once when an attempt fails, the step being
+     * attempted once more if it succeeds. A retry budget above 0 is then refused when the workflow
+     * is built, as `rescued step retried`.
+     *
+     * @throws IllegalStateException when the step already has a rescue step, since it has one at
+     *   most.
+     * @sample org.itineradev.itinera.workflow.samples.rescues
+     */
+    public fun rescue(rescue: RescueStepDescriptor<M>): StepBuilder<M> = apply {
+        check(this.rescue == null) { "A step has one rescue step at most, and $name has one." }
+        this.rescue = rescue
+    }
+
+    /**
      * The descriptor.
      *
      * @sample org.itineradev.itinera.workflow.samples.steps
@@ -127,6 +149,7 @@ internal constructor(private val name: StepName, private val factory: StepFactor
             retryBudget,
             retryOnAbnormalTermination,
             policies.toList(),
+            rescue,
         )
 
     private class Described<M : Mode>(
@@ -136,5 +159,6 @@ internal constructor(private val name: StepName, private val factory: StepFactor
         override val retryBudget: Int,
         override val retryOnAbnormalTermination: Boolean,
         override val policies: List<StepPolicyDescriptor<*, M>>,
+        override val rescue: RescueStepDescriptor<M>?,
     ) : StepDescriptor<M>
 }

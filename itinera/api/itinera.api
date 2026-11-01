@@ -40,6 +40,7 @@ public final class org/itineradev/itinera/engine/Builders {
 	public final fun inputAdapter (Ljava/lang/String;Lorg/itineradev/itinera/workflow/InputAdapterCall;)Lorg/itineradev/itinera/workflow/InputAdapterBuilder;
 	public final fun perAttemptProvider (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Class;Lorg/itineradev/itinera/service/ProviderCall;)Lorg/itineradev/itinera/service/ProviderBuilder;
 	public final fun provider (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Class;Lorg/itineradev/itinera/service/ProviderCall;)Lorg/itineradev/itinera/service/ProviderBuilder;
+	public final fun rescueStep (Lorg/itineradev/itinera/step/RescueFactory;)Lorg/itineradev/itinera/workflow/RescueStepBuilder;
 	public final fun step (Ljava/lang/String;Lorg/itineradev/itinera/step/StepFactory;)Lorg/itineradev/itinera/workflow/StepBuilder;
 	public final fun workflow (Ljava/lang/String;Lorg/itineradev/itinera/workflow/Mode;)Lorg/itineradev/itinera/workflow/WorkflowBuilder;
 }
@@ -257,6 +258,7 @@ public abstract interface class org/itineradev/itinera/engine/Parts {
 	public abstract fun accepts (Lorg/itineradev/itinera/policy/HookCall;)Z
 	public abstract fun accepts (Lorg/itineradev/itinera/report/ReporterOf;)Z
 	public abstract fun accepts (Lorg/itineradev/itinera/service/ProviderCall;)Z
+	public abstract fun accepts (Lorg/itineradev/itinera/step/RescueFactory;)Z
 	public abstract fun accepts (Lorg/itineradev/itinera/step/StepFactory;)Z
 	public abstract fun accepts (Lorg/itineradev/itinera/workflow/InputAdapterCall;)Z
 	public abstract synthetic fun build (Lorg/itineradev/itinera/step/StepFactory;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -327,6 +329,7 @@ public final class org/itineradev/itinera/engine/SyncParts : org/itineradev/itin
 	public fun accepts (Lorg/itineradev/itinera/policy/HookCall;)Z
 	public fun accepts (Lorg/itineradev/itinera/report/ReporterOf;)Z
 	public fun accepts (Lorg/itineradev/itinera/service/ProviderCall;)Z
+	public fun accepts (Lorg/itineradev/itinera/step/RescueFactory;)Z
 	public fun accepts (Lorg/itineradev/itinera/step/StepFactory;)Z
 	public fun accepts (Lorg/itineradev/itinera/workflow/InputAdapterCall;)Z
 	public synthetic fun build (Lorg/itineradev/itinera/step/StepFactory;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -2624,6 +2627,9 @@ public final class org/itineradev/itinera/request/Requests {
 	public static final fun stepReporter ()Lorg/itineradev/itinera/request/Request;
 }
 
+public abstract interface class org/itineradev/itinera/request/RescueKind : org/itineradev/itinera/request/ErrorKind, org/itineradev/itinera/request/FromStepKind, org/itineradev/itinera/request/ReasonKind, org/itineradev/itinera/request/StepKind {
+}
+
 public abstract interface class org/itineradev/itinera/request/RetryCauseKind {
 }
 
@@ -2816,6 +2822,25 @@ public final class org/itineradev/itinera/step/Reason : java/lang/Record {
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract interface class org/itineradev/itinera/step/RescueFactory {
+}
+
+public abstract interface class org/itineradev/itinera/step/RescueOutcome {
+	public static final field Companion Lorg/itineradev/itinera/step/RescueOutcome$Companion;
+	public static fun success ()Lorg/itineradev/itinera/step/RescueOutcome;
+}
+
+public final class org/itineradev/itinera/step/RescueOutcome$Companion {
+	public final fun success ()Lorg/itineradev/itinera/step/RescueOutcome;
+}
+
+public final class org/itineradev/itinera/step/RescueOutcome$Success : org/itineradev/itinera/step/RescueOutcome {
+	public static final field INSTANCE Lorg/itineradev/itinera/step/RescueOutcome$Success;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract interface annotation class org/itineradev/itinera/step/Step : java/lang/annotation/Annotation {
 }
 
@@ -2839,6 +2864,14 @@ public abstract interface class org/itineradev/itinera/step/StepReporter {
 	public abstract fun setGlobalMetadata (Ljava/lang/String;Ljava/lang/Object;)V
 	public abstract fun warning (Ljava/lang/String;)V
 	public abstract fun warning (Ljava/lang/String;Ljava/lang/Object;)V
+}
+
+public abstract interface class org/itineradev/itinera/step/SyncRescueFactory : org/itineradev/itinera/step/RescueFactory {
+	public abstract fun build (Lorg/itineradev/itinera/request/Got;)Lorg/itineradev/itinera/step/SyncRescueRun;
+}
+
+public abstract interface class org/itineradev/itinera/step/SyncRescueRun {
+	public abstract fun run ()Lorg/itineradev/itinera/step/RescueOutcome;
 }
 
 public abstract interface class org/itineradev/itinera/step/SyncStepFactory : org/itineradev/itinera/step/StepFactory {
@@ -2929,11 +2962,28 @@ public abstract interface annotation class org/itineradev/itinera/workflow/Key :
 public abstract interface class org/itineradev/itinera/workflow/Mode {
 }
 
+public final class org/itineradev/itinera/workflow/RescueStepBuilder {
+	public final fun build ()Lorg/itineradev/itinera/workflow/RescueStepDescriptor;
+	public final fun request (Lorg/itineradev/itinera/request/Request;)Lorg/itineradev/itinera/workflow/RescueStepBuilder;
+}
+
+public abstract interface class org/itineradev/itinera/workflow/RescueStepDescriptor {
+	public static final field Companion Lorg/itineradev/itinera/workflow/RescueStepDescriptor$Companion;
+	public static fun builder (Lorg/itineradev/itinera/step/SyncRescueFactory;)Lorg/itineradev/itinera/workflow/RescueStepBuilder;
+	public abstract fun getFactory ()Lorg/itineradev/itinera/step/RescueFactory;
+	public abstract fun getRequests ()Ljava/util/List;
+}
+
+public final class org/itineradev/itinera/workflow/RescueStepDescriptor$Companion {
+	public final fun builder (Lorg/itineradev/itinera/step/SyncRescueFactory;)Lorg/itineradev/itinera/workflow/RescueStepBuilder;
+}
+
 public final class org/itineradev/itinera/workflow/StepBuilder {
 	public final fun build ()Lorg/itineradev/itinera/workflow/StepDescriptor;
 	public final fun noRetryOnAbnormalTermination ()Lorg/itineradev/itinera/workflow/StepBuilder;
 	public final fun policy (Lorg/itineradev/itinera/policy/StepPolicyDescriptor;)Lorg/itineradev/itinera/workflow/StepBuilder;
 	public final fun request (Lorg/itineradev/itinera/request/Request;)Lorg/itineradev/itinera/workflow/StepBuilder;
+	public final fun rescue (Lorg/itineradev/itinera/workflow/RescueStepDescriptor;)Lorg/itineradev/itinera/workflow/StepBuilder;
 	public final fun retryBudget (I)Lorg/itineradev/itinera/workflow/StepBuilder;
 }
 
@@ -2944,6 +2994,7 @@ public abstract interface class org/itineradev/itinera/workflow/StepDescriptor {
 	public abstract fun getName ()Lorg/itineradev/itinera/step/StepName;
 	public abstract fun getPolicies ()Ljava/util/List;
 	public abstract fun getRequests ()Ljava/util/List;
+	public abstract fun getRescue ()Lorg/itineradev/itinera/workflow/RescueStepDescriptor;
 	public abstract fun getRetryBudget ()I
 	public abstract fun getRetryOnAbnormalTermination ()Z
 }
@@ -3107,6 +3158,19 @@ public final class org/itineradev/itinera/workflow/Violation$NotAValue : java/la
 	public final fun held ()Lorg/itineradev/itinera/workflow/Violation$Held;
 	public final fun key ()Ljava/lang/String;
 	public fun named ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/workflow/Violation$RescuedStepRetried : java/lang/Record, org/itineradev/itinera/workflow/Violation {
+	public fun <init> (Lorg/itineradev/itinera/step/StepName;)V
+	public final fun component1 ()Lorg/itineradev/itinera/step/StepName;
+	public final fun copy (Lorg/itineradev/itinera/step/StepName;)Lorg/itineradev/itinera/workflow/Violation$RescuedStepRetried;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/workflow/Violation$RescuedStepRetried;Lorg/itineradev/itinera/step/StepName;ILjava/lang/Object;)Lorg/itineradev/itinera/workflow/Violation$RescuedStepRetried;
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getNamed ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun named ()Ljava/lang/String;
+	public final fun step ()Lorg/itineradev/itinera/step/StepName;
 	public fun toString ()Ljava/lang/String;
 }
 

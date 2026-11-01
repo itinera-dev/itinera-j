@@ -25,11 +25,13 @@ import org.itineradev.itinera.report.ReporterOf
 import org.itineradev.itinera.request.AttemptProviderKind
 import org.itineradev.itinera.request.InputAdapterKind
 import org.itineradev.itinera.request.Request
+import org.itineradev.itinera.request.RescueKind
 import org.itineradev.itinera.request.StepHookKind
 import org.itineradev.itinera.service.AttemptProviderDescriptor
 import org.itineradev.itinera.service.ProviderCall
 import org.itineradev.itinera.service.ProviderDescriptor
 import org.itineradev.itinera.service.ProviderName
+import org.itineradev.itinera.step.RescueFactory
 import org.itineradev.itinera.step.StepFactory
 import org.itineradev.itinera.step.StepName
 import org.itineradev.itinera.value.Fragile
@@ -38,6 +40,7 @@ import org.itineradev.itinera.workflow.Async
 import org.itineradev.itinera.workflow.InputAdapterCall
 import org.itineradev.itinera.workflow.InputAdapterDescriptor
 import org.itineradev.itinera.workflow.JourneyIdGenerator
+import org.itineradev.itinera.workflow.RescueStepDescriptor
 import org.itineradev.itinera.workflow.StepDescriptor
 import org.itineradev.itinera.workflow.Supplied
 import org.itineradev.itinera.workflow.Sync
@@ -201,6 +204,23 @@ class StartTest {
                     Violation.ModeNotAccepted("step pack", Sync),
                     Violation.ModeNotAccepted("reporter 1", Sync),
                 )
+            ),
+            refused,
+        )
+    }
+
+    @Test
+    fun `a rescue step of another mode is refused with mode not accepted`() {
+        val rescue =
+            object : RescueStepDescriptor<Sync> {
+                override val requests: List<Request<RescueKind<Sync>, *>> = emptyList()
+                override val factory: RescueFactory<Sync> = object : RescueFactory<Sync> {}
+            }
+        val step = succeeding("pack").rescue(rescue).build()
+        val refused = refused { ran(HandWritten(Written(listOf(step)), emptyList())) }
+        assertEquals(
+            Refused.Inadmissible(
+                listOf(Violation.ModeNotAccepted("rescue step pack_rescue", Sync))
             ),
             refused,
         )

@@ -17,22 +17,35 @@ import org.itineradev.itinera.workflow.Mode
 public interface StepKind<M : Mode> : BuildKind, ContributorKind, StepReporterKind<M>
 
 /**
+ * A rescue step of a workflow of mode [M], as the kind of part that requests: what a step may
+ * request, and, from the step it rescues, the data its failed attempt contributed, the failure's
+ * reason and the error.
+ *
+ * @param M the mode of the workflows the rescue step can join.
+ * @sample org.itineradev.itinera.workflow.samples.rescues
+ */
+@ExperimentalItineraApi
+public interface RescueKind<M : Mode> : StepKind<M>, FromStepKind, ReasonKind, ErrorKind
+
+/**
  * The kinds of part built from the data and services they request, which may request inputs and
- * services: steps.
+ * services: steps and rescue steps.
  *
  * @sample org.itineradev.itinera.request.samples.requests
  */
 @ExperimentalItineraApi public interface BuildKind
 
 /**
- * The kinds of part that contribute data, which may request a contributor: steps and hooks.
+ * The kinds of part that contribute data, which may request a contributor: steps, rescue steps and
+ * hooks.
  *
  * @sample org.itineradev.itinera.request.samples.requests
  */
 @ExperimentalItineraApi public interface ContributorKind
 
 /**
- * The kinds of part of mode [M] that may request the step reporter of that mode: steps.
+ * The kinds of part of mode [M] that may request the step reporter of that mode: steps and rescue
+ * steps.
  *
  * @param M the mode of the reporter they may request.
  * @sample org.itineradev.itinera.request.samples.requests
