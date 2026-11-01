@@ -60,6 +60,19 @@ internal class StepScript {
     /** Whether the step catches what its emit calls throw and carries on. */
     var ignoresEmitFailures = false
 
+    /** The step policies attached to the step, in order, once stated. */
+    var policies: List<String>? = null
+        private set
+
+    /** Whether the step keeps its contributor and step reporter after its attempt ends. */
+    var keepsHandles = false
+
+    /** Attaches step policies, once. */
+    fun attach(name: String, attached: List<String>) {
+        if (policies != null) throw ModelException("the policies of \"$name\" are stated twice")
+        policies = attached
+    }
+
     var hasRescueStep = false
     var isRescueStep = false
     var isAsynchronous = false
@@ -92,60 +105,4 @@ internal class StepScript {
     fun doesNotRetryAbnormalTerminations() {
         retriesAbnormalTerminations = false
     }
-}
-
-/**
- * The workflow a scenario declares: its name, its steps in declaration order, and their scripts.
- */
-internal class WorkflowModel(val name: String, val steps: List<String>) {
-    /** The script of each step and rescue step, by name; two steps of one name share one. */
-    val scripts: MutableMap<String, StepScript> =
-        steps.associateWithTo(linkedMapOf()) { StepScript() }
-
-    /** The reporters the workflow lists, in order, once stated. */
-    var reporters: List<String>? = null
-
-    /** Where journey IDs come from, once stated. */
-    var idGenerator: IdGenerator? = null
-
-    /** The input adapters, in the order declared, two of one name among them. */
-    val adapters = mutableListOf<AdapterModel>()
-
-    /** The service providers, in the order declared, two of one name among them. */
-    val providers = mutableListOf<ProviderModel>()
-
-    /** Declares an input adapter attached to [steps], after those already declared. */
-    fun adapt(name: String, steps: List<String>) {
-        adapters += AdapterModel(name, steps)
-    }
-
-    /** Declares a service provider, after those already declared. */
-    fun provide(name: String, key: String, type: ServiceType, scope: ProviderScope) {
-        providers += ProviderModel(name, key, type, scope)
-    }
-
-    /** The one input adapter the workflow declares under [name]. */
-    fun adapter(name: String): AdapterModel =
-        adapters.filter { adapter -> isNamed(adapter, name) }.singleOrNull()
-            ?: throw ModelException("the workflow declares no adapter, or several, named \"$name\"")
-
-    /** The one provider the workflow declares under [name]. */
-    fun provider(name: String): ProviderModel =
-        providers.filter { provider -> isNamed(provider, name) }.singleOrNull()
-            ?: throw ModelException(
-                "the workflow declares no provider, or several, named \"$name\""
-            )
-}
-
-private fun isNamed(adapter: AdapterModel, name: String): Boolean = adapter.name == name
-
-private fun isNamed(provider: ProviderModel, name: String): Boolean = provider.name == name
-
-/** Where a workflow instance's journey ID comes from. */
-internal sealed interface IdGenerator {
-    /** The default: a UUID v4 for each instance. */
-    data object None : IdGenerator
-
-    /** A generator that returns this ID. */
-    data class Returns(val id: String) : IdGenerator
 }
