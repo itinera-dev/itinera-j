@@ -2,6 +2,7 @@ package org.itineradev.itinera.workflow
 
 import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Described
+import org.itineradev.itinera.engine.listingOf
 import org.itineradev.itinera.policy.WorkflowPolicyDescriptor
 import org.itineradev.itinera.service.ProviderDescriptor
 
@@ -46,6 +47,17 @@ public interface WorkflowDescriptor<W, M : Mode> {
 
     /** How each instance's journey ID is produced; `null` for a UUID version 4. */
     public val idGenerator: JourneyIdGenerator<W>?
+
+    /**
+     * The workflow's listing, read from its declaration without running anything: each step in
+     * order, with its position, the names of its policies, the name of its input adapter, the
+     * services it requests, each with the name of the provider that serves it, and, when it has a
+     * rescue step, its rescue section. A service no provider serves is left out, as the executor
+     * refuses such a workflow.
+     *
+     * @sample org.itineradev.itinera.workflow.samples.listing
+     */
+    public fun listing(): List<ListedStep> = listingOf(this)
 
     /** Makes workflow descriptors. */
     public companion object {
