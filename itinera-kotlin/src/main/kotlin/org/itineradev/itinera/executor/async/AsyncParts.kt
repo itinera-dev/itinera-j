@@ -3,8 +3,11 @@ package org.itineradev.itinera.executor.async
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import org.itineradev.itinera.engine.Delivery
+import org.itineradev.itinera.engine.Emits
 import org.itineradev.itinera.engine.Guard
 import org.itineradev.itinera.engine.Parts
+import org.itineradev.itinera.engine.ReporterHandle
+import org.itineradev.itinera.engine.ReporterHandles
 import org.itineradev.itinera.engine.Running
 import org.itineradev.itinera.engine.nullable
 import org.itineradev.itinera.engine.returned
@@ -77,6 +80,9 @@ internal class AsyncParts(private val factory: AsyncDispatcherFactory) : Parts<A
     override suspend fun build(factory: StepFactory<Async>, got: Got<StepKind<Async>>): Running? =
         nullable((factory as AsyncStepFactory).build(got))?.let(::running)
 
+    override val reporterHandles: ReporterHandles
+        get() = AsyncReporterHandles
+
     @JvmSynthetic
     override suspend fun ensureActive() {
         currentCoroutineContext().ensureActive()
@@ -121,4 +127,9 @@ private class Guarded(private val reporter: AsyncReporter, private val guard: Gu
     override suspend fun setGlobalMetadata(key: String, value: Any?) {
         guard.setGlobalMetadata { reporter.setGlobalMetadata(key, value) }
     }
+}
+
+/** Makes the asynchronous mode's reporter handles. */
+private object AsyncReporterHandles : ReporterHandles {
+    override fun stepReporter(emits: Emits): ReporterHandle = EmittingAsyncStepReporter(emits)
 }

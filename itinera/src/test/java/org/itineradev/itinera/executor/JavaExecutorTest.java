@@ -7,11 +7,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.itineradev.itinera.event.ByAdapterForKey;
 import org.itineradev.itinera.event.ByProviderForKey;
 import org.itineradev.itinera.event.ByStep;
+import org.itineradev.itinera.event.Event;
 import org.itineradev.itinera.event.UnexpectedResult;
 import org.itineradev.itinera.instance.InstanceBuilder;
 import org.itineradev.itinera.journey.AbortReason;
@@ -106,6 +108,44 @@ final class JavaExecutorTest {
   void aJavaStepThatSkipsLetsTheJourneyGoOn() throws Refusal {
     var result = new LocalExecutor().run(oneStep(got -> () -> Outcome.skipped("none")).create());
     assertTrue(result.isSucceeded());
+  }
+
+  @Test
+  void aJavaStepEmitsAndSetsGlobalMetadataThroughItsStepReporter() throws Refusal {
+    var reporting = Requests.stepReporter();
+    var step =
+        StepDescriptor.builder(
+                "pack",
+                got -> {
+                  var reporter = got.get(reporting);
+                  return () -> {
+                    reporter.warning("heavy", Map.of("kilos", 30L));
+                    reporter.setGlobalMetadata("carrier", "north");
+                    return Outcome.success();
+                  };
+                })
+            .request(reporting)
+            .build();
+    var kinds = new ArrayList<String>();
+    var keys = new ArrayList<String>();
+    var reporter =
+        new Reporter() {
+          @Override
+          public void report(Event event) {
+            kinds.add(event.getKind().toString());
+          }
+
+          @Override
+          public void setGlobalMetadata(String key, Object value) {
+            keys.add(key);
+          }
+        };
+    var instance = InstanceBuilder.of(shop().step(step).build(), new Shop()).reporter(reporter);
+    assertTrue(new LocalExecutor().run(instance.create()).isSucceeded());
+    assertEquals(
+        List.of("journey_started", "attempt_started", "step_warning", "global_metadata_set"),
+        kinds.subList(0, 4));
+    assertEquals(List.of("journey_id", "carrier"), keys);
   }
 
   @Test

@@ -36,7 +36,9 @@ internal data class Input(val key: String, val type: ValueType, val optional: Bo
 internal class StepScript {
     val inputs = mutableListOf<Input>()
     val services = mutableListOf<RequestedService>()
-    val contributions = mutableListOf<Pair<String, Any?>>()
+
+    /** What the step does on every attempt before it ends, in the order written. */
+    val actions = mutableListOf<StepAction>()
 
     /** What the step changes each input it received to, in place, by key. */
     val inputChanges = linkedMapOf<String, Any?>()
@@ -54,6 +56,9 @@ internal class StepScript {
     /** The message the step's build fails with, once stated. */
     var buildFailure: String? = null
         private set
+
+    /** Whether the step catches what its emit calls throw and carries on. */
+    var ignoresEmitFailures = false
 
     var hasRescueStep = false
     var isRescueStep = false
