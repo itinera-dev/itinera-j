@@ -63,10 +63,7 @@ private fun hook(hook: DefinedHook<*>, mode: Mode): Violation =
     Violation.ModeNotAccepted(hook.toString(), mode)
 
 private fun adapter(adapter: InputAdapterDescriptor<*, *>, mode: Mode): Violation =
-    Violation.Misdeclared(
-        "input adapter ${adapter.name}",
-        "is not of the mode $mode, which the executor runs",
-    )
+    Violation.ModeNotAccepted("input adapter ${adapter.name}", mode)
 
 private fun provider(provider: ProviderDescriptor<*, *>, mode: Mode): Violation =
     Violation.ModeNotAccepted("service provider ${provider.name}", mode)

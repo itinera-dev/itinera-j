@@ -71,6 +71,16 @@ public final class WorkflowModel {
     providers.add(new ProviderModel(name, key, type, scope));
   }
 
+  /** The one input adapter the workflow declares under {@code name}. */
+  public AdapterModel adapter(String name) {
+    var named = adapters.stream().filter(adapter -> isNamed(adapter, name)).toList();
+    if (named.size() != 1) {
+      throw new ModelException(
+          "the workflow declares no adapter, or several, named \"" + name + "\"");
+    }
+    return named.get(0);
+  }
+
   /** The one provider the workflow declares under {@code name}. */
   public ProviderModel provider(String name) {
     var named = providers.stream().filter(provider -> isNamed(provider, name)).toList();
@@ -87,6 +97,10 @@ public final class WorkflowModel {
 
   void idGenerator(IdGenerator generator) {
     idGenerator = generator;
+  }
+
+  private static boolean isNamed(AdapterModel adapter, String name) {
+    return adapter.name().equals(name);
   }
 
   private static boolean isNamed(ProviderModel provider, String name) {

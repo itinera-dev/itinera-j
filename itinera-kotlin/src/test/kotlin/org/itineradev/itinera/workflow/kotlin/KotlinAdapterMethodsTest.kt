@@ -15,11 +15,13 @@ import org.itineradev.itinera.service.Service
 import org.itineradev.itinera.step.StepName
 import org.itineradev.itinera.value.kotlin.bagOf
 import org.itineradev.itinera.workflow.AdapterName
+import org.itineradev.itinera.workflow.Async
 import org.itineradev.itinera.workflow.InputAdapter
 import org.itineradev.itinera.workflow.InputAdapterDescriptor
 import org.itineradev.itinera.workflow.ItineraWorkflow
 import org.itineradev.itinera.workflow.Key
 import org.itineradev.itinera.workflow.Supplied
+import org.itineradev.itinera.workflow.Sync
 import org.itineradev.itinera.workflow.SyncInputAdapter
 import org.itineradev.itinera.workflow.Violation
 import org.itineradev.itinera.workflow.Violations
@@ -172,13 +174,19 @@ class KotlinAdapterMethodsTest {
     @Test
     fun `every mistake of one input adapter is refused at once`() {
         val refused = assertThrows<Violations> { WorkflowDescriptor.of(TwoMistakes::class.java) }
-        assertEquals(
-            listOf(
-                "is suspend, though an input adapter of a synchronous workflow is not",
-                "returns String, not Supplied",
-            ),
-            refused.violations.map(::problem),
-        )
+        assertEquals(2, refused.violations.size)
+        val (mode, returns) = refused.violations
+        assertEquals(Violation.ModeNotAccepted("input adapter pricing", Sync), mode)
+        assertEquals("returns String, not Supplied", problem(returns))
+    }
+
+    @ParameterizedTest
+    @FieldSource("otherModes")
+    fun `a Kotlin input adapter of the other mode is refused as not accepted`(
+        describe: () -> Any,
+        refused: Violation,
+    ) {
+        assertEquals(listOf(refused), assertThrows<Violations> { describe() }.violations)
     }
 
     @ParameterizedTest
@@ -215,18 +223,23 @@ class KotlinAdapterMethodsTest {
             )
 
         @JvmField
-        val misdeclared =
+        val otherModes =
             listOf(
                 argumentSet(
                     "a suspend adapter in a synchronous workflow",
                     describing { WorkflowDescriptor.of(SuspendingAdapter::class.java) },
-                    "is suspend, though an input adapter of a synchronous workflow is not",
+                    Violation.ModeNotAccepted("input adapter pricing", Sync),
                 ),
                 argumentSet(
                     "an adapter that is not suspend in an asynchronous workflow",
                     describing { asyncDescriptorOf(PlainAsyncAdapter::class) },
-                    "is not suspend, though an input adapter of an asynchronous workflow is",
+                    Violation.ModeNotAccepted("input adapter pricing", Async),
                 ),
+            )
+
+        @JvmField
+        val misdeclared =
+            listOf(
                 argumentSet(
                     "an adapter naming a step with an empty name",
                     describing { WorkflowDescriptor.of(EmptyStepAdapter::class.java) },

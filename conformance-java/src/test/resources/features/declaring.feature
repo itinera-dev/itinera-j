@@ -20,6 +20,8 @@ Feature: Scenarios that only declare
       | step   |
       | charge |
     And step "charge" is asynchronous
+    And the workflow declares the input adapter "pricing" for the steps "charge"
+    And the input adapter "pricing" is asynchronous
 
   Scenario: Every sentence that declares a workflow
     Given a workflow "orders" with the steps:
