@@ -1,11 +1,9 @@
 package org.itineradev.itinera.journey
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Captured
 import org.itineradev.itinera.engine.Values
 
 /** Data bags for tests, in Kotlin and in Java, holding what each pair captures. */
-@OptIn(ExperimentalItineraApi::class)
 object DataBags {
     @JvmStatic
     fun of(vararg entries: Pair<String, Any?>): DataBag =

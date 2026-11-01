@@ -41,6 +41,8 @@ final class JavaStepMockTest {
   @Test
   void anEndingGivesTheOutcomeItStandsForInJava() {
     assertEquals(Outcome.success(), Ending.success().outcome());
+    assertEquals(Outcome.failure("declined"), Ending.failure("declined").outcome());
+    assertEquals(Outcome.skipped(), Ending.skipped().outcome());
   }
 
   @Test

@@ -1,9 +1,7 @@
 package org.itineradev.itinera.value.kotlin.samples
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.value.kotlin.typeToken
 
-@OptIn(ExperimentalItineraApi::class)
 fun typeTokens() {
     val amounts = typeToken<List<Long>>()
     val notes = typeToken<Map<String, String?>>()

@@ -3,9 +3,12 @@ package org.itineradev.itinera.conformance.run;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.itineradev.itinera.conformance.model.Input;
 import org.itineradev.itinera.conformance.model.StepScript;
+import org.itineradev.itinera.journey.Contributor;
 import org.itineradev.itinera.request.BuildKind;
+import org.itineradev.itinera.request.ContributorKind;
 import org.itineradev.itinera.request.Got;
 import org.itineradev.itinera.request.Request;
 import org.itineradev.itinera.request.Requests;
@@ -18,12 +21,15 @@ import org.itineradev.itinera.workflow.Sync;
 
 /**
  * What a step's script requests, and what the step does with what it receives before the rest of
- * its script: it uses each service once, and changes the inputs the script says.
+ * its script: it uses each service once, changes the inputs the script says, and contributes what
+ * the script says, first what every attempt contributes, then what this attempt does.
  */
 final class Scripted {
   private final StepScript script;
   private final Map<String, Request<BuildKind, ?>> inputs = new LinkedHashMap<>();
   private final List<ServiceRequest<?>> services;
+  private final Request<ContributorKind, Contributor> contributor = Requests.contributor();
+  private final AtomicInteger built = new AtomicInteger();
 
   Scripted(StepScript script) {
     this.script = script;
@@ -34,11 +40,13 @@ final class Scripted {
   }
 
   /**
-   * Declares the step's inputs on {@code builder}, then its services, each in the order written.
+   * Declares the step's inputs on {@code builder}, then its services, each in the order written,
+   * then its contributor.
    */
   StepBuilder<Sync> declaredOn(StepBuilder<Sync> builder) {
     inputs.values().forEach(builder::request);
     services.forEach(builder::request);
+    builder.request(contributor);
     return builder;
   }
 
@@ -52,15 +60,33 @@ final class Scripted {
     for (var service : services) {
       lent.put(service.getKey(), got.get(service));
     }
-    return new Received(read, lent);
+    return new Received(read, lent, got.get(contributor), built.getAndIncrement());
   }
 
   /**
-   * Uses each service the step received, whose failure escapes, then changes its inputs in place.
+   * Uses each service the step received, whose failure escapes, changes its inputs in place, then
+   * contributes.
    */
   void act(Received received) {
     received.services().values().forEach(Services::use);
     script.inputChanges().forEach((key, to) -> changeInPlace(received.inputs().get(key), to));
+    var contributing = received.contributor();
+    for (var contribution : script.contributions()) {
+      contributing.contribute(contribution.getKey(), contribution.getValue());
+    }
+    contributionsOf(received.builtBefore()).forEach(contributing::contribute);
+  }
+
+  /**
+   * What the step built after {@code builtBefore} others contributes, as its row says, or as the
+   * last row says for a step built past them.
+   */
+  private Map<String, Object> contributionsOf(int builtBefore) {
+    var rows = script.attempts();
+    if (rows == null) {
+      return Map.of();
+    }
+    return rows.get(Math.min(builtBefore, rows.size() - 1)).contributes();
   }
 
   private static Request<BuildKind, ?> requested(Input input) {

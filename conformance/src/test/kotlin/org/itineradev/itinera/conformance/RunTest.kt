@@ -88,6 +88,12 @@ class RunTest {
     }
 
     @Test
+    fun `every scenario whose steps fail, skip and contribute passes in both columns`() {
+        assertTrue(runs("@outcomes"), errors().toString())
+        assertEquals(12, scenarios().size)
+    }
+
+    @Test
     fun `a journey that did not do what the case expects fails as unmet`() {
         assertFalse(runs("@unmet"))
         assertTrue(errors().all { "Unmet" in it }, errors().toString())
@@ -98,8 +104,8 @@ class RunTest {
         assertFalse(runs("@not-run-yet"))
         assertEquals(
             listOf(
-                "the runner cannot run an attempt that fails or is skipped yet",
-                "the runner cannot run an attempt that fails or is skipped yet",
+                "the runner cannot run rescue steps yet",
+                "the runner cannot run rescue steps yet",
             ),
             errors().map(::notRunYet),
             errors().toString(),
