@@ -4,6 +4,7 @@ import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
 import org.itineradev.itinera.instance.WorkflowInstance
 import org.itineradev.itinera.journey.JourneyId
+import org.itineradev.itinera.report.ReporterFactoryOf
 import org.itineradev.itinera.report.ReporterOf
 import org.itineradev.itinera.workflow.Mode
 import org.itineradev.itinera.workflow.WorkflowDescriptor
@@ -19,7 +20,7 @@ public class Draft<W, M : Mode>(
 ) {
     private val data = LinkedHashMap<String, Any?>()
     private val metadata = LinkedHashMap<String, Any?>()
-    private val reporters = mutableListOf<(JourneyId) -> ReporterOf<M>?>()
+    private val reporters = mutableListOf<ReporterFactoryOf<M>>()
 
     /** Puts [value] in the initial data under [key]. */
     public fun data(key: String, value: Any?) {
@@ -32,13 +33,13 @@ public class Draft<W, M : Mode>(
     }
 
     /** Adds the reporter [factory] makes for the journey's ID. */
-    public fun reporter(factory: (JourneyId) -> ReporterOf<M>?) {
+    public fun reporter(factory: ReporterFactoryOf<M>) {
         reporters += factory
     }
 
     /**
      * The instance: captures the initial data, then produces the journey ID, then makes the
-     * reporters.
+     * reporters, those the workflow lists first.
      *
      * @throws IllegalStateException when the ID generator or a reporter factory throws or returns
      *   what it may not.
@@ -50,7 +51,7 @@ public class Draft<W, M : Mode>(
             descriptor,
             workflow,
             journeyId,
-            reporters.map { factory -> made(factory, journeyId) },
+            (descriptor.reporters + reporters).map { factory -> made(factory, journeyId) },
             data.toMap(),
             metadata.toMap(),
             initial,
@@ -73,10 +74,10 @@ public class Draft<W, M : Mode>(
 }
 
 private fun <M : Mode> made(
-    factory: (JourneyId) -> ReporterOf<M>?,
+    factory: ReporterFactoryOf<M>,
     journeyId: JourneyId,
 ): ReporterOf<M> =
-    runCatching { factory(journeyId) }
+    runCatching { nullable(factory.create(journeyId)) }
         .onFailure(::rethrowError)
         .getOrElse { thrown -> throw failed("A reporter factory", thrown) }
         ?: throw IllegalStateException("A reporter factory returned null, not a reporter.")

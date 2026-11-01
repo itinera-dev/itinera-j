@@ -4,6 +4,7 @@ import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Checked
 import org.itineradev.itinera.engine.isRole
 import org.itineradev.itinera.policy.WorkflowPolicyDescriptor
+import org.itineradev.itinera.report.ReporterFactoryOf
 import org.itineradev.itinera.service.ProviderDescriptor
 
 /**
@@ -21,6 +22,7 @@ internal constructor(private val name: WorkflowName, private val mode: M) {
     private val roles = mutableListOf<Class<in W>>()
     private val inputAdapters = mutableListOf<InputAdapterDescriptor<W, M>>()
     private val providers = mutableListOf<ProviderDescriptor<W, M>>()
+    private val reporters = mutableListOf<ReporterFactoryOf<M>>()
     private var idGenerator: JourneyIdGenerator<W>? = null
 
     /**
@@ -73,6 +75,18 @@ internal constructor(private val name: WorkflowName, private val mode: M) {
     }
 
     /**
+     * Lists the reporter [factory] makes, after those already listed. Each instance makes its own
+     * with it, given its journey ID, before the reporters it is given itself. From Java, a factory
+     * whose reporter is itself a lambda is written as a `ReporterFactory`, such as `ReporterFactory
+     * printing = id -> event -> …`.
+     *
+     * @sample org.itineradev.itinera.report.samples.listed
+     */
+    public fun reporter(factory: ReporterFactoryOf<M>): WorkflowBuilder<W, M> = apply {
+        reporters += factory
+    }
+
+    /**
      * Produces each instance's journey ID with this generator, in place of a UUID version 4.
      *
      * @sample org.itineradev.itinera.workflow.samples.ids
@@ -88,5 +102,15 @@ internal constructor(private val name: WorkflowName, private val mode: M) {
      * @sample org.itineradev.itinera.workflow.samples.building
      */
     public fun build(): WorkflowDescriptor<W, M> =
-        Checked.of(name, mode, steps, policies, roles, inputAdapters, providers, idGenerator)
+        Checked.of(
+            name,
+            mode,
+            steps,
+            policies,
+            roles,
+            inputAdapters,
+            providers,
+            reporters,
+            idGenerator,
+        )
 }

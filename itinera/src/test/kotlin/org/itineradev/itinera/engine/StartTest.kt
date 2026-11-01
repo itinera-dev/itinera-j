@@ -21,6 +21,7 @@ import org.itineradev.itinera.policy.samples.Messages
 import org.itineradev.itinera.report.Dispatcher
 import org.itineradev.itinera.report.DispatcherFactory
 import org.itineradev.itinera.report.Reporter
+import org.itineradev.itinera.report.ReporterFactoryOf
 import org.itineradev.itinera.report.ReporterOf
 import org.itineradev.itinera.request.AttemptProviderKind
 import org.itineradev.itinera.request.InputAdapterKind
@@ -352,6 +353,7 @@ private class Written(
     override val name: WorkflowName = WorkflowName.of("written")
     override val mode: Sync = Sync
     override val policies: List<WorkflowPolicyDescriptor<*, Sync>> = emptyList()
+    override val reporters: List<ReporterFactoryOf<Sync>> = emptyList()
     override val idGenerator: JourneyIdGenerator<Shop>? = null
 }
 
@@ -365,6 +367,7 @@ private class Asynchronous : WorkflowDescriptor<Shop, Async> {
     override val inputAdapters: List<InputAdapterDescriptor<Shop, Async>> = emptyList()
     override val providers: List<ProviderDescriptor<Shop, Async>> = emptyList()
     override val roles: List<Class<in Shop>> = emptyList()
+    override val reporters: List<ReporterFactoryOf<Async>> = emptyList()
     override val idGenerator: JourneyIdGenerator<Shop>? = null
 }
 

@@ -14,7 +14,7 @@ Kotlin's types rule out every `null` below, but a Java class or a Java lambda ca
 | A step's run, `SyncStepRun.run`, or an annotated step's `run` | `fun run(): Outcome` | `Outcome run()` | none | aborts with `unexpected result`, `ByStep`: "the step's run returned null, not an outcome" |
 | The dispatcher factory, `DispatcherFactory.create` | `fun create(): Dispatcher` | `Dispatcher create()` | none | refused with `Refused.DispatcherFactoryReturnedNull` |
 | The ID generator, `JourneyIdGenerator.generate` or an `@IdGenerator` method | `fun generate(workflow: W, data: DataBag): String` | `String generate(W workflow, DataBag data)` | none | `create()` throws `IllegalStateException`, as for an empty ID |
-| A reporter factory, `ReporterFactory.create` | `fun create(journeyId: JourneyId): Reporter` | `Reporter create(JourneyId journeyId)` | none | `create()` throws `IllegalStateException` |
+| A reporter factory, `ReporterFactoryOf.create`, narrowed by `ReporterFactory.create` | `fun create(journeyId: JourneyId): ReporterOf<M>`, or `Reporter` for a `ReporterFactory` | `ReporterOf<M> create(JourneyId journeyId)`, or `Reporter` for a `ReporterFactory` | none | `create()` throws `IllegalStateException` |
 
 The ID generator and the reporter factories are called while the instance is created, before any journey, so a `null` from them is a failure of `create()`, as chapter 5, 5.1 point 1 says of any failure then, not a refusal of `run`. Reporters and dispatchers are void ([0011](0011-events.md)).
 
