@@ -29,7 +29,7 @@ internal class WrittenRequest(
     fun answer(): Answer? = if (optional && !kotlin) javaForms?.optional else Answer.ITSELF
 }
 
-private fun isOptional(type: ValueType): Boolean =
+internal fun isOptional(type: ValueType): Boolean =
     type is ClassType && type.raw == Optional::class.java
 
 internal fun admitsNull(type: ValueType): Boolean =
