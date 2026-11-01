@@ -22,6 +22,7 @@ import org.itineradev.itinera.event.ResultSource;
 import org.itineradev.itinera.event.StepCouldNotBeBuilt;
 import org.itineradev.itinera.event.UnexpectedResult;
 import org.itineradev.itinera.event.ValueSource;
+import org.itineradev.itinera.event.WrongData;
 import org.itineradev.itinera.event.WrongType;
 
 /** The cells naming who an abort blames. */
@@ -43,7 +44,7 @@ final class Naming {
       return cellsOf(missing.missing());
     }
     if (abort instanceof WrongType wrong) {
-      return keyed(wrong.key(), requesterCells(wrong.requester()));
+      return cellsOf(wrong.wrong());
     }
     if (abort instanceof NotAValue.UnderKey notAValue) {
       return keyed(notAValue.key(), valueCells(notAValue.source()));
@@ -73,6 +74,13 @@ final class Naming {
       return failureCells(reason.requester());
     }
     return failureCells(((MissingData.Error) missing).requester());
+  }
+
+  private static List<Cell> cellsOf(WrongData wrong) {
+    if (wrong instanceof WrongData.Key key) {
+      return keyed(key.key(), requesterCells(key.requester()));
+    }
+    return failureCells(((WrongData.FailureReason) wrong).requester());
   }
 
   private static List<Cell> requesterCells(Requester requester) {

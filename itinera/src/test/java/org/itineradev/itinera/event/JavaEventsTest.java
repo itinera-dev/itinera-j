@@ -77,7 +77,10 @@ class JavaEventsTest {
   void anAbortNamesItsReasonAndWhoCausedIt() {
     JourneyAbort abort =
         new WrongType(
-            CHARGE, "amount", new ByStepHook(PolicyName.of("audit"), StepHook.ON_STEP_RETRY), null);
+            CHARGE,
+            new WrongData.Key(
+                "amount", new ByStepHook(PolicyName.of("audit"), StepHook.ON_STEP_RETRY)),
+            null);
     assertEquals(AbortReason.WRONG_TYPE, abort.getReason());
     assertEquals("wrong type", abort.getReason().toString());
     assertSame(ByStep.INSTANCE, new ReservedMetadataKey(CHARGE, ByStep.INSTANCE).source());
