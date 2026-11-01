@@ -1,7 +1,5 @@
 package org.itineradev.itinera.workflow
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * Marks a method of a workflow class as an input adapter of the workflow, attached to [steps]: an
  * ordinary method in a synchronous workflow, a `suspend` one in an asynchronous workflow, returning
@@ -11,7 +9,6 @@ import org.itineradev.itinera.ExperimentalItineraApi
  *
  * @sample org.itineradev.itinera.workflow.annotated.samples.pricing
  */
-@ExperimentalItineraApi
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
 @MustBeDocumented

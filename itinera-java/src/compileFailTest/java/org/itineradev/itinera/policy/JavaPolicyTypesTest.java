@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 import org.itineradev.itinera.compiling.Javac;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -49,6 +50,22 @@ final class JavaPolicyTypesTest {
     var failing = javac.compile(SNIPPET.formatted(refused));
     assertFalse(failing.compiled(), failing.messages());
     assertTrue(failing.messages().contains(message), failing.messages());
+  }
+
+  @Test
+  void aJavaFailureHookNeverFinishesTheWorkflow() throws IOException {
+    var refused =
+        new Javac(directory)
+            .compile(
+                """
+                import org.itineradev.itinera.policy.OnFailure;
+
+                final class Finishing implements OnFailure {}
+                """);
+    assertFalse(refused.compiled(), refused.messages());
+    assertTrue(
+        refused.messages().contains("class is not allowed to extend sealed class: OnFailure"),
+        refused.messages());
   }
 
   static Stream<Arguments> refusals() {

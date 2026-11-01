@@ -1,7 +1,5 @@
 package org.itineradev.itinera.step
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * Why a step failed or was skipped, or why a hook failed the journey: a short code a program can
  * compare, a message for people, and details. The details are a value, which itinera captures when
@@ -9,7 +7,6 @@ import org.itineradev.itinera.ExperimentalItineraApi
  *
  * @sample org.itineradev.itinera.step.samples.reasons
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class Reason
 @JvmOverloads

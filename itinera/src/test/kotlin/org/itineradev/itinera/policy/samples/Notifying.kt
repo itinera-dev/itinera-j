@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.policy.samples
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.policy.PolicyFactory
 import org.itineradev.itinera.policy.Role
 import org.itineradev.itinera.policy.SyncWorkflowHook

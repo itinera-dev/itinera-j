@@ -17,7 +17,6 @@ import org.itineradev.itinera.event.EventKind
  *
  * @sample org.itineradev.itinera.report.async.samples.asyncDispatching
  */
-@ExperimentalItineraApi
 public class AsyncDefaultDispatcher : AsyncDispatcher {
     private val reporters = mutableListOf<AsyncReporter>()
 
@@ -50,6 +49,7 @@ public class AsyncDefaultDispatcher : AsyncDispatcher {
      *
      * @sample org.itineradev.itinera.report.async.samples.asyncDispatching
      */
+    @ExperimentalItineraApi
     @JvmSynthetic
     override suspend fun setGlobalMetadata(key: String, value: Any?) {
         reporters.forEach { reporter -> reporter.setGlobalMetadata(key, value) }
@@ -61,7 +61,6 @@ public class AsyncDefaultDispatcher : AsyncDispatcher {
  *
  * @sample org.itineradev.itinera.report.async.samples.asyncDispatching
  */
-@ExperimentalItineraApi
 public class AsyncDefaultDispatcherFactory : AsyncDispatcherFactory {
     /**
      * A new dispatcher, holding no reporter.

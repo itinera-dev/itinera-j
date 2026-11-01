@@ -1,6 +1,5 @@
 package org.itineradev.itinera.step
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.Name
 
 /**
@@ -8,7 +7,6 @@ import org.itineradev.itinera.Name
  *
  * @sample org.itineradev.itinera.samples.names
  */
-@ExperimentalItineraApi
 public class StepName private constructor(name: String) : Name(name, "step") {
     /** Makes step names. */
     public companion object {

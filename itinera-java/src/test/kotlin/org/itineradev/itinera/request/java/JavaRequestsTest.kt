@@ -1,9 +1,6 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.request.java
 
 import java.util.Optional
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.Contributor
 import org.itineradev.itinera.policy.KeepDefault
 import org.itineradev.itinera.policy.SyncHook

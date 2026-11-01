@@ -1,7 +1,6 @@
 package org.itineradev.itinera.event
 
 import java.time.Instant
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.JourneyId
 import org.itineradev.itinera.workflow.WorkflowName
 
@@ -17,7 +16,6 @@ import org.itineradev.itinera.workflow.WorkflowName
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 public sealed interface Event {
     /** The event's kind, which tells what else it carries. */
     public val kind: EventKind
@@ -41,7 +39,6 @@ public sealed interface Event {
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 public sealed interface Decision : Event {
     /** Who decided it: the executor's own rule, or the hook whose returned lifecycle decided it. */
     public val decidedBy: DecidedBy

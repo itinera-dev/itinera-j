@@ -1,7 +1,5 @@
 package org.itineradev.itinera.step
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * Marks a parameter of a step's constructor as one of its inputs: data from the workflow, read
  * under its key as the parameter's type.
@@ -12,7 +10,6 @@ import org.itineradev.itinera.ExperimentalItineraApi
  *
  * @sample org.itineradev.itinera.workflow.annotated.samples.charging
  */
-@ExperimentalItineraApi
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @MustBeDocumented

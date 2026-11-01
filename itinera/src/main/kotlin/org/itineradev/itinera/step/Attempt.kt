@@ -1,14 +1,11 @@
 package org.itineradev.itinera.step
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * An attempt of a step, by its number, counted from 1: every event about a step carries the attempt
  * it is about. Attempts compare by their numbers.
  *
  * @sample org.itineradev.itinera.step.samples.attempts
  */
-@ExperimentalItineraApi
 public class Attempt
 private constructor(
     /** The attempt's number, counted from 1. */

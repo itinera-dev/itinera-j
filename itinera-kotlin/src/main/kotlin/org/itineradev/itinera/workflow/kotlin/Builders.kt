@@ -1,6 +1,5 @@
 package org.itineradev.itinera.workflow.kotlin
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.workflow.Sync
 import org.itineradev.itinera.workflow.WorkflowBuilder
 import org.itineradev.itinera.workflow.WorkflowDescriptor
@@ -12,6 +11,5 @@ import org.itineradev.itinera.workflow.WorkflowDescriptor
  * @throws IllegalArgumentException when [name] is empty.
  * @sample org.itineradev.itinera.workflow.kotlin.samples.reifiedBuilding
  */
-@ExperimentalItineraApi
 public inline fun <reified W> builder(name: String): WorkflowBuilder<W, Sync> =
     WorkflowDescriptor.builder(W::class.java, name)

@@ -1,7 +1,6 @@
 package org.itineradev.itinera.engine
 
 import java.util.UUID
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Journeys.Shop
 import org.itineradev.itinera.engine.Journeys.instanceOf
 import org.itineradev.itinera.engine.Journeys.packing
@@ -17,7 +16,6 @@ import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-@OptIn(ExperimentalItineraApi::class)
 class DraftTest {
     @Test
     fun `without an ID generator each journey ID is a UUID version 4`() {

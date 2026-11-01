@@ -1,6 +1,5 @@
 package org.itineradev.itinera.executor
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Journeys.packing
 import org.itineradev.itinera.event.Event
 import org.itineradev.itinera.executor.samples.executors
@@ -13,7 +12,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-@OptIn(ExperimentalItineraApi::class)
 class LocalExecutorTest {
     @Test
     fun `an executor refuses a journey while it runs one`() {
@@ -47,7 +45,6 @@ class LocalExecutorTest {
 }
 
 /** Tries, on the first event, to run another journey on the executor running this one. */
-@OptIn(ExperimentalItineraApi::class)
 private class Nested(
     private val executor: LocalExecutor,
     private val instance: WorkflowInstance<Sync>,

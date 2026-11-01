@@ -13,7 +13,6 @@ import org.itineradev.itinera.ExperimentalItineraApi
  *
  * @sample org.itineradev.itinera.step.async.samples.asyncReporters
  */
-@ExperimentalItineraApi
 public interface AsyncStepReporter {
     /**
      * Emits `step_info` with [message].
@@ -70,5 +69,7 @@ public interface AsyncStepReporter {
      * @throws IllegalStateException when its attempt has ended.
      * @sample org.itineradev.itinera.step.async.samples.asyncReporters
      */
-    @JvmSynthetic public suspend fun setGlobalMetadata(key: String, value: Any?)
+    @ExperimentalItineraApi
+    @JvmSynthetic
+    public suspend fun setGlobalMetadata(key: String, value: Any?)
 }

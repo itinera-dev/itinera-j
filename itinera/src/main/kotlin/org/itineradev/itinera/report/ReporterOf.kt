@@ -1,6 +1,5 @@
 package org.itineradev.itinera.report
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.workflow.Mode
 
 /**
@@ -12,4 +11,4 @@ import org.itineradev.itinera.workflow.Mode
  * @param M the mode of the workflows the reporter can report.
  * @sample org.itineradev.itinera.report.samples.printer
  */
-@ExperimentalItineraApi public interface ReporterOf<M : Mode>
+public interface ReporterOf<M : Mode>

@@ -1,10 +1,10 @@
 package org.itineradev.itinera.executor
 
 import java.util.concurrent.atomic.AtomicBoolean
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Engine
 import org.itineradev.itinera.engine.SyncParts
 import org.itineradev.itinera.engine.driven
+import org.itineradev.itinera.engine.restoringInterrupts
 import org.itineradev.itinera.instance.WorkflowInstance
 import org.itineradev.itinera.journey.JourneyResult
 import org.itineradev.itinera.report.DefaultDispatcherFactory
@@ -21,7 +21,6 @@ import org.itineradev.itinera.workflow.Sync
  *
  * @sample org.itineradev.itinera.executor.samples.executors
  */
-@ExperimentalItineraApi
 public class LocalExecutor
 /** An executor whose journeys deliver their events through dispatchers [factory] makes. */
 @JvmOverloads
@@ -31,7 +30,9 @@ public constructor(private val factory: DispatcherFactory = DefaultDispatcherFac
     /**
      * Runs the one journey of [instance] and returns its result: it succeeded or failed, with its
      * data bag, or it was aborted. Nothing that happens in the journey escapes, except a
-     * [java.lang.Error], which itinera never catches.
+     * [java.lang.Error], which itinera never catches. Custom code that throws
+     * [InterruptedException] fails as any throw does, and the thread's interrupt flag, which the
+     * throw cleared, is set again once the journey ends, before [run] returns or throws.
      *
      * @throws Refusal before any journey and any event: when the executor is running a journey, the
      *   instance ran before, it is not admitted, or the dispatcher factory, the dispatcher or a
@@ -42,7 +43,7 @@ public constructor(private val factory: DispatcherFactory = DefaultDispatcherFac
     public fun run(instance: WorkflowInstance<Sync>): JourneyResult {
         if (!running.compareAndSet(false, true)) throw Refusal(Refused.JourneyRunning)
         try {
-            return driven { Engine(SyncParts(factory)).run(instance) }
+            return restoringInterrupts { driven { Engine(SyncParts(factory)).run(instance) } }
         } finally {
             running.set(false)
         }

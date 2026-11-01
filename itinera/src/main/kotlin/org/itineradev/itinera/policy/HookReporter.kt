@@ -12,7 +12,6 @@ import org.itineradev.itinera.ExperimentalItineraApi
  *
  * @sample org.itineradev.itinera.policy.samples.hookReporters
  */
-@ExperimentalItineraApi
 public interface HookReporter {
     /**
      * Emits `journey_info` with [message].
@@ -69,5 +68,5 @@ public interface HookReporter {
      * @throws IllegalStateException when its hook has returned.
      * @sample org.itineradev.itinera.policy.samples.hookReporters
      */
-    public fun setGlobalMetadata(key: String, value: Any?)
+    @ExperimentalItineraApi public fun setGlobalMetadata(key: String, value: Any?)
 }

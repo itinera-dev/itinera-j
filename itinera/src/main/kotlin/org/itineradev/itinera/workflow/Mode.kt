@@ -1,7 +1,5 @@
 package org.itineradev.itinera.workflow
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * A workflow's execution mode: [Sync] or [Async]. A workflow is all of one mode, its steps and
  * reporters included, and each executor runs one mode. Each mode is both a type, which descriptors
@@ -11,7 +9,7 @@ import org.itineradev.itinera.ExperimentalItineraApi
  *
  * @sample org.itineradev.itinera.workflow.samples.modes
  */
-@ExperimentalItineraApi public sealed interface Mode
+public sealed interface Mode
 
 /**
  * The synchronous mode, which Kotlin and Java write: every part returns when its work is done, and
@@ -19,7 +17,7 @@ import org.itineradev.itinera.ExperimentalItineraApi
  *
  * @sample org.itineradev.itinera.workflow.samples.modes
  */
-@ExperimentalItineraApi public data object Sync : Mode
+public data object Sync : Mode
 
 /**
  * The asynchronous mode, which only Kotlin writes, with `suspend` functions, and
@@ -27,4 +25,4 @@ import org.itineradev.itinera.ExperimentalItineraApi
  *
  * @sample org.itineradev.itinera.workflow.samples.modes
  */
-@ExperimentalItineraApi public data object Async : Mode
+public data object Async : Mode
