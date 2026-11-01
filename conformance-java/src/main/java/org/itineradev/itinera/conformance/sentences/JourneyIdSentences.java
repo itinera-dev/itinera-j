@@ -1,14 +1,18 @@
 package org.itineradev.itinera.conformance.sentences;
 
 import static org.itineradev.itinera.conformance.run.Verdicts.holds;
+import static org.itineradev.itinera.conformance.sentences.Reported.madeAs;
 
 import io.cucumber.java.en.Then;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 import org.itineradev.itinera.conformance.World;
 import org.itineradev.itinera.conformance.run.Ended;
 import org.itineradev.itinera.conformance.run.Journey;
+import org.itineradev.itinera.conformance.run.ScenarioReporter;
+import org.itineradev.itinera.journey.JourneyId;
 
 /** The sentences that check each journey's ID, and whether its instance was created. */
 public final class JourneyIdSentences {
@@ -43,6 +47,15 @@ public final class JourneyIdSentences {
   public void resultsJourneyIdIs(String id) {
     var found = world.result().journeyId().toString();
     holds(found.equals(id), "the result's journey ID \"" + id + "\"", "\"" + found + "\"");
+  }
+
+  @Then("the reporter {string} was made with the journey ID {string}")
+  public void reporterMadeWith(String reporter, String id) {
+    var found = madeAs(world, reporter).stream().map(ScenarioReporter::journeyId).toList();
+    holds(
+        found.equals(List.of(JourneyId.of(id))),
+        "\"" + reporter + "\" made with the journey ID \"" + id + "\"",
+        found.toString());
   }
 
   @Then("no journey ID was produced")
