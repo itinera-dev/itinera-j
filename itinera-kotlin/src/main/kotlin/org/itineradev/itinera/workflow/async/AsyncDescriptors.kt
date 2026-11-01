@@ -11,6 +11,7 @@ import org.itineradev.itinera.engine.HookCalls
 import org.itineradev.itinera.engine.HookMethod
 import org.itineradev.itinera.engine.ProviderCalls
 import org.itineradev.itinera.engine.ProviderMethod
+import org.itineradev.itinera.engine.RescueClass
 import org.itineradev.itinera.engine.StepClass
 import org.itineradev.itinera.engine.StepFactories
 import org.itineradev.itinera.engine.invoked
@@ -32,9 +33,11 @@ import org.itineradev.itinera.service.ProviderCall
 import org.itineradev.itinera.service.ProviderReporter
 import org.itineradev.itinera.service.async.AsyncProvider
 import org.itineradev.itinera.service.async.AsyncProviderReporter
+import org.itineradev.itinera.step.RescueFactory
 import org.itineradev.itinera.step.StepFactory
 import org.itineradev.itinera.step.StepReporter
 import org.itineradev.itinera.step.async.AsyncRescueFactory
+import org.itineradev.itinera.step.async.AsyncRescueRun
 import org.itineradev.itinera.step.async.AsyncStepFactory
 import org.itineradev.itinera.step.async.AsyncStepReporter
 import org.itineradev.itinera.step.async.AsyncStepRun
@@ -131,6 +134,12 @@ private object AsynchronousSteps : StepFactories<Async> {
         val built = step.built(got)
         val arguments = step.arguments(got)
         AsyncStepRun { returned(suspended(step.run, built, arguments)) }
+    }
+
+    override fun of(rescue: RescueClass<Async>): RescueFactory<Async> = AsyncRescueFactory { got ->
+        val built = rescue.built(got)
+        val arguments = rescue.arguments(got)
+        AsyncRescueRun { returned(suspended(rescue.run, built, arguments)) }
     }
 }
 

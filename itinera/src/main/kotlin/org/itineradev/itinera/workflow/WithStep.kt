@@ -3,6 +3,7 @@ package org.itineradev.itinera.workflow
 import kotlin.reflect.KClass
 import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.policy.ItineraStepPolicy
+import org.itineradev.itinera.step.ItineraRescueStep
 import org.itineradev.itinera.step.ItineraStep
 
 /**
@@ -27,4 +28,9 @@ public annotation class WithStep(
     val noRetryOnAbnormalTermination: Boolean = false,
     /** The step's policies, each a class marked `@StepPolicy`, in the order their hooks run. */
     val policies: Array<KClass<out ItineraStepPolicy>> = [],
+    /**
+     * The step's rescue step, a class marked `@RescueStep`, or [ItineraRescueStep] itself, the
+     * default, for none. A step with a rescue step has a retry budget of 0.
+     */
+    val rescue: KClass<out ItineraRescueStep> = ItineraRescueStep::class,
 )
