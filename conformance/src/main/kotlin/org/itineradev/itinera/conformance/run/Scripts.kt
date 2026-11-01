@@ -1,9 +1,11 @@
 package org.itineradev.itinera.conformance.run
 
 import org.itineradev.itinera.conformance.model.Ending as Written
+import org.itineradev.itinera.conformance.model.ModelException
 import org.itineradev.itinera.conformance.model.ScriptedAttempt
 import org.itineradev.itinera.conformance.model.StepScript
 import org.itineradev.itinera.conformance.model.WorkflowModel
+import org.itineradev.itinera.step.Reason
 import org.itineradev.itinera.step.testing.AsyncStepMock
 import org.itineradev.itinera.step.testing.Ending
 import org.itineradev.itinera.step.testing.StepMock
@@ -32,17 +34,9 @@ internal fun notRunYetIn(model: WorkflowModel): String? =
 /** What [script] asks for that the runner cannot run yet, or `null` when it can run it. */
 internal fun notRunYetIn(script: StepScript): String? =
     when {
-        script.contributions.isNotEmpty() -> "contributions"
         script.hasRescueStep || script.isRescueStep -> "rescue steps"
-        script.attempts.orEmpty().any(::contributes) -> "contributions"
-        script.attempts.orEmpty().any(::failsOrSkips) -> "an attempt that fails or is skipped"
         else -> null
     }
-
-private fun contributes(attempt: ScriptedAttempt): Boolean = attempt.contributes.isNotEmpty()
-
-private fun failsOrSkips(attempt: ScriptedAttempt): Boolean =
-    attempt.ending == Written.FAILURE || attempt.ending == Written.SKIPPED
 
 private fun playing(endings: List<Ending>): StepMock =
     StepMock.playing(endings.first(), *endings.drop(1).toTypedArray())
@@ -64,7 +58,16 @@ private fun endingsOf(script: StepScript): List<Ending> =
 private fun endingOf(attempt: ScriptedAttempt): Ending =
     when (attempt.ending) {
         Written.SUCCESS -> Ending.success()
+        Written.FAILURE -> Ending.failure(failureReasonOf(attempt))
+        Written.SKIPPED -> Ending.Skipped(attempt.code?.let { code -> reasonOf(attempt, code) })
         Written.ERROR -> Ending.abnormalTermination(attempt.message ?: UNWRITTEN_MESSAGE)
-        Written.FAILURE,
-        Written.SKIPPED -> throw NotRunYet("an attempt that fails or is skipped")
     }
+
+private fun failureReasonOf(attempt: ScriptedAttempt): Reason =
+    reasonOf(
+        attempt,
+        attempt.code ?: throw ModelException("attempt ${attempt.number} fails with no code"),
+    )
+
+private fun reasonOf(attempt: ScriptedAttempt, code: String): Reason =
+    Reason(code, attempt.message, attempt.details)

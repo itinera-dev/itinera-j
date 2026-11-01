@@ -3,6 +3,7 @@ package org.itineradev.itinera.conformance.trace
 import org.itineradev.itinera.conformance.run.writtenImplementation
 import org.itineradev.itinera.event.AdapterSource
 import org.itineradev.itinera.event.ByWorkflowHook
+import org.itineradev.itinera.event.ContributionSource
 import org.itineradev.itinera.event.JourneyAborted
 import org.itineradev.itinera.event.OptionalInputAbsent
 import org.itineradev.itinera.event.ProviderSource
@@ -35,6 +36,23 @@ internal fun cellsOf(event: ServiceProvided): List<Cell> =
 /** The cells of [event]: the key and who requested it. */
 internal fun cellsOf(event: OptionalInputAbsent): List<Cell> =
     listOf("key" to event.key) + cellsOf(event.requester)
+
+/** The cells of a contribution under [key]: the key, and who made it. */
+internal fun contributedCells(key: String, source: ContributionSource): List<Cell> =
+    listOf("key" to key) + cellsOf(source)
+
+private fun cellsOf(source: ContributionSource): List<Cell> =
+    when (source) {
+        is StepSource ->
+            listOf("step" to source.step, "attempt" to source.attempt, "source" to source.step)
+        is StepHookSource ->
+            listOf(
+                "step" to source.step,
+                "attempt" to source.attempt,
+                "source" to "${source.policy}, ${source.hook}",
+            )
+        is ByWorkflowHook -> listOf("source" to "${source.policy}, ${source.hook}")
+    }
 
 private fun cellsOf(source: RequestSource): List<Cell> =
     when (source) {

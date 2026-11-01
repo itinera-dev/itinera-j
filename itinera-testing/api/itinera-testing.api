@@ -30,7 +30,12 @@ public final class org/itineradev/itinera/step/testing/AsyncStepMock$Companion {
 public abstract interface class org/itineradev/itinera/step/testing/Ending {
 	public static final field Companion Lorg/itineradev/itinera/step/testing/Ending$Companion;
 	public static fun abnormalTermination (Ljava/lang/String;)Lorg/itineradev/itinera/step/testing/Ending;
+	public static fun failure (Ljava/lang/String;)Lorg/itineradev/itinera/step/testing/Ending;
+	public static fun failure (Lorg/itineradev/itinera/step/Reason;)Lorg/itineradev/itinera/step/testing/Ending;
 	public fun outcome ()Lorg/itineradev/itinera/step/Outcome;
+	public static fun skipped ()Lorg/itineradev/itinera/step/testing/Ending;
+	public static fun skipped (Ljava/lang/String;)Lorg/itineradev/itinera/step/testing/Ending;
+	public static fun skipped (Lorg/itineradev/itinera/step/Reason;)Lorg/itineradev/itinera/step/testing/Ending;
 	public static fun success ()Lorg/itineradev/itinera/step/testing/Ending;
 }
 
@@ -47,7 +52,34 @@ public final class org/itineradev/itinera/step/testing/Ending$AbnormalTerminatio
 
 public final class org/itineradev/itinera/step/testing/Ending$Companion {
 	public final fun abnormalTermination (Ljava/lang/String;)Lorg/itineradev/itinera/step/testing/Ending;
+	public final fun failure (Ljava/lang/String;)Lorg/itineradev/itinera/step/testing/Ending;
+	public final fun failure (Lorg/itineradev/itinera/step/Reason;)Lorg/itineradev/itinera/step/testing/Ending;
+	public final fun skipped ()Lorg/itineradev/itinera/step/testing/Ending;
+	public final fun skipped (Ljava/lang/String;)Lorg/itineradev/itinera/step/testing/Ending;
+	public final fun skipped (Lorg/itineradev/itinera/step/Reason;)Lorg/itineradev/itinera/step/testing/Ending;
 	public final fun success ()Lorg/itineradev/itinera/step/testing/Ending;
+}
+
+public final class org/itineradev/itinera/step/testing/Ending$Failure : java/lang/Record, org/itineradev/itinera/step/testing/Ending {
+	public fun <init> (Lorg/itineradev/itinera/step/Reason;)V
+	public final fun component1 ()Lorg/itineradev/itinera/step/Reason;
+	public final fun copy (Lorg/itineradev/itinera/step/Reason;)Lorg/itineradev/itinera/step/testing/Ending$Failure;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/step/testing/Ending$Failure;Lorg/itineradev/itinera/step/Reason;ILjava/lang/Object;)Lorg/itineradev/itinera/step/testing/Ending$Failure;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public final fun reason ()Lorg/itineradev/itinera/step/Reason;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/step/testing/Ending$Skipped : java/lang/Record, org/itineradev/itinera/step/testing/Ending {
+	public fun <init> (Lorg/itineradev/itinera/step/Reason;)V
+	public final fun component1 ()Lorg/itineradev/itinera/step/Reason;
+	public final fun copy (Lorg/itineradev/itinera/step/Reason;)Lorg/itineradev/itinera/step/testing/Ending$Skipped;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/step/testing/Ending$Skipped;Lorg/itineradev/itinera/step/Reason;ILjava/lang/Object;)Lorg/itineradev/itinera/step/testing/Ending$Skipped;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public final fun reason ()Lorg/itineradev/itinera/step/Reason;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class org/itineradev/itinera/step/testing/Ending$Success : org/itineradev/itinera/step/testing/Ending {

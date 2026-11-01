@@ -5,7 +5,6 @@ import org.itineradev.itinera.journey.DataBag
 import org.itineradev.itinera.journey.DataBagAccess
 import org.itineradev.itinera.journey.kotlin.read
 
-@OptIn(ExperimentalItineraApi::class)
 fun reads(data: DataBag): Long = data.read<Parcel>("parcel").orNull()?.weight ?: 0L
 
 @OptIn(ExperimentalItineraApi::class)

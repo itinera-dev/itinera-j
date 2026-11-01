@@ -1,6 +1,5 @@
 package org.itineradev.itinera.journey
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Captured
 import org.itineradev.itinera.engine.Received
 import org.itineradev.itinera.engine.Values
@@ -17,7 +16,6 @@ import org.itineradev.itinera.value.TypeToken
  *
  * @sample org.itineradev.itinera.journey.samples.reads
  */
-@ExperimentalItineraApi
 public class DataBag internal constructor() {
     private val values = LinkedHashMap<String, Captured>()
 

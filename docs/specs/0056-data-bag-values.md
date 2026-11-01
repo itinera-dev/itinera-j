@@ -2,11 +2,11 @@
 
 Tech spec for [proposal 0056](https://github.com/itinera-dev/spec/blob/main/proposals/0056-data-bag-values.md), implemented in [#18](https://github.com/itinera-dev/itinera-j/issues/18). The [tier 1 plan](../tier-1-plan.md) holds what crosses proposals, section 2 above all, and [0121](0121-read-only-copies.md) when itinera copies a value.
 
-Status: started. Stage 1 added the check and copy of a value, type tokens, the data bag and its `Read`. Stage 3 captures the initial data and the initial global metadata when the instance is created, and `run` refuses the keys whose values are not values ([0042](0042-configuration-errors-before-the-journey.md)). Later stages capture what enters a journey through the same function: adapters' values and providers' data in stage 5, as [0060](0060-input-adapters-attached-to-steps.md) and [0095](0095-services-provided-to-steps.md) say, then contributions and reasons' details later in stage 5.
+Status: done. Stage 1 added the check and copy of a value, type tokens, the data bag and its `Read`. Stage 3 captures the initial data and the initial global metadata when the instance is created, and `run` refuses the keys whose values are not values ([0042](0042-configuration-errors-before-the-journey.md)). Stage 5 captures what enters a journey through the same function: adapters' values and providers' data, as [0060](0060-input-adapters-attached-to-steps.md) and [0095](0095-services-provided-to-steps.md) say, then contributions and reasons' details, as [0008](0008-steps.md) says, with which the last scenario passed and 56 was listed in both manifests.
 
 ## API
 
-Until 56 is listed in both manifests, every public item below carries `@ExperimentalItineraApi`.
+56 is listed in both manifests, so no public item below carries `@ExperimentalItineraApi`, but for `DataBagAccess.read<T>(key)` in `itinera-kotlin`, which belongs to [0091](0091-adapters-read-the-data-bag.md).
 
 - **`TypeToken<T>`**, in `org.itineradev.itinera.value`: the type a read wants, generics and nullability included. `TypeToken.of(Long::class.java)` refuses `null` and `TypeToken.ofNullable(...)` admits it. In Java, `new TypeToken<List<Long>>() {}` names a generic type. In Kotlin, `typeToken<List<Long?>>()`, from `org.itineradev.itinera.value.kotlin` in `itinera-kotlin`, reads the type with `typeOf`. A token is never of a primitive: `long` gives `Long`.
 - **`DataBag`**, in `org.itineradev.itinera.journey`: string keys in the order they were first set, `keys`, `contains`, and `read(key, token)`, which returns a `Read`. `itinera-kotlin` adds `data.read<Long>("amount")`, in `org.itineradev.itinera.journey.kotlin`. Applications never build a data bag; the engine does, through `DataBags.of`.
@@ -83,7 +83,8 @@ A `TypeToken` subclass is read through `getAnnotatedSuperclass`, with the subcla
 - `itinera/src/test/kotlin/org/itineradev/itinera/journey/DataBagTest.kt` and `itinera/src/test/java/org/itineradev/itinera/journey/JavaDataBagTest.java`: present, absent, numbers that do not widen, a stored `null`, key order.
 - `itinera/src/test/java/org/itineradev/itinera/value/GenericTokensTest.java` and `NullMarkedTest.java`: tokens written in Java, generic and sealed types, wildcards, and JSpecify's marks, at the top, in arguments, in record components and on type variables, by class, by enclosing class and by package.
 - `itinera-kotlin/src/test/kotlin/org/itineradev/itinera/value/kotlin/KotlinDataClassesTest.kt`, `TypeTokensTest.kt` and `itinera-kotlin/src/test/kotlin/org/itineradev/itinera/journey/kotlin/ReadsTest.kt`: data classes and data objects, the Kotlin classes that are not values, Kotlin's nullability and projections, and generic data classes.
+- `itinera/src/test/kotlin/org/itineradev/itinera/engine/ContributionsTest.kt`: "a contribution is captured when it is made" and "a contribution that is not a value aborts the journey, naming the step and the key".
 
 ## Done when
 
-56 is listed in both manifests once every scenario tagged `@proposal-0056` passes in both runners, in stage 6.
+56 is listed in both manifests, since every scenario tagged `@proposal-0056` passes in both runners, by the pull request of stage 5 that lets steps contribute.

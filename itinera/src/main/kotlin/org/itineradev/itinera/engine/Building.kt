@@ -23,12 +23,16 @@ internal class Building<M : Mode>(
     private val lending = Lending(journey, parts, instance)
 
     /**
-     * What [step]'s [attempt] is built from.
+     * What [step]'s [attempt] is built from, the [handles] made for the attempt among it.
      *
      * @throws JourneyAbortSignal when resolving a request aborts the journey.
      */
     @JvmSynthetic
-    suspend fun got(step: StepDescriptor<M>, attempt: Attempt): Got<StepKind<M>> {
+    suspend fun got(
+        step: StepDescriptor<M>,
+        attempt: Attempt,
+        handles: Map<Handle, Any>,
+    ): Got<StepKind<M>> {
         val requests = step.requests
         val read =
             requests.filter(::asksInput).associateWith { input -> inputOf(step, attempt, input) }
@@ -44,7 +48,7 @@ internal class Building<M : Mode>(
                     Known.STEP_NAME to step.name,
                     Known.ATTEMPT to attempt,
                 ),
-                emptyMap(),
+                handles,
             )
         return Answered(requests, read + lent + journey.resolved(requests, call))
     }

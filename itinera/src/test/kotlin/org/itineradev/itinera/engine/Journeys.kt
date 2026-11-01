@@ -8,10 +8,12 @@ import org.itineradev.itinera.event.Event
 import org.itineradev.itinera.instance.InstanceBuilder
 import org.itineradev.itinera.instance.WorkflowInstance
 import org.itineradev.itinera.instance.instance
+import org.itineradev.itinera.journey.Contributor
 import org.itineradev.itinera.journey.JourneyResult
 import org.itineradev.itinera.report.DefaultDispatcherFactory
 import org.itineradev.itinera.report.DispatcherFactory
 import org.itineradev.itinera.report.Reporter
+import org.itineradev.itinera.request.Requests
 import org.itineradev.itinera.step.Outcome
 import org.itineradev.itinera.step.SyncStepFactory
 import org.itineradev.itinera.step.SyncStepRun
@@ -36,6 +38,18 @@ object Journeys {
     fun playing(name: String, vararg endings: Throwable?): StepBuilder<Sync> {
         val left = endings.toMutableList()
         return StepDescriptor.builder(name) { SyncStepRun { ending(left.removeFirst()) } }
+    }
+
+    /** A step that requests its contributor, whose attempts play [attempts] in turn with it. */
+    fun contributing(name: String, vararg attempts: (Contributor) -> Outcome): StepBuilder<Sync> {
+        val left = attempts.toMutableList()
+        val contributor = Requests.contributor()
+        return StepDescriptor.builder(name) { got ->
+                val handle = got[contributor]
+                val attempt = left.removeFirst()
+                SyncStepRun { attempt(handle) }
+            }
+            .request(contributor)
     }
 
     fun building(name: String, factory: SyncStepFactory): StepBuilder<Sync> =

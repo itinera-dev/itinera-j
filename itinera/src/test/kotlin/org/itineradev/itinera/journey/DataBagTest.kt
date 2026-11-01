@@ -1,6 +1,5 @@
 package org.itineradev.itinera.journey
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.samples.keys
 import org.itineradev.itinera.journey.samples.reads
 import org.itineradev.itinera.value.Rebuilds
@@ -13,7 +12,6 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments.argumentSet
 import org.junit.jupiter.params.provider.FieldSource
 
-@OptIn(ExperimentalItineraApi::class)
 class DataBagTest {
     private val amount = TypeToken.of(Long::class.java)
 
