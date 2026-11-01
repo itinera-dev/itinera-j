@@ -1,6 +1,7 @@
 package org.itineradev.itinera.conformance.model;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
@@ -10,6 +11,7 @@ public final class StepScript {
   private final List<Input> inputs = new ArrayList<>();
   private final List<RequestedService> services = new ArrayList<>();
   private final List<Map.Entry<String, Object>> contributions = new ArrayList<>();
+  private final Map<String, Object> inputChanges = new LinkedHashMap<>();
   private List<ScriptedAttempt> attempts;
   private Integer retries;
   private boolean retryOnAbnormalTermination = true;
@@ -31,6 +33,11 @@ public final class StepScript {
   /** What it contributes, in the order written. */
   public List<Map.Entry<String, Object>> contributions() {
     return contributions;
+  }
+
+  /** What the step changes each input it received to, in place, by key. */
+  public Map<String, Object> inputChanges() {
+    return inputChanges;
   }
 
   /** Each attempt in order; attempts after the last repeat it. {@code null} until stated. */

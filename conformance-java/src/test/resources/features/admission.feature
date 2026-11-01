@@ -67,13 +67,3 @@ Feature: Scenarios that declare adapters, services and providers, and list the w
     Then admission is refused with the violations:
       | violation           |
       | duplicate step name |
-
-  @not-run-yet
-  Scenario: A workflow with an input adapter, which the runner cannot run yet
-    Given a workflow "orders" with the steps:
-      | step   |
-      | charge |
-    And step "charge" succeeds
-    And the workflow declares the input adapter "pricing" for the steps "charge"
-    When the workflow runs
-    Then the journey succeeded

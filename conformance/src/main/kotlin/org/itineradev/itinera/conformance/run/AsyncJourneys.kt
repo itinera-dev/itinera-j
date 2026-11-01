@@ -47,7 +47,7 @@ internal fun asyncJourneys(model: Model, recorders: Recorders, witness: Witness)
     val builder = asyncBuilder<Scenario>(workflow.name)
     for (step in workflow.steps) builder.step(asyncStepOf(step, model, witness))
     for (adapter in workflow.adapters) builder.inputAdapter(asyncAdapterOf(adapter))
-    for (provider in workflow.providers) builder.provider(asyncProviderOf(provider))
+    for (provider in workflow.providers) builder.provider(asyncProviderOf(provider, witness))
     for (name in workflow.reporters.orEmpty()) {
         builder.reporter { AsyncScenarioReporter(recorders.make(name)) }
     }
@@ -58,11 +58,12 @@ internal fun asyncJourneys(model: Model, recorders: Recorders, witness: Witness)
 
 private fun asyncStepOf(name: String, model: Model, witness: Witness): StepDescriptor<Async> {
     val script = model.step(name)
+    val scripted = Scripted(script)
     val what = notRunYetIn(script)
     val factory =
-        if (what == null) witness.watchingAsync(name, asyncMockOf(script)) else asyncNotRunYet(what)
-    val builder = asyncStep(name, factory).scriptedBy(script)
-    script.services.map(::requestOf).forEach(builder::request)
+        if (what == null) witness.watchingAsync(name, asyncMockOf(script), scripted)
+        else asyncNotRunYet(what)
+    val builder = scripted.declaredOn(asyncStep(name, factory).scriptedBy(script))
     if (script.hasRescueStep) builder.rescue(asyncRescueOf(model.step("${name}_rescue")))
     return builder.build()
 }
@@ -78,34 +79,49 @@ private fun asyncRescueOf(script: StepScript): RescueStepDescriptor<Async> {
 }
 
 private fun asyncAdapterOf(adapter: AdapterModel): InputAdapterDescriptor<Scenario, Async> {
+    val adapting = Adapting(adapter)
     val builder =
-        asyncInputAdapter<Scenario>(adapter.name, adapter.steps.first()) { _, _ ->
-            throw NotRunYet("input adapters")
+        asyncInputAdapter<Scenario>(adapter.name, adapter.steps.first()) { _, got ->
+            adapting.supplied(got)
         }
     adapter.steps.drop(1).forEach(builder::step)
-    return builder.build()
+    return adapting.declaredOn(builder).build()
 }
 
-private fun asyncProviderOf(provider: ProviderModel): ProviderDescriptor<Scenario, Async> =
-    asyncProviderOf(provider, classOf(provider.type))
+private fun asyncProviderOf(
+    provider: ProviderModel,
+    witness: Witness,
+): ProviderDescriptor<Scenario, Async> = asyncProviderOf(provider, witness, classOf(provider.type))
 
 private fun <T : Any> asyncProviderOf(
     provider: ProviderModel,
+    witness: Witness,
     type: Class<T>,
 ): ProviderDescriptor<Scenario, Async> =
     when (provider.scope) {
-        ProviderScope.JOURNEY ->
-            asyncProvider<Scenario, T>(provider.name, provider.key, type) { _, _ ->
-                    throw NotRunYet("service providers")
-                }
+        ProviderScope.JOURNEY -> {
+            val providing = journeyProviding<Async>(provider, witness)
+            providing
+                .declaredOn(
+                    asyncProvider<Scenario, T>(provider.name, provider.key, type) { _, got ->
+                        providing.provided(got, type)
+                    }
+                )
                 .servingOnly(provider)
                 .build()
-        ProviderScope.ATTEMPT ->
-            asyncPerAttemptProvider<Scenario, T>(provider.name, provider.key, type) { _, _ ->
-                    throw NotRunYet("service providers")
-                }
+        }
+        ProviderScope.ATTEMPT -> {
+            val providing = attemptProviding<Async>(provider, witness)
+            providing
+                .declaredOn(
+                    asyncPerAttemptProvider<Scenario, T>(provider.name, provider.key, type) { _, got
+                        ->
+                        providing.provided(got, type)
+                    }
+                )
                 .servingOnly(provider)
                 .build()
+        }
     }
 
 private class AsyncJourneys(

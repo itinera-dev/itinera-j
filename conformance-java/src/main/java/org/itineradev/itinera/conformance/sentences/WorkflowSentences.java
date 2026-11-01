@@ -51,6 +51,11 @@ public final class WorkflowSentences {
     model().step(step).contributions().add(new SimpleImmutableEntry<>(key, value(written)));
   }
 
+  @Given("^step \"([^\"]*)\" changes its input \"([^\"]*)\" to (.+)$")
+  public void changesItsInput(String step, String key, String written) {
+    model().step(step).inputChanges().put(key, value(written));
+  }
+
   @Given("step {string} succeeds")
   public void succeeds(String step) {
     model().step(step).attempts(step, List.of(new ScriptedAttempt(1, Ending.SUCCESS)));

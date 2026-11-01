@@ -7,6 +7,7 @@ import org.itineradev.itinera.engine.Guard
 import org.itineradev.itinera.engine.Parts
 import org.itineradev.itinera.engine.Running
 import org.itineradev.itinera.engine.nullable
+import org.itineradev.itinera.engine.returned
 import org.itineradev.itinera.event.Event
 import org.itineradev.itinera.policy.HookCall
 import org.itineradev.itinera.policy.async.AsyncHook
@@ -16,7 +17,9 @@ import org.itineradev.itinera.report.async.AsyncDispatcher
 import org.itineradev.itinera.report.async.AsyncDispatcherFactory
 import org.itineradev.itinera.report.async.AsyncReporter
 import org.itineradev.itinera.request.Got
+import org.itineradev.itinera.request.InputAdapterKind
 import org.itineradev.itinera.request.StepKind
+import org.itineradev.itinera.service.Provided
 import org.itineradev.itinera.service.ProviderCall
 import org.itineradev.itinera.service.async.AsyncProvider
 import org.itineradev.itinera.step.RescueFactory
@@ -26,6 +29,7 @@ import org.itineradev.itinera.step.async.AsyncStepFactory
 import org.itineradev.itinera.step.async.AsyncStepRun
 import org.itineradev.itinera.workflow.Async
 import org.itineradev.itinera.workflow.InputAdapterCall
+import org.itineradev.itinera.workflow.Supplied
 import org.itineradev.itinera.workflow.async.AsyncInputAdapter
 
 /** The asynchronous mode's parts, whose dispatchers [factory] makes. */
@@ -51,6 +55,23 @@ internal class AsyncParts(private val factory: AsyncDispatcherFactory) : Parts<A
 
     @JvmSynthetic
     override suspend fun dispatcher(): Delivery? = nullable(factory.create())?.let(::AsyncDelivery)
+
+    @JvmSynthetic
+    override suspend fun adapt(
+        adapter: InputAdapterCall<*, Async>,
+        workflow: Any?,
+        got: Got<InputAdapterKind>,
+    ): Supplied? = nullable(returned<AsyncInputAdapter<Any?>>(adapter).adapt(workflow, got))
+
+    @JvmSynthetic
+    override suspend fun provide(
+        provider: ProviderCall<*, *, *, *>?,
+        workflow: Any?,
+        got: Got<*>,
+    ): Provided<*>? =
+        nullable(
+            returned<AsyncProvider<Any?, Any?, Any>>(provider).provide(workflow, returned(got))
+        )
 
     @JvmSynthetic
     override suspend fun build(factory: StepFactory<Async>, got: Got<StepKind<Async>>): Running? =
