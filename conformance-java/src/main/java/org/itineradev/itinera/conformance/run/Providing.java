@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import org.itineradev.itinera.conformance.model.ModelException;
+import org.itineradev.itinera.conformance.model.ProviderAction;
 import org.itineradev.itinera.conformance.model.ProviderFailure;
 import org.itineradev.itinera.conformance.model.ProviderModel;
 import org.itineradev.itinera.conformance.model.ProviderRequest;
@@ -19,17 +20,20 @@ import org.itineradev.itinera.request.Requests;
 import org.itineradev.itinera.request.java.JavaRequests;
 import org.itineradev.itinera.service.Provided;
 import org.itineradev.itinera.service.ProviderBuilder;
+import org.itineradev.itinera.service.ProviderReporter;
 import org.itineradev.itinera.value.TypeToken;
 import org.itineradev.itinera.workflow.Sync;
 
 /**
  * What a scripted provider does when called, through requests of kind {@code K}: the witness
- * records what it received, and it fails, returns no instance or makes one, as its script says.
+ * records what it received, it does what its actions say through its reporter, and it fails,
+ * returns no instance or makes one, as its script says.
  */
 final class Providing<K extends JourneyProviderKind<Sync>> {
   private final ProviderModel provider;
   private final Witness witness;
   private final Request<? super K, JourneyId> journeyId = Requests.journeyId();
+  private final Request<? super K, ProviderReporter> reporter = Requests.providerReporter();
   private final Map<ProviderRequest, Request<? super K, ?>> requests;
   private final Map<JourneyId, Integer> made = new HashMap<>();
 
@@ -64,6 +68,7 @@ final class Providing<K extends JourneyProviderKind<Sync>> {
   /** Declares what the provider requests on {@code builder}, in the order written. */
   <W> ProviderBuilder<W, Sync, K> declaredOn(ProviderBuilder<W, Sync, K> builder) {
     builder.request(journeyId);
+    builder.request(reporter);
     requests.values().forEach(builder::request);
     return builder;
   }
@@ -75,6 +80,7 @@ final class Providing<K extends JourneyProviderKind<Sync>> {
       received.put(request.getKey(), answerOf(got.get(request.getValue())));
     }
     witness.called(provider.name(), received);
+    perform(got.get(reporter));
     var failure = provider.failure();
     if (failure != null && failsOn(failure, received)) {
       throw new IllegalStateException(failure.message());
@@ -85,6 +91,25 @@ final class Providing<K extends JourneyProviderKind<Sync>> {
     int count = made.merge(got.get(journeyId), 1, Integer::sum);
     return new Provided.Instance<>(
         type.cast(Services.madeBy(provider, labelOf(received, count))), dataOf(provider));
+  }
+
+  private void perform(ProviderReporter reporter) {
+    for (var action : provider.actions()) {
+      if (action instanceof ProviderAction.Emits emits) {
+        emit(reporter, emits);
+      } else {
+        var sets = (ProviderAction.SetsGlobalMetadata) action;
+        reporter.setGlobalMetadata(sets.key(), sets.value());
+      }
+    }
+  }
+
+  private static void emit(ProviderReporter reporter, ProviderAction.Emits emits) {
+    switch (emits.kind()) {
+      case JOURNEY_INFO -> reporter.info(emits.message(), emits.data());
+      case JOURNEY_WARNING -> reporter.warning(emits.message(), emits.data());
+      case JOURNEY_ERROR -> reporter.error(emits.message(), emits.data());
+    }
   }
 
   private String labelOf(Map<ProviderRequest, Object> received, int count) {

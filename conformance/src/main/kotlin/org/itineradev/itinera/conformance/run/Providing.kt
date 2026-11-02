@@ -1,6 +1,7 @@
 package org.itineradev.itinera.conformance.run
 
 import org.itineradev.itinera.conformance.model.ModelException
+import org.itineradev.itinera.conformance.model.ProviderAction
 import org.itineradev.itinera.conformance.model.ProviderFailure
 import org.itineradev.itinera.conformance.model.ProviderModel
 import org.itineradev.itinera.conformance.model.ProviderRequest
@@ -18,24 +19,59 @@ import org.itineradev.itinera.workflow.Mode
 
 /**
  * What the scripted [provider] does when called, through requests of kind [K]: the witness records
- * what it received, and it fails, returns no instance or makes one, as its script says.
+ * what it received, it does what its actions say through its [reporter], and it fails, returns no
+ * instance or makes one, as its script says.
  */
-internal class Providing<K>(
+internal class Providing<K, R>(
     private val provider: ProviderModel,
     private val witness: Witness,
     private val journeyId: Request<K, JourneyId>,
+    private val reporter: Request<K, R>,
     private val requests: Map<ProviderRequest, Request<K, *>>,
 ) {
     private val made = mutableMapOf<JourneyId, Int>()
 
     /** Declares what the provider requests on [builder], in the order written. */
     fun <W, M : Mode> declaredOn(builder: ProviderBuilder<W, M, K>): ProviderBuilder<W, M, K> =
-        builder.request(journeyId).apply { requests.values.forEach(::request) }
+        builder.request(journeyId).request(reporter).apply { requests.values.forEach(::request) }
 
-    /** What the provider gives for one call, given [got], making instances of [type]. */
-    fun <T : Any> provided(got: Got<K>, type: Class<T>): Provided<T> {
-        val received = requests.mapValues { entry -> got[entry.value] }
-        witness.called(provider.name, received)
+    /**
+     * What the provider gives for one call, given [got], making instances of [type], once
+     * [performing] its actions with its reporter.
+     */
+    fun <T : Any> provided(
+        got: Got<K>,
+        type: Class<T>,
+        performing: (List<ProviderAction>, R) -> Unit,
+    ): Provided<T> {
+        val received = receivedFrom(got)
+        performing(provider.actions, got[reporter])
+        return provided(got, received, type)
+    }
+
+    /** The asynchronous twin of [provided]. */
+    suspend fun <T : Any> providedAsync(
+        got: Got<K>,
+        type: Class<T>,
+        performing: suspend (List<ProviderAction>, R) -> Unit,
+    ): Provided<T> {
+        val received = receivedFrom(got)
+        performing(provider.actions, got[reporter])
+        return provided(got, received, type)
+    }
+
+    private fun receivedFrom(got: Got<K>): Map<ProviderRequest, Any?> =
+        requests
+            .mapValues { entry -> got[entry.value] }
+            .also { received ->
+                witness.called(provider.name, received)
+            }
+
+    private fun <T : Any> provided(
+        got: Got<K>,
+        received: Map<ProviderRequest, Any?>,
+        type: Class<T>,
+    ): Provided<T> {
         provider.failure?.takeIf { failure -> failsOn(failure, received) }?.let(::failed)
         if (provider.returnsNothing) return Provided.noInstance()
         val count = made.merge(got[journeyId], 1, Int::plus) ?: 1
@@ -51,27 +87,31 @@ internal class Providing<K>(
             ?: "${provider.name} $count"
 }
 
-/** Calls of a provider of journey scope scripted as [provider]. */
-internal fun <M : Mode> journeyProviding(
+/** Calls of a provider of journey scope scripted as [provider], given its [reporter]. */
+internal fun <M : Mode, R> journeyProviding(
     provider: ProviderModel,
     witness: Witness,
-): Providing<JourneyProviderKind<M>> =
+    reporter: Request<JourneyProviderKind<M>, R>,
+): Providing<JourneyProviderKind<M>, R> =
     Providing(
         provider,
         witness,
         Requests.journeyId(),
+        reporter,
         provider.requests.associateWith(::journeyRequestOf),
     )
 
-/** Calls of a provider of attempt scope scripted as [provider]. */
-internal fun <M : Mode> attemptProviding(
+/** Calls of a provider of attempt scope scripted as [provider], given its [reporter]. */
+internal fun <M : Mode, R> attemptProviding(
     provider: ProviderModel,
     witness: Witness,
-): Providing<AttemptProviderKind<M>> =
+    reporter: Request<AttemptProviderKind<M>, R>,
+): Providing<AttemptProviderKind<M>, R> =
     Providing(
         provider,
         witness,
         Requests.journeyId(),
+        reporter,
         provider.requests.associateWith(::attemptRequestOf),
     )
 

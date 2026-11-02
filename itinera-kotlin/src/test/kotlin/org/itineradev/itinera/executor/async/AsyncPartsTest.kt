@@ -25,6 +25,7 @@ import org.itineradev.itinera.policy.async.asyncWorkflowPolicy
 import org.itineradev.itinera.report.async.AsyncReporter
 import org.itineradev.itinera.request.Requests
 import org.itineradev.itinera.request.async.asyncHookReporter
+import org.itineradev.itinera.request.async.asyncProviderReporter
 import org.itineradev.itinera.request.async.asyncStepReporter
 import org.itineradev.itinera.service.Provided
 import org.itineradev.itinera.service.ProviderDescriptor
@@ -219,6 +220,36 @@ class AsyncPartsTest {
                 log.kinds.take(4),
             )
             assertEquals(listOf("journey_id", "carrier"), log.keys)
+        }
+
+    @Test
+    fun `an asynchronous provider's reporter emits and sets global metadata, awaiting every reporter`() =
+        runBlocking<Unit> {
+            val reporter = Requests.asyncProviderReporter()
+            val labels = Requests.service("labels", String::class.java)
+            val ship = asyncStep("ship") { _ -> AsyncStepRun { Outcome.success() } }.request(labels)
+            val printer =
+                asyncProvider<Shop, String>("printer", "labels", String::class.java) { _, got ->
+                        got[reporter].warning("paper low")
+                        got[reporter].setGlobalMetadata("printer", "north")
+                        Provided.Instance("label")
+                    }
+                    .request(reporter)
+            val log = Yielding()
+            val instance =
+                asyncBuilder<Shop>("shop")
+                    .step(ship.build())
+                    .provider(printer.build())
+                    .build()
+                    .instance(Shop())
+                    .reporter(log)
+                    .create()
+            assertTrue(AsyncLocalExecutor().run(instance).isSucceeded)
+            assertEquals(
+                listOf("journey_warning", "global_metadata_set", "service_provided"),
+                log.kinds.subList(2, 5),
+            )
+            assertEquals(listOf("journey_id", "printer"), log.keys)
         }
 
     @Test

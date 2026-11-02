@@ -10,14 +10,20 @@ import org.itineradev.itinera.engine.Journeys.ran
 import org.itineradev.itinera.engine.Journeys.shop
 import org.itineradev.itinera.event.ByProvider
 import org.itineradev.itinera.event.ByProviderForKey
+import org.itineradev.itinera.event.Event
 import org.itineradev.itinera.event.EventKind
+import org.itineradev.itinera.event.GlobalMetadataSet
+import org.itineradev.itinera.event.JourneyInfo
 import org.itineradev.itinera.event.MissingData
 import org.itineradev.itinera.event.NotAValue
+import org.itineradev.itinera.event.ProviderSource
+import org.itineradev.itinera.event.ReporterFailed
 import org.itineradev.itinera.event.RequiredDataMissing
 import org.itineradev.itinera.event.ServiceProvided
 import org.itineradev.itinera.event.StepCouldNotBeBuilt
 import org.itineradev.itinera.event.UnexpectedResult
 import org.itineradev.itinera.instance.InstanceBuilder
+import org.itineradev.itinera.report.Reporter
 import org.itineradev.itinera.request.AttemptProviderKind
 import org.itineradev.itinera.request.JourneyProviderKind
 import org.itineradev.itinera.request.Requests
@@ -25,7 +31,9 @@ import org.itineradev.itinera.service.Provided
 import org.itineradev.itinera.service.ProviderBuilder
 import org.itineradev.itinera.service.ProviderDescriptor
 import org.itineradev.itinera.service.ProviderName
+import org.itineradev.itinera.service.ProviderReporter
 import org.itineradev.itinera.service.SyncProvider
+import org.itineradev.itinera.step.Attempt
 import org.itineradev.itinera.step.Outcome
 import org.itineradev.itinera.step.StepName
 import org.itineradev.itinera.step.SyncStepRun
@@ -36,6 +44,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotSame
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class LendingTest {
     /** A service the steps request. */
@@ -188,6 +197,71 @@ class LendingTest {
         assertEquals(emptyList<String>(), called)
     }
 
+    @Test
+    fun `a provider's events name it and the step being built, and come before service_provided`() {
+        val log = Log()
+        val reporter = Requests.providerReporter()
+        val provider = attemptScope { _, got ->
+            got[reporter].info("choosing", "main")
+            Provided.Instance(Card())
+        }
+        ran(served(provider.request(reporter)).reporter(log).create())
+        assertEquals(listOf("journey_info", "service_provided"), log.kinds.subList(2, 4))
+        val info = log.events[2] as JourneyInfo
+        assertEquals(
+            listOf(ProviderSource(payments, charge, Attempt.of(1)), "choosing", "main"),
+            listOf(info.source, info.message, info.data),
+        )
+    }
+
+    @Test
+    fun `an entry a provider sets reaches the reporters, then global_metadata_set names the provider`() {
+        val log = Log()
+        val reporter = Requests.providerReporter()
+        val provider = journeyScope { _, got ->
+            got[reporter].setGlobalMetadata("gateway", "main")
+            Provided.Instance(Card())
+        }
+        ran(served(provider.request(reporter)).reporter(log).create())
+        assertEquals("gateway" to "main", log.metadata.last())
+        assertEquals(
+            ProviderSource(payments, charge, Attempt.of(1)),
+            log.events.filterIsInstance<GlobalMetadataSet>().single().source,
+        )
+    }
+
+    @Test
+    fun `a provider's reporter reports nothing once the provider has returned`() {
+        val reporter = Requests.providerReporter()
+        val kept = mutableListOf<ProviderReporter>()
+        val provider = journeyScope { _, got ->
+            kept += got[reporter]
+            Provided.Instance(Card())
+        }
+        ran(served(provider.request(reporter)).create())
+        assertThrows<IllegalStateException> { kept.single().info("late") }
+    }
+
+    @Test
+    fun `a reporter failing on a provider's event aborts the journey, though the provider caught it`() {
+        val log = Log()
+        val reporter = Requests.providerReporter()
+        val provider = attemptScope { _, got ->
+            runCatching { got[reporter].warning("slow") }
+            Provided.Instance(Card())
+        }
+        val result =
+            ran(
+                served(provider.request(reporter)).reporter(log).reporter(FailingOnWarning).create()
+            )
+        assertEquals(ReporterFailed(charge, "full"), result.abort?.details)
+        assertEquals(
+            listOf("journey_started", "attempt_started", "journey_warning", "journey_aborted"),
+            log.kinds,
+        )
+        assertEquals(emptyList<Gateway>(), lent)
+    }
+
     private fun lending(name: String): StepBuilder<Sync> =
         building(name) { got ->
                 lent += got[gateway]
@@ -214,6 +288,13 @@ class LendingTest {
                 .provider(provider.build())
                 .build()
         )
+
+    /** Fails on every `journey_warning`. */
+    private object FailingOnWarning : Reporter {
+        override fun report(event: Event) {
+            check(event.kind != EventKind.JOURNEY_WARNING) { "full" }
+        }
+    }
 
     private companion object {
         val charge: StepName = StepName.of("charge")
