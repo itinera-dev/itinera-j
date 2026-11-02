@@ -6,7 +6,7 @@ Status: done. Stage 3 added `LocalExecutor`, `AsyncLocalExecutor` and the engine
 
 ## API
 
-12 is listed in both manifests, but every public item below keeps `@ExperimentalItineraApi`, as AGENTS.md allows, since each names API of a proposal not listed yet: `run` takes the `WorkflowInstance` of 0061 and returns the `JourneyResult` of 0065, whose `Failure` and `Abort` are 0083's, the constructors take the dispatcher factories of 0063, and `Refusal` carries the violations of 0003, 0010, 0060 and 0095.
+12 is listed in both manifests, but every public item below keeps `@ExperimentalItineraApi`, as AGENTS.md allows, since each names API of a proposal not listed yet: `run` returns the `JourneyResult` of 0065, whose `Failure` and `Abort` are 0083's, the constructors take the dispatchers of 0011, and `Refusal` carries the violations of 0003, 0010, 0060 and 0095.
 
 - **`LocalExecutor`**, in `org.itineradev.itinera.executor`, is made with a `DispatcherFactory`, or with `DefaultDispatcherFactory` when none is given; Java reaches both constructors through `@JvmOverloads`. Its `run(instance: WorkflowInstance<Sync>)` runs the journey on the caller's thread and returns its `JourneyResult`, or throws `Refusal` before any journey, which Java sees as checked through `@Throws`.
 - **`AsyncLocalExecutor`**, in `org.itineradev.itinera.executor.async` in `itinera-kotlin`, is made with an `AsyncDispatcherFactory`, or with `AsyncDefaultDispatcherFactory` when none is given. Its `suspend fun run(instance: WorkflowInstance<Async>)`, `@JvmSynthetic`, runs the journey in the caller's coroutine, on whatever dispatcher it uses, and returns its `JourneyResult`, or throws `Refusal` before any journey. It never spawns, sleeps, sets timers or chooses a thread.

@@ -2,7 +2,7 @@
 
 Tech spec for [proposal 0064](https://github.com/itinera-dev/spec/blob/main/proposals/0064-event-data-values.md), implemented in [#25](https://github.com/itinera-dev/itinera-j/issues/25). [0056](0056-data-bag-values.md) says what a value is, and [0011](0011-events.md) describes the events.
 
-Status: started. Stage 1 typed event data and reason details as values. Stage 5 captures the data a service provider supplies with an instance, the details of steps' reasons and the data steps emit, and stages 7 and 8 what hooks and service providers emit.
+Status: done. Stage 1 typed event data and reason details as values. Stage 5 captures the data a service provider supplies with an instance, the details of steps' reasons and the data steps emit. Stage 6 lists 64 in both manifests. Stages 7 and 8 will capture what hooks and service providers emit through the same `Values.capture`, as [0011](0011-events.md) and [0095](0095-services-provided-to-steps.md) say.
 
 ## API
 
@@ -23,6 +23,10 @@ None.
 
 - `itinera/src/test/kotlin/org/itineradev/itinera/engine/StepEmitsTest.kt`: "an event carries a copy of its data made when it is emitted" and "data that is not a value aborts the journey, and the event is not delivered".
 
+## Conformance
+
+Of the two scenarios tagged `@proposal-0064`, "A failure whose details are not a value aborts the journey" runs once 64 is listed, and passes in both runners and every column. "Data that is not a value aborts the journey, and the event is not delivered" is also tagged `@proposal-0011`, so it runs once 11 is listed, in stage 7; `StepEmitsTest` checks its rule meanwhile.
+
 ## Done when
 
-64 is listed in both manifests once every scenario tagged `@proposal-0064` passes in both runners.
+64 is listed in both manifests by the pull request of stage 6 that lists 61 and 63, which says `Closes #25`.

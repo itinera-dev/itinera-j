@@ -39,7 +39,7 @@ internal fun localJourneys(model: Model, recorders: Recorders, witness: Witness)
     for (adapter in workflow.adapters) builder.inputAdapter(adapterOf(adapter))
     for (provider in workflow.providers) builder.provider(providerOf(provider, witness))
     for (name in workflow.reporters.orEmpty()) {
-        builder.reporter { recorders.make(name) }
+        builder.reporter { journeyId -> recorders.make(name, journeyId) }
     }
     val generator = workflow.idGenerator
     if (generator is IdGenerator.Returns) builder.idGenerator { _, _ -> generator.id }

@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.itineradev.itinera.conformance.model.ReporterFailure;
+import org.itineradev.itinera.journey.JourneyId;
 
 /**
  * Every recording reporter of a scenario, by name, in the order each was made: one per journey for
@@ -22,9 +23,17 @@ public final class Recorders {
     this.failures = failures;
   }
 
-  /** A new reporter under {@code name}, failing as the scenario scripts it. */
+  /** A new reporter under {@code name}, failing as the scenario scripts it, made with no ID. */
   public ScenarioReporter make(String name) {
-    var reporter = new ScenarioReporter(failures.get(name));
+    return make(name, null);
+  }
+
+  /**
+   * A new reporter under {@code name}, failing as the scenario scripts it, made with {@code
+   * journeyId} when the workflow lists it.
+   */
+  public ScenarioReporter make(String name, JourneyId journeyId) {
+    var reporter = new ScenarioReporter(failures.get(name), journeyId);
     made.computeIfAbsent(name, unmade -> new ArrayList<>()).add(reporter);
     return reporter;
   }

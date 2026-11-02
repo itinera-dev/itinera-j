@@ -3,6 +3,7 @@ package org.itineradev.itinera.conformance.run
 import org.itineradev.itinera.conformance.model.ReporterFailure
 import org.itineradev.itinera.event.Event
 import org.itineradev.itinera.event.EventKind
+import org.itineradev.itinera.journey.JourneyId
 import org.itineradev.itinera.report.Reporter
 import org.itineradev.itinera.report.async.AsyncReporter
 import org.itineradev.itinera.report.testing.RecordingReporter
@@ -16,9 +17,13 @@ internal data class Entry(val key: String, val value: Any?, val after: EventKind
 /**
  * A recording reporter of the scenario: it keeps every event and entry of global metadata it
  * receives, the one it fails on included, then fails as the scenario scripts it, and remembers
- * whether it ever failed.
+ * whether it ever failed. A reporter the workflow lists keeps the [journeyId] it was made with; one
+ * a dispatcher holds is made with none.
  */
-internal class ScenarioReporter(private val failure: ReporterFailure?) : Reporter {
+internal class ScenarioReporter(
+    private val failure: ReporterFailure?,
+    val journeyId: JourneyId?,
+) : Reporter {
     private val recording = RecordingReporter()
     private val received = mutableListOf<Entry>()
 
@@ -83,9 +88,12 @@ internal class ScriptedReporterFailure(message: String) : RuntimeException(messa
 internal class Recorders(private val failures: Map<String, ReporterFailure>) {
     private val made = linkedMapOf<String, MutableList<ScenarioReporter>>()
 
-    /** A new reporter under [name], failing as the scenario scripts it. */
-    fun make(name: String): ScenarioReporter {
-        val reporter = ScenarioReporter(failures[name])
+    /**
+     * A new reporter under [name], failing as the scenario scripts it, made with [journeyId] when
+     * the workflow lists it.
+     */
+    fun make(name: String, journeyId: JourneyId? = null): ScenarioReporter {
+        val reporter = ScenarioReporter(failures[name], journeyId)
         made.getOrPut(name, ::mutableListOf) += reporter
         return reporter
     }
