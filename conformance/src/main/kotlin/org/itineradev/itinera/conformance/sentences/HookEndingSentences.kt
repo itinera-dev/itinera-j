@@ -25,4 +25,9 @@ internal class HookEndingSentences(private val world: World) {
     fun failsWith(hook: String, policy: String, message: String) {
         world.ends(hook, policy, HookReturn.Fails(message))
     }
+
+    @Given("the hook {string} of policy {string} returns a value")
+    fun returnsAValue(hook: String, policy: String) {
+        world.ends(hook, policy, HookReturn.Value)
+    }
 }

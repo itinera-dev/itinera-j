@@ -15,6 +15,15 @@ public sealed interface HookReturn {
    */
   record FailWorkflow(String code) implements HookReturn {}
 
+  /** A workflow hook returns a value, which is never read. */
+  record Value() implements HookReturn {}
+
+  /** A step hook returns {@code null}, not a lifecycle. */
+  record NullLike() implements HookReturn {}
+
+  /** A step hook returns what is neither {@code keepDefault()} nor a lifecycle, a string. */
+  record NotALifecycle() implements HookReturn {}
+
   /**
    * It fails.
    *

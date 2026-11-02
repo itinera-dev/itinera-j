@@ -7,6 +7,7 @@ import org.itineradev.itinera.conformance.model.ModelException;
 import org.itineradev.itinera.conformance.model.PolicyBuild;
 import org.itineradev.itinera.conformance.model.PolicyKind;
 import org.itineradev.itinera.conformance.model.PolicyModel;
+import org.itineradev.itinera.policy.PolicyFactory;
 import org.itineradev.itinera.policy.StepHook;
 import org.itineradev.itinera.policy.StepPolicyBuilder;
 import org.itineradev.itinera.policy.StepPolicyDescriptor;
@@ -52,7 +53,8 @@ final class Policies {
                 Policies::stepEndingOf,
                 (earlier, later) -> later);
     StepPolicyBuilder<Played<StepPolicyMock>> builder =
-        StepPolicyDescriptor.builder(policy.name(), () -> new Played<>(playing.build()));
+        StepPolicyDescriptor.builder(
+            policy.name(), madeAs(policy.build(), () -> new Played<>(playing.build())));
     for (var hook : policy.hooks().entrySet()) {
       define(builder, policy.name(), hook.getKey(), hook.getValue(), witness);
     }
@@ -68,7 +70,8 @@ final class Policies {
                 Policies::workflowEndingOf,
                 (earlier, later) -> later);
     WorkflowPolicyBuilder<Played<WorkflowPolicyMock>> builder =
-        WorkflowPolicyDescriptor.builder(policy.name(), () -> new Played<>(playing.build()));
+        WorkflowPolicyDescriptor.builder(
+            policy.name(), madeAs(policy.build(), () -> new Played<>(playing.build())));
     for (var hook : policy.hooks().entrySet()) {
       define(builder, policy.name(), hook.getKey(), hook.getValue(), witness);
     }
@@ -97,30 +100,37 @@ final class Policies {
       Hook hook,
       HookScript script,
       Witness witness) {
+    var returns = script.returns();
     switch (stepHookOf(hook)) {
       case ON_STEP_SUCCESS -> {
         var scripted = new ScriptedHook<StepHookKind<Sync>>(policy, hook, script);
         builder.onStepSuccess(
             scripted.declared(),
-            (played, got) -> played(scripted, played, got, witness).onStepSuccess());
+            HookEndings.returning(
+                returns, (played, got) -> played(scripted, played, got, witness).onStepSuccess()));
       }
       case ON_STEP_FAILURE -> {
         var scripted = new ScriptedHook<StepFailureKind<Sync>>(policy, hook, script);
         builder.onStepFailure(
             scripted.declared(),
-            (played, got) -> played(scripted, played, got, witness).onStepFailure());
+            HookEndings.returning(
+                returns, (played, got) -> played(scripted, played, got, witness).onStepFailure()));
       }
       case ON_STEP_RETRY -> {
         var scripted = new ScriptedHook<StepRetryKind<Sync>>(policy, hook, script);
         builder.onStepRetry(
             scripted.declared(),
-            (played, got) -> played(scripted, played, got, witness).onStepRetry());
+            HookEndings.returning(
+                returns, (played, got) -> played(scripted, played, got, witness).onStepRetry()));
       }
       case ON_STEP_ABNORMAL_TERMINATION -> {
         var scripted = new ScriptedHook<StepHookKind<Sync>>(policy, hook, script);
         builder.onStepAbnormalTermination(
             scripted.declared(),
-            (played, got) -> played(scripted, played, got, witness).onStepAbnormalTermination());
+            HookEndings.returning(
+                returns,
+                (played, got) ->
+                    played(scripted, played, got, witness).onStepAbnormalTermination()));
       }
     }
   }
@@ -132,15 +142,20 @@ final class Policies {
       HookScript script,
       Witness witness) {
     var scripted = new ScriptedHook<WorkflowHookKind<Sync>>(policy, hook, script);
+    var returns = script.returns();
     switch (workflowHookOf(hook)) {
       case ON_WORKFLOW_SUCCESS ->
           builder.onWorkflowSuccess(
               scripted.declared(),
-              (played, got) -> played(scripted, played, got, witness).onWorkflowSuccess());
+              HookEndings.workflowReturning(
+                  returns,
+                  (played, got) -> played(scripted, played, got, witness).onWorkflowSuccess()));
       case ON_WORKFLOW_FAILURE ->
           builder.onWorkflowFailure(
               scripted.declared(),
-              (played, got) -> played(scripted, played, got, witness).onWorkflowFailure());
+              HookEndings.workflowReturning(
+                  returns,
+                  (played, got) -> played(scripted, played, got, witness).onWorkflowFailure()));
     }
   }
 
@@ -155,6 +170,11 @@ final class Policies {
       HookActing.perform(action, received, played, witness);
     }
     return played.mock();
+  }
+
+  /** {@code factory}, or one returning {@code null}, not a policy, when {@code build} says so. */
+  private static <P> PolicyFactory<P> madeAs(PolicyBuild build, PolicyFactory<P> factory) {
+    return build instanceof PolicyBuild.NullLike ? () -> null : factory;
   }
 
   private static StepPolicyScript builtAs(StepPolicyScript script, PolicyBuild build) {

@@ -9,13 +9,6 @@ import org.itineradev.itinera.event.Event
 internal class Unmet(message: String) : AssertionError(message)
 
 /**
- * What a case scripts and the runner cannot run yet, because the stage of itinera that makes it run
- * has not landed.
- */
-internal class NotRunYet(what: String) :
-    UnsupportedOperationException("the runner cannot run $what yet")
-
-/**
  * Holds when [condition] does, and otherwise throws [Unmet], saying what was expected and found.
  */
 internal fun holds(condition: Boolean, expected: String, found: String) {

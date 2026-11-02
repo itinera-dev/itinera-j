@@ -7,9 +7,7 @@ import org.itineradev.itinera.conformance.run.Admission;
 import org.itineradev.itinera.conformance.run.Ended;
 import org.itineradev.itinera.conformance.run.Journey;
 import org.itineradev.itinera.conformance.run.LocalJourneys;
-import org.itineradev.itinera.conformance.run.NotRunYet;
 import org.itineradev.itinera.conformance.run.Recorders;
-import org.itineradev.itinera.conformance.run.Scripts;
 import org.itineradev.itinera.conformance.run.Streams;
 import org.itineradev.itinera.conformance.run.Unmet;
 import org.itineradev.itinera.conformance.run.Witness;
@@ -65,17 +63,9 @@ public final class World {
     }
   }
 
-  /**
-   * Runs {@code times} journeys of the workflow on one executor, once it is admitted.
-   *
-   * @throws NotRunYet when the workflow holds what the runner cannot run yet
-   */
+  /** Runs {@code times} journeys of the workflow on one executor, once it is admitted. */
   public void run(int times) {
     if (admit() instanceof Admission.Admitted admission) {
-      var what = Scripts.notRunYetIn(model.workflow());
-      if (what != null) {
-        throw new NotRunYet(what);
-      }
       journeys = admission.journeys().run(times);
     }
   }

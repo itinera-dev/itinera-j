@@ -124,5 +124,7 @@ public sealed interface Ending {
     }
 }
 
-/** What a step mock throws to end an attempt abnormally, or to fail its build. */
+/**
+ * What a step mock or a rescue step mock throws to end an attempt abnormally, or to fail its build.
+ */
 internal class ScriptedError(message: String) : RuntimeException(message)

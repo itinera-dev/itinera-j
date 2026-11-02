@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
-import org.itineradev.itinera.conformance.run.NotRunYet;
 import org.itineradev.itinera.event.AttemptStarted;
 import org.itineradev.itinera.event.ContributionCommitted;
 import org.itineradev.itinera.event.ContributionsDiscarded;
@@ -54,15 +53,11 @@ public final class Writing {
 
   private Writing() {}
 
-  /**
-   * The line of {@code event}, with every column it fills.
-   *
-   * @throws NotRunYet for an event whose sources the runner cannot read yet
-   */
+  /** The line of {@code event}, with every column it fills. */
   public static Line lineOf(Event event) {
     var writing = new Writing();
     if (!writing.facts(event) && !writing.decisions(event) && !writing.emitted(event)) {
-      throw new NotRunYet("reading " + event.getKind() + " in an event table");
+      throw new AssertionError("an event the runner does not write: " + event.getKind());
     }
     return new Line(
         event.getKind().toString(),

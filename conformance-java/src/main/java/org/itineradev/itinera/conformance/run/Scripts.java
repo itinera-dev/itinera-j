@@ -1,18 +1,18 @@
 package org.itineradev.itinera.conformance.run;
 
 import java.util.List;
-import java.util.Objects;
 import org.itineradev.itinera.conformance.model.ModelException;
 import org.itineradev.itinera.conformance.model.ScriptedAttempt;
 import org.itineradev.itinera.conformance.model.StepScript;
-import org.itineradev.itinera.conformance.model.WorkflowModel;
 import org.itineradev.itinera.step.Reason;
 import org.itineradev.itinera.step.testing.Ending;
+import org.itineradev.itinera.step.testing.RescueEnding;
+import org.itineradev.itinera.step.testing.RescueStepMock;
 import org.itineradev.itinera.step.testing.StepMock;
 import org.itineradev.itinera.workflow.StepBuilder;
 import org.itineradev.itinera.workflow.Sync;
 
-/** The step mocks that play each step's script. */
+/** The step mocks and rescue step mocks that play each script. */
 public final class Scripts {
   /** The message of an abnormal termination the case scripts with none. */
   private static final String UNWRITTEN_MESSAGE = "the scripted step terminated abnormally";
@@ -27,6 +27,16 @@ public final class Scripts {
     var endings = endingsOf(script);
     return StepMock.playing(
         endings.get(0), endings.subList(1, endings.size()).toArray(Ending[]::new));
+  }
+
+  /** The rescue step mock playing the rescue step's script. */
+  static RescueStepMock rescueMockOf(StepScript script) {
+    if (script.buildFailure() != null) {
+      return RescueStepMock.failingToBuild(script.buildFailure());
+    }
+    var endings = rescueEndingsOf(script);
+    return RescueStepMock.playing(
+        endings.get(0), endings.subList(1, endings.size()).toArray(RescueEnding[]::new));
   }
 
   /** The step's retry budget and retry on abnormal termination, as its script says. */
@@ -48,25 +58,22 @@ public final class Scripts {
     return script.attempts().stream().map(Scripts::endingOf).toList();
   }
 
-  /**
-   * What {@code model} scripts that the runner cannot run yet, or {@code null} when it can run all
-   * of it. A workflow that holds any of it is still built, so its admission and its listing are
-   * checked, with each such part a call that throws {@link NotRunYet}, which no journey reaches.
-   */
-  public static String notRunYetIn(WorkflowModel model) {
-    return model.scripts().values().stream()
-        .map(Scripts::notRunYetIn)
-        .filter(Objects::nonNull)
-        .findFirst()
-        .orElse(null);
+  /** How the rescue step's attempt ends, a success when the case does not say. */
+  private static List<RescueEnding> rescueEndingsOf(StepScript script) {
+    if (script.attempts() == null) {
+      return List.of(RescueEnding.success());
+    }
+    return script.attempts().stream().map(Scripts::rescueEndingOf).toList();
   }
 
-  /** What {@code script} asks for that the runner cannot run yet, or {@code null} when it can. */
-  static String notRunYetIn(StepScript script) {
-    if (script.hasRescueStep() || script.isRescueStep()) {
-      return "rescue steps";
-    }
-    return null;
+  private static RescueEnding rescueEndingOf(ScriptedAttempt attempt) {
+    return switch (attempt.ending()) {
+      case SUCCESS -> RescueEnding.success();
+      case FAILURE -> RescueEnding.failure(failureReasonOf(attempt));
+      case SKIPPED ->
+          throw new ModelException("Java's types refuse a rescue step that skips: it never does");
+      case ERROR -> RescueEnding.abnormalTermination(messageOf(attempt));
+    };
   }
 
   private static Ending endingOf(ScriptedAttempt attempt) {
@@ -75,10 +82,12 @@ public final class Scripts {
       case FAILURE -> Ending.failure(failureReasonOf(attempt));
       case SKIPPED ->
           new Ending.Skipped(attempt.code() == null ? null : reasonOf(attempt, attempt.code()));
-      case ERROR ->
-          Ending.abnormalTermination(
-              attempt.message() == null ? UNWRITTEN_MESSAGE : attempt.message());
+      case ERROR -> Ending.abnormalTermination(messageOf(attempt));
     };
+  }
+
+  private static String messageOf(ScriptedAttempt attempt) {
+    return attempt.message() == null ? UNWRITTEN_MESSAGE : attempt.message();
   }
 
   private static Reason failureReasonOf(ScriptedAttempt attempt) {

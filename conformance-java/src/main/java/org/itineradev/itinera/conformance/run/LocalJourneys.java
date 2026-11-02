@@ -15,18 +15,15 @@ import org.itineradev.itinera.conformance.model.Model;
 import org.itineradev.itinera.conformance.model.ModelException;
 import org.itineradev.itinera.conformance.model.PolicyModel;
 import org.itineradev.itinera.conformance.model.ProviderModel;
-import org.itineradev.itinera.conformance.model.StepScript;
 import org.itineradev.itinera.executor.LocalExecutor;
 import org.itineradev.itinera.executor.Refusal;
 import org.itineradev.itinera.instance.InstanceBuilder;
 import org.itineradev.itinera.instance.WorkflowInstance;
 import org.itineradev.itinera.policy.StepPolicyDescriptor;
 import org.itineradev.itinera.service.ProviderDescriptor;
-import org.itineradev.itinera.step.SyncStepFactory;
 import org.itineradev.itinera.workflow.InputAdapterBuilder;
 import org.itineradev.itinera.workflow.InputAdapterDescriptor;
 import org.itineradev.itinera.workflow.ListedStep;
-import org.itineradev.itinera.workflow.RescueStepBuilder;
 import org.itineradev.itinera.workflow.RescueStepDescriptor;
 import org.itineradev.itinera.workflow.StepDescriptor;
 import org.itineradev.itinera.workflow.Sync;
@@ -57,7 +54,6 @@ public final class LocalJourneys implements Journeys {
    * Puts the workflow the scenario declares together.
    *
    * @throws org.itineradev.itinera.workflow.Violations when the builder refuses the workflow
-   * @throws NotRunYet when the scenario scripts what the runner cannot run yet
    */
   public static Journeys of(Model model, Recorders recorders, Witness witness) {
     var workflow = model.workflow();
@@ -105,9 +101,7 @@ public final class LocalJourneys implements Journeys {
           "Java hands no asynchronous step to LocalExecutor: it writes synchronous workflows only");
     }
     var scripted = new Scripted(script);
-    var what = Scripts.notRunYetIn(script);
-    var factory =
-        what == null ? witness.watching(name, Scripts.mockOf(script), scripted) : notRunYet(what);
+    var factory = witness.watching(name, Scripts.mockOf(script), scripted);
     var builder =
         scripted.declaredOn(Scripts.scriptedBy(StepDescriptor.builder(name, factory), script));
     var attached = script.policies();
@@ -115,25 +109,16 @@ public final class LocalJourneys implements Journeys {
       builder.policy(Policies.attached(policies, policy));
     }
     if (script.hasRescueStep()) {
-      builder.rescue(rescueOf(model.step(name + "_rescue")));
+      builder.rescue(rescueOf(name + "_rescue", model, witness));
     }
     return builder.build();
   }
 
-  private static SyncStepFactory notRunYet(String what) {
-    return got -> {
-      throw new NotRunYet(what);
-    };
-  }
-
-  private static RescueStepDescriptor<Sync> rescueOf(StepScript script) {
-    RescueStepBuilder<Sync> builder =
-        RescueStepDescriptor.builder(
-            got -> {
-              throw new NotRunYet("rescue steps");
-            });
-    script.services().stream().map(Services::requestOf).forEach(builder::request);
-    return builder.build();
+  private static RescueStepDescriptor<Sync> rescueOf(String name, Model model, Witness witness) {
+    var script = model.step(name);
+    var scripted = new Scripted(script);
+    var factory = witness.watchingRescue(name, Scripts.rescueMockOf(script), scripted);
+    return scripted.declaredOn(RescueStepDescriptor.builder(factory)).build();
   }
 
   private static InputAdapterDescriptor<Scenario, Sync> adapterOf(AdapterModel adapter) {

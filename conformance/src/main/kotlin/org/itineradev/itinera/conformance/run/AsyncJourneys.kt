@@ -10,7 +10,6 @@ import org.itineradev.itinera.conformance.model.ModelException
 import org.itineradev.itinera.conformance.model.PolicyModel
 import org.itineradev.itinera.conformance.model.ProviderModel
 import org.itineradev.itinera.conformance.model.ProviderScope
-import org.itineradev.itinera.conformance.model.StepScript
 import org.itineradev.itinera.conformance.record.asyncDispatchers
 import org.itineradev.itinera.conformance.record.failingAsyncDispatchers
 import org.itineradev.itinera.executor.async.AsyncLocalExecutor
@@ -23,7 +22,6 @@ import org.itineradev.itinera.request.async.asyncStepReporter
 import org.itineradev.itinera.service.ProviderDescriptor
 import org.itineradev.itinera.service.async.asyncPerAttemptProvider
 import org.itineradev.itinera.service.async.asyncProvider
-import org.itineradev.itinera.step.async.AsyncStepFactory
 import org.itineradev.itinera.workflow.Async
 import org.itineradev.itinera.workflow.InputAdapterDescriptor
 import org.itineradev.itinera.workflow.ListedStep
@@ -40,7 +38,6 @@ import org.itineradev.itinera.workflow.async.asyncStep
  * each step an asynchronous step mock the witness watches, run on `AsyncLocalExecutor`.
  *
  * @throws org.itineradev.itinera.workflow.Violations when the builder refuses the workflow.
- * @throws NotRunYet when the scenario scripts what the runner cannot run yet.
  */
 internal fun asyncJourneys(model: Model, recorders: Recorders, witness: Witness): Journeys {
     if (model.onlySynchronous) {
@@ -77,24 +74,22 @@ private fun asyncStepOf(
 ): StepDescriptor<Async> {
     val script = model.step(name)
     val scripted = Scripted(script, Requests.asyncStepReporter())
-    val what = notRunYetIn(script)
-    val factory =
-        if (what == null) witness.watchingAsync(name, asyncMockOf(script), scripted)
-        else asyncNotRunYet(what)
+    val factory = witness.watchingAsync(name, asyncMockOf(script), scripted)
     val builder = scripted.declaredOn(asyncStep(name, factory).scriptedBy(script))
     for (policy in script.policies.orEmpty()) builder.policy(attached(policies, policy))
-    if (script.hasRescueStep) builder.rescue(asyncRescueOf(model.step("${name}_rescue")))
+    if (script.hasRescueStep) builder.rescue(asyncRescueOf("${name}_rescue", model, witness))
     return builder.build()
 }
 
-private fun asyncNotRunYet(what: String): AsyncStepFactory = AsyncStepFactory {
-    throw NotRunYet(what)
-}
-
-private fun asyncRescueOf(script: StepScript): RescueStepDescriptor<Async> {
-    val builder = asyncRescueStep { throw NotRunYet("rescue steps") }
-    script.services.map(::requestOf).forEach(builder::request)
-    return builder.build()
+private fun asyncRescueOf(
+    name: String,
+    model: Model,
+    witness: Witness,
+): RescueStepDescriptor<Async> {
+    val script = model.step(name)
+    val scripted = Scripted(script, Requests.asyncStepReporter())
+    val factory = witness.watchingAsyncRescue(name, asyncRescueMockOf(script), scripted)
+    return scripted.declaredOn(asyncRescueStep(factory)).build()
 }
 
 private fun asyncAdapterOf(adapter: AdapterModel): InputAdapterDescriptor<Scenario, Async> {
