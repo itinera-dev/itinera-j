@@ -1,6 +1,6 @@
 {
   "cases": "v0.1.0-rc.19",
-  "proposals": [56, 62, 116, 121],
+  "proposals": [12, 32, 42, 56, 62, 116, 121],
   "capabilities": ["sync", "async"],
   "impossible": {
     "bag-write": [
@@ -20,6 +20,32 @@
         "proof": {
           "test": "a provider of journey scope cannot request the attempt",
           "file": "itinera/src/compileFailTest/kotlin/org/itineradev/itinera/service/ProviderTypesTest.kt"
+        }
+      }
+    ],
+    "mode-not-accepted": [
+      {
+        "feature": "cases/tier-1/0012-local-executor/local-executor.feature",
+        "scenario": "A synchronous-only executor refuses an asynchronous step before the journey starts",
+        "proof": {
+          "test": "a workflow takes only the steps of its own mode",
+          "file": "itinera/src/compileFailTest/kotlin/org/itineradev/itinera/workflow/BuilderTypesTest.kt"
+        }
+      },
+      {
+        "feature": "cases/tier-1/0012-local-executor/local-executor.feature",
+        "scenario": "A synchronous-only executor refuses an asynchronous input adapter before the journey starts",
+        "proof": {
+          "test": "a workflow takes only input adapters of its own mode",
+          "file": "itinera-kotlin/src/compileFailTest/kotlin/org/itineradev/itinera/workflow/async/AdapterModeTypesTest.kt"
+        }
+      },
+      {
+        "feature": "cases/tier-1/0095-services-provided-to-steps/admission.feature",
+        "scenario": "A synchronous-only executor refuses an asynchronous provider before the journey starts",
+        "proof": {
+          "test": "a workflow takes only service providers of its own mode",
+          "file": "itinera-kotlin/src/compileFailTest/kotlin/org/itineradev/itinera/service/async/ProviderModeTypesTest.kt"
         }
       }
     ],

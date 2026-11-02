@@ -98,6 +98,40 @@ class EngineTest {
     }
 
     @Test
+    fun `no step runs after a step is given up`() {
+        val log = Log()
+        val error = IllegalStateException("carrier down")
+        ran(journeyOf(playing("ship", error), succeeding("bill")).reporter(log).create())
+        assertEquals(
+            listOf(
+                "journey_started",
+                "attempt_started",
+                "step_abnormal_termination",
+                "step_given_up",
+                "journey_failed",
+            ),
+            log.kinds,
+        )
+    }
+
+    @Test
+    fun `no step runs after the journey is aborted, whose events stay with journey_aborted last`() {
+        val log = Log()
+        val ship = building("ship", SyncStepFactory { throw IllegalArgumentException("no van") })
+        ran(journeyOf(succeeding("pack"), ship, succeeding("bill")).reporter(log).create())
+        assertEquals(
+            listOf(
+                "journey_started",
+                "attempt_started",
+                "step_succeeded",
+                "attempt_started",
+                "journey_aborted",
+            ),
+            log.kinds,
+        )
+    }
+
+    @Test
     fun `an abnormal termination is retried while the retry budget lasts`() {
         val log = Log()
         val result =
