@@ -5,9 +5,16 @@ import io.cucumber.java.en.Then
 import org.itineradev.itinera.conformance.World
 import org.itineradev.itinera.conformance.model.value
 import org.itineradev.itinera.conformance.run.Entry
+import org.itineradev.itinera.conformance.run.ScenarioReporter
 import org.itineradev.itinera.conformance.run.holds
+import org.itineradev.itinera.conformance.run.holdsOfStream
+import org.itineradev.itinera.event.Event
+import org.itineradev.itinera.event.EventKind
 
-/** The sentences that read the global metadata each scripted reporter received. */
+/**
+ * The sentences that read the global metadata each scripted reporter received, and the events that
+ * must not carry it.
+ */
 internal class MetadataSentences(private val world: World) {
     @Then("""^the reporters ("[^"]*"(?:, "[^"]*")*) received the same global metadata$""")
     fun receivedTheSameGlobalMetadata(reporters: String) {
@@ -16,6 +23,21 @@ internal class MetadataSentences(private val world: World) {
             received.values.toSet().size == 1,
             "the same global metadata for $reporters",
             "$received",
+        )
+    }
+
+    @Then("no engine event carries the global metadata value of {string}")
+    fun noEngineEventCarriesTheValueOf(key: String) {
+        val values =
+            world.recorders.all.flatMap(ScenarioReporter::entries).filter { entry ->
+                isUnder(entry, key)
+            }
+        val events = world.stream()
+        holds(values.isNotEmpty(), "a reporter to receive the global metadata \"$key\"", "none")
+        holdsOfStream(
+            events.filter(::isEngineEvent).none { event -> carriesAny(event, values) },
+            "no engine event to carry the value of \"$key\"",
+            events,
         )
     }
 
@@ -48,3 +70,25 @@ private fun agrees(cell: String?, found: String): Boolean = cell == null || cell
 
 private fun agreesInValue(cell: String?, found: Any?): Boolean =
     cell == null || value(cell) == found
+
+/** Whether [event] is one the engine emits, not one a step, hook or provider emits. */
+private fun isEngineEvent(event: Event): Boolean = event.kind !in emittedByCustomCode
+
+private val emittedByCustomCode =
+    setOf(
+        EventKind.STEP_INFO,
+        EventKind.STEP_WARNING,
+        EventKind.STEP_ERROR,
+        EventKind.JOURNEY_INFO,
+        EventKind.JOURNEY_WARNING,
+        EventKind.JOURNEY_ERROR,
+    )
+
+/** Whether any field of [event] shows the value of one of [entries]. */
+private fun carriesAny(event: Event, entries: List<Entry>): Boolean = entries.any { entry ->
+    shows(event, entry)
+}
+
+private fun shows(event: Event, entry: Entry): Boolean = "${entry.value}" in event.toString()
+
+private fun isUnder(entry: Entry, key: String): Boolean = entry.key == key

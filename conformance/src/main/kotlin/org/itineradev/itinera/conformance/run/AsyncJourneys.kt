@@ -15,6 +15,8 @@ import org.itineradev.itinera.conformance.record.failingAsyncDispatchers
 import org.itineradev.itinera.executor.async.AsyncLocalExecutor
 import org.itineradev.itinera.instance.WorkflowInstance
 import org.itineradev.itinera.instance.async.instance
+import org.itineradev.itinera.request.Requests
+import org.itineradev.itinera.request.async.asyncStepReporter
 import org.itineradev.itinera.service.ProviderDescriptor
 import org.itineradev.itinera.service.async.asyncPerAttemptProvider
 import org.itineradev.itinera.service.async.asyncProvider
@@ -58,7 +60,7 @@ internal fun asyncJourneys(model: Model, recorders: Recorders, witness: Witness)
 
 private fun asyncStepOf(name: String, model: Model, witness: Witness): StepDescriptor<Async> {
     val script = model.step(name)
-    val scripted = Scripted(script)
+    val scripted = Scripted(script, Requests.asyncStepReporter())
     val what = notRunYetIn(script)
     val factory =
         if (what == null) witness.watchingAsync(name, asyncMockOf(script), scripted)

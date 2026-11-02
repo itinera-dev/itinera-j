@@ -1,13 +1,17 @@
 package org.itineradev.itinera.conformance.run
 
 import org.itineradev.itinera.conformance.model.ProviderRequest
+import org.itineradev.itinera.step.StepReporter
 import org.itineradev.itinera.step.SyncStepFactory
 import org.itineradev.itinera.step.SyncStepRun
 import org.itineradev.itinera.step.async.AsyncStepFactory
+import org.itineradev.itinera.step.async.AsyncStepReporter
 import org.itineradev.itinera.step.async.AsyncStepRun
+import org.itineradev.itinera.workflow.Async
+import org.itineradev.itinera.workflow.Sync
 
 /** One step built for an attempt: the step itself, and what it received. */
-internal data class Built(val step: Any, val received: Received)
+internal data class Built(val step: Any, val received: Received<*>)
 
 /**
  * Every step the scenario's workflow built, by step name, in the order built, how many ran, and
@@ -37,35 +41,42 @@ internal class Witness {
      * A factory building with [factory], each step kept under [step] with what it received as it is
      * built, and counted as it runs, where it first acts as [scripted] says.
      */
-    fun watching(step: String, factory: SyncStepFactory, scripted: Scripted): SyncStepFactory =
-        SyncStepFactory { got ->
-            val received = scripted.receivedFrom(got)
-            val run = factory.build(got)
-            keep(step, run, received)
-            SyncStepRun {
-                ran += 1
-                scripted.act(received)
-                run.run()
+    fun watching(
+        step: String,
+        factory: SyncStepFactory,
+        scripted: Scripted<Sync, StepReporter>,
+    ): SyncStepFactory = SyncStepFactory { got ->
+        val received = scripted.receivedFrom(got)
+        val run = factory.build(got)
+        keep(step, run, received)
+        SyncStepRun {
+            ran += 1
+            scripted.prepared(received).forEach { action ->
+                perform(action, received, scripted.ignoresEmitFailures)
             }
+            run.run()
         }
+    }
 
     /** The asynchronous twin of [watching]. */
     fun watchingAsync(
         step: String,
         factory: AsyncStepFactory,
-        scripted: Scripted,
+        scripted: Scripted<Async, AsyncStepReporter>,
     ): AsyncStepFactory = AsyncStepFactory { got ->
         val received = scripted.receivedFrom(got)
         val run = factory.build(got)
         keep(step, run, received)
         AsyncStepRun {
             ran += 1
-            scripted.act(received)
+            scripted.prepared(received).forEach { action ->
+                performAsync(action, received, scripted.ignoresEmitFailures)
+            }
             run.run()
         }
     }
 
-    private fun keep(step: String, run: Any, received: Received) {
+    private fun keep(step: String, run: Any, received: Received<*>) {
         built.getOrPut(step, ::mutableListOf) += Built(run, received)
     }
 }

@@ -33,4 +33,9 @@ public final class Recorders {
   public List<ScenarioReporter> made(String name) {
     return List.copyOf(made.getOrDefault(name, List.of()));
   }
+
+  /** Every reporter made, by name in the order each name was first made. */
+  public List<ScenarioReporter> all() {
+    return made.values().stream().flatMap(List::stream).toList();
+  }
 }

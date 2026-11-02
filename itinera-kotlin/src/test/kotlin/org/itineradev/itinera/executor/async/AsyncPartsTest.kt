@@ -6,6 +6,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.yield
 import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.returned
+import org.itineradev.itinera.event.Event
 import org.itineradev.itinera.executor.Refusal
 import org.itineradev.itinera.executor.Refused
 import org.itineradev.itinera.executor.async.AsyncJourneys.Shop
@@ -17,7 +18,9 @@ import org.itineradev.itinera.policy.PolicyFactory
 import org.itineradev.itinera.policy.StepPolicyDescriptor
 import org.itineradev.itinera.policy.SyncHook
 import org.itineradev.itinera.policy.async.asyncStepPolicy
+import org.itineradev.itinera.report.async.AsyncReporter
 import org.itineradev.itinera.request.Requests
+import org.itineradev.itinera.request.async.asyncStepReporter
 import org.itineradev.itinera.service.Provided
 import org.itineradev.itinera.service.ProviderDescriptor
 import org.itineradev.itinera.service.async.asyncProvider
@@ -189,6 +192,30 @@ class AsyncPartsTest {
             assertEquals(listOf("42 label"), built)
         }
 
+    @Test
+    fun `an asynchronous step's reporter emits and sets global metadata, awaiting every reporter`() =
+        runBlocking<Unit> {
+            val reporter = Requests.asyncStepReporter()
+            val ship =
+                asyncStep("ship") { got ->
+                        val handle = got[reporter]
+                        AsyncStepRun {
+                            handle.info("packed", mapOf("parcels" to 2L))
+                            handle.setGlobalMetadata("carrier", "north")
+                            Outcome.success()
+                        }
+                    }
+                    .request(reporter)
+            val log = Yielding()
+            val instance = journeyOf(ship).reporter(log).create()
+            assertTrue(AsyncLocalExecutor().run(instance).isSucceeded)
+            assertEquals(
+                listOf("journey_started", "attempt_started", "step_info", "global_metadata_set"),
+                log.kinds.take(4),
+            )
+            assertEquals(listOf("journey_id", "carrier"), log.keys)
+        }
+
     private fun notOfTheMode(adapter: String): Violation =
         Violation.ModeNotAccepted("input adapter $adapter", Async)
 
@@ -204,4 +231,21 @@ class AsyncPartsTest {
         } catch (refusal: Refusal) {
             refusal.refused
         }
+}
+
+/** Keeps the kind of every event and the key of every entry it receives, yielding first. */
+@OptIn(ExperimentalItineraApi::class)
+private class Yielding : AsyncReporter {
+    val kinds = mutableListOf<String>()
+    val keys = mutableListOf<String>()
+
+    override suspend fun report(event: Event) {
+        yield()
+        kinds += event.kind.toString()
+    }
+
+    override suspend fun setGlobalMetadata(key: String, value: Any?) {
+        yield()
+        keys += key
+    }
 }

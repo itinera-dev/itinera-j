@@ -147,6 +147,12 @@ public final class org/itineradev/itinera/engine/DrivenKt {
 	public static final fun driven (Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 }
 
+public abstract interface class org/itineradev/itinera/engine/Emits {
+	public abstract fun close ()V
+	public abstract synthetic fun emit (Lorg/itineradev/itinera/engine/Severity;Ljava/lang/String;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract synthetic fun setGlobalMetadata (Ljava/lang/String;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
 public final class org/itineradev/itinera/engine/Engine {
 	public fun <init> (Lorg/itineradev/itinera/engine/Parts;Ljava/time/Clock;)V
 	public synthetic fun <init> (Lorg/itineradev/itinera/engine/Parts;Ljava/time/Clock;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -267,6 +273,7 @@ public abstract interface class org/itineradev/itinera/engine/Parts {
 	public abstract synthetic fun dispatcher (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract synthetic fun ensureActive (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun getMode ()Lorg/itineradev/itinera/workflow/Mode;
+	public abstract fun getReporterHandles ()Lorg/itineradev/itinera/engine/ReporterHandles;
 	public abstract synthetic fun provide (Lorg/itineradev/itinera/service/ProviderCall;Ljava/lang/Object;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
@@ -306,6 +313,16 @@ public final class org/itineradev/itinera/engine/ReflectionKt {
 	public static final fun returned (Ljava/lang/Object;)Ljava/lang/Object;
 }
 
+public abstract interface class org/itineradev/itinera/engine/ReporterHandle {
+	public abstract synthetic fun close (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getHandle ()Lorg/itineradev/itinera/engine/Handle;
+	public abstract fun getReporter ()Ljava/lang/Object;
+}
+
+public abstract interface class org/itineradev/itinera/engine/ReporterHandles {
+	public abstract fun stepReporter (Lorg/itineradev/itinera/engine/Emits;)Lorg/itineradev/itinera/engine/ReporterHandle;
+}
+
 public final class org/itineradev/itinera/engine/RequestedKt {
 	public static final fun excludingNull (Lorg/itineradev/itinera/request/Request;Lorg/itineradev/itinera/engine/Answer;)Lorg/itineradev/itinera/request/Request;
 	public static final fun requestOf (Lorg/itineradev/itinera/engine/Asked;Lorg/itineradev/itinera/engine/Answer;)Lorg/itineradev/itinera/request/Request;
@@ -319,6 +336,15 @@ public final class org/itineradev/itinera/engine/RescueClass {
 
 public abstract interface class org/itineradev/itinera/engine/Running {
 	public abstract synthetic fun run (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/itineradev/itinera/engine/Severity : java/lang/Enum {
+	public static final field ERROR Lorg/itineradev/itinera/engine/Severity;
+	public static final field INFO Lorg/itineradev/itinera/engine/Severity;
+	public static final field WARNING Lorg/itineradev/itinera/engine/Severity;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lorg/itineradev/itinera/engine/Severity;
+	public static fun values ()[Lorg/itineradev/itinera/engine/Severity;
 }
 
 public final class org/itineradev/itinera/engine/StepClass {
@@ -348,6 +374,7 @@ public final class org/itineradev/itinera/engine/SyncParts : org/itineradev/itin
 	public synthetic fun ensureActive (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public synthetic fun getMode ()Lorg/itineradev/itinera/workflow/Mode;
 	public fun getMode ()Lorg/itineradev/itinera/workflow/Sync;
+	public fun getReporterHandles ()Lorg/itineradev/itinera/engine/ReporterHandles;
 	public synthetic fun provide (Lorg/itineradev/itinera/service/ProviderCall;Ljava/lang/Object;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 

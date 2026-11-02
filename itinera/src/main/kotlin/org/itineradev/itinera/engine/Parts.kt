@@ -17,8 +17,9 @@ import org.itineradev.itinera.workflow.Supplied
 
 /**
  * What the engine calls in one mode: which parts it accepts, and how it makes the dispatcher, calls
- * input adapters and service providers, builds a step and asks whether its journey was cancelled.
- * [SyncParts] serves the synchronous mode, and `itinera-kotlin` the asynchronous one.
+ * input adapters and service providers, builds a step, makes the reporter handles and asks whether
+ * its journey was cancelled. [SyncParts] serves the synchronous mode, and `itinera-kotlin` the
+ * asynchronous one.
  *
  * Part of itinera's engine, not of its API.
  */
@@ -77,6 +78,9 @@ public interface Parts<M : Mode> {
      * returned `null`, which only Java code can. What the factory throws is thrown.
      */
     @JvmSynthetic public suspend fun build(factory: StepFactory<M>, got: Got<StepKind<M>>): Running?
+
+    /** What makes the reporter handles of this mode. */
+    public val reporterHandles: ReporterHandles
 
     /**
      * Throws a `CancellationException` when the coroutine running the journey was cancelled, and

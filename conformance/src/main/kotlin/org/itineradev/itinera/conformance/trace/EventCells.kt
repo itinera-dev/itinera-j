@@ -5,6 +5,7 @@ import org.itineradev.itinera.event.AdapterSource
 import org.itineradev.itinera.event.ByWorkflowHook
 import org.itineradev.itinera.event.ContributionSource
 import org.itineradev.itinera.event.JourneyAborted
+import org.itineradev.itinera.event.MetadataSource
 import org.itineradev.itinera.event.OptionalInputAbsent
 import org.itineradev.itinera.event.ProviderSource
 import org.itineradev.itinera.event.RequestSource
@@ -40,6 +41,36 @@ internal fun cellsOf(event: OptionalInputAbsent): List<Cell> =
 /** The cells of a contribution under [key]: the key, and who made it. */
 internal fun contributedCells(key: String, source: ContributionSource): List<Cell> =
     listOf("key" to key) + cellsOf(source)
+
+/** The cells of an entry of global metadata under [key]: the key, and who set it. */
+internal fun metadataCells(key: String, source: MetadataSource): List<Cell> =
+    listOf("key" to key) + cellsOf(source)
+
+private fun cellsOf(source: MetadataSource): List<Cell> =
+    when (source) {
+        is StepSource ->
+            listOf("step" to source.step, "attempt" to source.attempt, "source" to source.step)
+        is StepHookSource ->
+            listOf(
+                "step" to source.step,
+                "attempt" to source.attempt,
+                "policy" to source.policy,
+                "hook" to source.hook,
+                "source" to "${source.policy}, ${source.hook}",
+            )
+        is ByWorkflowHook ->
+            listOf(
+                "policy" to source.policy,
+                "hook" to source.hook,
+                "source" to "${source.policy}, ${source.hook}",
+            )
+        is ProviderSource ->
+            listOf(
+                "step" to source.step,
+                "attempt" to source.attempt,
+                "provider" to source.provider,
+            )
+    }
 
 private fun cellsOf(source: ContributionSource): List<Cell> =
     when (source) {

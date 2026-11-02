@@ -106,7 +106,7 @@ private class Writing {
             is StepError -> emitted(event.step, event.attempt, event.message, event.data)
             is ContributionCommitted -> contributedCells(event.key, event.source).forEach(::set)
             is DataOverwritten -> contributedCells(event.key, event.source).forEach(::set)
-            is GlobalMetadataSet,
+            is GlobalMetadataSet -> metadataCells(event.key, event.source).forEach(::set)
             is StepHookCalled,
             is WorkflowHookCalled,
             is JourneyInfo,

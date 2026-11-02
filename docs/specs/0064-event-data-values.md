@@ -2,7 +2,7 @@
 
 Tech spec for [proposal 0064](https://github.com/itinera-dev/spec/blob/main/proposals/0064-event-data-values.md), implemented in [#25](https://github.com/itinera-dev/itinera-j/issues/25). [0056](0056-data-bag-values.md) says what a value is, and [0011](0011-events.md) describes the events.
 
-Status: started. Stage 1 typed event data and reason details as values. Stage 5 captures the data a service provider supplies with an instance and the details of steps' reasons, then what steps emit, and stages 7 and 8 what hooks and service providers emit.
+Status: started. Stage 1 typed event data and reason details as values. Stage 5 captures the data a service provider supplies with an instance, the details of steps' reasons and the data steps emit, and stages 7 and 8 what hooks and service providers emit.
 
 ## API
 
@@ -21,7 +21,7 @@ None.
 - `itinera/src/test/kotlin/org/itineradev/itinera/step/OutcomeTest.kt`: "a failure's details are captured when it is made", "a skip's details are captured when it is made" and "details that are not a value are kept as given, for the engine to refuse".
 - `itinera/src/test/kotlin/org/itineradev/itinera/engine/AttemptingTest.kt`: "a reason whose details are not a value aborts the journey with no outcome fact".
 
-Stage 5 adds the tests of capture at emission, since steps emit from there.
+- `itinera/src/test/kotlin/org/itineradev/itinera/engine/StepEmitsTest.kt`: "an event carries a copy of its data made when it is emitted" and "data that is not a value aborts the journey, and the event is not delivered".
 
 ## Done when
 

@@ -68,6 +68,9 @@ public class SyncParts(private val factory: DispatcherFactory) : Parts<Sync> {
     override suspend fun build(factory: StepFactory<Sync>, got: Got<StepKind<Sync>>): Running? =
         nullable((factory as SyncStepFactory).build(got))?.let { run -> Running(run::run) }
 
+    override val reporterHandles: ReporterHandles
+        get() = SyncReporterHandles
+
     @JvmSynthetic override suspend fun ensureActive(): Unit = Unit
 }
 
@@ -96,4 +99,9 @@ private class Guarded(private val reporter: Reporter, private val guard: Guard) 
     override fun setGlobalMetadata(key: String, value: Any?) {
         guard.setGlobalMetadata { reporter.setGlobalMetadata(key, value) }
     }
+}
+
+/** Makes the synchronous mode's reporter handles. */
+private object SyncReporterHandles : ReporterHandles {
+    override fun stepReporter(emits: Emits): ReporterHandle = EmittingStepReporter(emits)
 }

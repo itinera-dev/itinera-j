@@ -7,6 +7,7 @@ import org.itineradev.itinera.event.AdapterSource;
 import org.itineradev.itinera.event.ByWorkflowHook;
 import org.itineradev.itinera.event.ContributionSource;
 import org.itineradev.itinera.event.JourneyAborted;
+import org.itineradev.itinera.event.MetadataSource;
 import org.itineradev.itinera.event.OptionalInputAbsent;
 import org.itineradev.itinera.event.ProviderSource;
 import org.itineradev.itinera.event.RequestSource;
@@ -52,6 +53,39 @@ final class EventCells {
   /** The cells of a contribution under {@code key}: the key, and who made it. */
   static List<Cell> contributedCells(String key, ContributionSource source) {
     return Stream.concat(Stream.of(new Cell("key", key)), cellsOf(source).stream()).toList();
+  }
+
+  /** The cells of an entry of global metadata under {@code key}: the key, and who set it. */
+  static List<Cell> metadataCells(String key, MetadataSource source) {
+    return Stream.concat(Stream.of(new Cell("key", key)), cellsOf(source).stream()).toList();
+  }
+
+  private static List<Cell> cellsOf(MetadataSource source) {
+    if (source instanceof StepSource step) {
+      return List.of(
+          new Cell("step", step.step()),
+          new Cell("attempt", step.attempt()),
+          new Cell("source", step.step()));
+    }
+    if (source instanceof StepHookSource hook) {
+      return Stream.of(
+              List.of(new Cell("step", hook.step()), new Cell("attempt", hook.attempt())),
+              Naming.hookCells(hook.policy(), hook.hook()),
+              List.of(new Cell("source", hook.policy() + ", " + hook.hook())))
+          .flatMap(List::stream)
+          .toList();
+    }
+    if (source instanceof ByWorkflowHook hook) {
+      return Stream.concat(
+              Naming.hookCells(hook.policy(), hook.hook()).stream(),
+              Stream.of(new Cell("source", hook.policy() + ", " + hook.hook())))
+          .toList();
+    }
+    var provider = (ProviderSource) source;
+    return List.of(
+        new Cell("step", provider.step()),
+        new Cell("attempt", provider.attempt()),
+        new Cell("provider", provider.provider()));
   }
 
   private static List<Cell> cellsOf(ContributionSource source) {

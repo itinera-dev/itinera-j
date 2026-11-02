@@ -10,12 +10,13 @@ import java.util.stream.IntStream;
 public final class StepScript {
   private final List<Input> inputs = new ArrayList<>();
   private final List<RequestedService> services = new ArrayList<>();
-  private final List<Map.Entry<String, Object>> contributions = new ArrayList<>();
+  private final List<StepAction> actions = new ArrayList<>();
   private final Map<String, Object> inputChanges = new LinkedHashMap<>();
   private List<ScriptedAttempt> attempts;
   private Integer retries;
   private boolean retryOnAbnormalTermination = true;
   private String buildFailure;
+  private boolean ignoresEmitFailures;
   private boolean hasRescueStep;
   private boolean isRescueStep;
   private boolean isAsynchronous;
@@ -30,9 +31,14 @@ public final class StepScript {
     return services;
   }
 
-  /** What it contributes, in the order written. */
-  public List<Map.Entry<String, Object>> contributions() {
-    return contributions;
+  /** What the step does on every attempt before it ends, in the order written. */
+  public List<StepAction> actions() {
+    return actions;
+  }
+
+  /** Whether the step catches what its emit calls throw and carries on. */
+  public boolean ignoresEmitFailures() {
+    return ignoresEmitFailures;
   }
 
   /** What the step changes each input it received to, in place, by key. */
@@ -109,6 +115,11 @@ public final class StepScript {
   /** Turns {@code retry on abnormal termination} off. */
   public void doesNotRetryAbnormalTerminations() {
     retryOnAbnormalTermination = false;
+  }
+
+  /** Says the step catches what its emit calls throw and carries on. */
+  public void ignoreEmitFailures() {
+    ignoresEmitFailures = true;
   }
 
   /** Says the step has a rescue step. */

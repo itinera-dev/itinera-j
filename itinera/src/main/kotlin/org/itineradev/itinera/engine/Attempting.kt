@@ -24,17 +24,22 @@ internal class Attempting<M : Mode>(
      * How [attempt] of [step] ended.
      *
      * @throws JourneyAbortSignal once the journey is aborted, even when the step caught the signal
-     *   it was given.
+     *   it was given, or a call it left going through aborted it before its handles closed.
      */
     @JvmSynthetic
     suspend fun ended(step: StepDescriptor<M>, attempt: Attempt): Ended {
         val contributions = Contributions(journey, step.name)
+        val reporter = parts.reporterHandles.stepReporter(StepEmits(journey, step.name, attempt))
+        val handles =
+            mapOf(Handle.CONTRIBUTOR to contributions, reporter.handle to reporter.reporter)
         val ran =
             try {
-                ran(step, built(step, attempt, contributions))
+                ran(step, built(step, attempt, handles))
             } finally {
                 contributions.close()
+                reporter.close()
             }
+        journey.ensureNotAborted()
         return ran.fold(
             { outcome -> endedWith(step, outcome, contributions.contributed) },
             Ended::Terminated,
@@ -44,9 +49,9 @@ internal class Attempting<M : Mode>(
     private suspend fun built(
         step: StepDescriptor<M>,
         attempt: Attempt,
-        contributions: Contributions,
+        handles: Map<Handle, Any>,
     ): Running {
-        val got = building.got(step, attempt, mapOf(Handle.CONTRIBUTOR to contributions))
+        val got = building.got(step, attempt, handles)
         val running =
             parts
                 .calling { parts.build(step.factory, got) }
@@ -58,7 +63,6 @@ internal class Attempting<M : Mode>(
     /** What the step's run returned, or what it threw. */
     private suspend fun ran(step: StepDescriptor<M>, running: Running): Result<Outcome> {
         val result = parts.calling { running.run() }
-        journey.ensureNotAborted()
         return result.map { outcome ->
             outcome ?: throw unexpected(step, "the step's run returned null, not an outcome")
         }

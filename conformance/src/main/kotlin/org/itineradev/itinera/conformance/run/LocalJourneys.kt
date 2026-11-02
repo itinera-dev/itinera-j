@@ -14,6 +14,7 @@ import org.itineradev.itinera.conformance.record.failingDispatchers
 import org.itineradev.itinera.executor.LocalExecutor
 import org.itineradev.itinera.instance.WorkflowInstance
 import org.itineradev.itinera.instance.instance
+import org.itineradev.itinera.request.Requests
 import org.itineradev.itinera.service.ProviderDescriptor
 import org.itineradev.itinera.step.SyncStepFactory
 import org.itineradev.itinera.workflow.InputAdapterDescriptor
@@ -52,7 +53,7 @@ private fun stepOf(name: String, model: Model, witness: Witness): StepDescriptor
             "Kotlin hands no asynchronous step to LocalExecutor: its types refuse it"
         )
     }
-    val scripted = Scripted(script)
+    val scripted = Scripted(script, Requests.stepReporter())
     val what = notRunYetIn(script)
     val factory =
         if (what == null) witness.watching(name, mockOf(script), scripted) else notRunYet(what)
