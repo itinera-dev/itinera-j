@@ -1,7 +1,5 @@
 package org.itineradev.itinera.service
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * What a service provider returns: an [Instance] of the service, lent to the step, or [NoInstance],
  * the provider's way of returning nothing, which fails the step's building.
@@ -9,7 +7,6 @@ import org.itineradev.itinera.ExperimentalItineraApi
  * @param T the service's type.
  * @sample org.itineradev.itinera.service.samples.providers
  */
-@ExperimentalItineraApi
 public sealed interface Provided<out T : Any> {
     /**
      * An instance of the service, with the [data] the provider supplies with it, which the event

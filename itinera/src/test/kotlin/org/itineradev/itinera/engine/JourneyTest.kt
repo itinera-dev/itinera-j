@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.engine
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Journeys.journeyOf
 import org.itineradev.itinera.engine.Journeys.ran
 import org.itineradev.itinera.engine.Journeys.reporting

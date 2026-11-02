@@ -27,7 +27,7 @@ public enum class AbortReason(private val text: String) {
     /** A rescue step reported Skipped. */
     @ExperimentalItineraApi RESCUE_SKIPPED("rescue skipped"),
     /** A step, hook or service provider set global metadata under `journey_id`. */
-    @ExperimentalItineraApi RESERVED_METADATA_KEY("reserved metadata key"),
+    RESERVED_METADATA_KEY("reserved metadata key"),
     /** Custom code returned something its call cannot return. */
     @ExperimentalItineraApi UNEXPECTED_RESULT("unexpected result");
 

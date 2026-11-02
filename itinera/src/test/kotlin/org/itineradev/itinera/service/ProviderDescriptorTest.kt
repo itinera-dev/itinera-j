@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.service
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.JourneyId
 import org.itineradev.itinera.request.Answers
 import org.itineradev.itinera.request.AttemptProviderKind

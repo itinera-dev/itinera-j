@@ -1,6 +1,5 @@
 package org.itineradev.itinera.service.async
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.request.Got
 import org.itineradev.itinera.service.Provided
 import org.itineradev.itinera.service.ProviderCall
@@ -15,7 +14,6 @@ import org.itineradev.itinera.workflow.Async
  * @param T the service's type.
  * @sample org.itineradev.itinera.service.async.samples.asyncProviders
  */
-@ExperimentalItineraApi
 public fun interface AsyncProvider<in W, K, out T : Any> : ProviderCall<Async, W, K, T> {
     /**
      * Provides an instance of the service, or [Provided.NoInstance].

@@ -340,7 +340,6 @@ class StartTest {
     private fun unimplemented(): Class<in Shop> = returned(Messages::class.java)
 }
 
-@OptIn(ExperimentalItineraApi::class)
 private class Written(
     override val steps: List<StepDescriptor<Sync>>,
     override val roles: List<Class<in Shop>> = emptyList(),
@@ -355,7 +354,6 @@ private class Written(
 }
 
 /** A hand-written asynchronous workflow of no step, which only an unchecked cast hands over. */
-@OptIn(ExperimentalItineraApi::class)
 private class Asynchronous : WorkflowDescriptor<Shop, Async> {
     override val name: WorkflowName = WorkflowName.of("written")
     override val mode: Async = Async
@@ -368,7 +366,6 @@ private class Asynchronous : WorkflowDescriptor<Shop, Async> {
     override val idGenerator: JourneyIdGenerator<Shop>? = null
 }
 
-@OptIn(ExperimentalItineraApi::class)
 private class HandWritten(
     override val descriptor: WorkflowDescriptor<*, Sync>,
     override val reporters: List<ReporterOf<Sync>>,
@@ -381,7 +378,6 @@ private class HandWritten(
     override fun claim(): Boolean = true
 }
 
-@OptIn(ExperimentalItineraApi::class)
 private class Adding(private val thrown: Throwable) : Dispatcher {
     override fun add(reporter: Reporter): Unit = throw thrown
 
@@ -390,7 +386,6 @@ private class Adding(private val thrown: Throwable) : Dispatcher {
     override fun setGlobalMetadata(key: String, value: Any?) = Unit
 }
 
-@OptIn(ExperimentalItineraApi::class)
 private class Rejecting(private val thrown: Throwable) : Reporter {
     override fun report(event: Event) = Unit
 

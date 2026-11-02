@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.request
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.Contributor
 import org.itineradev.itinera.request.samples.PaymentGateway
 import org.itineradev.itinera.request.samples.requests

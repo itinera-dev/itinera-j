@@ -6,7 +6,7 @@ Status: done. Stage 3 added `LocalExecutor`, `AsyncLocalExecutor` and the engine
 
 ## API
 
-12 is listed in both manifests, and from stage 7 no public item below carries `@ExperimentalItineraApi`, but for `Refused.GlobalMetadataNotSet`, which belongs to [0102](0102-global-metadata.md), not listed yet. Until then, each kept the marker, as AGENTS.md allows, since it named API of a proposal not listed yet.
+12 is listed in both manifests, and from stage 8 no public item below carries `@ExperimentalItineraApi`. Until stage 7, each kept the marker, as AGENTS.md allows, since it named API of a proposal not listed yet, and `Refused.GlobalMetadataNotSet`, which belongs to [0102](0102-global-metadata.md), kept it until stage 8 listed 102.
 
 - **`LocalExecutor`**, in `org.itineradev.itinera.executor`, is made with a `DispatcherFactory`, or with `DefaultDispatcherFactory` when none is given; Java reaches both constructors through `@JvmOverloads`. Its `run(instance: WorkflowInstance<Sync>)` runs the journey on the caller's thread and returns its `JourneyResult`, or throws `Refusal` before any journey, which Java sees as checked through `@Throws`.
 - **`AsyncLocalExecutor`**, in `org.itineradev.itinera.executor.async` in `itinera-kotlin`, is made with an `AsyncDispatcherFactory`, or with `AsyncDefaultDispatcherFactory` when none is given. Its `suspend fun run(instance: WorkflowInstance<Async>)`, `@JvmSynthetic`, runs the journey in the caller's coroutine, on whatever dispatcher it uses, and returns its `JourneyResult`, or throws `Refusal` before any journey. It never spawns, sleeps, sets timers or chooses a thread.

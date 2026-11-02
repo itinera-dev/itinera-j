@@ -1,6 +1,5 @@
 package org.itineradev.itinera.service
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.request.AttemptProviderKind
 import org.itineradev.itinera.request.JourneyProviderKind
 import org.itineradev.itinera.request.Request
@@ -25,7 +24,6 @@ import org.itineradev.itinera.workflow.Sync
  * @param M the mode of the workflows the provider can join.
  * @sample org.itineradev.itinera.service.samples.providers
  */
-@ExperimentalItineraApi
 public sealed interface ProviderDescriptor<in W, M : Mode> {
     /** The provider's name, unique among the workflow's service providers. */
     public val name: ProviderName
@@ -85,7 +83,6 @@ public sealed interface ProviderDescriptor<in W, M : Mode> {
  * @param M the mode of the workflows the provider can join.
  * @sample org.itineradev.itinera.service.samples.providers
  */
-@ExperimentalItineraApi
 public interface JourneyProviderDescriptor<in W, M : Mode> : ProviderDescriptor<W, M> {
     /** What it requests, in the order declared, resolved in that order before each call. */
     public val requests: List<Request<JourneyProviderKind<M>, *>>
@@ -102,7 +99,6 @@ public interface JourneyProviderDescriptor<in W, M : Mode> : ProviderDescriptor<
  * @param M the mode of the workflows the provider can join.
  * @sample org.itineradev.itinera.service.samples.providers
  */
-@ExperimentalItineraApi
 public interface AttemptProviderDescriptor<in W, M : Mode> : ProviderDescriptor<W, M> {
     /** What it requests, in the order declared, resolved in that order before each call. */
     public val requests: List<Request<AttemptProviderKind<M>, *>>

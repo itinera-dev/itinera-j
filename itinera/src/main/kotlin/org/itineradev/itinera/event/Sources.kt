@@ -1,6 +1,5 @@
 package org.itineradev.itinera.event
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.policy.PolicyName
 import org.itineradev.itinera.policy.StepHook
 import org.itineradev.itinera.service.ProviderName
@@ -96,7 +95,6 @@ public data class StepHookSource(
  *
  * @sample org.itineradev.itinera.event.samples.sources
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class ProviderSource(
     /** The provider's name. */

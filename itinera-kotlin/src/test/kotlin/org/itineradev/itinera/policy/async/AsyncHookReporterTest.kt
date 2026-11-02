@@ -1,9 +1,6 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.policy.async
 
 import kotlinx.coroutines.runBlocking
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.policy.async.samples.asyncHookReporters
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

@@ -1,6 +1,5 @@
 package org.itineradev.itinera.report
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.event.Event
 import org.itineradev.itinera.workflow.Sync
 
@@ -34,5 +33,5 @@ public fun interface Reporter : ReporterOf<Sync> {
      *
      * @sample org.itineradev.itinera.report.samples.tenants
      */
-    @ExperimentalItineraApi public fun setGlobalMetadata(key: String, value: Any?): Unit = Unit
+    public fun setGlobalMetadata(key: String, value: Any?): Unit = Unit
 }

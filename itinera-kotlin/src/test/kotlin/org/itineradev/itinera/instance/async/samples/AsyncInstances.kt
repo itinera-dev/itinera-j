@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.instance.async.samples
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.instance.WorkflowInstance
 import org.itineradev.itinera.instance.async.AsyncInstanceBuilder
 import org.itineradev.itinera.instance.async.instance

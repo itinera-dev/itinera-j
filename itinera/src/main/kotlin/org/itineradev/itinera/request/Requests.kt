@@ -1,6 +1,5 @@
 package org.itineradev.itinera.request
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Answer
 import org.itineradev.itinera.engine.ErrorAsked
 import org.itineradev.itinera.engine.FromStepAsked
@@ -60,7 +59,6 @@ public object Requests {
      *
      * @sample org.itineradev.itinera.request.samples.requests
      */
-    @ExperimentalItineraApi
     @JvmStatic
     public fun <T : Any> service(key: String, type: Class<T>): ServiceRequest<T> =
         ServiceRequest(key, type)
@@ -241,7 +239,6 @@ public object Requests {
      *
      * @sample org.itineradev.itinera.service.samples.providers
      */
-    @ExperimentalItineraApi
     @JvmStatic
     public fun providerReporter(): Request<ProviderReporterKind<Sync>, ProviderReporter> =
         Asking(Handle.PROVIDER_REPORTER, Answer.ITSELF)

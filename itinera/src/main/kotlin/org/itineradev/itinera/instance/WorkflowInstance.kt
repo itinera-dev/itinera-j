@@ -1,6 +1,5 @@
 package org.itineradev.itinera.instance
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.JourneyId
 import org.itineradev.itinera.report.ReporterOf
 import org.itineradev.itinera.workflow.Mode
@@ -35,7 +34,7 @@ public interface WorkflowInstance<M : Mode> {
     public val initialData: Map<String, Any?>
 
     /** The global metadata set on the reporters before the journey starts, by key, in order. */
-    @ExperimentalItineraApi public val initialGlobalMetadata: Map<String, Any?>
+    public val initialGlobalMetadata: Map<String, Any?>
 
     /**
      * Claims the instance for a journey: `true` the first time it is called, and `false` ever

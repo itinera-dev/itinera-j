@@ -6,7 +6,7 @@ Status: done. Stage 1 added the factories. Stage 3 gave one to `LocalExecutor`, 
 
 ## API
 
-63 is listed in both manifests, and from stage 7, when 11 is listed, no public item below carries `@ExperimentalItineraApi`. Until then, each kept it, as AGENTS.md allows, since each named the dispatchers and reporters of 0011. A Kotlin class implementing `Dispatcher` or `AsyncDispatcher` still opts in, since it overrides `setGlobalMetadata`, which belongs to [0102](0102-global-metadata.md), not listed yet.
+63 is listed in both manifests, and from stage 7, when 11 is listed, no public item below carries `@ExperimentalItineraApi`. Until then, each kept it, as AGENTS.md allows, since each named the dispatchers and reporters of 0011. A Kotlin class implementing `Dispatcher` or `AsyncDispatcher` opted in until stage 8 listed [0102](0102-global-metadata.md), since it overrides `setGlobalMetadata`, which belongs to 102.
 
 - **`DispatcherFactory`**, in `org.itineradev.itinera.report`, is a `fun interface` whose `create()` returns a `Dispatcher`. A Kotlin lambda, a Java lambda or a constructor reference, such as `DefaultDispatcher::new`, is a factory.
 - **`DefaultDispatcherFactory`** creates a new `DefaultDispatcher` holding no reporter each time, the default factory of chapter 2, 2.2 point 2.

@@ -1,7 +1,6 @@
 package org.itineradev.itinera.event
 
 import java.time.Instant
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.JourneyId
 import org.itineradev.itinera.step.Attempt
 import org.itineradev.itinera.step.StepName
@@ -73,7 +72,6 @@ public data class DataOverwritten(
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class GlobalMetadataSet(
     override val sequence: Long,

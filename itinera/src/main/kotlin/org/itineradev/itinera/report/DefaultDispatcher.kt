@@ -1,6 +1,5 @@
 package org.itineradev.itinera.report
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.deliverToEveryone
 import org.itineradev.itinera.event.Event
 import org.itineradev.itinera.event.EventKind
@@ -47,7 +46,6 @@ public class DefaultDispatcher : Dispatcher {
      *
      * @sample org.itineradev.itinera.report.samples.dispatching
      */
-    @ExperimentalItineraApi
     override fun setGlobalMetadata(key: String, value: Any?) {
         reporters.forEach { reporter -> reporter.setGlobalMetadata(key, value) }
     }

@@ -1,6 +1,5 @@
 package org.itineradev.itinera.workflow
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Checked
 import org.itineradev.itinera.engine.isRole
 import org.itineradev.itinera.policy.WorkflowPolicyDescriptor
@@ -69,7 +68,6 @@ internal constructor(private val name: WorkflowName, private val mode: M) {
      *
      * @sample org.itineradev.itinera.service.samples.providers
      */
-    @ExperimentalItineraApi
     public fun provider(provider: ProviderDescriptor<W, M>): WorkflowBuilder<W, M> = apply {
         providers += provider
     }

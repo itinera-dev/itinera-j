@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.request.samples
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.request.Requests
 import org.itineradev.itinera.step.Outcome
 import org.itineradev.itinera.step.SyncStepRun
