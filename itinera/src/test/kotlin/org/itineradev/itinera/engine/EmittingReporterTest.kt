@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-class EmittingStepReporterTest {
+class EmittingReporterTest {
     @Test
     fun `calls from several threads go through one at a time, so their events keep distinct increasing sequences`() {
         val log = Log()
@@ -29,7 +29,7 @@ class EmittingStepReporterTest {
     @Test
     fun `closing waits for the call going through`() {
         val emits = Gated()
-        val reporter = EmittingStepReporter(emits)
+        val reporter = EmittingReporter(emits, Handle.STEP_REPORTER)
         val emitting = Thread { reporter.info("noted") }.also(Thread::start)
         emits.entered.await()
         val closing = Thread { driven { reporter.close() } }.also(Thread::start)

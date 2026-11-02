@@ -52,6 +52,9 @@ public interface ReporterHandle {
 public interface ReporterHandles {
     /** The step reporter for one attempt, which reports through [emits]. */
     public fun stepReporter(emits: Emits): ReporterHandle
+
+    /** The hook reporter for one call of a hook, which reports through [emits]. */
+    public fun hookReporter(emits: Emits): ReporterHandle
 }
 
 /**

@@ -81,7 +81,7 @@ public data class RequiredDataMissing(
 }
 
 /**
- * A requested value has the wrong type.
+ * A requested value has the wrong type, or could not be copied for the request.
  *
  * @sample org.itineradev.itinera.event.samples.aborts
  */
@@ -89,10 +89,8 @@ public data class RequiredDataMissing(
 @JvmRecord
 public data class WrongType(
     override val step: StepName?,
-    /** The key that was requested. */
-    val key: String,
-    /** Who requested it. */
-    val requester: Requester,
+    /** What was requested, and by whom. */
+    val wrong: WrongData,
     /**
      * The message of what the application's code threw while the value was copied for the request,
      * if it threw; `null` when the value is of another type.

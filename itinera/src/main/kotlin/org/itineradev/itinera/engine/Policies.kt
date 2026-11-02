@@ -10,25 +10,8 @@ import org.itineradev.itinera.workflow.WorkflowDescriptor
 internal fun policyViolations(descriptor: WorkflowDescriptor<*, *>): List<Violation> =
     descriptor.steps.flatMap(::stepHooksDefinedTwice) +
         workflowHooksDefinedTwice(descriptor.policies) +
-        rolesNotProvided(descriptor) +
+        roleViolations(descriptor) +
         hookless(descriptor)
-
-private fun rolesNotProvided(descriptor: WorkflowDescriptor<*, *>): List<Violation> =
-    hooksOf(descriptor).flatMap(::rolesRequested).distinct().filterNot { requested ->
-        provided(descriptor.roles, requested.role)
-    }
-
-private fun rolesRequested(hook: DefinedHook<*>): List<Violation.RoleNotProvided> =
-    hook.requests.map(::askedBy).filterIsInstance<RoleAsked>().map { asked ->
-        roleNotProvided(hook.policy, asked)
-    }
-
-private fun roleNotProvided(policy: PolicyName, asked: RoleAsked): Violation.RoleNotProvided =
-    Violation.RoleNotProvided(policy, asked.type)
-
-/** Whether one of [roles] is [requested], or extends it. */
-private fun provided(roles: List<Class<*>>, requested: Class<*>): Boolean =
-    roles.any(requested::isAssignableFrom)
 
 private fun hookless(descriptor: WorkflowDescriptor<*, *>): List<Violation> {
     val workflowPolicies =

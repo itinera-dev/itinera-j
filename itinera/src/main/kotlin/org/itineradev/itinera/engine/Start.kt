@@ -3,15 +3,21 @@ package org.itineradev.itinera.engine
 import org.itineradev.itinera.executor.Refusal
 import org.itineradev.itinera.executor.Refused
 import org.itineradev.itinera.instance.WorkflowInstance
+import org.itineradev.itinera.policy.WorkflowHook
 import org.itineradev.itinera.workflow.Mode
 
 /** What a journey starts with, once nothing refused it. */
-internal class Started(val initial: Initial, val delivery: Delivery, val failures: Failures)
+internal class Started(
+    val initial: Initial,
+    val policies: List<BuiltPolicy<WorkflowHook>>,
+    val delivery: Delivery,
+    val failures: Failures,
+)
 
 /**
  * Does everything that comes before a journey on the executor of [parts], in order: admits the
- * instance, makes the dispatcher, adds the guarded reporters, then sets the journey ID and the
- * initial global metadata.
+ * instance, builds the workflow policies, makes the dispatcher, adds the guarded reporters, then
+ * sets the journey ID and the initial global metadata.
  */
 internal class Start<M : Mode>(private val parts: Parts<M>) {
     /** @throws Refusal when any of it refuses the instance or fails. */
@@ -22,11 +28,12 @@ internal class Start<M : Mode>(private val parts: Parts<M>) {
                 ?: Initial.of(instance.initialData, instance.initialGlobalMetadata)
         val violations = admission(instance, parts, initial)
         if (violations.isNotEmpty()) throw Refusal(Refused.Inadmissible(violations))
+        val policies = workflowPolicies(parts, instance.descriptor.policies)
         val delivery = dispatcher()
         val failures = Failures()
         added(instance, delivery, failures)
         introduced(instance, initial, delivery, failures)
-        return Started(initial, delivery, failures)
+        return Started(initial, policies, delivery, failures)
     }
 
     private suspend fun dispatcher(): Delivery =

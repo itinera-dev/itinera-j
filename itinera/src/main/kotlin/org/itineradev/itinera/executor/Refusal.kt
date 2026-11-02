@@ -1,6 +1,7 @@
 package org.itineradev.itinera.executor
 
 import org.itineradev.itinera.ExperimentalItineraApi
+import org.itineradev.itinera.policy.PolicyName
 import org.itineradev.itinera.workflow.Violation
 
 /**
@@ -128,6 +129,45 @@ public sealed interface Refused {
     ) : Refused {
         override val message: String
             get() = "run refused an instance: the global metadata could not be set: $errorMessage"
+    }
+
+    /**
+     * The workflow policy [policy] threw while it was built for the journey, before its dispatcher
+     * was made.
+     *
+     * @sample org.itineradev.itinera.executor.samples.refusals
+     */
+    @JvmRecord
+    public data class WorkflowPolicyFailed(
+        /** The policy's name. */
+        val policy: PolicyName,
+        /** What building it threw. */
+        override val error: Throwable,
+        /** Its message, or a fixed text when it has none. */
+        val errorMessage: String,
+    ) : Refused {
+        override val message: String
+            get() =
+                "run refused an instance: the workflow policy $policy failed while it was built: $errorMessage"
+    }
+
+    /**
+     * Building the workflow policy [policy] gave `null`, which only Java code can, and which is not
+     * a failure of that code, so the refusal carries no error.
+     *
+     * @sample org.itineradev.itinera.executor.samples.refusals
+     */
+    @JvmRecord
+    public data class WorkflowPolicyReturnedNull(
+        /** The policy's name. */
+        val policy: PolicyName
+    ) : Refused {
+        override val message: String
+            get() =
+                "run refused an instance: building the workflow policy $policy gave null, not the policy"
+
+        override val error: Throwable?
+            get() = null
     }
 
     /**

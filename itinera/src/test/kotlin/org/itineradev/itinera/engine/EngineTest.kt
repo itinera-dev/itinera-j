@@ -2,27 +2,44 @@ package org.itineradev.itinera.engine
 
 import java.time.Instant
 import org.itineradev.itinera.ExperimentalItineraApi
+import org.itineradev.itinera.engine.Hooking.audit
+import org.itineradev.itinera.engine.Hooking.ledger
+import org.itineradev.itinera.engine.Journeys.Shop
 import org.itineradev.itinera.engine.Journeys.building
+import org.itineradev.itinera.engine.Journeys.instanceOf
 import org.itineradev.itinera.engine.Journeys.journeyOf
 import org.itineradev.itinera.engine.Journeys.packing
 import org.itineradev.itinera.engine.Journeys.playing
 import org.itineradev.itinera.engine.Journeys.ran
+import org.itineradev.itinera.engine.Journeys.shop
 import org.itineradev.itinera.engine.Journeys.succeeding
 import org.itineradev.itinera.event.AttemptStarted
 import org.itineradev.itinera.event.ByStep
+import org.itineradev.itinera.event.ByWorkflowHook
 import org.itineradev.itinera.event.Event
 import org.itineradev.itinera.event.JourneyStarted
 import org.itineradev.itinera.event.StepAbnormalTermination
 import org.itineradev.itinera.event.StepCouldNotBeBuilt
+import org.itineradev.itinera.event.WorkflowHookCalled
+import org.itineradev.itinera.instance.InstanceBuilder
 import org.itineradev.itinera.journey.AbortReason
+import org.itineradev.itinera.journey.DataBag
 import org.itineradev.itinera.journey.FailureCause
 import org.itineradev.itinera.journey.JourneyStatus
+import org.itineradev.itinera.policy.OnSuccess
+import org.itineradev.itinera.policy.PolicyName
+import org.itineradev.itinera.policy.SyncHook
+import org.itineradev.itinera.policy.SyncWorkflowHook
+import org.itineradev.itinera.policy.WorkflowHook
 import org.itineradev.itinera.request.Requests
 import org.itineradev.itinera.step.Outcome
 import org.itineradev.itinera.step.StepName
 import org.itineradev.itinera.step.SyncStepFactory
 import org.itineradev.itinera.step.SyncStepRun
 import org.itineradev.itinera.value.TypeToken
+import org.itineradev.itinera.workflow.StepBuilder
+import org.itineradev.itinera.workflow.Sync
+import org.itineradev.itinera.workflow.WorkflowBuilder
 import org.itineradev.itinera.workflow.WorkflowName
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertSame
@@ -229,5 +246,85 @@ class EngineTest {
                 ran(journeyOf(playing("ship", error)).create())
             }
         assertSame(error, thrown)
+    }
+
+    @Test
+    fun `on workflow success runs before journey_succeeded, and its contributions are in the result`() {
+        val log = Log()
+        val result = ran(ledgered(succeeding("pack")).reporter(log).create())
+        assertEquals(
+            listOf("hook_called", "contribution_committed", "journey_succeeded"),
+            log.kinds.takeLast(3),
+        )
+        assertEquals(
+            ByWorkflowHook(PolicyName.of("ledger"), WorkflowHook.ON_WORKFLOW_SUCCESS),
+            log.events.filterIsInstance<WorkflowHookCalled>().single().source,
+        )
+        assertEquals("succeeded", ledgerOf((result.status as JourneyStatus.Succeeded).dataBag))
+    }
+
+    @Test
+    fun `on workflow failure runs before journey_failed`() {
+        val log = Log()
+        val result =
+            ran(ledgered(playing("pack", IllegalStateException("down"))).reporter(log).create())
+        assertEquals(
+            listOf("step_given_up", "hook_called", "contribution_committed", "journey_failed"),
+            log.kinds.takeLast(4),
+        )
+        assertEquals("failed", ledgerOf((result.status as JourneyStatus.Failed).dataBag))
+    }
+
+    @Test
+    fun `on workflow success runs when a step hook finishes the workflow`() {
+        val log = Log()
+        val finishing =
+            succeeding("pack")
+                .policy(
+                    audit().onStepSuccess(SyncHook { _, _ -> OnSuccess.finishWorkflow() }).build()
+                )
+        ran(ledgered(finishing, succeeding("ship")).reporter(log).create())
+        assertEquals(
+            WorkflowHook.ON_WORKFLOW_SUCCESS,
+            log.events.filterIsInstance<WorkflowHookCalled>().single().source.hook,
+        )
+    }
+
+    @Test
+    fun `no workflow hook runs once the journey is aborted`() {
+        val log = Log()
+        val aborting =
+            succeeding("pack")
+                .policy(audit().onStepSuccess(SyncHook { _, _ -> error("down") }).build())
+        ran(ledgered(aborting).reporter(log).create())
+        assertEquals(
+            emptyList<WorkflowHookCalled>(),
+            log.events.filterIsInstance<WorkflowHookCalled>(),
+        )
+    }
+
+    private fun withStep(workflow: WorkflowBuilder<Shop, Sync>, step: StepBuilder<Sync>) =
+        workflow.step(step.build())
+
+    private fun ledgerOf(dataBag: DataBag): String? =
+        dataBag.read("ledger", TypeToken.of(String::class.java)).orNull()
+
+    /** The instance of a workflow of [steps] whose policy `ledger` notes how the journey ended. */
+    private fun ledgered(vararg steps: StepBuilder<Sync>): InstanceBuilder {
+        val contributor = Requests.contributor()
+        val ledger =
+            ledger()
+                .onWorkflowSuccess(
+                    listOf(contributor),
+                    SyncWorkflowHook { _, got ->
+                        got[contributor].contribute("ledger", "succeeded")
+                    },
+                )
+                .onWorkflowFailure(
+                    listOf(contributor),
+                    SyncWorkflowHook { _, got -> got[contributor].contribute("ledger", "failed") },
+                )
+                .build()
+        return instanceOf(steps.fold(shop(), ::withStep).policy(ledger).build())
     }
 }

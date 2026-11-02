@@ -194,6 +194,11 @@ public final class org/itineradev/itinera/engine/Handle : java/lang/Enum, org/it
 	public static fun values ()[Lorg/itineradev/itinera/engine/Handle;
 }
 
+public abstract interface class org/itineradev/itinera/engine/HookCaller {
+	public abstract synthetic fun step (Lorg/itineradev/itinera/policy/HookCall;Ljava/lang/Object;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract synthetic fun workflow (Lorg/itineradev/itinera/policy/HookCall;Ljava/lang/Object;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
 public abstract interface class org/itineradev/itinera/engine/HookCalls {
 	public abstract fun getHandles ()Ljava/util/Map;
 	public abstract fun getOtherModes ()Ljava/util/Map;
@@ -273,6 +278,7 @@ public abstract interface class org/itineradev/itinera/engine/Parts {
 	public abstract synthetic fun build (Lorg/itineradev/itinera/step/StepFactory;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract synthetic fun dispatcher (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract synthetic fun ensureActive (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun getHooks ()Lorg/itineradev/itinera/engine/HookCaller;
 	public abstract fun getMode ()Lorg/itineradev/itinera/workflow/Mode;
 	public abstract fun getReporterHandles ()Lorg/itineradev/itinera/engine/ReporterHandles;
 	public abstract synthetic fun provide (Lorg/itineradev/itinera/service/ProviderCall;Ljava/lang/Object;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -321,6 +327,7 @@ public abstract interface class org/itineradev/itinera/engine/ReporterHandle {
 }
 
 public abstract interface class org/itineradev/itinera/engine/ReporterHandles {
+	public abstract fun hookReporter (Lorg/itineradev/itinera/engine/Emits;)Lorg/itineradev/itinera/engine/ReporterHandle;
 	public abstract fun stepReporter (Lorg/itineradev/itinera/engine/Emits;)Lorg/itineradev/itinera/engine/ReporterHandle;
 }
 
@@ -373,6 +380,7 @@ public final class org/itineradev/itinera/engine/SyncParts : org/itineradev/itin
 	public synthetic fun build (Lorg/itineradev/itinera/step/StepFactory;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public synthetic fun dispatcher (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public synthetic fun ensureActive (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun getHooks ()Lorg/itineradev/itinera/engine/HookCaller;
 	public synthetic fun getMode ()Lorg/itineradev/itinera/workflow/Mode;
 	public fun getMode ()Lorg/itineradev/itinera/workflow/Sync;
 	public fun getReporterHandles ()Lorg/itineradev/itinera/engine/ReporterHandles;
@@ -1971,25 +1979,50 @@ public final class org/itineradev/itinera/event/WorkflowHookCalled : java/lang/R
 	public fun workflow ()Lorg/itineradev/itinera/workflow/WorkflowName;
 }
 
+public abstract interface class org/itineradev/itinera/event/WrongData {
+}
+
+public final class org/itineradev/itinera/event/WrongData$FailureReason : java/lang/Record, org/itineradev/itinera/event/WrongData {
+	public fun <init> (Lorg/itineradev/itinera/event/FailureRequester;)V
+	public final fun component1 ()Lorg/itineradev/itinera/event/FailureRequester;
+	public final fun copy (Lorg/itineradev/itinera/event/FailureRequester;)Lorg/itineradev/itinera/event/WrongData$FailureReason;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/event/WrongData$FailureReason;Lorg/itineradev/itinera/event/FailureRequester;ILjava/lang/Object;)Lorg/itineradev/itinera/event/WrongData$FailureReason;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public final fun requester ()Lorg/itineradev/itinera/event/FailureRequester;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/event/WrongData$Key : java/lang/Record, org/itineradev/itinera/event/WrongData {
+	public fun <init> (Ljava/lang/String;Lorg/itineradev/itinera/event/Requester;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lorg/itineradev/itinera/event/Requester;
+	public final fun copy (Ljava/lang/String;Lorg/itineradev/itinera/event/Requester;)Lorg/itineradev/itinera/event/WrongData$Key;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/event/WrongData$Key;Ljava/lang/String;Lorg/itineradev/itinera/event/Requester;ILjava/lang/Object;)Lorg/itineradev/itinera/event/WrongData$Key;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public final fun key ()Ljava/lang/String;
+	public final fun requester ()Lorg/itineradev/itinera/event/Requester;
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class org/itineradev/itinera/event/WrongType : java/lang/Record, org/itineradev/itinera/event/JourneyAbort {
-	public fun <init> (Lorg/itineradev/itinera/step/StepName;Ljava/lang/String;Lorg/itineradev/itinera/event/Requester;Ljava/lang/String;)V
+	public fun <init> (Lorg/itineradev/itinera/step/StepName;Lorg/itineradev/itinera/event/WrongData;Ljava/lang/String;)V
 	public final fun component1 ()Lorg/itineradev/itinera/step/StepName;
-	public final fun component2 ()Ljava/lang/String;
-	public final fun component3 ()Lorg/itineradev/itinera/event/Requester;
-	public final fun component4 ()Ljava/lang/String;
-	public final fun copy (Lorg/itineradev/itinera/step/StepName;Ljava/lang/String;Lorg/itineradev/itinera/event/Requester;Ljava/lang/String;)Lorg/itineradev/itinera/event/WrongType;
-	public static synthetic fun copy$default (Lorg/itineradev/itinera/event/WrongType;Lorg/itineradev/itinera/step/StepName;Ljava/lang/String;Lorg/itineradev/itinera/event/Requester;Ljava/lang/String;ILjava/lang/Object;)Lorg/itineradev/itinera/event/WrongType;
+	public final fun component2 ()Lorg/itineradev/itinera/event/WrongData;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Lorg/itineradev/itinera/step/StepName;Lorg/itineradev/itinera/event/WrongData;Ljava/lang/String;)Lorg/itineradev/itinera/event/WrongType;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/event/WrongType;Lorg/itineradev/itinera/step/StepName;Lorg/itineradev/itinera/event/WrongData;Ljava/lang/String;ILjava/lang/Object;)Lorg/itineradev/itinera/event/WrongType;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun errorMessage ()Ljava/lang/String;
 	public synthetic fun getErrorMessage ()Ljava/lang/String;
 	public synthetic fun getReason ()Lorg/itineradev/itinera/journey/AbortReason;
 	public synthetic fun getStep ()Lorg/itineradev/itinera/step/StepName;
 	public fun hashCode ()I
-	public final fun key ()Ljava/lang/String;
 	public fun reason ()Lorg/itineradev/itinera/journey/AbortReason;
-	public final fun requester ()Lorg/itineradev/itinera/event/Requester;
 	public fun step ()Lorg/itineradev/itinera/step/StepName;
 	public fun toString ()Ljava/lang/String;
+	public final fun wrong ()Lorg/itineradev/itinera/event/WrongData;
 }
 
 public final class org/itineradev/itinera/executor/LocalExecutor {
@@ -2096,6 +2129,39 @@ public final class org/itineradev/itinera/executor/Refused$JourneyRunning : org/
 	public fun getError ()Ljava/lang/Throwable;
 	public fun getMessage ()Ljava/lang/String;
 	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/executor/Refused$WorkflowPolicyFailed : java/lang/Record, org/itineradev/itinera/executor/Refused {
+	public fun <init> (Lorg/itineradev/itinera/policy/PolicyName;Ljava/lang/Throwable;Ljava/lang/String;)V
+	public final fun component1 ()Lorg/itineradev/itinera/policy/PolicyName;
+	public final fun component2 ()Ljava/lang/Throwable;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Lorg/itineradev/itinera/policy/PolicyName;Ljava/lang/Throwable;Ljava/lang/String;)Lorg/itineradev/itinera/executor/Refused$WorkflowPolicyFailed;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/executor/Refused$WorkflowPolicyFailed;Lorg/itineradev/itinera/policy/PolicyName;Ljava/lang/Throwable;Ljava/lang/String;ILjava/lang/Object;)Lorg/itineradev/itinera/executor/Refused$WorkflowPolicyFailed;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun error ()Ljava/lang/Throwable;
+	public final fun errorMessage ()Ljava/lang/String;
+	public synthetic fun getError ()Ljava/lang/Throwable;
+	public synthetic fun getMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun message ()Ljava/lang/String;
+	public final fun policy ()Lorg/itineradev/itinera/policy/PolicyName;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class org/itineradev/itinera/executor/Refused$WorkflowPolicyReturnedNull : java/lang/Record, org/itineradev/itinera/executor/Refused {
+	public fun <init> (Lorg/itineradev/itinera/policy/PolicyName;)V
+	public final fun component1 ()Lorg/itineradev/itinera/policy/PolicyName;
+	public final fun copy (Lorg/itineradev/itinera/policy/PolicyName;)Lorg/itineradev/itinera/executor/Refused$WorkflowPolicyReturnedNull;
+	public static synthetic fun copy$default (Lorg/itineradev/itinera/executor/Refused$WorkflowPolicyReturnedNull;Lorg/itineradev/itinera/policy/PolicyName;ILjava/lang/Object;)Lorg/itineradev/itinera/executor/Refused$WorkflowPolicyReturnedNull;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun error ()Ljava/lang/Throwable;
+	public synthetic fun getError ()Ljava/lang/Throwable;
+	public synthetic fun getMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun message ()Ljava/lang/String;
+	public final fun policy ()Lorg/itineradev/itinera/policy/PolicyName;
 	public fun toString ()Ljava/lang/String;
 }
 
