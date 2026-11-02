@@ -1,7 +1,6 @@
 package org.itineradev.itinera.value
 
 import java.util.LinkedList
-import org.itineradev.itinera.samples.optingIn
 import org.itineradev.itinera.value.samples.genericTypeTokens
 import org.itineradev.itinera.value.samples.typeTokens
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -41,7 +40,6 @@ class TypeTokenTest {
     fun `the samples run`() {
         typeTokens()
         genericTypeTokens()
-        assertEquals(TypeToken.of(Long::class.java), optingIn())
     }
 
     companion object {

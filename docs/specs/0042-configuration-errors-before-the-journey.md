@@ -6,7 +6,7 @@ Status: done. Stage 3 added the admission check of `run` and the refusals before
 
 ## API
 
-42 is listed in both manifests, but every public item below keeps `@ExperimentalItineraApi`, as AGENTS.md allows, since each names API of a proposal not listed yet, such as the violations of 0003, 0010, 0060 and 0095.
+42 is listed in both manifests, and from stage 7 no public item below carries `@ExperimentalItineraApi`, but for what belongs to a proposal not listed yet: the violations of rescue steps (0003), of services (0095) and of global metadata (0102), and `Refused.GlobalMetadataNotSet`.
 
 - **`Refusal`**, in `org.itineradev.itinera.executor`, is the checked exception `run` throws before any journey and any event. Its `refused` says why, as a `Refused`: `InstanceRan`, `JourneyRunning`, `Inadmissible` with every violation, `DispatcherFactoryFailed`, `DispatcherFactoryReturnedNull`, `DispatcherFailed` and `GlobalMetadataNotSet`. Those caused by failing custom code carry its error, which is also the refusal's `cause`, and its message. The executor claims the instance before anything else, so any refusal after the claim uses the instance up, and running it again is refused with `InstanceRan`, whose message says the instance was handed to an executor before.
 - **`Violation`** is sealed. Stage 3 has `DuplicateStepName`, `ModeNotAccepted`, `NotAValue`, held in the initial data or the initial global metadata, `ReservedMetadataKey` and `Misdeclared`; stage 4 adds `ServiceRequestedTwice`, `ServiceNotProvided`, `StepHookDefinedTwice`, `WorkflowHookDefinedTwice` and `RoleNotProvided`. `Violations`, thrown when a workflow is described or built, lists them all.

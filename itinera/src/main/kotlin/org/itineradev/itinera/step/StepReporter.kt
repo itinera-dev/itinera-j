@@ -11,7 +11,6 @@ import org.itineradev.itinera.ExperimentalItineraApi
  *
  * @sample org.itineradev.itinera.step.samples.reporters
  */
-@ExperimentalItineraApi
 public interface StepReporter {
     /**
      * Emits `step_info` with [message].
@@ -68,5 +67,5 @@ public interface StepReporter {
      * @throws IllegalStateException when its attempt has ended.
      * @sample org.itineradev.itinera.step.samples.reporters
      */
-    public fun setGlobalMetadata(key: String, value: Any?)
+    @ExperimentalItineraApi public fun setGlobalMetadata(key: String, value: Any?)
 }

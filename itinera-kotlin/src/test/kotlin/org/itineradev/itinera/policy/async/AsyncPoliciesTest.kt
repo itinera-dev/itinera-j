@@ -1,9 +1,6 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.policy.async
 
 import kotlinx.coroutines.runBlocking
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.Contributor
 import org.itineradev.itinera.journey.JourneyId
 import org.itineradev.itinera.policy.HookDefinition

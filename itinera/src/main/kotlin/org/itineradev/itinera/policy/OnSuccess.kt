@@ -1,6 +1,5 @@
 package org.itineradev.itinera.policy
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.step.Reason
 
 /**
@@ -9,7 +8,6 @@ import org.itineradev.itinera.step.Reason
  *
  * @sample org.itineradev.itinera.policy.samples.decisions
  */
-@ExperimentalItineraApi
 public sealed interface OnSuccess {
     /** Whether the hook keeps the default. */
     public val keepsDefault: Boolean

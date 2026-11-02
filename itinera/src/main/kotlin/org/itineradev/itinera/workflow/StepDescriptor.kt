@@ -21,7 +21,6 @@ import org.itineradev.itinera.step.SyncStepFactory
  * @param M the mode of the workflows the step can join.
  * @sample org.itineradev.itinera.workflow.samples.steps
  */
-@ExperimentalItineraApi
 public interface StepDescriptor<M : Mode> {
     /** The step's name, unique in its workflow. */
     public val name: StepName
@@ -49,7 +48,7 @@ public interface StepDescriptor<M : Mode> {
      * the step being attempted once more if it succeeds, or `null` when the step has none. A step
      * with both a rescue step and a retry budget above 0 is refused, as `rescued step retried`.
      */
-    public val rescue: RescueStepDescriptor<M>?
+    @ExperimentalItineraApi public val rescue: RescueStepDescriptor<M>?
 
     /** Makes step descriptors. */
     public companion object {
@@ -74,7 +73,6 @@ public interface StepDescriptor<M : Mode> {
  * @param M the mode of the workflows the step can join.
  * @sample org.itineradev.itinera.workflow.samples.steps
  */
-@ExperimentalItineraApi
 public class StepBuilder<M : Mode>
 internal constructor(private val name: StepName, private val factory: StepFactory<M>) {
     private val requests = mutableListOf<Request<StepKind<M>, *>>()
@@ -131,6 +129,7 @@ internal constructor(private val name: StepName, private val factory: StepFactor
      *   most.
      * @sample org.itineradev.itinera.workflow.samples.rescues
      */
+    @ExperimentalItineraApi
     public fun rescue(rescue: RescueStepDescriptor<M>): StepBuilder<M> = apply {
         check(this.rescue == null) { "A step has one rescue step at most, and $name has one." }
         this.rescue = rescue

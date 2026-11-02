@@ -1,7 +1,6 @@
 package org.itineradev.itinera.event
 
 import java.time.Instant
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.JourneyId
 import org.itineradev.itinera.step.Attempt
 import org.itineradev.itinera.step.StepName
@@ -12,7 +11,6 @@ import org.itineradev.itinera.workflow.WorkflowName
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class StepInfo(
     override val sequence: Long,
@@ -39,7 +37,6 @@ public data class StepInfo(
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class StepWarning(
     override val sequence: Long,
@@ -66,7 +63,6 @@ public data class StepWarning(
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class StepError(
     override val sequence: Long,
@@ -93,7 +89,6 @@ public data class StepError(
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class JourneyInfo(
     override val sequence: Long,
@@ -118,7 +113,6 @@ public data class JourneyInfo(
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class JourneyWarning(
     override val sequence: Long,
@@ -143,7 +137,6 @@ public data class JourneyWarning(
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class JourneyError(
     override val sequence: Long,

@@ -1,7 +1,6 @@
 package org.itineradev.itinera.event
 
 import java.time.Instant
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.JourneyId
 import org.itineradev.itinera.step.Attempt
 import org.itineradev.itinera.step.Reason
@@ -13,7 +12,6 @@ import org.itineradev.itinera.workflow.WorkflowName
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class JourneyStarted(
     override val sequence: Long,
@@ -32,7 +30,6 @@ public data class JourneyStarted(
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class AttemptStarted(
     override val sequence: Long,
@@ -53,7 +50,6 @@ public data class AttemptStarted(
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class StepSucceeded(
     override val sequence: Long,
@@ -74,7 +70,6 @@ public data class StepSucceeded(
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class StepFailed(
     override val sequence: Long,
@@ -97,7 +92,6 @@ public data class StepFailed(
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class StepSkipped(
     override val sequence: Long,
@@ -120,7 +114,6 @@ public data class StepSkipped(
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class StepAbnormalTermination(
     override val sequence: Long,
@@ -143,7 +136,6 @@ public data class StepAbnormalTermination(
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class JourneyAborted(
     override val sequence: Long,

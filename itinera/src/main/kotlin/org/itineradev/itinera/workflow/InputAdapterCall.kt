@@ -1,6 +1,5 @@
 package org.itineradev.itinera.workflow
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.request.Got
 import org.itineradev.itinera.request.InputAdapterKind
 
@@ -14,7 +13,7 @@ import org.itineradev.itinera.request.InputAdapterKind
  * @param M the mode of the workflows the adapter can join.
  * @sample org.itineradev.itinera.workflow.samples.adapters
  */
-@ExperimentalItineraApi public interface InputAdapterCall<in W, M : Mode>
+public interface InputAdapterCall<in W, M : Mode>
 
 /**
  * A synchronous input adapter, called with the workflow object and the answers to its requests in
@@ -24,7 +23,6 @@ import org.itineradev.itinera.request.InputAdapterKind
  * @param W the class of the workflow object it is called with.
  * @sample org.itineradev.itinera.workflow.samples.adapters
  */
-@ExperimentalItineraApi
 public fun interface SyncInputAdapter<in W> : InputAdapterCall<W, Sync> {
     /**
      * Supplies the input whose key `got` answers, or leaves it to the data bag.

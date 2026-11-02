@@ -1,7 +1,6 @@
 package org.itineradev.itinera.workflow
 
 import kotlin.reflect.KClass
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.policy.ItineraWorkflowPolicy
 import org.itineradev.itinera.report.ReporterOf
 
@@ -12,7 +11,6 @@ import org.itineradev.itinera.report.ReporterOf
  *
  * @sample org.itineradev.itinera.workflow.annotated.samples.shipping
  */
-@ExperimentalItineraApi
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
 @MustBeDocumented

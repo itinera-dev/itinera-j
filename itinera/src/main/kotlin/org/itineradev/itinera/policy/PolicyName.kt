@@ -1,6 +1,5 @@
 package org.itineradev.itinera.policy
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.Name
 
 /**
@@ -8,7 +7,6 @@ import org.itineradev.itinera.Name
  *
  * @sample org.itineradev.itinera.samples.names
  */
-@ExperimentalItineraApi
 public class PolicyName private constructor(name: String) : Name(name, "policy") {
     /** Makes policy names. */
     public companion object {

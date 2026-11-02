@@ -6,7 +6,7 @@ Status: done. Stage 1 added the check and copy of a value, type tokens, the data
 
 ## API
 
-56 is listed in both manifests, so no public item below carries `@ExperimentalItineraApi`, but for `DataBagAccess.read<T>(key)` in `itinera-kotlin`, which belongs to [0091](0091-adapters-read-the-data-bag.md).
+56 is listed in both manifests, so no public item below carries `@ExperimentalItineraApi`; `DataBagAccess.read<T>(key)` in `itinera-kotlin`, which belongs to [0091](0091-adapters-read-the-data-bag.md), lost it when stage 7 listed 91.
 
 - **`TypeToken<T>`**, in `org.itineradev.itinera.value`: the type a read wants, generics and nullability included. `TypeToken.of(Long::class.java)` refuses `null` and `TypeToken.ofNullable(...)` admits it. In Java, `new TypeToken<List<Long>>() {}` names a generic type. In Kotlin, `typeToken<List<Long?>>()`, from `org.itineradev.itinera.value.kotlin` in `itinera-kotlin`, reads the type with `typeOf`. A token is never of a primitive: `long` gives `Long`.
 - **`DataBag`**, in `org.itineradev.itinera.journey`: string keys in the order they were first set, `keys`, `contains`, and `read(key, token)`, which returns a `Read`. `itinera-kotlin` adds `data.read<Long>("amount")`, in `org.itineradev.itinera.journey.kotlin`. Applications never build a data bag; the engine does, through `DataBags.of`.

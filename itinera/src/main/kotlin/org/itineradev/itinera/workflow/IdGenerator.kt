@@ -1,7 +1,5 @@
 package org.itineradev.itinera.workflow
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * Marks the method of a workflow class that produces each instance's journey ID, as a
  * [JourneyIdGenerator] does. It returns a `String`, is never `suspend`, and takes either nothing or
@@ -9,7 +7,6 @@ import org.itineradev.itinera.ExperimentalItineraApi
  *
  * @sample org.itineradev.itinera.workflow.annotated.samples.shipping
  */
-@ExperimentalItineraApi
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
 @MustBeDocumented

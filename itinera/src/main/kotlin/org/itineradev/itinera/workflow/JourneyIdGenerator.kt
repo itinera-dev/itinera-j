@@ -1,6 +1,5 @@
 package org.itineradev.itinera.workflow
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.DataBag
 
 /**
@@ -14,7 +13,6 @@ import org.itineradev.itinera.journey.DataBag
  * @param W the class of the workflow object.
  * @sample org.itineradev.itinera.workflow.samples.ids
  */
-@ExperimentalItineraApi
 public fun interface JourneyIdGenerator<in W> {
     /**
      * The journey ID of a new instance of the workflow object, which may read the instance's

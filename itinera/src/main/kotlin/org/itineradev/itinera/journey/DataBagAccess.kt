@@ -1,6 +1,5 @@
 package org.itineradev.itinera.journey
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.value.TypeToken
 
 /**
@@ -10,7 +9,6 @@ import org.itineradev.itinera.value.TypeToken
  *
  * @sample org.itineradev.itinera.journey.samples.access
  */
-@ExperimentalItineraApi
 public class DataBagAccess internal constructor(private val data: DataBag) {
     @Volatile private var open = true
 

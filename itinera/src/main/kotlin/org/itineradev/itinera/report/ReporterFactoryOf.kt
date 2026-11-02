@@ -1,6 +1,5 @@
 package org.itineradev.itinera.report
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.JourneyId
 import org.itineradev.itinera.workflow.Mode
 
@@ -15,7 +14,6 @@ import org.itineradev.itinera.workflow.Mode
  * @param M the mode of the workflows whose reporters it makes.
  * @sample org.itineradev.itinera.report.samples.listed
  */
-@ExperimentalItineraApi
 public fun interface ReporterFactoryOf<M : Mode> {
     /**
      * Makes the reporter of the journey with this ID.

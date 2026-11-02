@@ -1,7 +1,5 @@
 package org.itineradev.itinera.journey
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * The ID of a journey: a string that is never empty, which every event of the journey carries, and
  * which reporters receive as the global metadata `journey_id`. Two IDs are equal when they spell
@@ -9,7 +7,6 @@ import org.itineradev.itinera.ExperimentalItineraApi
  *
  * @sample org.itineradev.itinera.samples.names
  */
-@ExperimentalItineraApi
 public class JourneyId private constructor(private val id: String) {
     /** Whether the other is a journey ID spelling the same text. */
     override fun equals(other: Any?): Boolean = other is JourneyId && other.id == id

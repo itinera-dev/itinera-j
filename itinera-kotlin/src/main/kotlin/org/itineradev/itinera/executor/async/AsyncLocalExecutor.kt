@@ -1,7 +1,6 @@
 package org.itineradev.itinera.executor.async
 
 import java.util.concurrent.atomic.AtomicBoolean
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Engine
 import org.itineradev.itinera.executor.Refusal
 import org.itineradev.itinera.executor.Refused
@@ -25,7 +24,6 @@ import org.itineradev.itinera.workflow.Async
  *
  * @sample org.itineradev.itinera.executor.async.samples.asyncExecutors
  */
-@ExperimentalItineraApi
 public class AsyncLocalExecutor
 /**
  * An executor whose journeys deliver their events through dispatchers [factory] makes.

@@ -9,7 +9,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.job
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.returned
 import org.itineradev.itinera.event.Event
 import org.itineradev.itinera.event.EventKind
@@ -38,7 +37,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-@OptIn(ExperimentalItineraApi::class)
 class AsyncLocalExecutorTest {
     @Test
     fun `an asynchronous journey awaits each step and succeeds`() =
@@ -172,7 +170,6 @@ class AsyncLocalExecutorTest {
 }
 
 /** Tries, on the first event, to run another journey on the executor running this one. */
-@OptIn(ExperimentalItineraApi::class)
 private class Nested(
     private val executor: AsyncLocalExecutor,
     private val instance: WorkflowInstance<Async>,
@@ -192,7 +189,6 @@ private class Nested(
 }
 
 /** Throws a `CancellationException` of its own on the first event of [kind]. */
-@OptIn(ExperimentalItineraApi::class)
 private class Throwing(private val kind: EventKind) : AsyncReporter {
     override suspend fun report(event: Event) {
         if (event.kind == kind) throw CancellationException("timed out")
@@ -200,7 +196,6 @@ private class Throwing(private val kind: EventKind) : AsyncReporter {
 }
 
 /** Cancels the coroutine running the journey once it receives `journey_aborted`. */
-@OptIn(ExperimentalItineraApi::class)
 private class CancellingOnAbort : AsyncReporter {
     override suspend fun report(event: Event) {
         if (event.kind == EventKind.JOURNEY_ABORTED) currentCoroutineContext().job.cancel()

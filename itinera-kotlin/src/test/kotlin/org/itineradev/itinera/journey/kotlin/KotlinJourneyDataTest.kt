@@ -1,6 +1,5 @@
 package org.itineradev.itinera.journey.kotlin
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.instance.async.instance
 import org.itineradev.itinera.journey.DataBag
 import org.itineradev.itinera.journey.Datum
@@ -22,7 +21,6 @@ data class Box<T>(val content: T)
 
 data class Note(@Datum(required = true) val note: String?)
 
-@OptIn(ExperimentalItineraApi::class)
 class KotlinJourneyDataTest {
     private fun succeeded(bag: DataBag): JourneyResult =
         JourneyResult(JourneyId.of("order-42"), JourneyStatus.Succeeded(bag))

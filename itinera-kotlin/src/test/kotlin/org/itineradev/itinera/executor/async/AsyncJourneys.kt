@@ -1,6 +1,5 @@
 package org.itineradev.itinera.executor.async
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.event.Event
 import org.itineradev.itinera.instance.async.AsyncInstanceBuilder
 import org.itineradev.itinera.instance.async.instance
@@ -14,7 +13,6 @@ import org.itineradev.itinera.workflow.async.asyncBuilder
 import org.itineradev.itinera.workflow.async.asyncStep
 
 /** Workflows and reporters for the tests of the asynchronous executor. */
-@OptIn(ExperimentalItineraApi::class)
 object AsyncJourneys {
     /** The workflow object of every workflow the tests build. */
     class Shop
@@ -38,7 +36,6 @@ object AsyncJourneys {
 }
 
 /** Keeps the kind of every event it receives, in order. */
-@OptIn(ExperimentalItineraApi::class)
 class AsyncLog : AsyncReporter {
     val kinds = mutableListOf<String>()
 

@@ -2,11 +2,11 @@
 
 Tech spec for [proposal 0083](https://github.com/itinera-dev/spec/blob/main/proposals/0083-what-failures-carry.md), implemented in [#28](https://github.com/itinera-dev/itinera-j/issues/28). [0065](0065-business-result.md) describes the result, and [0042](0042-configuration-errors-before-the-journey.md) the refusals.
 
-Status: started. Stage 3 added what the result's failure and abort carry, and the refusals' errors.
+Status: done. Stage 3 added what the result's failure and abort carry, and the refusals' errors. Stage 7 runs the scenarios whose failures come from hooks, and lists 83 in both manifests.
 
 ## API
 
-Until 83 is listed in both manifests, every public item below carries `@ExperimentalItineraApi`.
+83 is listed in both manifests, so no public item below carries `@ExperimentalItineraApi`, but for the details of aborts that belong to a proposal not listed yet: `RescueSkipped` (0003), `ReservedMetadataKey` (0102) and `UnexpectedResult` (0122), with their entries of `AbortReason`.
 
 - **`Failure`**, in `org.itineradev.itinera.journey`, carries the `JourneyFailure` its `journey_failed` event carries, as `details`, and the error that ended the step, when an abnormal termination failed the journey. `cause`, `reason` and `errorMessage` read the details.
 - **`Abort`** carries the `JourneyAbort` its `journey_aborted` event carries, as `details`, and the error that aborted the journey, when one did. `reason`, `step` and `errorMessage` read the details. Reusing the events' types keeps the result and the event saying the same thing, as itinera-ts does.
@@ -24,4 +24,4 @@ None.
 
 ## Done when
 
-83 is listed in both manifests once every scenario tagged `@proposal-0083` passes in both runners.
+83 is listed in both manifests by the pull request of stage 7 that lists the stage's proposals, which says `Closes #28`: every scenario tagged `@proposal-0083` passes in both runners and every column, but those that also name a proposal not listed yet.

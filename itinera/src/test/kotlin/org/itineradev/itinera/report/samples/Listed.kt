@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.report.samples
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.report.Reporter
 import org.itineradev.itinera.workflow.Sync
 import org.itineradev.itinera.workflow.WorkflowDescriptor

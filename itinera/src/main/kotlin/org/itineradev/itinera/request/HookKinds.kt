@@ -1,6 +1,5 @@
 package org.itineradev.itinera.request
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.workflow.Mode
 
 /**
@@ -11,7 +10,6 @@ import org.itineradev.itinera.workflow.Mode
  * @param M the mode of the workflows the hook can join.
  * @sample org.itineradev.itinera.request.samples.hookRequests
  */
-@ExperimentalItineraApi
 public interface HookKind<M : Mode> :
     WorkflowDataKind, JourneyIdKind, ContributorKind, HookReporterKind<M>, RoleKind
 
@@ -22,7 +20,7 @@ public interface HookKind<M : Mode> :
  * @param M the mode of the workflows the hook can join.
  * @sample org.itineradev.itinera.request.samples.hookRequests
  */
-@ExperimentalItineraApi public interface WorkflowHookKind<M : Mode> : HookKind<M>
+public interface WorkflowHookKind<M : Mode> : HookKind<M>
 
 /**
  * A step hook of a workflow of mode [M], as `on step success` and `on step abnormal termination`
@@ -32,7 +30,6 @@ public interface HookKind<M : Mode> :
  * @param M the mode of the workflows the hook can join.
  * @sample org.itineradev.itinera.request.samples.hookRequests
  */
-@ExperimentalItineraApi
 public interface StepHookKind<M : Mode> :
     HookKind<M>, FromStepKind, StepNameKind, AttemptKind, ReasonKind, ErrorKind
 
@@ -43,7 +40,6 @@ public interface StepHookKind<M : Mode> :
  * @param M the mode of the workflows the hook can join.
  * @sample org.itineradev.itinera.request.samples.hookRequests
  */
-@ExperimentalItineraApi
 public interface StepFailureKind<M : Mode> : StepHookKind<M>, FailureCauseKind
 
 /**
@@ -52,7 +48,7 @@ public interface StepFailureKind<M : Mode> : StepHookKind<M>, FailureCauseKind
  * @param M the mode of the workflows the hook can join.
  * @sample org.itineradev.itinera.request.samples.hookRequests
  */
-@ExperimentalItineraApi public interface StepRetryKind<M : Mode> : StepHookKind<M>, RetryCauseKind
+public interface StepRetryKind<M : Mode> : StepHookKind<M>, RetryCauseKind
 
 /**
  * The kinds of part that may request data from the workflow, read from the data bag and never
@@ -60,14 +56,14 @@ public interface StepFailureKind<M : Mode> : StepHookKind<M>, FailureCauseKind
  *
  * @sample org.itineradev.itinera.request.samples.hookRequests
  */
-@ExperimentalItineraApi public interface WorkflowDataKind
+public interface WorkflowDataKind
 
 /**
  * The kinds of part that may request the journey ID: hooks and input adapters.
  *
  * @sample org.itineradev.itinera.request.samples.hookRequests
  */
-@ExperimentalItineraApi public interface JourneyIdKind
+public interface JourneyIdKind
 
 /**
  * The kinds of part of mode [M] that may request the hook reporter of that mode: hooks.
@@ -75,14 +71,14 @@ public interface StepFailureKind<M : Mode> : StepHookKind<M>, FailureCauseKind
  * @param M the mode of the reporter they may request.
  * @sample org.itineradev.itinera.request.samples.hookRequests
  */
-@ExperimentalItineraApi public interface HookReporterKind<M : Mode>
+public interface HookReporterKind<M : Mode>
 
 /**
  * The kinds of part that may request roles: hooks.
  *
  * @sample org.itineradev.itinera.request.samples.hookRequests
  */
-@ExperimentalItineraApi public interface RoleKind
+public interface RoleKind
 
 /**
  * The kinds of part that may request data a step contributed: step hooks, from the step they act
@@ -90,7 +86,7 @@ public interface StepFailureKind<M : Mode> : StepHookKind<M>, FailureCauseKind
  *
  * @sample org.itineradev.itinera.request.samples.hookRequests
  */
-@ExperimentalItineraApi public interface FromStepKind
+public interface FromStepKind
 
 /**
  * The kinds of part that may request the name of the step they act on: step hooks, and input
@@ -98,14 +94,14 @@ public interface StepFailureKind<M : Mode> : StepHookKind<M>, FailureCauseKind
  *
  * @sample org.itineradev.itinera.request.samples.hookRequests
  */
-@ExperimentalItineraApi public interface StepNameKind
+public interface StepNameKind
 
 /**
  * The kinds of part that may request the attempt they act on: step hooks.
  *
  * @sample org.itineradev.itinera.request.samples.hookRequests
  */
-@ExperimentalItineraApi public interface AttemptKind
+public interface AttemptKind
 
 /**
  * The kinds of part that may request the reason a step's attempt reported for failing: step hooks
@@ -113,7 +109,7 @@ public interface StepFailureKind<M : Mode> : StepHookKind<M>, FailureCauseKind
  *
  * @sample org.itineradev.itinera.request.samples.hookRequests
  */
-@ExperimentalItineraApi public interface ReasonKind
+public interface ReasonKind
 
 /**
  * The kinds of part that may request the error that ended a step's attempt abnormally: step hooks
@@ -121,18 +117,18 @@ public interface StepFailureKind<M : Mode> : StepHookKind<M>, FailureCauseKind
  *
  * @sample org.itineradev.itinera.request.samples.hookRequests
  */
-@ExperimentalItineraApi public interface ErrorKind
+public interface ErrorKind
 
 /**
  * The kinds of part that may request why a step failed: `on step failure`.
  *
  * @sample org.itineradev.itinera.request.samples.hookRequests
  */
-@ExperimentalItineraApi public interface FailureCauseKind
+public interface FailureCauseKind
 
 /**
  * The kinds of part that may request why a step is retried: `on step retry`.
  *
  * @sample org.itineradev.itinera.request.samples.hookRequests
  */
-@ExperimentalItineraApi public interface RetryCauseKind
+public interface RetryCauseKind

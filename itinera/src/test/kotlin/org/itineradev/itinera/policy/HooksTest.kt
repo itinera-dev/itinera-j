@@ -1,6 +1,5 @@
 package org.itineradev.itinera.policy
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.policy.samples.hooks
 import org.itineradev.itinera.step.Reason
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -9,7 +8,6 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments.argumentSet
 import org.junit.jupiter.params.provider.FieldSource
 
-@OptIn(ExperimentalItineraApi::class)
 class HooksTest {
     @ParameterizedTest
     @FieldSource("names")

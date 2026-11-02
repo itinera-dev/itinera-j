@@ -2,13 +2,13 @@
 
 Tech spec for [proposal 0011](https://github.com/itinera-dev/spec/blob/main/proposals/0011-events.md), implemented in [#7](https://github.com/itinera-dev/itinera-j/issues/7). The [tier 1 plan](../tier-1-plan.md), section 12, holds what crosses proposals; [0040](0040-events-facts-and-decisions.md) covers decisions and [0064](0064-event-data-values.md) the data events carry.
 
-Status: started. Stage 1 added the events and what they carry, and reporters, dispatchers and their factories in both modes. From stage 3 the engine emits them, numbered from 1 and stamped by its clock, and its guard around each reporter keeps the rules of chapter 2, 2.3 whatever the dispatcher ([0081](0081-reporter-failure-stops-delivery.md)). From stage 5 steps emit their own events through their step reporter ([0008](0008-steps.md)).
+Status: done. Stage 1 added the events and what they carry, and reporters, dispatchers and their factories in both modes. From stage 3 the engine emits them, numbered from 1 and stamped by its clock, and its guard around each reporter keeps the rules of chapter 2, 2.3 whatever the dispatcher ([0081](0081-reporter-failure-stops-delivery.md)). From stage 5 steps emit their own events through their step reporter ([0008](0008-steps.md)). Stage 7 lets hooks emit theirs through their hook reporter ([0010](0010-hooks-lifecycles-and-roles.md)), and lists 11 in both manifests.
 
 This tech spec covers every type of chapter 2 as amended, including the event types that belong to other proposals: the rescue's events and causes (0003), what failures and aborts carry (0083), the service events (0095 and 0104), `global_metadata_set` and `reserved metadata key` (0102), and `unexpected result` (0122). Each of those proposals gets its own tech spec in the stage that builds its behaviour.
 
 ## API
 
-Until 11 is listed in both manifests, every public item below carries `@ExperimentalItineraApi`.
+11 is listed in both manifests, so no public item below carries `@ExperimentalItineraApi`, but for the types of the proposals not listed yet: the rescue's events, causes and sources (0003), the service events and their sources (0095 and 0104), `global_metadata_set` and `setGlobalMetadata` on every reporter and dispatcher (0102), and the details of `reserved metadata key`, `rescue skipped` and `unexpected result`, with their entries of `EventKind` and `AbortReason`. A Kotlin class implementing `Dispatcher` or `AsyncDispatcher` therefore still opts in, since it overrides `setGlobalMetadata`; a reporter need not, since `Reporter` and `AsyncReporter` give it a body that does nothing.
 
 - **`Event`**, in `org.itineradev.itinera.event`, is a sealed interface with one `@JvmRecord` data class per kind of chapter 2, 2.7 and 2.9, such as `StepFailed` or `JourneyAborted`. Kotlin matches an event with `when`, and Java with `instanceof`.
 - `hook_called` is the one kind with two classes, under the sealed interface `HookCalled`. `StepHookCalled` carries the lifecycle a step hook returned, or `null` when it kept the default. `WorkflowHookCalled` carries none, since a workflow hook returns no lifecycle.
@@ -62,4 +62,4 @@ None.
 
 ## Done when
 
-11 is listed in both manifests once every scenario tagged `@proposal-0011` passes in both runners.
+11 is listed in both manifests by the pull request of stage 7 that lists the stage's proposals, which says `Closes #7`: every scenario tagged `@proposal-0011` passes in both runners and every column, but those that also name a proposal not listed yet.

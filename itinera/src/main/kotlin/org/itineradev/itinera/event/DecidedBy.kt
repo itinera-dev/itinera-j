@@ -1,6 +1,5 @@
 package org.itineradev.itinera.event
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.FailureCause
 import org.itineradev.itinera.policy.PolicyName
 import org.itineradev.itinera.policy.StepHook
@@ -12,7 +11,6 @@ import org.itineradev.itinera.step.Reason
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 public sealed interface DecidedBy {
     /**
      * The executor's own rule.
@@ -28,7 +26,6 @@ public sealed interface DecidedBy {
  *
  * @sample org.itineradev.itinera.event.samples.describe
  */
-@ExperimentalItineraApi
 @JvmRecord
 public data class DecidingHook(
     /** The policy's name. */
@@ -43,7 +40,6 @@ public data class DecidingHook(
  *
  * @sample org.itineradev.itinera.event.samples.givenUp
  */
-@ExperimentalItineraApi
 public sealed interface GiveUpCause {
     /** The cause, as the specification names it. */
     public val cause: FailureCause

@@ -2,7 +2,7 @@
 
 Tech spec for [proposal 0060](https://github.com/itinera-dev/spec/blob/main/proposals/0060-input-adapters-attached-to-steps.md), implemented in [#21](https://github.com/itinera-dev/itinera-j/issues/21). The [tier 1 plan](../tier-1-plan.md) holds what crosses proposals, sections 6 and 9 above all, [0062](0062-workflow-descriptors.md) how adapters are declared and checked, and [0091](0091-adapters-read-the-data-bag.md) their access to the data bag.
 
-Status: started. Stage 4 declared input adapters and refused those misattached. Stage 5 calls them while a step is built. 60 is listed in stage 7, once the scenarios whose adapters see what hooks contributed pass, and the scenarios of rescue steps wait for 0003.
+Status: done. Stage 4 declared input adapters and refused those misattached. Stage 5 calls them while a step is built. Stage 7 runs the scenarios whose adapters see what hooks contributed, and lists 60 in both manifests; the scenarios of rescue steps wait for 0003.
 
 ## Calling an adapter
 
@@ -30,4 +30,4 @@ Both runners call a scripted adapter, `Adapting`, in each runner's `run` package
 
 ## Done when
 
-60 is listed in both manifests once every scenario tagged `@proposal-0060` passes in both runners.
+60 is listed in both manifests by the pull request of stage 7 that lists the stage's proposals, which says `Closes #21`: every scenario tagged `@proposal-0060` passes in both runners and every column, but those that also name a proposal not listed yet.

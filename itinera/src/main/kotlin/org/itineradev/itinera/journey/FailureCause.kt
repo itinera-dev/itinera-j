@@ -1,13 +1,10 @@
 package org.itineradev.itinera.journey
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * Why a journey failed, each written as the specification names it, such as `retries exhausted`.
  *
  * @sample org.itineradev.itinera.event.samples.failures
  */
-@ExperimentalItineraApi
 public enum class FailureCause(private val text: String) {
     /** The last attempt reported a failure, and the step has no retry budget. */
     FAILURE("failure"),

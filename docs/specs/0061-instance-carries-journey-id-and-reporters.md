@@ -6,7 +6,7 @@ Status: done. Stage 3 added the instance, its builders in both modes, the journe
 
 ## API
 
-61 is listed in both manifests, but every public item below keeps `@ExperimentalItineraApi`, as AGENTS.md allows, since each names API of a proposal not listed yet: the reporters and reporter factories of 0011, the modes of 0008, and the global metadata of 0102.
+61 is listed in both manifests, and from stage 7 no public item below carries `@ExperimentalItineraApi`, but for the global metadata of [0102](0102-global-metadata.md), not listed yet: `reportersGlobalMetadata` on both instance builders and `WorkflowInstance.initialGlobalMetadata`.
 
 - **`WorkflowInstance<M>`**, in `org.itineradev.itinera.instance`, holds the descriptor and the workflow object side by side, the journey ID, the reporters, the initial data and the initial global metadata. `claim()` is `true` only the first time it is called, so the executor refuses an instance that ran, with `Refused.InstanceRan`. The interface is public, so a hand-written instance runs too.
 - **`InstanceBuilder`** creates the instance of a synchronous workflow. `instance()` on a class implementing `ItineraWorkflow` starts one; `InstanceBuilder.of(descriptor, workflow)` starts one for a descriptor the builder made, and Kotlin also writes it `descriptor.instance(workflow)`. The plan writes `descriptor.instance(orders)` as a method; the descriptor interface is shared by both modes, so the method became a static factory, which Java reaches, and an extension, `@JvmSynthetic`, which only Kotlin sees.

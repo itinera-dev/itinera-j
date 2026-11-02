@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.journey.samples
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.Contributor
 
 fun contributors(contributor: Contributor) {

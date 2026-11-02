@@ -1,6 +1,5 @@
 package org.itineradev.itinera.event
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.event.Fixtures.closing
 import org.itineradev.itinera.event.Fixtures.stepHookSource
 import org.itineradev.itinera.event.samples.sources
@@ -9,7 +8,6 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments.argumentSet
 import org.junit.jupiter.params.provider.FieldSource
 
-@OptIn(ExperimentalItineraApi::class)
 class SourcesTest {
     @ParameterizedTest
     @FieldSource("requests")

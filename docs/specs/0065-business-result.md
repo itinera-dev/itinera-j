@@ -6,7 +6,7 @@ Status: done. Stage 3 added the result. Stage 6 adds `output`, initial data give
 
 ## API
 
-65 is listed in both manifests, but `JourneyResult` and `JourneyStatus` keep `@ExperimentalItineraApi`, as AGENTS.md allows, since they name `Failure` and `Abort`, which carry the details of [0083](0083-what-failures-carry.md), not listed yet. `Datum`, `OutputException` and `OutputProblem` name nothing unlisted and carry no marker.
+65 is listed in both manifests, and no public item below carries `@ExperimentalItineraApi`. Until stage 7 listed [0083](0083-what-failures-carry.md), `JourneyResult` and `JourneyStatus` kept it, as AGENTS.md allows, since they name `Failure` and `Abort`, which carry 0083's details.
 
 - **`JourneyResult`**, in `org.itineradev.itinera.journey`, a `@JvmRecord` data class, carries the journey ID and a sealed `JourneyStatus`: `Succeeded` and `Failed` with the data bag as the journey left it, `Aborted` with none, as [0085](https://github.com/itinera-dev/spec/blob/main/proposals/0085-aborted-result-has-no-data.md) requires. `isSucceeded`, `isFailed`, `isAborted`, `failure` and `abort` read it without a `when` or a `switch`; Java reads them as `isSucceeded()`, `failure()` and `abort()`, as a record's accessors.
 - **`output(type)`** on `JourneyResult` reads the data bag of a journey that succeeded or failed as the record or data class a `TypeToken` names, the counterpart of Rust's `#[derive(Output)]`; `output<T>()` in `org.itineradev.itinera.journey.kotlin`, in `itinera-kotlin`, reads it as a reified Kotlin type, generics and nullability included. Each component is the reader's own copy of the value under its key, read as the component's declared type, with the token's type arguments put in. Keys no component names are left unread.

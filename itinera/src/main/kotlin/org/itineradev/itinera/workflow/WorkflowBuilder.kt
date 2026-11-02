@@ -14,7 +14,6 @@ import org.itineradev.itinera.service.ProviderDescriptor
  * @param M the workflow's mode.
  * @sample org.itineradev.itinera.workflow.samples.building
  */
-@ExperimentalItineraApi
 public class WorkflowBuilder<W, M : Mode>
 internal constructor(private val name: WorkflowName, private val mode: M) {
     private val steps = mutableListOf<StepDescriptor<M>>()
@@ -70,6 +69,7 @@ internal constructor(private val name: WorkflowName, private val mode: M) {
      *
      * @sample org.itineradev.itinera.service.samples.providers
      */
+    @ExperimentalItineraApi
     public fun provider(provider: ProviderDescriptor<W, M>): WorkflowBuilder<W, M> = apply {
         providers += provider
     }
