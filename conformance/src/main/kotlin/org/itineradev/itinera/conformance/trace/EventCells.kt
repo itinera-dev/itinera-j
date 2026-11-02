@@ -10,8 +10,12 @@ import org.itineradev.itinera.event.OptionalInputAbsent
 import org.itineradev.itinera.event.ProviderSource
 import org.itineradev.itinera.event.RequestSource
 import org.itineradev.itinera.event.ServiceProvided
+import org.itineradev.itinera.event.StepHookCalled
 import org.itineradev.itinera.event.StepHookSource
 import org.itineradev.itinera.event.StepSource
+import org.itineradev.itinera.policy.Lifecycle
+import org.itineradev.itinera.step.Attempt
+import org.itineradev.itinera.step.StepName
 
 /** A column of an event table and what an event writes in it. */
 internal typealias Cell = Pair<String, Any?>
@@ -44,9 +48,22 @@ internal fun contributedCells(key: String, source: ContributionSource): List<Cel
 
 /** The cells of an entry of global metadata under [key]: the key, and who set it. */
 internal fun metadataCells(key: String, source: MetadataSource): List<Cell> =
-    listOf("key" to key) + cellsOf(source)
+    listOf("key" to key) + sourceCells(source)
 
-private fun cellsOf(source: MetadataSource): List<Cell> =
+/** The cells of [event]: the hook and what it acts on, the lifecycle it returned and its code. */
+internal fun hookCalledCells(event: StepHookCalled): List<Cell> =
+    sourceCells(event.source) +
+        listOf(
+            "lifecycle" to writtenLifecycle(event.lifecycle),
+            "code" to (event.lifecycle as? Lifecycle.FailWorkflow)?.reason?.code,
+        )
+
+/** The cells of an event of [attempt] of [step]. */
+internal fun stepCells(step: StepName, attempt: Attempt): List<Cell> =
+    listOf("step" to step, "attempt" to attempt)
+
+/** The cells naming [source]: the step and attempt, the policy and hook, or the provider. */
+internal fun sourceCells(source: MetadataSource): List<Cell> =
     when (source) {
         is StepSource ->
             listOf("step" to source.step, "attempt" to source.attempt, "source" to source.step)
@@ -100,4 +117,11 @@ private fun cellsOf(source: RequestSource): List<Cell> =
             listOf("step" to source.step, "attempt" to source.attempt) +
                 hookCells(source.policy, source.hook)
         is ByWorkflowHook -> hookCells(source.policy, source.hook)
+    }
+
+private fun writtenLifecycle(lifecycle: Lifecycle?): String =
+    when (lifecycle) {
+        null -> "none"
+        Lifecycle.FinishWorkflow -> "FinishWorkflow"
+        is Lifecycle.FailWorkflow -> "FailWorkflow"
     }

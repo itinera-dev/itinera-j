@@ -29,6 +29,12 @@ import org.itineradev.itinera.event.ValueSource
 import org.itineradev.itinera.event.WrongData
 import org.itineradev.itinera.event.WrongType
 
+/** The key a case writes for an abort on a request for the failure's reason. */
+private const val FAILURE_REASON = "failure reason"
+
+/** The key a case writes for an abort on a request for the error. */
+private const val ERROR = "error"
+
 /**
  * The cells naming what [abort] names besides its step and its code: the key, and the adapter,
  * provider, policy or hook it blames.
@@ -53,14 +59,16 @@ internal fun cellsOf(abort: JourneyAbort): List<Cell> =
 private fun cellsOf(missing: MissingData): List<Cell> =
     when (missing) {
         is MissingData.Key -> listOf("key" to missing.key) + requesterCells(missing.requester)
-        is MissingData.FailureReason -> failureCells(missing.requester)
-        is MissingData.Error -> failureCells(missing.requester)
+        is MissingData.FailureReason ->
+            listOf("key" to FAILURE_REASON) + failureCells(missing.requester)
+        is MissingData.Error -> listOf("key" to ERROR) + failureCells(missing.requester)
     }
 
 private fun cellsOf(wrong: WrongData): List<Cell> =
     when (wrong) {
         is WrongData.Key -> listOf("key" to wrong.key) + requesterCells(wrong.requester)
-        is WrongData.FailureReason -> failureCells(wrong.requester)
+        is WrongData.FailureReason ->
+            listOf("key" to FAILURE_REASON) + failureCells(wrong.requester)
     }
 
 private fun requesterCells(requester: Requester): List<Cell> =

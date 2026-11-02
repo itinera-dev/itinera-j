@@ -20,6 +20,8 @@ public final class StepScript {
   private boolean hasRescueStep;
   private boolean isRescueStep;
   private boolean isAsynchronous;
+  private List<String> policies;
+  private boolean keepsHandles;
 
   /** The inputs it requests, in the order written. */
   public List<Input> inputs() {
@@ -79,6 +81,29 @@ public final class StepScript {
   /** Whether the step is asynchronous. */
   public boolean isAsynchronous() {
     return isAsynchronous;
+  }
+
+  /** The step policies attached to the step, in order, or {@code null} until stated. */
+  public List<String> policies() {
+    return policies;
+  }
+
+  /** Whether the step keeps its contributor and step reporter after its attempt ends. */
+  public boolean keepsHandles() {
+    return keepsHandles;
+  }
+
+  /** Attaches step policies to the step {@code name}, once. */
+  public void attach(String name, List<String> attached) {
+    if (policies != null) {
+      throw new ModelException("the policies of \"" + name + "\" are stated twice");
+    }
+    policies = List.copyOf(attached);
+  }
+
+  /** Says the step keeps its contributor and step reporter after its attempt ends. */
+  public void keepHandles() {
+    keepsHandles = true;
   }
 
   /** Says how each attempt ends, once. */

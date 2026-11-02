@@ -12,8 +12,10 @@ import org.itineradev.itinera.event.OptionalInputAbsent;
 import org.itineradev.itinera.event.ProviderSource;
 import org.itineradev.itinera.event.RequestSource;
 import org.itineradev.itinera.event.ServiceProvided;
+import org.itineradev.itinera.event.StepHookCalled;
 import org.itineradev.itinera.event.StepHookSource;
 import org.itineradev.itinera.event.StepSource;
+import org.itineradev.itinera.policy.Lifecycle;
 
 /** The cells of the events whose columns depend on who they name. */
 final class EventCells {
@@ -57,10 +59,26 @@ final class EventCells {
 
   /** The cells of an entry of global metadata under {@code key}: the key, and who set it. */
   static List<Cell> metadataCells(String key, MetadataSource source) {
-    return Stream.concat(Stream.of(new Cell("key", key)), cellsOf(source).stream()).toList();
+    return Stream.concat(Stream.of(new Cell("key", key)), sourceCells(source).stream()).toList();
   }
 
-  private static List<Cell> cellsOf(MetadataSource source) {
+  /**
+   * The cells of {@code event}: the hook and what it acts on, the lifecycle it returned and its
+   * code.
+   */
+  static List<Cell> hookCalledCells(StepHookCalled event) {
+    var lifecycle = event.lifecycle();
+    var code = lifecycle instanceof Lifecycle.FailWorkflow failing ? failing.reason().code() : null;
+    return Stream.concat(
+            sourceCells(event.source()).stream(),
+            Stream.of(new Cell("lifecycle", writtenLifecycle(lifecycle)), new Cell("code", code)))
+        .toList();
+  }
+
+  /**
+   * The cells naming {@code source}: the step and attempt, the policy and hook, or the provider.
+   */
+  static List<Cell> sourceCells(MetadataSource source) {
     if (source instanceof StepSource step) {
       return List.of(
           new Cell("step", step.step()),
@@ -129,5 +147,12 @@ final class EventCells {
     }
     var hook = (ByWorkflowHook) source;
     return Naming.hookCells(hook.policy(), hook.hook());
+  }
+
+  private static String writtenLifecycle(Lifecycle lifecycle) {
+    if (lifecycle == null) {
+      return "none";
+    }
+    return lifecycle instanceof Lifecycle.FailWorkflow ? "FailWorkflow" : "FinishWorkflow";
   }
 }

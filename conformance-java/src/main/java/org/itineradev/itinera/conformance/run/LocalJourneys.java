@@ -4,6 +4,8 @@ import static org.itineradev.itinera.conformance.record.Dispatchers.dispatchers;
 import static org.itineradev.itinera.conformance.record.Dispatchers.failingDispatchers;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.itineradev.itinera.conformance.model.AdapterModel;
 import org.itineradev.itinera.conformance.model.DispatcherScript;
@@ -11,12 +13,14 @@ import org.itineradev.itinera.conformance.model.Dispatching;
 import org.itineradev.itinera.conformance.model.IdGenerator;
 import org.itineradev.itinera.conformance.model.Model;
 import org.itineradev.itinera.conformance.model.ModelException;
+import org.itineradev.itinera.conformance.model.PolicyModel;
 import org.itineradev.itinera.conformance.model.ProviderModel;
 import org.itineradev.itinera.conformance.model.StepScript;
 import org.itineradev.itinera.executor.LocalExecutor;
 import org.itineradev.itinera.executor.Refusal;
 import org.itineradev.itinera.instance.InstanceBuilder;
 import org.itineradev.itinera.instance.WorkflowInstance;
+import org.itineradev.itinera.policy.StepPolicyDescriptor;
 import org.itineradev.itinera.service.ProviderDescriptor;
 import org.itineradev.itinera.step.SyncStepFactory;
 import org.itineradev.itinera.workflow.InputAdapterBuilder;
@@ -36,12 +40,17 @@ public final class LocalJourneys implements Journeys {
   private final WorkflowDescriptor<Scenario, Sync> descriptor;
   private final Model model;
   private final Recorders recorders;
+  private final Witness witness;
 
   private LocalJourneys(
-      WorkflowDescriptor<Scenario, Sync> descriptor, Model model, Recorders recorders) {
+      WorkflowDescriptor<Scenario, Sync> descriptor,
+      Model model,
+      Recorders recorders,
+      Witness witness) {
     this.descriptor = descriptor;
     this.model = model;
     this.recorders = recorders;
+    this.witness = witness;
   }
 
   /**
@@ -53,8 +62,14 @@ public final class LocalJourneys implements Journeys {
   public static Journeys of(Model model, Recorders recorders, Witness witness) {
     var workflow = model.workflow();
     var builder = WorkflowDescriptor.builder(Scenario.class, workflow.name());
+    Map<String, StepPolicyDescriptor<?, Sync>> policies =
+        workflow.policies().values().stream()
+            .filter(Policies::isStepPolicy)
+            .collect(
+                Collectors.toMap(
+                    PolicyModel::name, policy -> Policies.stepPolicyOf(policy, witness)));
     for (var step : workflow.steps()) {
-      builder.step(stepOf(step, model, witness));
+      builder.step(stepOf(step, model, witness, policies));
     }
     for (var adapter : workflow.adapters()) {
       builder.inputAdapter(adapterOf(adapter));
@@ -66,13 +81,24 @@ public final class LocalJourneys implements Journeys {
     for (var name : reporters == null ? List.<String>of() : reporters) {
       builder.reporter(journeyId -> recorders.make(name, journeyId));
     }
+    var attached = workflow.workflowPolicies();
+    for (var name : attached == null ? List.<String>of() : attached) {
+      builder.policy(Policies.workflowPolicyOf(workflow.policy(name), witness));
+    }
+    for (var role : workflow.roles().keySet()) {
+      builder.role(Roles.roleOf(role));
+    }
     if (workflow.idGenerator() instanceof IdGenerator.Returns generator) {
       builder.idGenerator((scenario, data) -> generator.id());
     }
-    return new LocalJourneys(builder.build(), model, recorders);
+    return new LocalJourneys(builder.build(), model, recorders, witness);
   }
 
-  private static StepDescriptor<Sync> stepOf(String name, Model model, Witness witness) {
+  private static StepDescriptor<Sync> stepOf(
+      String name,
+      Model model,
+      Witness witness,
+      Map<String, StepPolicyDescriptor<?, Sync>> policies) {
     var script = model.step(name);
     if (script.isAsynchronous()) {
       throw new ModelException(
@@ -84,6 +110,10 @@ public final class LocalJourneys implements Journeys {
         what == null ? witness.watching(name, Scripts.mockOf(script), scripted) : notRunYet(what);
     var builder =
         scripted.declaredOn(Scripts.scriptedBy(StepDescriptor.builder(name, factory), script));
+    var attached = script.policies();
+    for (var policy : attached == null ? List.<String>of() : attached) {
+      builder.policy(Policies.attached(policies, policy));
+    }
     if (script.hasRescueStep()) {
       builder.rescue(rescueOf(model.step(name + "_rescue")));
     }
@@ -191,7 +221,9 @@ public final class LocalJourneys implements Journeys {
   }
 
   private WorkflowInstance<Sync> instance() {
-    var builder = InstanceBuilder.of(descriptor, new Scenario()).initialData(model.initialData());
+    var builder =
+        InstanceBuilder.of(descriptor, new Scenario(witness, model.workflow().failingOperations()))
+            .initialData(model.initialData());
     for (var entry : model.initialGlobalMetadata()) {
       builder.reportersGlobalMetadata(entry.getKey(), entry.getValue());
     }
