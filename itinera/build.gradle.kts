@@ -11,14 +11,17 @@ dependencies {
     "compileFailTestImplementation"(libs.kctfork)
 }
 
-// The samples of annotated Kotlin classes run in itinera-kotlin's tests, where Kotlin classes are
-// read.
+// The samples of annotated Kotlin classes and of data classes run in itinera-kotlin's tests, where
+// Kotlin classes are read.
 dokka {
     dokkaSourceSets.configureEach {
         samples.from(
             rootProject.file(
                 "itinera-kotlin/src/test/kotlin/org/itineradev/itinera/workflow/annotated/samples"
-            )
+            ),
+            rootProject.file(
+                "itinera-kotlin/src/test/kotlin/org/itineradev/itinera/journey/kotlin/samples"
+            ),
         )
     }
 }

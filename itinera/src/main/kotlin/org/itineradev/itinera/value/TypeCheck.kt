@@ -51,6 +51,13 @@ private fun componentIsOf(
     bindings: Map<String, ValueType>,
 ): Boolean = isOf(component.field.get(value), substituted(component.type, bindings))
 
+/**
+ * The declared type of a component of [owner], a record or data class, with the type variables that
+ * [owner]'s arguments give put in.
+ */
+internal fun componentType(owner: ClassType, component: Component): ValueType =
+    substituted(component.type, bindings(owner.raw, owner).orEmpty())
+
 /** The type of a collection's elements or a map's values, as the value's class declares it. */
 private fun contentType(
     value: Any,

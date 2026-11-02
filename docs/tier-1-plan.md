@@ -279,7 +279,7 @@ The Java version, which the core and `itinera-java` run from stage 3, reads the 
 | `#[input_adapter(steps, name)]`, `#[provider(...)]`, `#[id_generator]` on the workflow's block | `@InputAdapter(steps, name)`, `@Provider(perAttempt, steps, key, name)`, `@IdGenerator` on methods of the workflow class | |
 | `Orders::builder()` and `.create()` | `orders.instance()`, a default method of both workflow interfaces, then `.data(key, value)`, `.initialData(...)`, `.reporter(r)`, `.reportersGlobalMetadata(key, value)` and `.create()` | The application constructs its own workflow object, as Rust's struct is |
 | `WorkflowDescriptor::builder(name)` | `WorkflowDescriptor.builder(Orders::class.java, "orders")`, or `builder<Orders>("orders")`, and with `itinera-kotlin` `asyncBuilder<Orders>("orders")`, with typed tokens (section 6) | |
-| `#[derive(InitialData)]`, `#[derive(Output)]` | a data class or record given to `initialData`, each component one key; `result.output<Receipt>()`, or `output(TypeToken)` | A component holding `null` is left out unless it is marked required, as Rust's `None` |
+| `#[derive(InitialData)]`, `#[derive(Output)]` | a data class or record given to `initialData`, each component one key; `result.output<Receipt>()`, or `output(TypeToken)` | A component holding `null` is left out unless `@Datum(required = true)` marks it required, as Rust's `None`; `@Datum(key = ...)` names a key, as Rust's `#[key]` |
 | `local_executor_for!(Orders)` | `LocalExecutor()`, or `AsyncLocalExecutor()` from `itinera-kotlin` | The instance's type carries its mode, so the wrong executor does not compile (section 11) |
 | `#[async_trait]` | not needed | `suspend` functions are recognised by reflection |
 
