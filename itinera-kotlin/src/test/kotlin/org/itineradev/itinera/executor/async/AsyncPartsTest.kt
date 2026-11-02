@@ -11,6 +11,7 @@ import org.itineradev.itinera.executor.Refusal
 import org.itineradev.itinera.executor.Refused
 import org.itineradev.itinera.executor.async.AsyncJourneys.Shop
 import org.itineradev.itinera.executor.async.AsyncJourneys.journeyOf
+import org.itineradev.itinera.executor.async.AsyncJourneys.running
 import org.itineradev.itinera.executor.async.AsyncJourneys.succeeding
 import org.itineradev.itinera.instance.async.instance
 import org.itineradev.itinera.policy.OnSuccess
@@ -33,6 +34,7 @@ import org.itineradev.itinera.service.async.asyncProvider
 import org.itineradev.itinera.step.Outcome
 import org.itineradev.itinera.step.RescueOutcome
 import org.itineradev.itinera.step.SyncRescueRun
+import org.itineradev.itinera.step.async.AsyncRescueRun
 import org.itineradev.itinera.step.async.AsyncStepRun
 import org.itineradev.itinera.value.TypeToken
 import org.itineradev.itinera.workflow.Async
@@ -42,6 +44,7 @@ import org.itineradev.itinera.workflow.Supplied
 import org.itineradev.itinera.workflow.Violation
 import org.itineradev.itinera.workflow.async.asyncBuilder
 import org.itineradev.itinera.workflow.async.asyncInputAdapter
+import org.itineradev.itinera.workflow.async.asyncRescueStep
 import org.itineradev.itinera.workflow.async.asyncStep
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -196,6 +199,26 @@ class AsyncPartsTest {
                     .create()
             assertTrue(AsyncLocalExecutor().run(instance).isSucceeded)
             assertEquals(listOf("42 label"), built)
+        }
+
+    @Test
+    fun `an asynchronous rescue step is awaited, then its step attempted again`() =
+        runBlocking<Unit> {
+            val log = Yielding()
+            val attempts = mutableListOf(Outcome.failure("expired"), Outcome.success())
+            val charge = running("charge") { attempts.removeFirst() }
+            val renewal = asyncRescueStep {
+                AsyncRescueRun {
+                    yield()
+                    RescueOutcome.success()
+                }
+            }
+            val instance = journeyOf(charge.rescue(renewal.build())).reporter(log).create()
+            assertTrue(AsyncLocalExecutor().run(instance).isSucceeded)
+            assertEquals(
+                listOf("step_rescuing", "attempt_started", "step_succeeded", "step_rescued"),
+                log.kinds.subList(3, 7),
+            )
         }
 
     @Test

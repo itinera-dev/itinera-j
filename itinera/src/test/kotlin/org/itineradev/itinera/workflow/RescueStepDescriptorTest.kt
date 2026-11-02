@@ -35,7 +35,8 @@ class RescueStepDescriptorTest {
     @FieldSource("declined")
     fun `a rescue step's factory builds its run from its answers`(
         reason: Reason?,
-        contributed: String,
+        outcome: RescueOutcome,
+        contributed: List<Pair<String, Any?>>,
     ) {
         val renewal = rescues().rescue
         val (card, declined, contributor) = renewal?.requests.orEmpty()
@@ -49,8 +50,8 @@ class RescueStepDescriptorTest {
                 )
             )
         val run = (renewal?.factory as SyncRescueFactory).build(got)
-        assertEquals(RescueOutcome.Success, run.run())
-        assertEquals(listOf("card" to contributed), renewed)
+        assertEquals(outcome, run.run())
+        assertEquals(contributed, renewed)
     }
 
     @Test
@@ -73,8 +74,24 @@ class RescueStepDescriptorTest {
         @JvmField
         val declined =
             listOf(
-                argumentSet("with the reason", Reason("expired"), "visa renewed after expired"),
-                argumentSet("without a reason", null, "visa renewed after unknown"),
+                argumentSet(
+                    "with the reason",
+                    Reason("expired"),
+                    RescueOutcome.Success,
+                    listOf("card" to "visa renewed after expired"),
+                ),
+                argumentSet(
+                    "without a reason",
+                    null,
+                    RescueOutcome.Success,
+                    listOf("card" to "visa renewed after unknown"),
+                ),
+                argumentSet(
+                    "for a stolen card",
+                    Reason("stolen"),
+                    RescueOutcome.failure("stolen card"),
+                    emptyList<Pair<String, Any?>>(),
+                ),
             )
     }
 }

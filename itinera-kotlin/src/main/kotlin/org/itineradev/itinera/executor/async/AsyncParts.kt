@@ -10,7 +10,9 @@ import org.itineradev.itinera.engine.HookCaller
 import org.itineradev.itinera.engine.Parts
 import org.itineradev.itinera.engine.ReporterHandle
 import org.itineradev.itinera.engine.ReporterHandles
+import org.itineradev.itinera.engine.RescueRunning
 import org.itineradev.itinera.engine.Running
+import org.itineradev.itinera.engine.StepCaller
 import org.itineradev.itinera.engine.nullable
 import org.itineradev.itinera.engine.returned
 import org.itineradev.itinera.event.Event
@@ -23,6 +25,7 @@ import org.itineradev.itinera.report.async.AsyncDispatcherFactory
 import org.itineradev.itinera.report.async.AsyncReporter
 import org.itineradev.itinera.request.Got
 import org.itineradev.itinera.request.InputAdapterKind
+import org.itineradev.itinera.request.RescueKind
 import org.itineradev.itinera.request.StepKind
 import org.itineradev.itinera.service.Provided
 import org.itineradev.itinera.service.ProviderCall
@@ -30,6 +33,7 @@ import org.itineradev.itinera.service.async.AsyncProvider
 import org.itineradev.itinera.step.RescueFactory
 import org.itineradev.itinera.step.StepFactory
 import org.itineradev.itinera.step.async.AsyncRescueFactory
+import org.itineradev.itinera.step.async.AsyncRescueRun
 import org.itineradev.itinera.step.async.AsyncStepFactory
 import org.itineradev.itinera.step.async.AsyncStepRun
 import org.itineradev.itinera.workflow.Async
@@ -78,9 +82,8 @@ internal class AsyncParts(private val factory: AsyncDispatcherFactory) : Parts<A
             returned<AsyncProvider<Any?, Any?, Any>>(provider).provide(workflow, returned(got))
         )
 
-    @JvmSynthetic
-    override suspend fun build(factory: StepFactory<Async>, got: Got<StepKind<Async>>): Running? =
-        nullable((factory as AsyncStepFactory).build(got))?.let(::running)
+    override val steps: StepCaller<Async>
+        get() = AsyncSteps
 
     override val reporterHandles: ReporterHandles
         get() = AsyncReporterHandles
@@ -103,6 +106,8 @@ internal fun writtenInKotlin(part: Any): Boolean =
     part.javaClass.isHidden || part.javaClass.isAnnotationPresent(Metadata::class.java)
 
 private fun running(run: AsyncStepRun): Running = Running { run.run() }
+
+private fun rescuing(run: AsyncRescueRun): RescueRunning = RescueRunning { run.run() }
 
 private class AsyncDelivery(private val dispatcher: AsyncDispatcher) : Delivery {
     @JvmSynthetic
@@ -144,6 +149,19 @@ private object AsyncReporterHandles : ReporterHandles {
 
     override fun providerReporter(emits: Emits): ReporterHandle =
         EmittingAsyncReporter(emits, Handle.ASYNC_PROVIDER_REPORTER)
+}
+
+/** Builds the asynchronous mode's steps and rescue steps, awaiting each. */
+private object AsyncSteps : StepCaller<Async> {
+    @JvmSynthetic
+    override suspend fun build(factory: StepFactory<Async>, got: Got<StepKind<Async>>): Running? =
+        nullable((factory as AsyncStepFactory).build(got))?.let(::running)
+
+    @JvmSynthetic
+    override suspend fun rescue(
+        factory: RescueFactory<Async>,
+        got: Got<RescueKind<Async>>,
+    ): RescueRunning? = nullable((factory as AsyncRescueFactory).build(got))?.let(::rescuing)
 }
 
 /** Calls the asynchronous mode's hooks, awaiting each. */

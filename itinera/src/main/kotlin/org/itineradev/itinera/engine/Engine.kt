@@ -69,7 +69,7 @@ public constructor(private val parts: Parts<M>, private val clock: Clock = Clock
         journey.emit { JourneyStarted(sequence, timestamp, journeyId, workflow, keys) }
         val hooks = Hooks(journey, parts, instance)
         val attempting = Attempting(journey, parts, Building(journey, parts, instance))
-        val attempts = Attempts(journey, parts, attempting, hooks)
+        val attempts = Attempts(journey, parts, attempting, hooks, Rescuing(journey, attempting))
         val early = instance.descriptor.steps.firstNotNullOfOrNull { step -> attempts.of(step) }
         journey.step = null
         if (early is Early.Failed) {

@@ -22,7 +22,10 @@ private val CARD = Requests.input("card", TypeToken.of(String::class.java))
 private val DECLINED = Requests.optionalReason()
 private val CONTRIBUTOR = Requests.contributor()
 
-/** The charge, whose rescue step renews the card after a failed attempt, before it is retried. */
+/**
+ * The charge, whose rescue step renews the card after a failed attempt, before it is attempted
+ * again, unless the card was stolen.
+ */
 fun rescues(): StepDescriptor<Sync> {
     val renewal =
         RescueStepDescriptor.builder { got ->
@@ -30,8 +33,12 @@ fun rescues(): StepDescriptor<Sync> {
                 val declined = got[DECLINED]?.code ?: "unknown"
                 val contributor = got[CONTRIBUTOR]
                 SyncRescueRun {
-                    contributor.contribute("card", "$card renewed after $declined")
-                    RescueOutcome.success()
+                    if (declined == "stolen") {
+                        RescueOutcome.failure("stolen card")
+                    } else {
+                        contributor.contribute("card", "$card renewed after $declined")
+                        RescueOutcome.success()
+                    }
                 }
             }
             .request(CARD)

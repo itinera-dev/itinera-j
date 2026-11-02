@@ -275,12 +275,12 @@ public abstract interface class org/itineradev/itinera/engine/Parts {
 	public abstract fun accepts (Lorg/itineradev/itinera/step/StepFactory;)Z
 	public abstract fun accepts (Lorg/itineradev/itinera/workflow/InputAdapterCall;)Z
 	public abstract synthetic fun adapt (Lorg/itineradev/itinera/workflow/InputAdapterCall;Ljava/lang/Object;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract synthetic fun build (Lorg/itineradev/itinera/step/StepFactory;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract synthetic fun dispatcher (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract synthetic fun ensureActive (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun getHooks ()Lorg/itineradev/itinera/engine/HookCaller;
 	public abstract fun getMode ()Lorg/itineradev/itinera/workflow/Mode;
 	public abstract fun getReporterHandles ()Lorg/itineradev/itinera/engine/ReporterHandles;
+	public abstract fun getSteps ()Lorg/itineradev/itinera/engine/StepCaller;
 	public abstract synthetic fun provide (Lorg/itineradev/itinera/service/ProviderCall;Ljava/lang/Object;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
@@ -343,6 +343,10 @@ public final class org/itineradev/itinera/engine/RescueClass {
 	public final fun getRun ()Ljava/lang/reflect/Method;
 }
 
+public abstract interface class org/itineradev/itinera/engine/RescueRunning {
+	public abstract synthetic fun run (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
 public abstract interface class org/itineradev/itinera/engine/Running {
 	public abstract synthetic fun run (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
@@ -354,6 +358,11 @@ public final class org/itineradev/itinera/engine/Severity : java/lang/Enum {
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lorg/itineradev/itinera/engine/Severity;
 	public static fun values ()[Lorg/itineradev/itinera/engine/Severity;
+}
+
+public abstract interface class org/itineradev/itinera/engine/StepCaller {
+	public abstract synthetic fun build (Lorg/itineradev/itinera/step/StepFactory;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract synthetic fun rescue (Lorg/itineradev/itinera/step/RescueFactory;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class org/itineradev/itinera/engine/StepClass {
@@ -378,13 +387,13 @@ public final class org/itineradev/itinera/engine/SyncParts : org/itineradev/itin
 	public fun accepts (Lorg/itineradev/itinera/step/StepFactory;)Z
 	public fun accepts (Lorg/itineradev/itinera/workflow/InputAdapterCall;)Z
 	public synthetic fun adapt (Lorg/itineradev/itinera/workflow/InputAdapterCall;Ljava/lang/Object;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public synthetic fun build (Lorg/itineradev/itinera/step/StepFactory;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public synthetic fun dispatcher (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public synthetic fun ensureActive (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun getHooks ()Lorg/itineradev/itinera/engine/HookCaller;
 	public synthetic fun getMode ()Lorg/itineradev/itinera/workflow/Mode;
 	public fun getMode ()Lorg/itineradev/itinera/workflow/Sync;
 	public fun getReporterHandles ()Lorg/itineradev/itinera/engine/ReporterHandles;
+	public fun getSteps ()Lorg/itineradev/itinera/engine/StepCaller;
 	public synthetic fun provide (Lorg/itineradev/itinera/service/ProviderCall;Ljava/lang/Object;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
@@ -2946,6 +2955,8 @@ public abstract interface annotation class org/itineradev/itinera/step/Input : j
 }
 
 public abstract interface class org/itineradev/itinera/step/ItineraRescueStep {
+	public fun fail (Ljava/lang/String;)Lorg/itineradev/itinera/step/RescueOutcome;
+	public fun fail (Lorg/itineradev/itinera/step/Reason;)Lorg/itineradev/itinera/step/RescueOutcome;
 	public fun succeed ()Lorg/itineradev/itinera/step/RescueOutcome;
 }
 
@@ -3023,11 +3034,23 @@ public abstract interface class org/itineradev/itinera/step/RescueFactory {
 
 public abstract interface class org/itineradev/itinera/step/RescueOutcome {
 	public static final field Companion Lorg/itineradev/itinera/step/RescueOutcome$Companion;
+	public static fun failure (Ljava/lang/String;)Lorg/itineradev/itinera/step/RescueOutcome;
+	public static fun failure (Lorg/itineradev/itinera/step/Reason;)Lorg/itineradev/itinera/step/RescueOutcome;
 	public static fun success ()Lorg/itineradev/itinera/step/RescueOutcome;
 }
 
 public final class org/itineradev/itinera/step/RescueOutcome$Companion {
+	public final fun failure (Ljava/lang/String;)Lorg/itineradev/itinera/step/RescueOutcome;
+	public final fun failure (Lorg/itineradev/itinera/step/Reason;)Lorg/itineradev/itinera/step/RescueOutcome;
 	public final fun success ()Lorg/itineradev/itinera/step/RescueOutcome;
+}
+
+public final class org/itineradev/itinera/step/RescueOutcome$Failure : org/itineradev/itinera/step/RescueOutcome {
+	public final fun component1 ()Lorg/itineradev/itinera/step/Reason;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getReason ()Lorg/itineradev/itinera/step/Reason;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class org/itineradev/itinera/step/RescueOutcome$Success : org/itineradev/itinera/step/RescueOutcome {
