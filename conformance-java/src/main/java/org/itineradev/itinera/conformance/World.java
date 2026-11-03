@@ -14,6 +14,7 @@ import org.itineradev.itinera.conformance.run.Tested;
 import org.itineradev.itinera.conformance.run.Unmet;
 import org.itineradev.itinera.conformance.run.Witness;
 import org.itineradev.itinera.event.Event;
+import org.itineradev.itinera.executor.testing.ScriptedRun;
 import org.itineradev.itinera.journey.JourneyResult;
 import org.itineradev.itinera.workflow.ListedStep;
 import org.itineradev.itinera.workflow.Supplied;
@@ -31,6 +32,7 @@ public final class World {
   private Admission admitted;
   private RanAlone ranAlone;
   private Supplied returned;
+  private ScriptedRun scriptedRun;
   private List<Journey> journeys = List.of();
 
   /** What the scenario declares. */
@@ -98,6 +100,23 @@ public final class World {
     } catch (Violations violations) {
       return new Admission.Refused(violations);
     }
+  }
+
+  /** Runs one journey of the workflow with the scenario's script, once it is admitted. */
+  public void runScripted() {
+    if (admit() instanceof Admission.Admitted admission) {
+      var scripted = admission.journeys().runScripted();
+      journeys = List.of(scripted.journey());
+      scriptedRun = scripted.run();
+    }
+  }
+
+  /** The record of the scripted run. */
+  public ScriptedRun scriptedRun() {
+    if (scriptedRun == null) {
+      throw new Unmet("expected a scripted run; " + journey().ended());
+    }
+    return scriptedRun;
   }
 
   /** Runs {@code times} journeys of the workflow on one executor, once it is admitted. */

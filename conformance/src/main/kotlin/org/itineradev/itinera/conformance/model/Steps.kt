@@ -78,6 +78,9 @@ internal class StepScript {
     /** Whether the step keeps its contributor and step reporter after its attempt ends. */
     var keepsHandles = false
 
+    /** Whether the step declares neither a contributor nor a step reporter. */
+    var declaresNoHandles = false
+
     /** Attaches step policies, once. */
     fun attach(name: String, attached: List<String>) {
         if (policies != null) throw ModelException("the policies of \"$name\" are stated twice")

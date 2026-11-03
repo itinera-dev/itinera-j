@@ -16,12 +16,14 @@ import org.itineradev.itinera.workflow.StepDescriptor
 
 /**
  * Builds and runs one attempt of a step of [journey], or of a rescue step, through [parts], from
- * what [building] resolves, with the handles made for the attempt, which close when it ends.
+ * what [building] resolves, with the handles made for the attempt, which close when it ends. An
+ * attempt that [scripting] plays is built, and plays in place of its run.
  */
 internal class Attempting<M : Mode>(
     private val journey: Journey,
     private val parts: Parts<M>,
     private val building: Building<M>,
+    private val scripting: Scripting,
 ) {
     /**
      * How [attempt] of [step] ended.
@@ -34,6 +36,7 @@ internal class Attempting<M : Mode>(
         val ran =
             attempted(
                 Part(step.name, attempt, "step"),
+                scripting.step(step.name, attempt),
                 { handles -> building.got(step, attempt, handles) },
             ) { got ->
                 parts.steps.build(step.factory, got)?.let { running -> running::run }
@@ -59,6 +62,7 @@ internal class Attempting<M : Mode>(
         val ran =
             attempted(
                 Part(rescueOf(step.name), FIRST, "rescue step"),
+                scripting.rescue(rescueOf(step.name)),
                 { handles -> building.rescuing(step, rescue, left, handles) },
             ) { got ->
                 parts.steps.rescue(rescue.factory, got)?.let { running -> running::run }
@@ -71,22 +75,26 @@ internal class Attempting<M : Mode>(
 
     /**
      * Builds [part] through [build], from what [resolve] gives it with the handles made for its
-     * attempt, then runs it, and gives what its run returned or threw, with what it contributed.
-     * Resolving is the engine's work, so only building and running are calls of custom code.
+     * attempt, then runs it, or plays [played] in its place, and gives what its run returned or
+     * threw, with what it contributed. Resolving is the engine's work, so only building and running
+     * are calls of custom code.
      */
     private suspend fun <G, O : Any> attempted(
         part: Part,
+        played: Play<O>?,
         resolve: suspend (Map<Handle, Any>) -> G,
         build: suspend (G) -> (suspend () -> O?)?,
     ): Ran<O> {
         val contributions = Contributions(journey, part.name, ByStep, "The attempt of ${part.name}")
-        val reporter =
-            parts.reporterHandles.stepReporter(StepEmits(journey, part.name, part.attempt))
+        val emits = StepEmits(journey, part.name, part.attempt)
+        val reporter = parts.reporterHandles.stepReporter(emits)
         val handles =
             mapOf(Handle.CONTRIBUTOR to contributions, reporter.handle to reporter.reporter)
         val outcome =
             try {
-                ran(part, built(part, resolve(handles), build))
+                val running = built(part, resolve(handles), build)
+                val lent = Lent(contributions, emits)
+                ran(part, played?.let { play -> playing(play, lent) } ?: running)
             } finally {
                 contributions.close()
                 reporter.close()
@@ -171,3 +179,6 @@ private class Ran<O>(val outcome: Result<O>, val contributed: Map<String, Captur
 
 /** The first attempt of a step, and a rescue step's only one. */
 internal val FIRST: Attempt = Attempt.of(1)
+
+/** What runs in place of a step's run: [play], with what the attempt [lent] it. */
+private fun <O> playing(play: Play<O>, lent: Lent): suspend () -> O = { play.play(lent) }

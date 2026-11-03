@@ -1,6 +1,7 @@
 package org.itineradev.itinera.conformance.run
 
 import org.itineradev.itinera.executor.Refusal
+import org.itineradev.itinera.executor.testing.ScriptedRun
 import org.itineradev.itinera.instance.WorkflowInstance
 import org.itineradev.itinera.journey.JourneyResult
 import org.itineradev.itinera.testing.TestMistake
@@ -23,7 +24,16 @@ internal interface Journeys {
 
     /** Runs [times] journeys, one after another, on one executor, each with a new instance. */
     fun run(times: Int): List<Journey>
+
+    /**
+     * Runs one journey of a new instance with the scenario's script, written through test support,
+     * on the local executor of the workflow's mode, given no dispatcher factory.
+     */
+    fun runScripted(): ScriptedJourney
 }
+
+/** A journey run with a script, and the scripted run's record, `null` when it never ran. */
+internal class ScriptedJourney(val journey: Journey, val run: ScriptedRun?)
 
 /**
  * How one journey ended: with its result, refused by `run`, or before, when no instance was
@@ -84,6 +94,8 @@ internal inline fun endedOf(run: () -> JourneyResult): Ended =
         Ended.Returned(run())
     } catch (refusal: Refusal) {
         Ended.Refused(refusal)
+    } catch (mistake: TestMistake) {
+        Ended.Stopped(mistake)
     }
 
 /** What building gave: the journeys [build] makes, or the violations it threw. */

@@ -239,6 +239,11 @@ public final class org/itineradev/itinera/engine/KotlinFunction$Companion {
 public abstract interface class org/itineradev/itinera/engine/KotlinShape {
 }
 
+public final class org/itineradev/itinera/engine/Lent {
+	public final fun getContributor ()Lorg/itineradev/itinera/journey/Contributor;
+	public final fun getEmits ()Lorg/itineradev/itinera/engine/Emits;
+}
+
 public final class org/itineradev/itinera/engine/Lone {
 	public fun <init> (Z)V
 	public final fun getContributed ()Ljava/util/Map;
@@ -294,6 +299,10 @@ public abstract interface class org/itineradev/itinera/engine/Parts {
 	public abstract fun getReporterHandles ()Lorg/itineradev/itinera/engine/ReporterHandles;
 	public abstract fun getSteps ()Lorg/itineradev/itinera/engine/StepCaller;
 	public abstract synthetic fun provide (Lorg/itineradev/itinera/service/ProviderCall;Ljava/lang/Object;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class org/itineradev/itinera/engine/Play {
+	public abstract synthetic fun play (Lorg/itineradev/itinera/engine/Lent;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class org/itineradev/itinera/engine/PolicyDraft {
@@ -359,8 +368,28 @@ public abstract interface class org/itineradev/itinera/engine/RescueRunning {
 	public abstract synthetic fun run (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
+public final class org/itineradev/itinera/engine/RescuesKt {
+	public static final fun rescueOf (Lorg/itineradev/itinera/step/StepName;)Lorg/itineradev/itinera/step/StepName;
+	public static final fun stepNamesOf (Lorg/itineradev/itinera/workflow/WorkflowDescriptor;)Ljava/util/List;
+}
+
 public abstract interface class org/itineradev/itinera/engine/Running {
 	public abstract synthetic fun run (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class org/itineradev/itinera/engine/ScriptedInstance : org/itineradev/itinera/instance/WorkflowInstance {
+	public abstract fun getScripting ()Lorg/itineradev/itinera/engine/Scripting;
+}
+
+public abstract interface class org/itineradev/itinera/engine/Scripting {
+	public abstract fun building (Lorg/itineradev/itinera/step/StepName;Lorg/itineradev/itinera/step/Attempt;Ljava/util/Map;)V
+	public abstract fun rescue (Lorg/itineradev/itinera/step/StepName;)Lorg/itineradev/itinera/engine/Play;
+	public abstract fun step (Lorg/itineradev/itinera/step/StepName;Lorg/itineradev/itinera/step/Attempt;)Lorg/itineradev/itinera/engine/Play;
+}
+
+public final class org/itineradev/itinera/engine/ScriptingKt {
+	public static final fun declaresContributor (Ljava/util/List;)Z
+	public static final fun declaresStepReporter (Ljava/util/List;)Z
 }
 
 public final class org/itineradev/itinera/engine/Severity : java/lang/Enum {
