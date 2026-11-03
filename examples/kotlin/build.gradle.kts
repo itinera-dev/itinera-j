@@ -8,6 +8,9 @@ plugins {
 // A Kotlin application reads itinera through Gradle's module metadata.
 repositories {
     maven(rootDir.resolve("../build/package")) { content { includeGroup("org.itinera-dev") } }
+    maven("https://maven-central.storage-download.googleapis.com/maven2/") {
+        content { excludeGroup("org.itinera-dev") }
+    }
     mavenCentral { content { excludeGroup("org.itinera-dev") } }
 }
 

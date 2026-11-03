@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 // An artifact of itinera: published, documented and with its public API recorded.
 plugins {
     id("itinera.kotlin-jvm")
-    id("org.jetbrains.dokka")
+    id("itinera.dokka")
     id("itinera.published")
     id("com.github.jk1.dependency-license-report")
 }
@@ -35,14 +35,6 @@ val patchModule =
 
 tasks.named<JavaCompile>("compileJava") { options.compilerArgumentProviders.add(patchModule) }
 
-dependencies {
-    dokkaHtmlGeneratorRuntime(platform(libs.findLibrary("jackson-bom").get()))
-    constraints {
-        dokkaHtmlGeneratorRuntime(libs.findLibrary("freemarker").get())
-        dokkaHtmlGeneratorRuntime(libs.findLibrary("jsoup").get())
-    }
-}
-
 // What applications receive from this artifact.
 licenseReport {
     configurations = arrayOf("runtimeClasspath")
@@ -53,7 +45,6 @@ licenseReport {
 tasks.check { dependsOn(tasks.named("checkLicense")) }
 
 dokka {
-    dokkaPublications.html { failOnWarning = true }
     dokkaSourceSets.configureEach {
         reportUndocumented = true
         jdkVersion = OLDEST_JDK
@@ -67,10 +58,12 @@ dokka {
     }
 }
 
+// Every artifact's javadoc jar holds the whole reference, which the root project gathers,
+// so that javadoc.io shows all of it whichever artifact a reader starts from.
 mavenPublishing {
     configure(
         KotlinJvm(
-            javadocJar = JavadocJar.Dokka("dokkaGeneratePublicationHtml"),
+            javadocJar = JavadocJar.Dokka(rootProject.tasks.named("dokkaGeneratePublicationHtml")),
             sourcesJar = SourcesJar.Sources(),
         )
     )

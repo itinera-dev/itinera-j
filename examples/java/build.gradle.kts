@@ -9,6 +9,9 @@ repositories {
             ignoreGradleMetadataRedirection()
         }
     }
+    maven("https://maven-central.storage-download.googleapis.com/maven2/") {
+        content { excludeGroup("org.itinera-dev") }
+    }
     mavenCentral { content { excludeGroup("org.itinera-dev") } }
 }
 

@@ -44,7 +44,7 @@ One pull request, titled "Release <version>" with a release commit `chore(releas
    Once it is pushed, check with `git ls-remote origin 'refs/tags/v<version>*'` that it shows a tag object, and a `^{}` line naming the commit.
 2. Once the release workflow has finished, check that:
    - every artifact, `itinera`, `itinera-kotlin`, `itinera-java`, `itinera-testing`, `itinera-checker` and `itinera-bom`, is on Maven Central at the version, under `https://repo.maven.apache.org/maven2/org/itinera-dev/`, which can take an hour after the deployment is released;
-   - javadoc.io serves each artifact's reference at the version;
+   - javadoc.io serves the whole reference, from each artifact, at the version;
    - the GitHub release exists, marked as a pre-release when the version has a pre-release part such as `-beta.1`, with the changelog section and both conformance reports.
 
    If publishing failed, tell the maintainer, pointing at docs/contributing.md "Releasing".
