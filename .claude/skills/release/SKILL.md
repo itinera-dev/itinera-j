@@ -53,12 +53,13 @@ One pull request, titled "Release <version>" with a release commit `chore(releas
 
 As soon as every artifact is on Maven Central at the version, Claude carries the release into the book and the site without waiting to be asked. The maintainer's standing preference is that both changes are pushed straight to each repository's `main`, with no pull request, once the checks its own manual asks for pass and a separate reviewer has passed them. When this session cannot reach a repository, Claude asks the maintainer for a thread working on it, and passes that preference on.
 
-1. **The book**, itinera-dev/book, follows the release as its BOOK.md says, once the Kotlin edition exists: `next` merges into `main`, whose `kotlin` directory then names the released version, and the prose naming the release is raised to it. Once that commit is on the book's `main`, give the maintainer the commands that tag it:
+1. **The book**, itinera-dev/book, follows the release as its BOOK.md says, in both its Kotlin and its Java editions, since the README links both and the reference that javadoc.io serves for the version keeps those links: `next` merges into `main`, whose `kotlin` and `java` directories then name the released version, each edition is marked `released` in `site/book.config.mjs` on its first release, and the prose naming the release is raised to it. Once that commit is on the book's `main`, give the maintainer the commands that tag it:
    1. `git fetch origin`
    2. `git tag -a kotlin-<version> <commit> -m "The Kotlin book for itinera <version>"`
-   3. `git push origin kotlin-<version>`
+   3. `git tag -a java-<version> <commit> -m "The Java book for itinera <version>"`
+   4. `git push origin kotlin-<version> java-<version>`
 
-   The tag freezes its commit as the version's edition, so it goes only on the commit whose prose names the new version.
+   Each tag freezes its commit as the version's edition, so they go only on the commit whose prose names the new version. The version is tagged only once both editions are ready on the book's `next`, so that `/book/kotlin/` and `/book/java/` exist as soon as the book follows it.
 2. **The site**, itinera-dev/itinera-dev.github.io, follows each language's release, as its own manual says. For the JVM, two entries:
    - in `src/data/languages.json`, the Kotlin entry and the Java entry, each with `state` `released`, and its `version`, `install`, `tier` and `executors` matching the release and its own manifest, with the other fields a released entry has, and links to javadoc.io;
    - in the `facts` of `site.config.mjs`, `conformance-ref` matches the cases the manifests pin;
