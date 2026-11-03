@@ -2,6 +2,7 @@ plugins {
     base
     id("com.diffplug.spotless")
     id("itinera.raised-dependencies")
+    id("itinera.dokka")
 }
 
 val libs = versionCatalogs.named("libs")
@@ -34,6 +35,17 @@ val checkManifests =
         javaManifest = layout.projectDirectory.file("conformance-java.json")
     }
 
+dependencyLocking { lockAllConfigurations() }
+
+// One reference for every artifact, whose first page is the README, since an application
+// that adds one artifact uses the API of those it brings.
+dokka { dokkaPublications.html { includes.from("README.md") } }
+
+val documented =
+    listOf("itinera", "itinera-kotlin", "itinera-java", "itinera-testing", "itinera-checker")
+
+dependencies { documented.forEach { dokka(project(":$it")) } }
+
 fun publication(project: String): String = ":$project:publishAllPublicationsToPackageRepository"
 
 // Applications of their own, which read itinera as published, POMs, module metadata and
@@ -42,15 +54,7 @@ tasks.register<Exec>("examples") {
     description =
         "Builds and tests the Kotlin and the Java examples against the published artifacts."
     group = LifecycleBasePlugin.VERIFICATION_GROUP
-    val published =
-        listOf(
-            "itinera",
-            "itinera-kotlin",
-            "itinera-java",
-            "itinera-testing",
-            "itinera-checker",
-            "itinera-bom",
-        )
+    val published = documented + "itinera-bom"
     dependsOn(published.map(::publication))
     val windows = System.getProperty("os.name").startsWith("Windows")
     val wrapper = if (windows) "gradlew.bat" else "gradlew"

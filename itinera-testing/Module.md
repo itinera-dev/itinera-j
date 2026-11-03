@@ -12,7 +12,7 @@ It tests each part of a workflow on its own, or a whole journey with what it doe
 
 A mistake in a test, such as a script that leaves out an attempt, is a `TestMistake`, thrown where the mistake is made.
 
-This reference shows test support as Kotlin declares it, with examples in Kotlin; the first page of the core's reference, `itinera`, says how Java reads it.
+This part of the reference shows test support as Kotlin declares it, with examples in Kotlin; the first page of the core's part, `itinera`, says how Java reads it.
 
 # Package org.itineradev.itinera.executor.testing
 

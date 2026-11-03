@@ -226,7 +226,7 @@ public final class FirstWorkflow {
 
 ## Learning more
 
-- [The API reference](https://javadoc.io/doc/org.itinera-dev/itinera), on javadoc.io for each release, documents every item of every artifact, each with an example. Its first page for the core says how Java reads it.
+- The API reference, on javadoc.io for each release, documents every item of every artifact in one place, each with an example: open it [from `itinera-kotlin`](https://javadoc.io/doc/org.itinera-dev/itinera-kotlin) or [from `itinera-java`](https://javadoc.io/doc/org.itinera-dev/itinera-java), which show the same reference. Its part for the core, `itinera`, says how Java reads it.
 - [The Itinera site](https://itinera-dev.org/) explains why Itinera exists.
 - [The specification](https://github.com/itinera-dev/spec) defines what every implementation of Itinera does.
 

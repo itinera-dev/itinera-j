@@ -4,9 +4,9 @@ Itinera's core: what every Itinera workflow on the JVM is made of, written in Ko
 
 An application seldom depends on the core alone. A Kotlin application adds `itinera-kotlin` and a Java application `itinera-java`, each of which brings the core with it. A Kotlin application needs `itinera-kotlin` for synchronous workflows too, since it is what reads Kotlin classes: without it, an annotated Kotlin class is refused when its workflow is described, and a data class is not a value unless it is `@JvmRecord`.
 
-## Reading this reference from Java
+## Reading the core from Java
 
-This reference shows the core as Kotlin declares it, with examples in Kotlin. Java sees this API, except what Kotlin keeps for itself, which this reference does not mark, in these forms:
+This part of the reference shows the core as Kotlin declares it, with examples in Kotlin. Java sees this API, except what Kotlin keeps for itself, which the reference does not mark, in these forms:
 
 - A property is read through its getter: `val steps` is `getSteps()`, and a property whose name starts with `is` keeps its name, as `isFirst()`.
 - Events, the result of a journey, its statuses, `Failure` and `Abort` are records, declared `@JvmRecord`, so Java reads their properties as a record's components, without `get`, such as `failure.cause()`, and on Java 21 and later can match them with record patterns. A property that a sealed interface declares for all its records, as `Event` declares `kind`, is read through the interface's getter, `event.getKind()`.
