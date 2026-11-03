@@ -58,3 +58,8 @@ cucumber-tag-expressions = { module = "io.cucumber:tag-expressions" }
 jackson-runners-databind = { module = "tools.jackson.core:jackson-databind", version.ref = "jackson-runners" }
 freemarker = { module = "org.freemarker:freemarker", version.ref = "freemarker" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
+
+[plugins]
+# The examples apply these as an application does.
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
