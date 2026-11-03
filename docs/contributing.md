@@ -27,7 +27,7 @@ One Gradle build, with the Kotlin DSL, a module per artifact, and every artifact
 | `itinera-kotlin` | yes | What Kotlin applications add: asynchronous workflows on coroutines, the reader and value walk for Kotlin classes, and the reified forms. It brings kotlin-reflect and kotlinx.coroutines |
 | `itinera-java` | yes | What Java applications add: the Java face of the core, which grows from stage 3 with whatever Java finds awkward in the core |
 | `itinera-testing` | yes | Test support, which an application adds to its tests only |
-| `itinera-checker` | yes, from stage 12 | Compile-time checks of the annotations, for KSP and javac |
+| `itinera-checker` | yes | Compile-time checks of the annotations, for javac, and for KSP once stage 12 adds it |
 | `itinera-bom` | yes | The bill of materials: the version of every artifact above |
 | `conformance` | no | The Kotlin conformance runner |
 | `conformance-java` | no | The Java conformance runner, written wholly in Java |
@@ -76,7 +76,7 @@ Every configuration of every project is locked, in `gradle.lockfile` beside its 
 
 A change to a version, a dependency or a plugin rewrites both in the same commit:
 
-1. `./gradlew :itinera:dependencies :itinera-kotlin:dependencies :itinera-java:dependencies :itinera-testing:dependencies :itinera-bom:dependencies :conformance:dependencies :conformance-java:dependencies :build-logic:dependencies dependencies --write-locks`, with every new project added to the list;
+1. `./gradlew :itinera:dependencies :itinera-kotlin:dependencies :itinera-java:dependencies :itinera-testing:dependencies :itinera-checker:dependencies :itinera-bom:dependencies :conformance:dependencies :conformance-java:dependencies :build-logic:dependencies dependencies --write-locks`, with every new project added to the list;
 2. `GRADLE_USER_HOME=$(mktemp -d) ./gradlew --write-verification-metadata sha256 check dokkaGenerate publishAllPublicationsToPackageRepository --rerun-tasks`, which fetches every artifact the build uses and records it. The empty Gradle home matters: with a warm cache, Gradle never fetches the parent POMs and BOMs it already holds, so it never records them, and CI, which starts empty, then fails verification.
 
 Read the diff of both files: every new entry is a dependency the change meant to add.

@@ -8,5 +8,6 @@ dependencies {
         api(project(":itinera-kotlin"))
         api(project(":itinera-java"))
         api(project(":itinera-testing"))
+        api(project(":itinera-checker"))
     }
 }
