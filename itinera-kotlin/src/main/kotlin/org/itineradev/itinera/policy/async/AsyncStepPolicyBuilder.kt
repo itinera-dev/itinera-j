@@ -19,7 +19,7 @@ import org.itineradev.itinera.workflow.Async
  * @param P the policy its hooks are called on.
  * @sample org.itineradev.itinera.policy.async.samples.asyncPolicies
  */
-public class AsyncStepPolicyBuilder<P>
+public class AsyncStepPolicyBuilder<P : Any>
 internal constructor(private val draft: PolicyDraft<P, Async>) {
     /**
      * Defines `on step success`, called after an attempt succeeded, which requests nothing.
@@ -127,5 +127,7 @@ internal constructor(private val draft: PolicyDraft<P, Async>) {
  * @throws IllegalArgumentException when [name] is empty.
  * @sample org.itineradev.itinera.policy.async.samples.asyncPolicies
  */
-public fun <P> asyncStepPolicy(name: String, factory: PolicyFactory<P>): AsyncStepPolicyBuilder<P> =
-    AsyncStepPolicyBuilder(PolicyDraft(PolicyName.of(name), factory))
+public fun <P : Any> asyncStepPolicy(
+    name: String,
+    factory: PolicyFactory<P>,
+): AsyncStepPolicyBuilder<P> = AsyncStepPolicyBuilder(PolicyDraft(PolicyName.of(name), factory))

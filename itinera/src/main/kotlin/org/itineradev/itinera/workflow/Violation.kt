@@ -1,6 +1,5 @@
 package org.itineradev.itinera.workflow
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.policy.PolicyName
 import org.itineradev.itinera.policy.StepHook
 import org.itineradev.itinera.policy.WorkflowHook
@@ -44,7 +43,6 @@ public sealed interface Violation {
      *
      * @sample org.itineradev.itinera.workflow.samples.misrescued
      */
-    @ExperimentalItineraApi
     @JvmRecord
     public data class RescuedStepRetried(
         /** The step. */

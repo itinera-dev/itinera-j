@@ -1,6 +1,5 @@
 package org.itineradev.itinera.request
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.workflow.Mode
 
 /**
@@ -23,7 +22,6 @@ public interface StepKind<M : Mode> : BuildKind, ContributorKind, StepReporterKi
  * @param M the mode of the workflows the rescue step can join.
  * @sample org.itineradev.itinera.workflow.samples.rescues
  */
-@ExperimentalItineraApi
 public interface RescueKind<M : Mode> : StepKind<M>, FromStepKind, ReasonKind, ErrorKind
 
 /**

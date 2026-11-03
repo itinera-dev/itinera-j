@@ -2,7 +2,7 @@
 
 Tech spec for [proposal 0003](https://github.com/itinera-dev/spec/blob/main/proposals/0003-rescue-steps.md), implemented in [#3](https://github.com/itinera-dev/itinera-j/issues/3). Its rules live in [chapter 7](https://github.com/itinera-dev/spec/blob/main/spec/07-rescue-steps.md) of the specification. The [tier 1 plan](../tier-1-plan.md) holds what crosses proposals, sections 5 to 7 above all, [0062](0062-workflow-descriptors.md) how a rescue step is declared and checked, [0098](0098-rescue-step-adapters-and-providers.md) the input adapters and service providers attached to a rescue step, and [0122](0122-unexpected-results.md) what a rescue step that returns `null` does.
 
-Status: started. Stage 4 declared rescue steps, with the builders and with annotations, refused `rescued step retried` and a step named `<step name>_rescue`, and listed each step's rescue step. Stage 9 runs them; its last pull request lists 3 in both manifests.
+Status: done. Stage 4 declared rescue steps, with the builders and with annotations, refused `rescued step retried` and a step named `<step name>_rescue`, and listed each step's rescue step. Stage 9 runs them, both runners script them with test support's rescue step mocks ([0108](0108-test-support.md)), and stage 9 lists 3 in both manifests, with [0098](0098-rescue-step-adapters-and-providers.md) and [0122](0122-unexpected-results.md), so no public item of 3 carries `@ExperimentalItineraApi`.
 
 ## Declaring a rescue step
 
@@ -39,6 +39,7 @@ None.
 - `itinera-kotlin/src/test/kotlin/org/itineradev/itinera/executor/async/AsyncPartsTest.kt`: "an asynchronous rescue step is awaited, then its step attempted again".
 - `itinera/src/test/java/org/itineradev/itinera/executor/JavaExecutorTest.java`: a Java rescue step that succeeds or fails, and one whose factory or run returns `null`.
 - `itinera/src/test/java/org/itineradev/itinera/workflow/JavaRescueClassesTest.java`: "aJavaRescueStepFailsThroughItsInterfacesHelpers".
+- `itinera/src/compileFailTest/kotlin/org/itineradev/itinera/workflow/RescueTypesTest.kt`: compile-fail tests, each beside a twin that compiles in `RescueTypesTwins.kt`: a rescue step never skips, requests only what its kind may, and its factory and run never give `null`; a step takes only a rescue step of its own mode.
 
 ## Done when
 

@@ -30,6 +30,22 @@ class RescueTypesTest {
     }
 
     @Test
+    fun `a rescue step's factory always builds a rescue step`() {
+        assertDoesNotCompile(
+            "$RESCUES val rescue = RescueStepDescriptor.builder { null }",
+            "Null cannot be a value of a non-null type 'SyncRescueRun'",
+        )
+    }
+
+    @Test
+    fun `a rescue step's run always gives an outcome`() {
+        assertDoesNotCompile(
+            "$RESCUES val run = SyncRescueRun { null }",
+            "Null cannot be a value of a non-null type 'RescueOutcome'",
+        )
+    }
+
+    @Test
     fun `a step takes only a rescue step of its own mode`() {
         assertDoesNotCompile(
             "$RESCUES fun rescue(step: StepBuilder<Sync>, rescue: RescueStepDescriptor<Async>) = " +

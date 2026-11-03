@@ -1,7 +1,5 @@
 package org.itineradev.itinera.step
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * A rescue step written as a class: what fixes the cause of a step's failure, after which the step
  * runs once more. A workflow gives it to the step it rescues with `@WithStep(rescue = ...)`. The
@@ -14,7 +12,6 @@ import org.itineradev.itinera.ExperimentalItineraApi
  *
  * @sample org.itineradev.itinera.workflow.annotated.samples.renewing
  */
-@ExperimentalItineraApi
 public interface ItineraRescueStep {
     /**
      * The outcome of a rescue that succeeded.

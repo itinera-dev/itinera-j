@@ -159,7 +159,7 @@ class KotlinPolicyClassesTest {
     private fun <K> answers(hook: HookDefinition<*, *, K, *>, vararg answers: Any?): Answers<K> =
         Answers(hook.requests.zip(answers).toMap())
 
-    private fun <P> succeeded(
+    private fun <P : Any> succeeded(
         policy: StepPolicyDescriptor<P, Sync>,
         vararg answers: Any?,
     ): OnSuccess {
@@ -167,17 +167,17 @@ class KotlinPolicyClassesTest {
         return (hook.call as SyncHook).call(policy.factory.build(), answers(hook, *answers))
     }
 
-    private fun <P> failed(policy: StepPolicyDescriptor<P, Sync>, reason: Reason): OnFailure {
+    private fun <P : Any> failed(policy: StepPolicyDescriptor<P, Sync>, reason: Reason): OnFailure {
         val hook = checkNotNull(policy.onStepFailure)
         return (hook.call as SyncHook).call(policy.factory.build(), answers(hook, reason))
     }
 
-    private fun <P> paid(policy: WorkflowPolicyDescriptor<P, Sync>, vararg answers: Any?) {
+    private fun <P : Any> paid(policy: WorkflowPolicyDescriptor<P, Sync>, vararg answers: Any?) {
         val hook = checkNotNull(policy.onWorkflowSuccess)
         (hook.call as SyncWorkflowHook).call(policy.factory.build(), answers(hook, *answers))
     }
 
-    private suspend fun <P> asyncSucceeded(
+    private suspend fun <P : Any> asyncSucceeded(
         policy: StepPolicyDescriptor<P, Async>,
         vararg answers: Any?,
     ): OnSuccess {

@@ -1,6 +1,5 @@
 package org.itineradev.itinera.event
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.policy.PolicyName
 import org.itineradev.itinera.policy.StepHook
 import org.itineradev.itinera.policy.WorkflowHook
@@ -21,7 +20,7 @@ public data object ByStep : Requester, BuildSource, ValueSource, ReasonSource, R
  *
  * @sample org.itineradev.itinera.event.samples.aborts
  */
-@ExperimentalItineraApi public data object ByRescueStep : FailureRequester
+public data object ByRescueStep : FailureRequester
 
 /**
  * An input adapter, resolving one of a step's inputs.

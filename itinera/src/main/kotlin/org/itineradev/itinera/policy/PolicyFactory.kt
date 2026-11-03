@@ -9,7 +9,7 @@ package org.itineradev.itinera.policy
  * @param P the policy it builds, which its hooks are called on.
  * @sample org.itineradev.itinera.policy.samples.policies
  */
-public fun interface PolicyFactory<out P> {
+public fun interface PolicyFactory<out P : Any> {
     /**
      * Builds the policy.
      *

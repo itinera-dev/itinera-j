@@ -1,7 +1,5 @@
 package org.itineradev.itinera.step
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * Marks a class implementing [ItineraRescueStep] as a rescue step, which a workflow gives a step
  * with `@WithStep(rescue = ...)`. Its one constructor takes the rescue step's inputs, each marked
@@ -13,7 +11,6 @@ import org.itineradev.itinera.ExperimentalItineraApi
  *
  * @sample org.itineradev.itinera.workflow.annotated.samples.renewing
  */
-@ExperimentalItineraApi
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
 @MustBeDocumented

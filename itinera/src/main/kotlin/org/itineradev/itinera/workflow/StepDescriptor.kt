@@ -1,6 +1,5 @@
 package org.itineradev.itinera.workflow
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.policy.StepPolicyDescriptor
 import org.itineradev.itinera.request.Request
 import org.itineradev.itinera.request.StepKind
@@ -48,7 +47,7 @@ public interface StepDescriptor<M : Mode> {
      * the step being attempted once more if it succeeds, or `null` when the step has none. A step
      * with both a rescue step and a retry budget above 0 is refused, as `rescued step retried`.
      */
-    @ExperimentalItineraApi public val rescue: RescueStepDescriptor<M>?
+    public val rescue: RescueStepDescriptor<M>?
 
     /** Makes step descriptors. */
     public companion object {
@@ -129,7 +128,6 @@ internal constructor(private val name: StepName, private val factory: StepFactor
      *   most.
      * @sample org.itineradev.itinera.workflow.samples.rescues
      */
-    @ExperimentalItineraApi
     public fun rescue(rescue: RescueStepDescriptor<M>): StepBuilder<M> = apply {
         check(this.rescue == null) { "A step has one rescue step at most, and $name has one." }
         this.rescue = rescue
