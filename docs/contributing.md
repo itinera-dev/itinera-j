@@ -138,6 +138,16 @@ Pull requests merge with a merge commit, never squashed, because a squash folds 
 
 `cliff.toml` holds git-cliff's template. `git cliff --unreleased --tag v<version> --strip all` prints the section for `<version>` from the entries of the commits since the last release. The template is written for git-cliff 2.14.2, which installs with `pip install git-cliff==2.14.2`.
 
+## The book
+
+The Itinera book has a Kotlin edition and a Java edition, published at <https://itinera-dev.org/book/kotlin/> and <https://itinera-dev.org/book/java/> from the first release; until then, their `next` editions, which follow this repository's `main`, are at <https://itinera-dev.org/book/kotlin/next/> and <https://itinera-dev.org/book/java/next/>. Both live in [itinera-dev/book](https://github.com/itinera-dev/book), under `kotlin/` and `java/`, and every example in them compiles and runs. Each edition's `itinera.json` names the commit of this repository that the edition builds against, and its `./gradlew itinera` publishes that commit for the edition's build to read.
+
+`book.json` pins the commit of the book that this repository is checked against. The `Kotlin book` and `Java book` checks run the `check-book` action of [itinera-dev/actions](https://github.com/itinera-dev/actions). The action takes the book at that commit and publishes this checkout as it stands, instead of the commit the edition names. It then runs `./gradlew check` in the edition's directory, so a change that breaks either edition fails in its own pull request.
+
+The book has two branches. Its `main` follows the latest release on Maven Central, and it is what the published book shows. Its `next` branch follows this repository's `main` by commit, and `book.json` pins a commit on `next`.
+
+A change that breaks the book comes with a fix on the book's `next`. Book changes are pushed straight to `next`, with no pull request, so the fix also moves each edition's `itinera.json` to the head commit of the change's pull request, which the book's `itinera` task can fetch by its SHA, and `next` stays green. The change's own pull request moves `book.json` to the commit of the fix. Once the change merges, the book moves each edition's `itinera.json` to the merge commit, and a later push to the pull request before then moves it to the new head. A pull request that only sets a new version needs no change in the book, but it moves `book.json` to `next`'s head, so that the book that `main` will take is checked against the release. What the book does once a release is on Maven Central is in the `release` skill, `.claude/skills/release/SKILL.md`.
+
 ## Releasing
 
 Every artifact is published to [Maven Central](https://central.sonatype.com/) under the group `org.itinera-dev`, at one version. A maintainer requests a release by pushing, on `main`, an annotated tag `v` followed by its version, such as `v0.1.0-beta.1`, with the message `itinera-j <version>`, after the pull request that sets the version and adds its section to `CHANGELOG.md` has merged. The release workflow, `.github/workflows/release.yml`, then runs four jobs, each waiting for the one before:
