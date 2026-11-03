@@ -39,7 +39,7 @@ class JavaParityTest {
     @Test
     fun `the checker reports in Java every mistake that reading a part alone finds`() {
         assertEquals(
-            partsOf(Alone::class.java).flatMap(::loneViolationsOf).map(::rendered).sorted(),
+            partClassesOf(Alone::class.java).flatMap(::loneViolationsOf).map(::rendered).sorted(),
             javacErrors(javaSourceOf(Alone::class.java)).sorted(),
         )
     }

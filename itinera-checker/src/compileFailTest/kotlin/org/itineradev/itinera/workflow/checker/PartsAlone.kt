@@ -29,7 +29,8 @@ import org.itineradev.itinera.workflow.async.asyncRescueStepOf
 import org.itineradev.itinera.workflow.async.asyncStep
 
 /** The parts [fixture] declares, as its nested classes marked as a step, rescue step or policy. */
-internal fun partsOf(fixture: Class<*>): List<Class<*>> = fixture.declaredClasses.filter(::isPart)
+internal fun partClassesOf(fixture: Class<*>): List<Class<*>> =
+    fixture.declaredClasses.filter(::isPart)
 
 /**
  * The violations reading the part [type] alone finds, in the mode its own methods say: asynchronous

@@ -31,7 +31,8 @@ import javax.tools.Diagnostic
  * wherever they were compiled, once every annotation processor ran, so that it reads the classes
  * they generate, and before javac generates any class, and only when javac knows every class the
  * workflow's annotations name. A class marked `@Step`, `@RescueStep`, `@StepPolicy` or
- * `@WorkflowPolicy` that no workflow class among those sources names is checked alone, as
+ * `@WorkflowPolicy` that no workflow class among those sources names is checked alone, unless a
+ * workflow names a class javac does not know, as no part's workflows can then be told, as
  * `StepDescriptor.builder(name, type)` and the other factories of one annotated part read it, in
  * the mode its own methods say: asynchronous when its `run`, or every hook, is `suspend`. It runs
  * whenever javac compiles, even with `-proc:none`, but with `-proc:only` only when an annotation
@@ -96,21 +97,21 @@ private class JavacChecking(private val task: JavacTask) : TaskListener {
         checked = true
         val elements = task.elements
         val symbols = JavacSymbols(elements, task.types)
-        val known = compiled.mapNotNull(elements::getTypeElement).filter(::namesOnlyKnownClasses)
+        val (known, unknown) =
+            compiled.mapNotNull(elements::getTypeElement).partition(::namesOnlyKnownClasses)
         val named =
             known.map(symbols::classOf).flatMap(::partsOf).mapTo(HashSet(), ClassSymbol::name)
-        for (element in known) check(element, symbols.classOf(element), named)
+        for (element in known) {
+            val type = symbols.classOf(element)
+            check(element, type, unknown.isEmpty() && type.name !in named && !isFromKotlin(type))
+        }
     }
 
-    /**
-     * Checks [type], declared by [element], as a workflow class, and, unless a workflow class among
-     * the [named] parts' names it, as a part read alone.
-     */
-    private fun check(element: TypeElement, type: ClassSymbol, named: Set<String>) {
+    /** Checks [type], declared by [element], as a workflow class, and as a part read [alone]. */
+    private fun check(element: TypeElement, type: ClassSymbol, alone: Boolean) {
         val workflow = if (namesKotlinPart(type)) emptyList() else mistakesOf(type)
-        val alone =
-            if (type.name in named || isFromKotlin(type)) emptyList() else loneMistakesOf(type)
-        for (finding in workflow + alone) report(finding, element)
+        val lone = if (alone) loneMistakesOf(type) else emptyList()
+        for (finding in workflow + lone) report(finding, element)
     }
 
     /**

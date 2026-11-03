@@ -201,6 +201,48 @@ class KspCheckerTest {
     }
 
     @Test
+    fun `KSP reads a part a waiting workflow names only through that workflow`() {
+        val source =
+            """
+            import org.itineradev.itinera.policy.ItineraStepPolicy
+            import org.itineradev.itinera.policy.OnFailure
+            import org.itineradev.itinera.policy.OnStepFailure
+            import org.itineradev.itinera.policy.OnStepSuccess
+            import org.itineradev.itinera.policy.OnSuccess
+            import org.itineradev.itinera.policy.StepPolicy
+            import org.itineradev.itinera.step.Input
+            import org.itineradev.itinera.step.ItineraStep
+            import org.itineradev.itinera.step.Outcome
+            import org.itineradev.itinera.step.Step
+            import org.itineradev.itinera.workflow.async.ItineraAsyncWorkflow
+            import org.itineradev.itinera.workflow.WithStep
+
+            @Step
+            class Charge(@Input("lines") private val lines: List<Line>) : ItineraStep {
+                suspend fun run(): Outcome = if (lines.isEmpty()) fail("empty") else succeed()
+            }
+
+            @StepPolicy(name = "audit")
+            class Audit : ItineraStepPolicy {
+                @OnStepSuccess suspend fun charged(): OnSuccess = keepDefault()
+
+                @OnStepFailure fun failed(): OnFailure = keepDefault()
+            }
+
+            @WithStep(Charge::class, name = "charge", policies = [Audit::class])
+            class Shop : ItineraAsyncWorkflow
+            """
+        assertEquals(
+            listOf(
+                "mode not accepted: hook on step failure of policy audit is not asynchronous, " +
+                    "as the workflow is"
+            ),
+            compiled(SourceFile.kotlin("Shop.kt", source.trimIndent()), generating = LINE)
+                .map(KspError::message),
+        )
+    }
+
+    @Test
     fun `KSP reads a workflow once a later round generates what its superclass requests`() {
         val source =
             """

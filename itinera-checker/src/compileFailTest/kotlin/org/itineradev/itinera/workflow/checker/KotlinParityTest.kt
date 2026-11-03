@@ -32,7 +32,10 @@ class KotlinParityTest {
     @Test
     fun `the checker reports in Kotlin every mistake that reading a part alone finds`() {
         assertEquals(
-            partsOf(KotlinAlone::class.java).flatMap(::loneViolationsOf).map(::rendered).sorted(),
+            partClassesOf(KotlinAlone::class.java)
+                .flatMap(::loneViolationsOf)
+                .map(::rendered)
+                .sorted(),
             kspErrors(kotlinSourceOf(KotlinAlone::class.java)).sorted(),
         )
     }

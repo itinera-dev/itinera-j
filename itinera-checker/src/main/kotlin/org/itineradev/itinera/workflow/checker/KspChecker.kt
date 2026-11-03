@@ -41,12 +41,14 @@ public class KspChecker : SymbolProcessorProvider {
  * Checks the workflow classes of the files each round brings, reporting each mistake once. A class
  * whose declarations, or those of the classes its annotations name, name a type KSP cannot resolve
  * yet, such as one another processor generates in a later round, waits for the next round, and is
- * left to the compiler if it never resolves.
+ * left to the compiler if it never resolves. While one waits, so do the classes it would otherwise
+ * read alone, since the waiting class may name them.
  */
 private class Checking(private val logger: KSPLogger) : SymbolProcessor {
     private val reported = HashSet<Pair<String, Any>>()
     private val deferred = LinkedHashSet<String>()
     private val named = HashSet<String>()
+    private val waiting = LinkedHashSet<String>()
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val symbols = KspSymbols(resolver)
@@ -58,13 +60,17 @@ private class Checking(private val logger: KSPLogger) : SymbolProcessor {
                 .flatMap(::withNested)
                 .filter(::isConcrete)
                 .toList() + deferred.mapNotNull(symbols::named)
+        val held = waiting.mapNotNull(symbols::named)
         deferred.clear()
+        waiting.clear()
         val (resolved, unresolved) = types.partition(::isResolved)
         unresolved.mapTo(deferred, ::binaryNameOf)
         val classes = resolved.map(symbols::classOf)
         classes.flatMap(::partsOf).mapTo(named, ClassSymbol::name)
         classes.filter(::namesKotlinPart).flatMap(::mistakesOf).forEach(::report)
-        classes.filter(::isAlone).flatMap(::loneMistakesOf).forEach(::report)
+        val alone = (resolved + held).map(symbols::classOf).filter(::isAlone)
+        if (deferred.isEmpty()) alone.flatMap(::loneMistakesOf).forEach(::report)
+        else alone.mapTo(waiting, ClassSymbol::name)
         return emptyList()
     }
 
