@@ -106,6 +106,12 @@ final class RunTest {
   }
 
   @Test
+  void everyScenarioThatUsesTestSupportPasses() {
+    assertTrue(runs("@testing"), errors().toString());
+    assertEquals(12, scenarios().size());
+  }
+
+  @Test
   void aJourneyThatDidNotDoWhatTheCaseExpectsFailsAsUnmet() {
     assertFalse(runs("@unmet"));
     assertTrue(errors().stream().allMatch(RunTest::isUnmet), errors().toString());

@@ -8,8 +8,9 @@ description =
 
 dependencies {
     api(project(":itinera"))
-    // Only the asynchronous parts need it, so a Java application's tests do not bring it.
+    // Only the asynchronous parts need them, so a Java application's tests do not bring them.
     compileOnly(project(":itinera-kotlin"))
+    compileOnly(libs.kotlinx.coroutines.core)
     testImplementation(project(":itinera-kotlin"))
     "compileFailTestImplementation"(libs.kctfork)
 }

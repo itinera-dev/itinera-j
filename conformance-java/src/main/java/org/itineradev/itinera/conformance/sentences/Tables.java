@@ -2,6 +2,7 @@ package org.itineradev.itinera.conformance.sentences;
 
 import static org.itineradev.itinera.conformance.model.Values.value;
 
+import java.util.AbstractMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,11 @@ final class Tables {
       throw new ModelException(row + " has no " + column);
     }
     return cell;
+  }
+
+  /** The key and value a row gives, its value written as JSON. */
+  static Map.Entry<String, Object> entryOf(Map<String, String> row) {
+    return new AbstractMap.SimpleImmutableEntry<>(cell(row, "key"), value(cell(row, "value")));
   }
 
   /**

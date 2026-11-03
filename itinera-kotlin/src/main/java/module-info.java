@@ -14,6 +14,7 @@ module org.itineradev.itinera.kotlin {
   exports org.itineradev.itinera.report.async;
   exports org.itineradev.itinera.request.async;
   exports org.itineradev.itinera.request.kotlin;
+  exports org.itineradev.itinera.service.async;
   exports org.itineradev.itinera.step.async;
   exports org.itineradev.itinera.value.kotlin;
   exports org.itineradev.itinera.workflow.async;
