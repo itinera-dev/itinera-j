@@ -31,7 +31,7 @@ val checkManifests =
     tasks.register<CheckManifests>("checkManifests") {
         description = "Checks that the Kotlin and the Java conformance manifests agree."
         group = LifecycleBasePlugin.VERIFICATION_GROUP
-        kotlinManifest = layout.projectDirectory.file("conformance.json")
+        kotlinManifest = layout.projectDirectory.file("conformance-kotlin.json")
         javaManifest = layout.projectDirectory.file("conformance-java.json")
     }
 

@@ -13,7 +13,7 @@ How to work in itinera-j, the JVM implementation of [Itinera](https://github.com
 
 The plan is implemented in stages, tracked in [#1](https://github.com/itinera-dev/itinera-j/issues/1):
 
-0. Bootstrap: the Gradle build and its modules, formatting, static analysis, JUnit, CI, the commit convention and git-cliff, the README, the licences, this manual, and the manifests `conformance.json` for Kotlin and `conformance-java.json` for Java.
+0. Bootstrap: the Gradle build and its modules, formatting, static analysis, JUnit, CI, the commit convention and git-cliff, the README, the licences, this manual, and the manifests `conformance-kotlin.json` for Kotlin and `conformance-java.json` for Java.
 1. Values and events: the value check, the private copy at capture and a fresh copy for each receiver, typed reads by runtime type, with the data class walk in `itinera-kotlin`, `TypeToken`, the data bag and its `Read`, `Event` and what it carries, reporters, dispatchers and their factories in both modes, `DefaultDispatcher`, global metadata on dispatchers.
 2. The Kotlin runner's skeleton: Cucumber-JVM, the environment variables, the scenario model, the two columns and the report, the recording dispatcher factory and the recording reporter, the manifest inputs of `run-conformance`, and the conformance change for two languages in one repository.
 3. Minimal executor: the engine and both executors, both builders and `WorkflowDescriptor.of` for a workflow of one step that succeeds, both readers, `@Workflow` and `@WithStep`, the instance and journey IDs, reporters, the result and refusals; test support's step mock; `itinera-java`, the Java runner, its scenario model and report, and the Java usage tests of the core.
@@ -96,7 +96,7 @@ The `commit messages` check is required as well. Before pushing, run it on the c
 
 ## Running the conformance runners
 
-The Kotlin runner, from stage 2, is the project `conformance`, run with `./gradlew :conformance:run`; the Java runner, from stage 3, is the project `conformance-java`, run with `./gradlew :conformance-java:run`. Each reads:
+The Kotlin runner, from stage 2, is the project `conformance-kotlin`, run with `./gradlew :conformance-kotlin:run`; the Java runner, from stage 3, is the project `conformance-java`, run with `./gradlew :conformance-java:run`. Each reads:
 
 - `ITINERA_CONFORMANCE_CASES`, the `cases` directory of a checkout of itinera-dev/conformance at the tag the manifests pin;
 - `ITINERA_CONFORMANCE_TAGS`, a Cucumber tag expression, for example `@proposal-0002 and not @non-value`;

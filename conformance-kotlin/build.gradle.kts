@@ -1,4 +1,4 @@
-plugins { id("itinera.conformance-runner") }
+plugins { id("itinera.kotlin-conformance-runner") }
 
 description = "The Kotlin conformance runner, which runs the cases of itinera-dev/conformance."
 

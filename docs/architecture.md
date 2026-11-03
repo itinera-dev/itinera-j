@@ -41,7 +41,7 @@ flowchart LR
 
 Each artifact is a Java module whose packages are its own, named after concepts. The core's packages are `org.itineradev.itinera` itself, which holds `ExperimentalItineraApi`, and `event`, `executor`, `instance`, `journey`, `policy`, `report`, `request`, `service`, `step`, `value` and `workflow`, under `org.itineradev.itinera`, and `engine`, which the core's module descriptor exports only to `itinera-kotlin`, `itinera-java` and `itinera-testing`. Test support's packages are `testing` subpackages of the concepts they serve, such as `executor.testing` for scripted runs and `instance.testing` for fake providers, and `org.itineradev.itinera.testing` for the test's mistakes. The checker's one package is `workflow.checker`.
 
-Where it lives: the Gradle projects `itinera`, `itinera-kotlin`, `itinera-java`, `itinera-testing`, `itinera-checker`, `itinera-bom`, `conformance` and `conformance-java`, each module descriptor in its `src/main/java/module-info.java`.
+Where it lives: the Gradle projects `itinera`, `itinera-kotlin`, `itinera-java`, `itinera-testing`, `itinera-checker`, `itinera-bom`, `conformance-kotlin` and `conformance-java`, each module descriptor in its `src/main/java/module-info.java`.
 
 ### What a workflow is made of
 
