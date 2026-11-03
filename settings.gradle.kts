@@ -28,6 +28,6 @@ include(
     "itinera-testing",
     "itinera-checker",
     "itinera-bom",
-    "conformance",
+    "conformance-kotlin",
     "conformance-java",
 )
