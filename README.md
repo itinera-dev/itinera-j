@@ -232,7 +232,7 @@ public final class FirstWorkflow {
 
 ## Status
 
-No version has been released yet. The [changelog](https://github.com/itinera-dev/itinera-j/blob/main/CHANGELOG.md) will say what each release implements: the specification version, the tier, the capabilities each language claims and the conformance cases it passes, whose reports each [GitHub release](https://github.com/itinera-dev/itinera-j/releases) will carry.
+`0.1.0-beta.7`, the first release, implements tier 1 of specification 0.1.0, with the capabilities `sync`, `async` and `testing` in Kotlin and `sync` and `testing` in Java, and passes the conformance cases `v0.1.0-rc.20` in both languages. It is a beta, not yet meant for production: until `0.1.0`, features may be added and its API may still change. The [changelog](https://github.com/itinera-dev/itinera-j/blob/main/CHANGELOG.md) says what each release implements, and each [GitHub release](https://github.com/itinera-dev/itinera-j/releases) carries the reports of the conformance cases it passes, one for Kotlin and one for Java.
 
 ## Rules made impossible to express
 
