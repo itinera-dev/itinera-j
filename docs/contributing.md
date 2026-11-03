@@ -138,6 +138,6 @@ Every artifact is published to [Maven Central](https://central.sonatype.com/) un
 
 A version published to Maven Central can never be deleted or replaced, which is why the gate and CI come first. Before pushing the tag, the maintainer runs `./gradlew check dokkaGenerate publishAllPublicationsToPackageRepository` at the commit to be tagged.
 
-Each artifact's javadoc jar, which Central requires and Dokka makes, is the artifact's API reference, which [javadoc.io](https://javadoc.io/) serves for every release with no work of ours.
+Each artifact's javadoc jar, which Central requires and Dokka makes, is the artifact's API reference, which [javadoc.io](https://javadoc.io/) serves for every release with no work of ours. Its first page is the artifact's `Module.md`, which says what the artifact holds, with a line on each of its packages. `itinera-java`'s reference shows its API in Java, through Dokka's Java rendering; the others show Kotlin's declarations, since that rendering misstates records and primitive types, and the core's first page says how Java reads them.
 
 The release gate, the GitHub release and the conformance run are actions of [itinera-dev/actions](https://github.com/itinera-dev/actions), shared with every language, which this repository uses at `v1`.
