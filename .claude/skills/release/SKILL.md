@@ -34,7 +34,8 @@ One pull request, titled "Release <version>" with a release commit `chore(releas
 
 ## After the merge
 
-1. Give the maintainer the commands that make the tag docs/contributing.md "Releasing" describes, at `main`'s merge commit:
+1. Before giving any command, check that the book's `next` holds both the Kotlin and the Java edition ready for the release: its `kotlin` and `java` directories name a commit of this repository with the API being released, and neither holds a pending example, since a released edition that names one fails to build. The README links both books at their release addresses, and the reference javadoc.io serves for the version keeps those links for good. If either edition is not ready, tell the maintainer that the release waits for the books, and give no commands.
+2. Give the maintainer the commands that make the tag docs/contributing.md "Releasing" describes, at `main`'s merge commit:
    1. `git fetch origin`
    2. `git switch --detach <commit>`
    3. `./gradlew check dokkaGenerate examples`
@@ -42,7 +43,7 @@ One pull request, titled "Release <version>" with a release commit `chore(releas
    5. `git push origin v<version>`
 
    Once it is pushed, check with `git ls-remote origin 'refs/tags/v<version>*'` that it shows a tag object, and a `^{}` line naming the commit.
-2. Once the release workflow has finished, check that:
+3. Once the release workflow has finished, check that:
    - every artifact, `itinera`, `itinera-kotlin`, `itinera-java`, `itinera-testing`, `itinera-checker` and `itinera-bom`, is on Maven Central at the version, under `https://repo.maven.apache.org/maven2/org/itinera-dev/`, which can take an hour after the deployment is released;
    - javadoc.io serves the whole reference, from each artifact, at the version;
    - the GitHub release exists, marked as a pre-release when the version has a pre-release part such as `-beta.1`, with the changelog section and both conformance reports.
@@ -59,7 +60,7 @@ As soon as every artifact is on Maven Central at the version, Claude carries the
    3. `git tag -a java-<version> <commit> -m "The Java book for itinera <version>"`
    4. `git push origin kotlin-<version> java-<version>`
 
-   Each tag freezes its commit as the version's edition, so they go only on the commit whose prose names the new version. The version is tagged only once both editions are ready on the book's `next`, so that `/book/kotlin/` and `/book/java/` exist as soon as the book follows it.
+   Each tag freezes its commit as the version's edition, so they go only on the commit whose prose names the new version. Both editions were checked ready before the tag, as "After the merge" says.
 2. **The site**, itinera-dev/itinera-dev.github.io, follows each language's release, as its own manual says. For the JVM, two entries:
    - in `src/data/languages.json`, the Kotlin entry and the Java entry, each with `state` `released`, and its `version`, `install`, `tier` and `executors` matching the release and its own manifest, with the other fields a released entry has, and links to javadoc.io;
    - in the `facts` of `site.config.mjs`, `conformance-ref` matches the cases the manifests pin;
