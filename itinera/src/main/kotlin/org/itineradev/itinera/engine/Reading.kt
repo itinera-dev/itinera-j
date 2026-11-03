@@ -8,9 +8,7 @@ import org.itineradev.itinera.report.ReporterOf
 import org.itineradev.itinera.step.ItineraRescueStep
 import org.itineradev.itinera.step.StepName
 import org.itineradev.itinera.workflow.Mode
-import org.itineradev.itinera.workflow.RescueStepBuilder
 import org.itineradev.itinera.workflow.RescueStepDescriptor
-import org.itineradev.itinera.workflow.StepBuilder
 import org.itineradev.itinera.workflow.StepDescriptor
 import org.itineradev.itinera.workflow.Violations
 import org.itineradev.itinera.workflow.WithStep
@@ -103,13 +101,11 @@ internal class Reading<M : Mode>(
     private fun rescue(name: StepName, declared: WithStep): DeclaredRescue<M>? {
         val rescue = declared.rescue.java
         return if (rescue == ItineraRescueStep::class.java) DeclaredRescue(null)
-        else rescues.read(name, rescue)?.let(::rescueStep)?.let(::DeclaredRescue)
-    }
-
-    private fun rescueStep(rescue: RescueClass<M>): RescueStepDescriptor<M> {
-        val builder = RescueStepBuilder(factories.of(rescue))
-        rescue.requests.forEach(builder::request)
-        return builder.build()
+        else
+            rescues
+                .read("rescue step ${rescueOf(name)}", rescue)
+                ?.let(factories::rescueStep)
+                ?.let(::DeclaredRescue)
     }
 
     private fun described(
@@ -119,8 +115,7 @@ internal class Reading<M : Mode>(
         declared: WithStep,
         rescue: DeclaredRescue<M>,
     ): StepDescriptor<M> {
-        val builder = StepBuilder(name, factories.of(step)).retryBudget(declared.retryBudget)
-        step.requests.forEach(builder::request)
+        val builder = factories.builder(name, step).retryBudget(declared.retryBudget)
         attached.forEach(builder::policy)
         if (declared.noRetryOnAbnormalTermination) builder.noRetryOnAbnormalTermination()
         rescue.rescue?.let(builder::rescue)

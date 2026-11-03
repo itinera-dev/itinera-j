@@ -8,6 +8,7 @@ import org.itineradev.itinera.engine.Builders
 import org.itineradev.itinera.engine.Described
 import org.itineradev.itinera.engine.HookCalls
 import org.itineradev.itinera.engine.HookMethod
+import org.itineradev.itinera.engine.PartClasses
 import org.itineradev.itinera.engine.ProviderCalls
 import org.itineradev.itinera.engine.ProviderMethod
 import org.itineradev.itinera.engine.RescueClass
@@ -115,6 +116,10 @@ private val asynchronous =
                 AsyncReporter::class.java,
             )
     }
+
+/** Reads the class of one asynchronous part alone. */
+internal val asyncPartClasses: PartClasses<Async> =
+    PartClasses(Async, AsynchronousSteps, AsynchronousHooks)
 
 private object AsynchronousSteps : StepFactories<Async> {
     override val handles: Map<Class<*>, Request<StepKind<Async>, *>> =

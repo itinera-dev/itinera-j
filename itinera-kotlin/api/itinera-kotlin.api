@@ -38,6 +38,11 @@ public abstract interface class org/itineradev/itinera/policy/async/AsyncHookRep
 	public abstract synthetic fun warning (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
+public final class org/itineradev/itinera/policy/async/AsyncPolicyClassesKt {
+	public static final fun asyncStepPolicyOf (Lkotlin/reflect/KClass;)Lorg/itineradev/itinera/policy/StepPolicyDescriptor;
+	public static final fun asyncWorkflowPolicyOf (Lkotlin/reflect/KClass;)Lorg/itineradev/itinera/policy/WorkflowPolicyDescriptor;
+}
+
 public final class org/itineradev/itinera/policy/async/AsyncStepPolicyBuilder {
 	public final fun build ()Lorg/itineradev/itinera/policy/StepPolicyDescriptor;
 	public final fun onStepAbnormalTermination (Ljava/util/List;Lorg/itineradev/itinera/policy/async/AsyncHook;)Lorg/itineradev/itinera/policy/async/AsyncStepPolicyBuilder;
@@ -171,6 +176,11 @@ public final class org/itineradev/itinera/workflow/async/AsyncDescriptorsKt {
 
 public abstract interface class org/itineradev/itinera/workflow/async/AsyncInputAdapter : org/itineradev/itinera/workflow/InputAdapterCall {
 	public abstract synthetic fun adapt (Ljava/lang/Object;Lorg/itineradev/itinera/request/Got;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class org/itineradev/itinera/workflow/async/AsyncPartClassesKt {
+	public static final fun asyncRescueStepOf (Lkotlin/reflect/KClass;)Lorg/itineradev/itinera/workflow/RescueStepDescriptor;
+	public static final fun asyncStep (Ljava/lang/String;Lkotlin/reflect/KClass;)Lorg/itineradev/itinera/workflow/StepBuilder;
 }
 
 public abstract interface class org/itineradev/itinera/workflow/async/ItineraAsyncWorkflow {

@@ -1,7 +1,9 @@
 package org.itineradev.itinera.workflow
 
+import org.itineradev.itinera.engine.Described
 import org.itineradev.itinera.request.Request
 import org.itineradev.itinera.request.RescueKind
+import org.itineradev.itinera.step.ItineraRescueStep
 import org.itineradev.itinera.step.RescueFactory
 import org.itineradev.itinera.step.SyncRescueFactory
 
@@ -12,8 +14,9 @@ import org.itineradev.itinera.step.SyncRescueFactory
  * attempt of its step fails, it runs once, and if it succeeds, the step is attempted once more; a
  * step is rescued at most once per journey.
  *
- * [builder] makes one for a synchronous workflow, and `asyncRescueStep` from `itinera-kotlin` for
- * an asynchronous one. A step descriptor's builder attaches it to its step.
+ * [builder] makes one for a synchronous workflow, [of] reads one from a class marked `@RescueStep`,
+ * and `asyncRescueStep` and `asyncRescueStepOf` from `itinera-kotlin` do the same for an
+ * asynchronous one. A step descriptor's builder attaches it to its step.
  *
  * @param M the mode of the workflows the rescue step can join.
  * @sample org.itineradev.itinera.workflow.samples.rescues
@@ -39,6 +42,18 @@ public interface RescueStepDescriptor<M : Mode> {
         @JvmStatic
         public fun builder(factory: SyncRescueFactory): RescueStepBuilder<Sync> =
             RescueStepBuilder(factory)
+
+        /**
+         * The descriptor of a synchronous rescue step written as a class marked `@RescueStep`,
+         * built with its constructor and run with its method `run`, which request what the rescue
+         * step requests. A Kotlin class needs `itinera-kotlin` to be read.
+         *
+         * @throws Violations with every mistake in the class's declaration.
+         * @sample org.itineradev.itinera.workflow.annotated.samples.describingARescueStep
+         */
+        @JvmStatic
+        public fun of(type: Class<out ItineraRescueStep>): RescueStepDescriptor<Sync> =
+            Described.synchronousPartClasses.rescue(type)
     }
 }
 

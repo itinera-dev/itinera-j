@@ -9,7 +9,6 @@ import org.itineradev.itinera.request.StepKind
 import org.itineradev.itinera.step.Outcome
 import org.itineradev.itinera.step.RescueOutcome
 import org.itineradev.itinera.step.RescueStep
-import org.itineradev.itinera.step.StepName
 import org.itineradev.itinera.workflow.Async
 import org.itineradev.itinera.workflow.Mode
 import org.itineradev.itinera.workflow.Violation
@@ -24,12 +23,14 @@ internal class RescueClasses<M : Mode>(
 ) {
     private val requests = StepRequests(factories, problems)
 
-    /** The rescue step class [rescue] of the step [step], or `null` when it has a mistake. */
-    fun read(step: StepName, rescue: Class<*>): RescueClass<M>? {
+    /**
+     * The rescue step class [rescue], named [part] in violations, or `null` when it has a mistake.
+     */
+    fun read(part: String, rescue: Class<*>): RescueClass<M>? {
         val buildable = problems.readable(rescue) && marked(rescue) && buildable(rescue, problems)
         val constructor = if (buildable) constructorOf(rescue, "a rescue step", problems) else null
         val run =
-            if (buildable) runOf(rescue, problems)?.takeIf { run -> checked(step, run) } else null
+            if (buildable) runOf(rescue, problems)?.takeIf { run -> checked(part, run) } else null
         val asked = constructor?.let(requests::ofRescue)
         val asks = run?.let(requests::ofRun)
         return if (constructor != null && run != null)
@@ -54,10 +55,10 @@ internal class RescueClasses<M : Mode>(
         return marked
     }
 
-    private fun checked(step: StepName, run: Method): Boolean {
+    private fun checked(part: String, run: Method): Boolean {
         val function = functionOf(run)
         val inMode = function.isSuspend == (mode == Async)
-        if (!inMode) problems += Violation.ModeNotAccepted("rescue step ${rescueOf(step)}", mode)
+        if (!inMode) problems += Violation.ModeNotAccepted(part, mode)
         val outcome = Outcome::class.java.isAssignableFrom(function.returnType)
         if (outcome)
             problems.misdeclared(
