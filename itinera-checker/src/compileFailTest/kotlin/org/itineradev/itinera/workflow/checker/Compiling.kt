@@ -7,6 +7,7 @@ import com.tschuchort.compiletesting.SourceFile
 import com.tschuchort.compiletesting.configureKsp
 import java.io.File
 import java.io.OutputStream
+import java.nio.file.Files
 import java.nio.file.Path
 import javax.tools.Diagnostic
 import javax.tools.DiagnosticCollector
@@ -27,17 +28,22 @@ internal fun javaSourceOf(type: Class<*>): File =
 internal fun kotlinSourceOf(type: Class<*>): File =
     sources.resolve("kotlin").resolve(type.name.replace('.', '/') + ".kt").toFile()
 
-/** The errors javac reports for [source] when it runs the checker, and only the checker. */
+/**
+ * The errors javac reports for [source] when it runs the checker, which it starts on its own, and
+ * no annotation processor.
+ */
 internal fun javacErrors(source: File): List<String> {
     val javac = ToolProvider.getSystemJavaCompiler()
     val diagnostics = DiagnosticCollector<JavaFileObject>()
+    val classes = Files.createTempDirectory("classes").toFile()
     javac.getStandardFileManager(null, null, null).use { files ->
-        val options = listOf("--release", "17", "-proc:only", "-classpath", classPath())
+        val options = listOf("--release", "17", "-d", classes.path, "-classpath", classPath())
         val task =
             javac.getTask(null, files, diagnostics, options, null, files.getJavaFileObjects(source))
-        task.setProcessors(listOf(JavacChecker()))
+        task.setProcessors(emptyList())
         task.call()
     }
+    classes.deleteRecursively()
     return diagnostics.diagnostics.filter(::isError).map { diagnostic ->
         diagnostic.getMessage(null)
     }

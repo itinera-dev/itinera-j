@@ -48,7 +48,7 @@ The artifacts run on JDK 17 and later. Java applications write synchronous workf
 
 ### Compile-time checks
 
-A Java application can also have javac report the mistakes of its annotated workflows as compile errors, such as a hook declared to return what its kind does not, by adding `itinera-checker` to its annotation processors; without it, the same mistakes are refused when the workflow is first described:
+A Java application can also have javac report the mistakes of its annotated workflows as compile errors, such as a hook declared to return what its kind does not, by adding `itinera-checker` to its annotation processor path, where javac finds it and starts it as a compiler plugin, so that it claims no annotation and gives javac's `processing` lint nothing to warn of, and a build with `-Xlint:all -Werror` and no other annotation processor stays clean; without it, the same mistakes are refused when the workflow is first described:
 
 ```kotlin
 dependencies {
