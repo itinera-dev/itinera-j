@@ -243,6 +243,26 @@ class KspCheckerTest {
     }
 
     @Test
+    fun `KSP reads a part alone while a class that is no workflow waits for a later round`() {
+        val source =
+            """
+            import org.itineradev.itinera.step.ItineraStep
+            import org.itineradev.itinera.step.Step
+
+            class Wiring(private val component: GeneratedNowhere)
+
+            @Step
+            class Charge : ItineraStep {
+                fun run(): String = "charged"
+            }
+            """
+        assertEquals(
+            listOf("Charge.run returns String, not Outcome"),
+            compiled(SourceFile.kotlin("Shop.kt", source.trimIndent())).map(KspError::message),
+        )
+    }
+
+    @Test
     fun `KSP reads a workflow once a later round generates what its superclass requests`() {
         val source =
             """

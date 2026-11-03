@@ -31,17 +31,18 @@ import javax.tools.Diagnostic
  * wherever they were compiled, once every annotation processor ran, so that it reads the classes
  * they generate, and before javac generates any class, and only when javac knows every class the
  * workflow's annotations name. A class marked `@Step`, `@RescueStep`, `@StepPolicy` or
- * `@WorkflowPolicy` that no workflow class among those sources names is checked alone, unless a
- * workflow names a class javac does not know, as no part's workflows can then be told, as
+ * `@WorkflowPolicy` that no workflow class among those sources names is checked alone, as
  * `StepDescriptor.builder(name, type)` and the other factories of one annotated part read it, in
- * the mode its own methods say: asynchronous when its `run`, or every hook, is `suspend`. It runs
- * whenever javac compiles, even with `-proc:none`, but with `-proc:only` only when an annotation
- * processor runs too, and javac also starts it from the class path when no processor path is given.
- * What only the running application can tell is left to the run-time checks: whether a module opens
- * its packages to itinera, whether the application has `itinera-java` or `itinera-kotlin`, and
- * whether a class was compiled with `-parameters`. So are classes compiled from Kotlin, which javac
- * reads only as Java reflection does: a workflow is not checked when it, or a part it names,
- * extends one or is one, and a class compiled from Kotlin that a request names is taken to be data.
+ * the mode its own methods say: asynchronous when every `run` and hook method it has is `suspend`.
+ * No part is checked alone when a class compiled names in its annotations a class javac does not
+ * know, since the parts its workflows name cannot then be told. It runs whenever javac compiles,
+ * even with `-proc:none`, but with `-proc:only` only when an annotation processor runs too, and
+ * javac also starts it from the class path when no processor path is given. What only the running
+ * application can tell is left to the run-time checks: whether a module opens its packages to
+ * itinera, whether the application has `itinera-java` or `itinera-kotlin`, and whether a class was
+ * compiled with `-parameters`. So are classes compiled from Kotlin, which javac reads only as Java
+ * reflection does: a workflow is not checked when it, or a part it names, extends one or is one,
+ * and a class compiled from Kotlin that a request names is taken to be data.
  *
  * @sample org.itineradev.itinera.workflow.checker.samples.checkingJava
  */

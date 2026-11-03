@@ -1,5 +1,6 @@
 package org.itineradev.itinera.workflow.checker
 
+import com.google.devtools.ksp.getAllSuperTypes
 import com.google.devtools.ksp.isAbstract
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
@@ -11,6 +12,7 @@ import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.symbol.KSNode
+import com.google.devtools.ksp.symbol.KSType
 
 /**
  * itinera's compile-time checks for Kotlin: a KSP processor that reports, as compile errors, every
@@ -41,8 +43,9 @@ public class KspChecker : SymbolProcessorProvider {
  * Checks the workflow classes of the files each round brings, reporting each mistake once. A class
  * whose declarations, or those of the classes its annotations name, name a type KSP cannot resolve
  * yet, such as one another processor generates in a later round, waits for the next round, and is
- * left to the compiler if it never resolves. While one waits, so do the classes it would otherwise
- * read alone, since the waiting class may name them.
+ * left to the compiler if it never resolves. While a workflow class waits, so do the classes it
+ * would otherwise read alone, since the workflow may name them, and they are left unread with it if
+ * it never resolves.
  */
 private class Checking(private val logger: KSPLogger) : SymbolProcessor {
     private val reported = HashSet<Pair<String, Any>>()
@@ -69,7 +72,7 @@ private class Checking(private val logger: KSPLogger) : SymbolProcessor {
         classes.flatMap(::partsOf).mapTo(named, ClassSymbol::name)
         classes.filter(::namesKotlinPart).flatMap(::mistakesOf).forEach(::report)
         val alone = (resolved + held).map(symbols::classOf).filter(::isAlone)
-        if (deferred.isEmpty()) alone.flatMap(::loneMistakesOf).forEach(::report)
+        if (unresolved.none(::mayBeWorkflow)) alone.flatMap(::loneMistakesOf).forEach(::report)
         else alone.mapTo(waiting, ClassSymbol::name)
         return emptyList()
     }
@@ -82,6 +85,18 @@ private class Checking(private val logger: KSPLogger) : SymbolProcessor {
             logger.error(finding.message, finding.origin as KSNode)
     }
 }
+
+/**
+ * Whether [type] is a workflow class, or may be one, as a supertype KSP cannot resolve yet may make
+ * it, so that a class with nothing of itinera's holds back no part read alone.
+ */
+private fun mayBeWorkflow(type: KSClassDeclaration): Boolean =
+    type.getAllSuperTypes().any(::isWorkflowOrUnknown)
+
+private fun isWorkflowOrUnknown(type: KSType): Boolean =
+    type.isError || type.declaration.qualifiedName?.asString() in workflowInterfaces
+
+private val workflowInterfaces = setOf(Names.ITINERA_WORKFLOW, Names.ITINERA_ASYNC_WORKFLOW)
 
 private fun withNested(type: KSClassDeclaration): Sequence<KSClassDeclaration> =
     sequenceOf(type) +
