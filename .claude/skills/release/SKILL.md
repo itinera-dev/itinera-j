@@ -18,19 +18,20 @@ One pull request, titled "Release <version>" with a release commit `chore(releas
 3. Raise the version:
    - `version` in `gradle.properties`, which every artifact, the bill of materials included, takes;
    - the status paragraph of `README.md`, with the cases it passes.
-4. Check that both `conformance-kotlin.json` and `conformance-java.json` list every tier 1 proposal of the cases they pin, except one whose every case needs a capability the manifest does not claim, which the release gate in docs/contributing.md "Releasing" requires, and that `./gradlew checkManifests` passes, since a release ships both languages or neither. If either fails, stop and tell the maintainer, since the tag would be refused.
-5. Write the version's section at the top of `CHANGELOG.md`, above the last release's, in the form of the sections below it:
+4. Move `book.json` to the head of the book's `next`, as docs/contributing.md "The book" says, so that the book `main` will take is checked against the release. `git ls-remote https://github.com/itinera-dev/book refs/heads/next` gives it.
+5. Check that both `conformance-kotlin.json` and `conformance-java.json` list every tier 1 proposal of the cases they pin, except one whose every case needs a capability the manifest does not claim, which the release gate in docs/contributing.md "Releasing" requires, and that `./gradlew checkManifests` passes, since a release ships both languages or neither. If either fails, stop and tell the maintainer, since the tag would be refused.
+6. Write the version's section at the top of `CHANGELOG.md`, above the last release's, in the form of the sections below it:
    - `git cliff --unreleased --tag v<version> --strip all` prints the heading `## [<version>]` and the entries that commits since the last release carry as trailers, under `### Added`, `### Changed`, `### Fixed` and `### Removed`, each only when it has entries; `docs/contributing.md` "Commit messages and the changelog" says how;
    - after the heading, one paragraph naming which release it is, whether it breaks code written for the last one, the specification version, the tier, the capabilities each language claims, the conformance cases of the manifests, the oldest JDK supported and the Kotlin standard library the artifacts need, and saying "What a journey does is unchanged" when that is so;
    - the heading's link at the bottom of the file, to `releases/tag/v<version>`.
-6. Reconcile the entries, since a commit's entries cannot change once it merges. Each entry follows AGENTS.md, and the section as a whole says what an application meets, compared with the last release:
+7. Reconcile the entries, since a commit's entries cannot change once it merges. Each entry follows AGENTS.md, and the section as a whole says what an application meets, compared with the last release:
    - entries that a later commit made untrue, such as an addition renamed before the release, become one entry saying what the release holds;
    - entries that say the same thing merge;
    - nothing that was already true in the last release, which `git show v<last version>:<file>` settles;
    - nothing about how the documentation spells something the language already allowed, such as a type the language lets code leave out;
    - a commit since the last release that changes what an application meets but carries no entry gets its entry here; changes to CI, the release workflow or the documentation get one only when they change what is published or how, as docs/contributing.md "Commit messages and the changelog" says.
-7. Check the change against every condition of the release gate. Run the checks of AGENTS.md "Running the checks", and have the change reviewed as the `review-change` skill says. Ask the reviewer to check every changelog entry against the code at both versions, and the section against the entries git-cliff printed.
-8. Open the pull request, in a cloud session with the REST form the `stack` skill gives, and report it as AGENTS.md "Working with the maintainer" says.
+8. Check the change against every condition of the release gate. Run the checks of AGENTS.md "Running the checks", and have the change reviewed as the `review-change` skill says. Ask the reviewer to check every changelog entry against the code at both versions, and the section against the entries git-cliff printed.
+9. Open the pull request, in a cloud session with the REST form the `stack` skill gives, and report it as AGENTS.md "Working with the maintainer" says.
 
 ## After the merge
 
