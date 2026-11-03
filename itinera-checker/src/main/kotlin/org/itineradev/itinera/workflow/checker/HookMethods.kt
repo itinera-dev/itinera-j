@@ -93,7 +93,8 @@ internal class HookMethods(private val mode: Mode, private val findings: Finding
 /** A method of a policy class and the [hook] it is marked as. */
 private class Marked(val hook: Hook, val method: FunctionSymbol)
 
-private fun hooksOf(method: FunctionSymbol): List<Hook> =
+/** The hooks [method] is marked as. */
+internal fun hooksOf(method: FunctionSymbol): List<Hook> =
     Hook.entries.filter { hook -> method.isMarked(hook.annotation) }
 
 private fun written(hooks: List<Hook>): String =

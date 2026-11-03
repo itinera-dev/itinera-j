@@ -284,6 +284,14 @@ public final class org/itineradev/itinera/engine/Nullness : java/lang/Enum {
 	public static fun values ()[Lorg/itineradev/itinera/engine/Nullness;
 }
 
+public final class org/itineradev/itinera/engine/PartClasses {
+	public fun <init> (Lorg/itineradev/itinera/workflow/Mode;Lorg/itineradev/itinera/engine/StepFactories;Lorg/itineradev/itinera/engine/HookCalls;)V
+	public final fun rescue (Ljava/lang/Class;)Lorg/itineradev/itinera/workflow/RescueStepDescriptor;
+	public final fun step (Lorg/itineradev/itinera/step/StepName;Ljava/lang/Class;)Lorg/itineradev/itinera/workflow/StepBuilder;
+	public final fun stepPolicy (Ljava/lang/Class;)Lorg/itineradev/itinera/policy/StepPolicyDescriptor;
+	public final fun workflowPolicy (Ljava/lang/Class;)Lorg/itineradev/itinera/policy/WorkflowPolicyDescriptor;
+}
+
 public abstract interface class org/itineradev/itinera/engine/Parts {
 	public abstract fun accepts (Lorg/itineradev/itinera/policy/HookCall;)Z
 	public abstract fun accepts (Lorg/itineradev/itinera/report/ReporterOf;)Z
@@ -2657,10 +2665,12 @@ public abstract interface class org/itineradev/itinera/policy/StepPolicyDescript
 	public abstract fun getOnStepFailure ()Lorg/itineradev/itinera/policy/HookDefinition;
 	public abstract fun getOnStepRetry ()Lorg/itineradev/itinera/policy/HookDefinition;
 	public abstract fun getOnStepSuccess ()Lorg/itineradev/itinera/policy/HookDefinition;
+	public static fun of (Ljava/lang/Class;)Lorg/itineradev/itinera/policy/StepPolicyDescriptor;
 }
 
 public final class org/itineradev/itinera/policy/StepPolicyDescriptor$Companion {
 	public final fun builder (Ljava/lang/String;Lorg/itineradev/itinera/policy/PolicyFactory;)Lorg/itineradev/itinera/policy/StepPolicyBuilder;
+	public final fun of (Ljava/lang/Class;)Lorg/itineradev/itinera/policy/StepPolicyDescriptor;
 }
 
 public abstract interface class org/itineradev/itinera/policy/SyncHook : org/itineradev/itinera/policy/HookCall {
@@ -2699,10 +2709,12 @@ public abstract interface class org/itineradev/itinera/policy/WorkflowPolicyDesc
 	public abstract fun getName ()Lorg/itineradev/itinera/policy/PolicyName;
 	public abstract fun getOnWorkflowFailure ()Lorg/itineradev/itinera/policy/HookDefinition;
 	public abstract fun getOnWorkflowSuccess ()Lorg/itineradev/itinera/policy/HookDefinition;
+	public static fun of (Ljava/lang/Class;)Lorg/itineradev/itinera/policy/WorkflowPolicyDescriptor;
 }
 
 public final class org/itineradev/itinera/policy/WorkflowPolicyDescriptor$Companion {
 	public final fun builder (Ljava/lang/String;Lorg/itineradev/itinera/policy/PolicyFactory;)Lorg/itineradev/itinera/policy/WorkflowPolicyBuilder;
+	public final fun of (Ljava/lang/Class;)Lorg/itineradev/itinera/policy/WorkflowPolicyDescriptor;
 }
 
 public final class org/itineradev/itinera/report/DebugReporter : org/itineradev/itinera/report/Reporter {
@@ -3299,10 +3311,12 @@ public abstract interface class org/itineradev/itinera/workflow/RescueStepDescri
 	public static fun builder (Lorg/itineradev/itinera/step/SyncRescueFactory;)Lorg/itineradev/itinera/workflow/RescueStepBuilder;
 	public abstract fun getFactory ()Lorg/itineradev/itinera/step/RescueFactory;
 	public abstract fun getRequests ()Ljava/util/List;
+	public static fun of (Ljava/lang/Class;)Lorg/itineradev/itinera/workflow/RescueStepDescriptor;
 }
 
 public final class org/itineradev/itinera/workflow/RescueStepDescriptor$Companion {
 	public final fun builder (Lorg/itineradev/itinera/step/SyncRescueFactory;)Lorg/itineradev/itinera/workflow/RescueStepBuilder;
+	public final fun of (Ljava/lang/Class;)Lorg/itineradev/itinera/workflow/RescueStepDescriptor;
 }
 
 public final class org/itineradev/itinera/workflow/StepBuilder {
@@ -3316,6 +3330,7 @@ public final class org/itineradev/itinera/workflow/StepBuilder {
 
 public abstract interface class org/itineradev/itinera/workflow/StepDescriptor {
 	public static final field Companion Lorg/itineradev/itinera/workflow/StepDescriptor$Companion;
+	public static fun builder (Ljava/lang/String;Ljava/lang/Class;)Lorg/itineradev/itinera/workflow/StepBuilder;
 	public static fun builder (Ljava/lang/String;Lorg/itineradev/itinera/step/SyncStepFactory;)Lorg/itineradev/itinera/workflow/StepBuilder;
 	public abstract fun getFactory ()Lorg/itineradev/itinera/step/StepFactory;
 	public abstract fun getName ()Lorg/itineradev/itinera/step/StepName;
@@ -3327,6 +3342,7 @@ public abstract interface class org/itineradev/itinera/workflow/StepDescriptor {
 }
 
 public final class org/itineradev/itinera/workflow/StepDescriptor$Companion {
+	public final fun builder (Ljava/lang/String;Ljava/lang/Class;)Lorg/itineradev/itinera/workflow/StepBuilder;
 	public final fun builder (Ljava/lang/String;Lorg/itineradev/itinera/step/SyncStepFactory;)Lorg/itineradev/itinera/workflow/StepBuilder;
 }
 

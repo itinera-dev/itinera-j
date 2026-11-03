@@ -8,6 +8,7 @@ import org.itineradev.itinera.workflow.WorkflowDescriptor
 import org.itineradev.itinera.workflow.async.ItineraAsyncWorkflow
 import org.itineradev.itinera.workflow.async.asyncDescriptorOf
 import org.itineradev.itinera.workflow.checker.fixtures.Adapters
+import org.itineradev.itinera.workflow.checker.fixtures.Alone
 import org.itineradev.itinera.workflow.checker.fixtures.Assembly
 import org.itineradev.itinera.workflow.checker.fixtures.Policies
 import org.itineradev.itinera.workflow.checker.fixtures.Providers
@@ -32,6 +33,14 @@ class JavaParityTest {
         assertEquals(
             workflowsOf(fixture).flatMap(::violationsOf).map(::rendered).sorted(),
             javacErrors(javaSourceOf(fixture)).sorted(),
+        )
+    }
+
+    @Test
+    fun `the checker reports in Java every mistake that reading a part alone finds`() {
+        assertEquals(
+            partClassesOf(Alone::class.java).flatMap(::loneViolationsOf).map(::rendered).sorted(),
+            javacErrors(javaSourceOf(Alone::class.java)).sorted(),
         )
     }
 

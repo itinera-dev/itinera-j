@@ -93,13 +93,29 @@ class JavacCheckerTest {
     }
 
     @Test
+    fun `javac reports the mistake of a part that no workflow names, read alone`() {
+        assertEquals(
+            listOf("Charge.java:3: Charge.run returns String, not Outcome"),
+            compiled(NAMING_NOTHING, charge = CHARGE).map(::filed),
+        )
+    }
+
+    @Test
+    fun `javac reads no part alone while a workflow names a class it cannot find`() {
+        assertEquals(
+            listOf("Shop.java:4: cannot find symbol"),
+            compiled(NAMING_CHRAGE, charge = CHARGE).map(::filed).map(::firstLineOf),
+        )
+    }
+
+    @Test
     fun `javac reports the mistake of a part from a library on the workflow that names it`(
         @TempDir library: Path
     ) {
-        compileLibrary(CHARGE, library)
+        val classes = compileLibrary(CHARGE, library)
         assertEquals(
             listOf("Shop.java:5: Charge.run returns String, not Outcome"),
-            compiled(NAMING_CHARGE, library = library).map(::filed),
+            compiled(NAMING_CHARGE, library = classes).map(::filed),
         )
     }
 
@@ -200,6 +216,22 @@ private const val NAMING_CHARGE =
     public final class Shop implements ItineraWorkflow {}
     """
 
+/** A workflow naming `Chrage`, a class that does not exist. */
+private const val NAMING_CHRAGE =
+    """
+    import org.itineradev.itinera.workflow.ItineraWorkflow;
+    import org.itineradev.itinera.workflow.WithStep;
+
+    @WithStep(step = Chrage.class, name = "charge")
+    public final class Shop implements ItineraWorkflow {}
+    """
+
+/** A class naming no part. */
+private const val NAMING_NOTHING =
+    """
+    public final class Shop {}
+    """
+
 /** A step class whose run returns what a step's run never does. */
 private const val CHARGE =
     """
@@ -245,13 +277,22 @@ private fun compiled(
     return reported.diagnostics
 }
 
-/** Compiles [source], the class `Charge`, into [directory], as a library is compiled. */
-private fun compileLibrary(source: String, directory: Path) {
+/**
+ * Compiles [source], the class `Charge`, into the directory `classes` of [library], as a library
+ * compiled without the checker is: by a javac of its own, whose processor path, where it would find
+ * the checker, is an empty directory, since a javac in this process finds the checker through this
+ * process's class loader. Returns the directory of classes, once javac succeeded.
+ */
+private fun compileLibrary(source: String, library: Path): Path {
+    val classes = Files.createDirectories(library.resolve("classes"))
+    val noProcessors = Files.createDirectories(library.resolve("processors"))
+    val file = Files.writeString(library.resolve("Charge.java"), source.trimIndent())
+    val javac = Path.of(System.getProperty("java.home"), "bin", "javac").toString()
+    val classPath = System.getProperty("java.class.path")
     val options =
-        listOf("-d", directory.toString(), "-classpath", System.getProperty("java.class.path"))
-    ToolProvider.getSystemJavaCompiler()
-        .getTask(null, null, null, options, null, listOf(sourceFile("Charge", source)))
-        .call()
+        listOf("-d", "$classes", "-classpath", classPath, "-processorpath", "$noProcessors")
+    assertEquals(0, ProcessBuilder(listOf(javac) + options + "$file").inheritIO().start().waitFor())
+    return classes
 }
 
 private fun sourceFile(name: String, source: String): JavaFileObject =
@@ -270,6 +311,8 @@ private fun filed(diagnostic: Diagnostic<out JavaFileObject>): String =
 
 private fun located(diagnostic: Diagnostic<*>): String =
     "${diagnostic.lineNumber}: ${diagnostic.getMessage(null)}"
+
+private fun firstLineOf(message: String): String = message.lineSequence().first()
 
 private fun firstLine(diagnostic: Diagnostic<*>): String =
     diagnostic.getMessage(null).lineSequence().first()

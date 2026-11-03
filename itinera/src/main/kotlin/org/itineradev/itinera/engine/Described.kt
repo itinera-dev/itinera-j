@@ -57,6 +57,10 @@ public object Described {
     public fun <W : ItineraWorkflow> synchronous(type: Class<W>): WorkflowDescriptor<W, Sync> =
         returned(synchronous.get(type))
 
+    /** Reads the class of one synchronous part alone. */
+    internal val synchronousPartClasses: PartClasses<Sync> =
+        PartClasses(Sync, SynchronousSteps, SynchronousHooks)
+
     /**
      * Reads the workflow [type] declares in [mode], whose steps [steps] makes factories for, whose
      * policies' hooks [hooks] calls, whose input adapters [adapters] calls, whose service providers

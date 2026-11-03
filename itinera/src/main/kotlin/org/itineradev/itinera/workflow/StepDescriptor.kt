@@ -1,8 +1,10 @@
 package org.itineradev.itinera.workflow
 
+import org.itineradev.itinera.engine.Described
 import org.itineradev.itinera.policy.StepPolicyDescriptor
 import org.itineradev.itinera.request.Request
 import org.itineradev.itinera.request.StepKind
+import org.itineradev.itinera.step.ItineraStep
 import org.itineradev.itinera.step.StepFactory
 import org.itineradev.itinera.step.StepName
 import org.itineradev.itinera.step.SyncStepFactory
@@ -13,9 +15,9 @@ import org.itineradev.itinera.step.SyncStepFactory
  * step. Every step states its own retry budget, whether it retries abnormal terminations and
  * whether it has a rescue step, so the declaration shows everything.
  *
- * [builder] makes one for a synchronous workflow, `asyncStep` from `itinera-kotlin` for an
- * asynchronous one, and annotated workflows get theirs from `@WithStep`. Any other implementation
- * runs too, checked by the executor before the journey.
+ * [builder] makes one for a synchronous workflow, from a factory or from a class marked `@Step`,
+ * `asyncStep` from `itinera-kotlin` for an asynchronous one, and annotated workflows get theirs
+ * from `@WithStep`. Any other implementation runs too, checked by the executor before the journey.
  *
  * @param M the mode of the workflows the step can join.
  * @sample org.itineradev.itinera.workflow.samples.steps
@@ -62,6 +64,22 @@ public interface StepDescriptor<M : Mode> {
         @JvmStatic
         public fun builder(name: String, factory: SyncStepFactory): StepBuilder<Sync> =
             StepBuilder(StepName.of(name), factory)
+
+        /**
+         * Starts the descriptor of a synchronous step written as a class marked `@Step`, built for
+         * each attempt with its constructor and run with its method `run`, which request what the
+         * step requests. The builder gives the rest, as a workflow class's `@WithStep` does: a
+         * retry budget of 0 and abnormal terminations retried, unless it says otherwise, and the
+         * step's policies and rescue step. A Kotlin class needs `itinera-kotlin` to be read.
+         *
+         * @throws IllegalArgumentException when [name] is empty.
+         * @throws Violations with every mistake in the class's declaration.
+         * @sample org.itineradev.itinera.workflow.annotated.samples.describingAStep
+         * @sample org.itineradev.itinera.workflow.annotated.samples.refusingAPart
+         */
+        @JvmStatic
+        public fun builder(name: String, type: Class<out ItineraStep>): StepBuilder<Sync> =
+            Described.synchronousPartClasses.step(StepName.of(name), type)
     }
 }
 

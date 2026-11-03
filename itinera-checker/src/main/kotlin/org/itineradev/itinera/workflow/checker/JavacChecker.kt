@@ -30,14 +30,19 @@ import javax.tools.Diagnostic
  * and those processors generate, and the step, rescue step, policy and reporter classes it names,
  * wherever they were compiled, once every annotation processor ran, so that it reads the classes
  * they generate, and before javac generates any class, and only when javac knows every class the
- * workflow's annotations name. It runs whenever javac compiles, even with `-proc:none`, but with
- * `-proc:only` only when an annotation processor runs too, and javac also starts it from the class
- * path when no processor path is given. What only the running application can tell is left to the
- * run-time checks: whether a module opens its packages to itinera, whether the application has
- * `itinera-java` or `itinera-kotlin`, and whether a class was compiled with `-parameters`. So are
- * classes compiled from Kotlin, which javac reads only as Java reflection does: a workflow is not
- * checked when it, or a part it names, extends one or is one, and a class compiled from Kotlin that
- * a request names is taken to be data.
+ * workflow's annotations name. A class marked `@Step`, `@RescueStep`, `@StepPolicy` or
+ * `@WorkflowPolicy` that no workflow class among those sources names is checked alone, as
+ * `StepDescriptor.builder(name, type)` and the other factories of one annotated part read it, in
+ * the mode its own methods say: asynchronous when every `run` and hook method it has is `suspend`.
+ * No part is checked alone when a class compiled names in its annotations a class javac does not
+ * know, since the parts its workflows name cannot then be told. It runs whenever javac compiles,
+ * even with `-proc:none`, but with `-proc:only` only when an annotation processor runs too, and
+ * javac also starts it from the class path when no processor path is given. What only the running
+ * application can tell is left to the run-time checks: whether a module opens its packages to
+ * itinera, whether the application has `itinera-java` or `itinera-kotlin`, and whether a class was
+ * compiled with `-parameters`. So are classes compiled from Kotlin, which javac reads only as Java
+ * reflection does: a workflow is not checked when it, or a part it names, extends one or is one,
+ * and a class compiled from Kotlin that a request names is taken to be data.
  *
  * @sample org.itineradev.itinera.workflow.checker.samples.checkingJava
  */
@@ -93,15 +98,21 @@ private class JavacChecking(private val task: JavacTask) : TaskListener {
         checked = true
         val elements = task.elements
         val symbols = JavacSymbols(elements, task.types)
-        for (workflow in compiled.mapNotNull(elements::getTypeElement)) {
-            if (namesOnlyKnownClasses(workflow)) check(workflow, symbols)
+        val (known, unknown) =
+            compiled.mapNotNull(elements::getTypeElement).partition(::namesOnlyKnownClasses)
+        val named =
+            known.map(symbols::classOf).flatMap(::partsOf).mapTo(HashSet(), ClassSymbol::name)
+        for (element in known) {
+            val type = symbols.classOf(element)
+            check(element, type, unknown.isEmpty() && type.name !in named && !isFromKotlin(type))
         }
     }
 
-    private fun check(workflow: TypeElement, symbols: JavacSymbols) {
-        val type = symbols.classOf(workflow)
-        if (!namesKotlinPart(type))
-            mistakesOf(type).forEach { finding -> report(finding, workflow) }
+    /** Checks [type], declared by [element], as a workflow class, and as a part read [alone]. */
+    private fun check(element: TypeElement, type: ClassSymbol, alone: Boolean) {
+        val workflow = if (namesKotlinPart(type)) emptyList() else mistakesOf(type)
+        val lone = if (alone) loneMistakesOf(type) else emptyList()
+        for (finding in workflow + lone) report(finding, element)
     }
 
     /**
