@@ -1,5 +1,5 @@
 // Google's mirror of Maven Central comes first in every build of this repository, since
-// Central refuses requests from CI runners it rate-limits; Central stays as the fallback.
+// Central refuses requests from CI runners it rate-limits; the Plugin Portal and Central follow it.
 pluginManagement {
     includeBuild("build-logic")
     repositories {
