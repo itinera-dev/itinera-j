@@ -93,6 +93,14 @@ class JavacCheckerTest {
     }
 
     @Test
+    fun `javac reports the mistake of a part that no workflow names, read alone`() {
+        assertEquals(
+            listOf("Charge.java:3: Charge.run returns String, not Outcome"),
+            compiled(NAMING_NOTHING, charge = CHARGE).map(::filed),
+        )
+    }
+
+    @Test
     fun `javac reports the mistake of a part from a library on the workflow that names it`(
         @TempDir library: Path
     ) {
@@ -200,6 +208,12 @@ private const val NAMING_CHARGE =
     public final class Shop implements ItineraWorkflow {}
     """
 
+/** A class naming no part. */
+private const val NAMING_NOTHING =
+    """
+    public final class Shop {}
+    """
+
 /** A step class whose run returns what a step's run never does. */
 private const val CHARGE =
     """
@@ -245,13 +259,20 @@ private fun compiled(
     return reported.diagnostics
 }
 
-/** Compiles [source], the class `Charge`, into [directory], as a library is compiled. */
+/**
+ * Compiles [source], the class `Charge`, into [directory], as a library compiled without the
+ * checker is: by a javac of its own, whose processor path, where it would find the checker, is an
+ * empty directory, since a javac in this process finds the checker through this process's class
+ * loader.
+ */
 private fun compileLibrary(source: String, directory: Path) {
-    val options =
-        listOf("-d", directory.toString(), "-classpath", System.getProperty("java.class.path"))
-    ToolProvider.getSystemJavaCompiler()
-        .getTask(null, null, null, options, null, listOf(sourceFile("Charge", source)))
-        .call()
+    val sources = Files.createTempDirectory("library")
+    val file = Files.writeString(sources.resolve("Charge.java"), source.trimIndent())
+    val javac = Path.of(System.getProperty("java.home"), "bin", "javac").toString()
+    val classPath = System.getProperty("java.class.path")
+    val options = listOf("-d", "$directory", "-classpath", classPath, "-processorpath", "$sources")
+    ProcessBuilder(listOf(javac) + options + "$file").inheritIO().start().waitFor()
+    sources.toFile().deleteRecursively()
 }
 
 private fun sourceFile(name: String, source: String): JavaFileObject =

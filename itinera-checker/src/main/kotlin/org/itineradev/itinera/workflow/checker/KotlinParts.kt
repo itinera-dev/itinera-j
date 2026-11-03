@@ -8,10 +8,12 @@ package org.itineradev.itinera.workflow.checker
 internal fun namesKotlinPart(type: ClassSymbol): Boolean =
     (listOf(type) + partsOf(type)).any(::isFromKotlin)
 
-private fun isFromKotlin(type: ClassSymbol): Boolean =
+/** Whether [type] was compiled from Kotlin or extends a class that was. */
+internal fun isFromKotlin(type: ClassSymbol): Boolean =
     generateSequence(type, ClassSymbol::superclass).any(ClassSymbol::isKotlin)
 
-private fun partsOf(type: ClassSymbol): List<ClassSymbol> =
+/** The parts the annotations of the workflow class [type] name. */
+internal fun partsOf(type: ClassSymbol): List<ClassSymbol> =
     type.annotations(Names.WITH_STEP).flatMap(::stepParts) +
         type.annotation(Names.WORKFLOW)?.let(::workflowParts).orEmpty()
 

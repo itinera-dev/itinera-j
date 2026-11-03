@@ -81,8 +81,10 @@ internal class Reading(private val type: ClassSymbol, private val mode: Mode) {
     /** The rescue step [rescue] gives the step [name]: none, or `null` when it has a mistake. */
     private fun rescue(name: String, rescue: ClassSymbol): DeclaredRescue? =
         if (rescue.name == Names.ITINERA_RESCUE_STEP) DeclaredRescue(null)
-        else steps.rescue(name, rescue)?.let { read -> DeclaredRescue(read.asks) }
+        else steps.rescue("rescue step ${name}_rescue", rescue)?.let(::declaredRescue)
 }
+
+private fun declaredRescue(read: ReadStep): DeclaredRescue = DeclaredRescue(read.asks)
 
 /** The rescue step a workflow class's `@WithStep` gives its step: what it requests, if any. */
 private class DeclaredRescue(val asks: List<Asked>?)

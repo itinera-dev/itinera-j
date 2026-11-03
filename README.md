@@ -57,7 +57,7 @@ dependencies {
 }
 ```
 
-A Kotlin application has KSP report them instead, by applying KSP's Gradle plugin, at the release the checker is built against, which the example below names, and adding the checker to its symbol processors. KSP checks the workflows written in Kotlin, and those written in Java that extend a Kotlin class or name a part written in Kotlin; javac's checker checks the other Java workflows:
+A Kotlin application has KSP report them instead, by applying KSP's Gradle plugin, at the release the checker is built against, which the example below names, and adding the checker to its symbol processors. KSP checks the workflows written in Kotlin, and those written in Java that extend a Kotlin class or name a part written in Kotlin; javac's checker checks the other Java workflows. A step, rescue step or policy class that no workflow in the compilation names is checked alone, in the mode its own methods say, by KSP when it is written in Kotlin and by javac otherwise, as reading it alone into its descriptor would refuse it:
 
 ```kotlin
 plugins {

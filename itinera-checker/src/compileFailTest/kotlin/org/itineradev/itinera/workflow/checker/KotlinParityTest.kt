@@ -2,6 +2,7 @@ package org.itineradev.itinera.workflow.checker
 
 import org.itineradev.itinera.workflow.Violation
 import org.itineradev.itinera.workflow.checker.fixtures.KotlinAdapters
+import org.itineradev.itinera.workflow.checker.fixtures.KotlinAlone
 import org.itineradev.itinera.workflow.checker.fixtures.KotlinPolicies
 import org.itineradev.itinera.workflow.checker.fixtures.KotlinProviders
 import org.itineradev.itinera.workflow.checker.fixtures.KotlinRequests
@@ -25,6 +26,14 @@ class KotlinParityTest {
         assertEquals(
             workflowsOf(fixture).flatMap(::violationsOf).map(::rendered).sorted(),
             kspErrors(kotlinSourceOf(fixture)).sorted(),
+        )
+    }
+
+    @Test
+    fun `the checker reports in Kotlin every mistake that reading a part alone finds`() {
+        assertEquals(
+            partsOf(KotlinAlone::class.java).flatMap(::loneViolationsOf).map(::rendered).sorted(),
+            kspErrors(kotlinSourceOf(KotlinAlone::class.java)).sorted(),
         )
     }
 

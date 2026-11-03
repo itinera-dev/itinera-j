@@ -57,6 +57,64 @@ class KspCheckerTest {
     }
 
     @Test
+    fun `KSP reports the mistake of a part that no workflow names, read alone`() {
+        val source =
+            """
+            import org.itineradev.itinera.step.ItineraStep
+            import org.itineradev.itinera.step.Step
+
+            @Step
+            class Charge : ItineraStep {
+                fun run(): String = "charged"
+            }
+            """
+        assertEquals(
+            listOf("6: Charge.run returns String, not Outcome"),
+            compiled(SourceFile.kotlin("Charge.kt", source.trimIndent())).map(::located),
+        )
+    }
+
+    @Test
+    fun `KSP reads a part alone in the mode its own methods say`() {
+        val source =
+            """
+            import org.itineradev.itinera.policy.ItineraStepPolicy
+            import org.itineradev.itinera.policy.OnFailure
+            import org.itineradev.itinera.policy.OnStepFailure
+            import org.itineradev.itinera.policy.OnStepSuccess
+            import org.itineradev.itinera.policy.OnSuccess
+            import org.itineradev.itinera.policy.StepPolicy
+            import org.itineradev.itinera.step.ItineraStep
+            import org.itineradev.itinera.step.Outcome
+            import org.itineradev.itinera.step.Step
+
+            @Step
+            class Charge : ItineraStep {
+                suspend fun run(): Outcome = succeed()
+            }
+
+            @Step
+            class Pack : ItineraStep {
+                fun run(): Outcome = succeed()
+            }
+
+            @StepPolicy(name = "audit")
+            class Audit : ItineraStepPolicy {
+                @OnStepSuccess suspend fun charged(): OnSuccess = keepDefault()
+
+                @OnStepFailure fun failed(): OnFailure = keepDefault()
+            }
+            """
+        assertEquals(
+            listOf(
+                "23: mode not accepted: hook on step success of policy audit is not synchronous, " +
+                    "as the workflow is"
+            ),
+            compiled(SourceFile.kotlin("Parts.kt", source.trimIndent())).map(::located),
+        )
+    }
+
+    @Test
     fun `KSP checks a Java workflow only when it names a part written in Kotlin`() {
         val charge =
             """

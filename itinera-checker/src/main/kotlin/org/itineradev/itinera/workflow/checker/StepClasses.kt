@@ -17,13 +17,15 @@ internal class StepClasses(private val mode: Mode, private val findings: Finding
     fun step(name: String, step: ClassSymbol): ReadStep? =
         read(step, Names.STEP, "a step", "step $name", Names.OUTCOME, requests::inputs)
 
-    /** The rescue step class [rescue] of the step [step], or `null` when it has a mistake. */
-    fun rescue(step: String, rescue: ClassSymbol): ReadStep? =
+    /**
+     * The rescue step class [rescue], named [part] in mistakes, or `null` when it has a mistake.
+     */
+    fun rescue(part: String, rescue: ClassSymbol): ReadStep? =
         read(
             rescue,
             Names.RESCUE_STEP,
             "a rescue step",
-            "rescue step ${step}_rescue",
+            part,
             Names.RESCUE_OUTCOME,
             requests::ofRescue,
         )
@@ -86,4 +88,5 @@ internal class StepClasses(private val mode: Mode, private val findings: Finding
     }
 }
 
-private fun isRun(method: FunctionSymbol): Boolean = method.jvmName == "run"
+/** Whether [method] is named `run`, as the method that runs a step or a rescue step is. */
+internal fun isRun(method: FunctionSymbol): Boolean = method.jvmName == "run"
