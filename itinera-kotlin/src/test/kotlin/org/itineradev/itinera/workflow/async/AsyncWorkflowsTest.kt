@@ -66,7 +66,7 @@ class AsyncWorkflowsTest {
     fun `each instance builds its own reporter of each class an annotated workflow lists`() {
         val first = Quietly().instance().create()
         val second = Quietly().instance().create()
-        assertEquals(listOf(Quiet::class.java), first.reporters.map(Any::javaClass))
+        assertEquals(listOf(Quiet::class.java), first.reporters.map { it.javaClass })
         assertNotSame(first.reporters.single(), second.reporters.single())
     }
 
