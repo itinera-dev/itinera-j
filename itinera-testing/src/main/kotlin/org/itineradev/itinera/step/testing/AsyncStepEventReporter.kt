@@ -1,6 +1,5 @@
 package org.itineradev.itinera.step.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.engine.Lone
 import org.itineradev.itinera.report.testing.Emitted
 import org.itineradev.itinera.report.testing.LoneAsyncReporter
@@ -14,7 +13,6 @@ import org.itineradev.itinera.step.async.AsyncStepReporter
  *
  * @sample org.itineradev.itinera.step.testing.samples.asyncStepEventReporter
  */
-@ExperimentalItineraApi
 public class AsyncStepEventReporter private constructor(private val lone: Lone) {
     /**
      * A recorder whose reporter keeps what it is given.

@@ -1,6 +1,5 @@
 package org.itineradev.itinera.report.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.event.EventKind
 import org.itineradev.itinera.report.testing.samples.metadata
 import org.itineradev.itinera.report.testing.samples.path
@@ -9,7 +8,6 @@ import org.itineradev.itinera.report.testing.samples.succeeding
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-@OptIn(ExperimentalItineraApi::class)
 class RecordingReporterTest {
     @Test
     fun `a recording reporter keeps every event in the order it received them`() {

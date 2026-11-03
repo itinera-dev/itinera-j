@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 // The compile-fail tests: snippets that the types refuse, each beside a twin that compiles, which
 // is ordinary source of the suite and so compiled once with it. They are a test suite of their
@@ -26,11 +25,6 @@ configurations
             if (requested.group == "org.jetbrains.kotlin") useVersion(kotlinVersion)
         }
     }
-
-// The twins compile with the opt-in, which kctfork also gives itinera-testing's snippets.
-tasks.named<KotlinCompile>("compileCompileFailTestKotlin") {
-    compilerOptions.optIn.add("org.itineradev.itinera.ExperimentalItineraApi")
-}
 
 // The required static analysis runs the detekt task alone, which reads only the main and test
 // sources unless told otherwise.

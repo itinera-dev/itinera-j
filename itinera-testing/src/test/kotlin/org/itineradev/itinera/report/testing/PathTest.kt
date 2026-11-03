@@ -1,6 +1,5 @@
 package org.itineradev.itinera.report.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.event.AttemptStarted
 import org.itineradev.itinera.event.ByStep
 import org.itineradev.itinera.event.ContributionsDiscarded
@@ -43,7 +42,6 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments.argumentSet
 import org.junit.jupiter.params.provider.FieldSource
 
-@OptIn(ExperimentalItineraApi::class)
 class PathTest {
     @ParameterizedTest
     @FieldSource("flow")

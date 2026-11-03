@@ -1,7 +1,5 @@
 package org.itineradev.itinera.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
-
 /**
  * One mistake in a test, with the step, the attempt or the service provider it concerns, as the
  * test named them. A [TestMistake] holds every one found.
@@ -10,7 +8,6 @@ import org.itineradev.itinera.ExperimentalItineraApi
  *
  * @sample org.itineradev.itinera.testing.samples.mistakes
  */
-@ExperimentalItineraApi
 public sealed interface Mistake {
     /** What kind of mistake it is. */
     public val kind: MistakeKind

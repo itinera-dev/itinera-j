@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.journey.testing.samples
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.DataBagAccess
 import org.itineradev.itinera.journey.testing.Contributions
 import org.itineradev.itinera.journey.testing.TestDataBag

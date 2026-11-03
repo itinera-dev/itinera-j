@@ -1,6 +1,5 @@
 package org.itineradev.itinera.executor.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.executor.LocalExecutor
 import org.itineradev.itinera.executor.Refusal
 import org.itineradev.itinera.testing.TestMistake
@@ -11,7 +10,6 @@ import org.itineradev.itinera.testing.TestMistake
  *
  * @sample org.itineradev.itinera.executor.testing.samples.scriptedRuns
  */
-@ExperimentalItineraApi
 public interface Script {
     /**
      * Starts describing the step, or the rescue step, named [name].
@@ -58,7 +56,6 @@ public interface Script {
  *
  * @sample org.itineradev.itinera.executor.testing.samples.scriptedRuns
  */
-@ExperimentalItineraApi
 public interface StepScript : AttemptChoice<StepScript> {
     /**
      * Starts describing the next step, or rescue step, named [name].

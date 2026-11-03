@@ -1,8 +1,5 @@
-@file:OptIn(ExperimentalItineraApi::class)
-
 package org.itineradev.itinera.journey.testing
 
-import org.itineradev.itinera.ExperimentalItineraApi
 import org.itineradev.itinera.journey.testing.samples.contributions
 import org.itineradev.itinera.journey.testing.samples.testDataBag
 import org.itineradev.itinera.value.TypeToken
