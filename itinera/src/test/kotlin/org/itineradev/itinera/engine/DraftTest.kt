@@ -73,7 +73,7 @@ class DraftTest {
         val given = Log()
         val first = instanceOf(listing).reporter(given).create()
         val second = instanceOf(listing).create()
-        assertEquals(listOf(Log::class.java, Log::class.java), first.reporters.map(Any::javaClass))
+        assertEquals(listOf(Log::class.java, Log::class.java), first.reporters.map { it.javaClass })
         assertSame(given, first.reporters.last())
         assertNotSame(first.reporters.first(), second.reporters.single())
     }
