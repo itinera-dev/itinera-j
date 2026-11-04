@@ -51,7 +51,7 @@ What the modules share lives in `build-logic`, a build included by `settings.gra
 
 ## Building and testing
 
-The build needs a JDK 17 or later to start Gradle; Gradle's toolchains then use JDK 25 to compile, and the JDK the tests run on. A toolchain that is not installed is downloaded through the Foojay resolver. Apart from that, `./gradlew` fetches everything, Gradle included, at the versions the repository pins.
+Gradle itself runs on JDK 25, which `gradle/gradle-daemon-jvm.properties` asks for, since Spotless runs google-java-format inside Gradle and google-java-format needs Java 21 or later: a JDK 17 or later starts `./gradlew`, then Gradle looks for an installed JDK 25 to run on, and stops, naming the version, when it finds none. Gradle's toolchains then use JDK 25 to compile, and the JDK the tests run on. A toolchain that is not installed is downloaded through the Foojay resolver. Apart from that, `./gradlew` fetches everything, Gradle included, at the versions the repository pins.
 
 Every one of these is a required check in CI, each one Gradle task:
 
