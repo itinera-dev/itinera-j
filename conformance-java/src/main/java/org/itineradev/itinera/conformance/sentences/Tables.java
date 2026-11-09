@@ -6,6 +6,8 @@ import java.util.AbstractMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Predicate;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 import org.itineradev.itinera.conformance.model.Ending;
@@ -17,6 +19,31 @@ final class Tables {
   private static final Pattern QUOTED = Pattern.compile("\"([^\"]*)\"");
 
   private Tables() {}
+
+  /** Refuses a row with a column its table does not define. */
+  static void only(Set<String> columns, Map<String, String> row) {
+    var unknown = row.keySet().stream().filter(Predicate.not(columns::contains)).toList();
+    if (!unknown.isEmpty()) {
+      throw new ModelException("the table has no column " + unknown);
+    }
+  }
+
+  /** Whether a cell that may only be {@code yes} says yes; an empty cell is never read. */
+  static boolean isYes(String written) {
+    if (!written.equals("yes")) {
+      throw new ModelException(written + " is not yes");
+    }
+    return true;
+  }
+
+  /** A cell holding a whole number. */
+  static int count(String written) {
+    try {
+      return Integer.parseInt(written);
+    } catch (NumberFormatException error) {
+      throw new ModelException(written + " is not a whole number", error);
+    }
+  }
 
   /** A cell a row must fill. */
   static String cell(Map<String, String> row, String column) {

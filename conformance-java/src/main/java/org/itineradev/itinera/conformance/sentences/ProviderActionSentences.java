@@ -18,7 +18,7 @@ public final class ProviderActionSentences {
   }
 
   private void does(String provider, ProviderAction action) {
-    world.model().workflow().provider(provider).actions().add(action);
+    world.model().blocks().provider(provider).actions().add(action);
   }
 
   @Given("the service provider {string} emits {word} {string}")

@@ -7,6 +7,7 @@ import io.cucumber.java.en.Given;
 import org.itineradev.itinera.conformance.World;
 import org.itineradev.itinera.conformance.model.HookAction;
 import org.itineradev.itinera.conformance.model.JourneyEmitted;
+import org.itineradev.itinera.conformance.model.Model;
 import org.itineradev.itinera.conformance.model.ModelException;
 
 /** The sentences that script what a hook does before it ends. */
@@ -51,9 +52,13 @@ public final class HookActionSentences {
           + " step \"([^\"]*)\" to contribute \"([^\"]*)\" = (.+) and emit step_info \"([^\"]*)\"$")
   public void usesKeptHandles(
       String hook, String policy, String step, String key, String written, String message) {
-    if (!world.model().step(step).keepsHandles()) {
+    world.model().checks().add(model -> keepsHandles(model, step));
+    does(world, hook, policy, new HookAction.UsesKeptHandles(step, key, value(written), message));
+  }
+
+  private static void keepsHandles(Model model, String step) {
+    if (!model.step(step).keepsHandles()) {
       throw new ModelException("\"" + step + "\" does not keep its contributor and step reporter");
     }
-    does(world, hook, policy, new HookAction.UsesKeptHandles(step, key, value(written), message));
   }
 }

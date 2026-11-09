@@ -4,6 +4,7 @@ import io.cucumber.java.en.Given
 import org.itineradev.itinera.conformance.World
 import org.itineradev.itinera.conformance.model.HookAction
 import org.itineradev.itinera.conformance.model.JourneyEmitted
+import org.itineradev.itinera.conformance.model.Model
 import org.itineradev.itinera.conformance.model.ModelException
 import org.itineradev.itinera.conformance.model.value
 
@@ -52,9 +53,13 @@ internal class HookActionSentences(private val world: World) {
         written: String,
         message: String,
     ) {
-        if (!world.model.step(step).keepsHandles) {
-            throw ModelException("\"$step\" does not keep its contributor and step reporter")
-        }
+        world.model.checks.add { model -> keepsHandles(model, step) }
         world.does(hook, policy, HookAction.UsesKeptHandles(step, key, value(written), message))
+    }
+}
+
+private fun keepsHandles(model: Model, step: String) {
+    if (!model.step(step).keepsHandles) {
+        throw ModelException("\"$step\" does not keep its contributor and step reporter")
     }
 }

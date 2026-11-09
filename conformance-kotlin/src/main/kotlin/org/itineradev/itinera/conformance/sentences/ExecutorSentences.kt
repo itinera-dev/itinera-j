@@ -18,7 +18,7 @@ internal class ExecutorSentences(private val world: World) {
 
     @Given("the input adapter {string} is asynchronous")
     fun adapterIsAsynchronous(adapter: String) {
-        model.workflow.adapter(adapter).isAsynchronous = true
+        model.blocks.adapter(adapter).isAsynchronous = true
     }
 
     @Given("the hook {string} of policy {string} is asynchronous")

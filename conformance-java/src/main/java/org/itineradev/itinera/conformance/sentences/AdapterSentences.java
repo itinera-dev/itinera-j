@@ -19,7 +19,7 @@ public final class AdapterSentences {
   }
 
   private AdapterModel adapter(String name) {
-    return world.model().workflow().adapter(name);
+    return world.model().blocks().adapter(name);
   }
 
   @Given(

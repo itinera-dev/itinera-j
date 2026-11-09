@@ -28,7 +28,7 @@ public final class ServiceSentences {
   @Given(
       "^the workflow declares the input adapter \"([^\"]*)\" for the steps (\"[^\"]*\"(?:, \"[^\"]*\")*)$")
   public void declaresTheInputAdapter(String adapter, String steps) {
-    model().workflow().adapt(adapter, names(steps));
+    model().blocks().adapt(adapter, names(steps));
   }
 
   @Given("^step \"([^\"]*)\" requests the service \"([^\"]*)\" of type (\\w+)$")
@@ -39,17 +39,17 @@ public final class ServiceSentences {
   @Given(
       "^the workflow declares the service provider \"([^\"]*)\" for \"([^\"]*)\" of type (\\w+), once per journey$")
   public void declaresAJourneyProvider(String provider, String key, String type) {
-    model().workflow().provide(provider, key, ServiceType.named(type), ProviderScope.JOURNEY);
+    model().blocks().provide(provider, key, ServiceType.named(type), ProviderScope.JOURNEY);
   }
 
   @Given(
       "^the workflow declares the service provider \"([^\"]*)\" for \"([^\"]*)\" of type (\\w+), for each attempt$")
   public void declaresAnAttemptProvider(String provider, String key, String type) {
-    model().workflow().provide(provider, key, ServiceType.named(type), ProviderScope.ATTEMPT);
+    model().blocks().provide(provider, key, ServiceType.named(type), ProviderScope.ATTEMPT);
   }
 
   @Given("^the service provider \"([^\"]*)\" serves only the steps (\"[^\"]*\"(?:, \"[^\"]*\")*)$")
   public void servesOnly(String provider, String steps) {
-    model().workflow().provider(provider).servesOnly(names(steps));
+    model().blocks().provider(provider).servesOnly(names(steps));
   }
 }

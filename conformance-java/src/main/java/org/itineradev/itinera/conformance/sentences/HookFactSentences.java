@@ -7,6 +7,7 @@ import io.cucumber.java.en.Given;
 import org.itineradev.itinera.conformance.World;
 import org.itineradev.itinera.conformance.model.HookAction;
 import org.itineradev.itinera.conformance.model.HookRequest;
+import org.itineradev.itinera.conformance.model.Model;
 import org.itineradev.itinera.conformance.model.ModelException;
 
 /** The sentences that script the facts and roles a hook requests. */
@@ -36,7 +37,13 @@ public final class HookFactSentences {
   @Given(
       "the hook {string} of policy {string} requests the role {string} and calls its operation {string}")
   public void callsTheRole(String hook, String policy, String role, String operation) {
-    var provided = world.model().workflow().roles().get(role);
+    world.model().checks().add(model -> providesTheOperation(model, role, operation));
+    requests(world, hook, policy, new HookRequest.Role(role));
+    does(world, hook, policy, new HookAction.CallsRole(role, operation));
+  }
+
+  private static void providesTheOperation(Model model, String role, String operation) {
+    var provided = model.workflow().roles().get(role);
     if (provided != null && !provided.equals(operation)) {
       throw new ModelException(
           "the role \""
@@ -47,7 +54,5 @@ public final class HookFactSentences {
               + operation
               + "\"");
     }
-    requests(world, hook, policy, new HookRequest.Role(role));
-    does(world, hook, policy, new HookAction.CallsRole(role, operation));
   }
 }

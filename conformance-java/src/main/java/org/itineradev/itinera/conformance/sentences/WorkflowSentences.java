@@ -1,6 +1,7 @@
 package org.itineradev.itinera.conformance.sentences;
 
 import static org.itineradev.itinera.conformance.sentences.Tables.cell;
+import static org.itineradev.itinera.conformance.sentences.Tables.names;
 
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
@@ -32,7 +33,19 @@ public final class WorkflowSentences {
 
   @Given("a workflow {string} with the steps:")
   public void aWorkflowWithTheSteps(String workflow, DataTable steps) {
-    model().declare(workflow, steps.asMaps().stream().map(WorkflowSentences::stepOf).toList());
+    var rows = steps.asMaps();
+    model().declare(workflow, rows.stream().map(WorkflowSentences::stepOf).toList());
+    // Two steps of one name share one script, so a repeated row scripts it once.
+    for (var row : rows.stream().distinct().toList()) {
+      StepColumns.script(model(), row);
+    }
+  }
+
+  @Given("^a workflow \"([^\"]*)\" with the policies (\"[^\"]*\"(?:, \"[^\"]*\")*) and the steps:$")
+  public void aWorkflowWithThePoliciesAndTheSteps(
+      String workflow, String policies, DataTable steps) {
+    aWorkflowWithTheSteps(workflow, steps);
+    model().workflow().attach(names(policies));
   }
 
   @Given("step {string} requests input {string} of type {word}")

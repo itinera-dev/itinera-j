@@ -20,9 +20,9 @@ internal fun World.does(hook: String, policy: String, action: HookAction) {
 /** Says how [hook] of [policy] ends. */
 internal fun World.ends(hook: String, policy: String, ending: HookReturn) {
     val named = Hook.named(hook)
-    model.workflow.policy(policy).hook(named).returns(named, policy, ending)
+    model.blocks.policy(policy).hook(named).returns(named, policy, ending)
 }
 
 /** The script of [hook] of [policy]. */
 internal fun World.scriptOf(hook: String, policy: String): HookScript =
-    model.workflow.policy(policy).hook(Hook.named(hook))
+    model.blocks.policy(policy).hook(Hook.named(hook))

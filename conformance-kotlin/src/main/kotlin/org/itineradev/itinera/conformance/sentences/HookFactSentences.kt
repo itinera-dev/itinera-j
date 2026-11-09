@@ -4,6 +4,7 @@ import io.cucumber.java.en.Given
 import org.itineradev.itinera.conformance.World
 import org.itineradev.itinera.conformance.model.HookAction
 import org.itineradev.itinera.conformance.model.HookRequest
+import org.itineradev.itinera.conformance.model.Model
 import org.itineradev.itinera.conformance.model.ModelException
 
 /** The sentences that script the facts and roles a hook requests. */
@@ -28,13 +29,17 @@ internal class HookFactSentences(private val world: World) {
             "{string}"
     )
     fun callsTheRole(hook: String, policy: String, role: String, operation: String) {
-        val provided = world.model.workflow.roles[role]
-        if (provided != null && provided != operation) {
-            throw ModelException(
-                "the role \"$role\" has the operation \"$provided\", not \"$operation\""
-            )
-        }
+        world.model.checks.add { model -> providesTheOperation(model, role, operation) }
         world.requests(hook, policy, HookRequest.Role(role))
         world.does(hook, policy, HookAction.CallsRole(role, operation))
+    }
+}
+
+private fun providesTheOperation(model: Model, role: String, operation: String) {
+    val provided = model.workflow.roles[role]
+    if (provided != null && provided != operation) {
+        throw ModelException(
+            "the role \"$role\" has the operation \"$provided\", not \"$operation\""
+        )
     }
 }

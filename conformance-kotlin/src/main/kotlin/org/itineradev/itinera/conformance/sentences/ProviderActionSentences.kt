@@ -10,7 +10,7 @@ import org.itineradev.itinera.conformance.run.NotAValue
 /** The sentences that script what a service provider does on every call before it returns. */
 internal class ProviderActionSentences(private val world: World) {
     private fun does(provider: String, action: ProviderAction) {
-        world.model.workflow.provider(provider).actions += action
+        world.model.blocks.provider(provider).actions += action
     }
 
     @Given("the service provider {string} emits {word} {string}")

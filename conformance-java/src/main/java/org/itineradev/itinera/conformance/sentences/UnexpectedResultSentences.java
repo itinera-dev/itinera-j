@@ -42,17 +42,17 @@ public final class UnexpectedResultSentences {
 
   @Given("the input adapter {string} returns no result for {string}")
   public void adapterReturnsNoResult(String adapter, String key) {
-    world.model().workflow().adapter(adapter).answers(key, new AdapterAnswer.NoResult(), null);
+    world.model().blocks().adapter(adapter).answers(key, new AdapterAnswer.NoResult(), null);
   }
 
   @Given("the service provider {string} returns a null-like value")
   public void providerReturnsNull(String provider) {
-    world.model().workflow().provider(provider).returnNull();
+    world.model().blocks().provider(provider).returnNull();
   }
 
   @Given("the policy {string} is built as a null-like value")
   public void policyIsBuiltAsNull(String policy) {
-    world.model().workflow().policy(policy).buildAsNull();
+    world.model().blocks().policy(policy).buildAsNull();
   }
 
   @Given("the workflow's ID generator returns something that is not a string")

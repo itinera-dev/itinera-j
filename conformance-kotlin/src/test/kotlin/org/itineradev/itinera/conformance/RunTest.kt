@@ -130,6 +130,24 @@ class RunTest {
     }
 
     @Test
+    fun `every scenario that defines its building blocks before the workflow passes in both columns`() {
+        assertTrue(runs("@defining"), errors().toString())
+        assertEquals(8, scenarios().size)
+    }
+
+    @Test
+    fun `a table with a column its sentence does not define fails`() {
+        assertFalse(runs("@unknown-column"))
+        assertTrue(errors().all { it.contains("has no column") }, errors().toString())
+    }
+
+    @Test
+    fun `a check that waits for the whole model fails the scenario when it runs`() {
+        assertFalse(runs("@deferred-check"))
+        assertTrue(errors().all { it.contains("has the operation") }, errors().toString())
+    }
+
+    @Test
     fun `a scenario whose sentences do not make a model fails`() {
         assertFalse(runs("@wrong-case"))
     }

@@ -15,7 +15,7 @@ public final class ProviderRequestSentences {
   }
 
   private void requests(String provider, ProviderRequest request) {
-    world.model().workflow().provider(provider).requests().add(request);
+    world.model().blocks().provider(provider).requests().add(request);
   }
 
   @Given("the service provider {string} requests the step name")

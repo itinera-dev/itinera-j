@@ -19,7 +19,16 @@ internal class WorkflowSentences(private val world: World) {
 
     @Given("a workflow {string} with the steps:")
     fun aWorkflowWithTheSteps(workflow: String, steps: DataTable) {
-        model.declare(workflow, steps.asMaps().map(::stepOf))
+        val rows = steps.asMaps()
+        model.declare(workflow, rows.map(::stepOf))
+        // Two steps of one name share one script, so a repeated row scripts it once.
+        rows.distinct().forEach(model::scriptColumns)
+    }
+
+    @Given("""^a workflow "([^"]*)" with the policies ("[^"]*"(?:, "[^"]*")*) and the steps:$""")
+    fun aWorkflowWithThePoliciesAndTheSteps(workflow: String, policies: String, steps: DataTable) {
+        aWorkflowWithTheSteps(workflow, steps)
+        model.workflow.attach(names(policies))
     }
 
     @Given("step {string} requests input {string} of type {word}")

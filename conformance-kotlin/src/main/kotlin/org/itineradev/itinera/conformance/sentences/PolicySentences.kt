@@ -16,14 +16,17 @@ internal class PolicySentences(private val world: World) {
     private val workflow
         get() = world.model.workflow
 
+    private val blocks
+        get() = world.model.blocks
+
     @Given("a step policy {string} defines the hook {string}")
     fun definesAStepHook(policy: String, hook: String) {
-        workflow.define(policy, PolicyKind.STEP, Hook.named(hook))
+        blocks.define(policy, PolicyKind.STEP, Hook.named(hook))
     }
 
     @Given("a workflow policy {string} defines the hook {string}")
     fun definesAWorkflowHook(policy: String, hook: String) {
-        workflow.define(policy, PolicyKind.WORKFLOW, Hook.named(hook))
+        blocks.define(policy, PolicyKind.WORKFLOW, Hook.named(hook))
     }
 
     @Given("""^step "([^"]*)" has the policies ("[^"]*"(?:, "[^"]*")*)$""")
@@ -38,12 +41,12 @@ internal class PolicySentences(private val world: World) {
 
     @Given("the policy {string} fails when it is built")
     fun failsWhenBuilt(policy: String) {
-        workflow.policy(policy).failsToBuild(null)
+        blocks.policy(policy).failsToBuild(null)
     }
 
     @Given("the policy {string} fails with {string} when it is built")
     fun failsWithWhenBuilt(policy: String, message: String) {
-        workflow.policy(policy).failsToBuild(message)
+        blocks.policy(policy).failsToBuild(message)
     }
 
     @Given("the workflow provides the role {string} with the operation {string}")

@@ -7,7 +7,7 @@ import org.itineradev.itinera.conformance.model.ValueType
 
 /** The sentences that script what each service provider requests, in the order written. */
 internal class ProviderRequestSentences(private val world: World) {
-    private fun provider(name: String) = world.model.workflow.provider(name)
+    private fun provider(name: String) = world.model.blocks.provider(name)
 
     @Given("the service provider {string} requests the step name")
     fun requestsTheStepName(provider: String) {
