@@ -2,6 +2,10 @@
 
 Every release of the artifacts `itinera`, `itinera-kotlin`, `itinera-java`, `itinera-testing`, `itinera-checker` and `itinera-bom`, which share one version, under the group `org.itinera-dev` on Maven Central. Each release says the version of the [Itinera specification](https://github.com/itinera-dev/spec) it implements, the tier, the capabilities each language claims and the [conformance cases](https://github.com/itinera-dev/conformance) it passes; the conformance reports of Kotlin and of Java are attached to its GitHub release. Before 1.0, a breaking change raises the minor version and a fix the patch version.
 
+## [0.1.0]
+
+The second release, the first that is not a pre-release: specification 0.1.0, tier 1, capabilities `sync`, `async` and `testing` for Kotlin and `sync` and `testing` for Java, cases `v0.1.0`. It does not break code written for `0.1.0-beta.7`, and holds the same code: the cases `v0.1.0` are those of `v0.1.0-rc.20`, which `0.1.0-beta.7` passes. What a journey does is unchanged. The artifacts run on JDK 17 and later, and need the Kotlin standard library 2.3 or later; `itinera-kotlin` also needs kotlinx.coroutines 1.11 or later.
+
 ## [0.1.0-beta.7]
 
 The first release, a beta: specification 0.1.0, tier 1, capabilities `sync`, `async` and `testing` for Kotlin and `sync` and `testing` for Java, cases `v0.1.0-rc.20`. Its version is the one itinera-rs and itinera-ts give their next releases, which pass the same cases. The artifacts run on JDK 17 and later, and need the Kotlin standard library 2.3 or later; `itinera-kotlin` also needs kotlinx.coroutines 1.11 or later.
@@ -22,4 +26,5 @@ The first release, a beta: specification 0.1.0, tier 1, capabilities `sync`, `as
 - Compile errors, instead of checks while a journey runs, for the rules the specification lets an implementation make impossible to express: a lifecycle a hook may not return, a part of the other mode in a workflow, a rescue step that skips, a service provider of journey scope requesting the attempt, an input adapter writing to the data bag, and a test's script choosing a fraction of an attempt; in Kotlin, also custom code returning what its call cannot return and an ID generator returning something that is not a string. Where an annotated class can still declare one, the workflow is refused when it is described, and `itinera-checker`, added to javac's annotation processor path or to KSP's symbol processors, reports it as a compile error, also in a step, rescue step or policy class that no workflow names.
 - `ExperimentalItineraApi` in `org.itineradev.itinera`, the opt-in marker of API whose proposal itinera does not claim yet, which may change or go in any release; nothing in this release carries it.
 
+[0.1.0]: https://github.com/itinera-dev/itinera-j/releases/tag/v0.1.0
 [0.1.0-beta.7]: https://github.com/itinera-dev/itinera-j/releases/tag/v0.1.0-beta.7
