@@ -42,7 +42,7 @@ public final class UnexpectedResultSentences {
 
   @Given("the input adapter {string} returns no result for {string}")
   public void adapterReturnsNoResult(String adapter, String key) {
-    world.model().blocks().adapter(adapter).answers(key, new AdapterAnswer.NoResult(), null);
+    world.model().blocks().definedAdapter(adapter).answers(key, new AdapterAnswer.NoResult(), null);
   }
 
   @Given("the service provider {string} returns a null-like value")

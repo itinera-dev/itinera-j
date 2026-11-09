@@ -9,7 +9,7 @@ import org.itineradev.itinera.conformance.model.value
 
 /** The sentences that script what each input adapter requests and supplies. */
 internal class AdapterSentences(private val world: World) {
-    private fun adapter(name: String) = world.model.blocks.adapter(name)
+    private fun adapter(name: String) = world.model.blocks.definedAdapter(name)
 
     @Given(
         """^the input adapter "([^"]*)" returns """ +

@@ -87,7 +87,8 @@ Feature: Scenarios that define their building blocks before the workflow and bin
       | audit    | journey_succeeded | 1        |
 
   Scenario: An input adapter that fails for one step, and a provider bound to no step
-    Given the input adapter "ledger" fails with "ledger down" when step "charge" requests "amount"
+    Given the input adapter "ledger" requests the data bag
+    And the input adapter "ledger" fails with "ledger down" when step "charge" requests "amount"
     Given the service provider "stock" makes a labeller for "stock", once per journey
     Given a workflow "orders" with the steps:
       | step   | inputs          | outcome |
