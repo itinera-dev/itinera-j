@@ -24,10 +24,10 @@ final class HookScripts {
   /** Says how {@code hook} of {@code policy} ends. */
   static void ends(World world, String hook, String policy, HookReturn ending) {
     var named = Hook.named(hook);
-    world.model().workflow().policy(policy).hook(named).returns(named, policy, ending);
+    world.model().blocks().policy(policy).hook(named).returns(named, policy, ending);
   }
 
   private static HookScript scriptOf(World world, String hook, String policy) {
-    return world.model().workflow().policy(policy).hook(Hook.named(hook));
+    return world.model().blocks().policy(policy).hook(Hook.named(hook));
   }
 }

@@ -20,6 +20,8 @@ public final class Model {
   private Dispatching dispatching = new Dispatching.Unstated();
   private boolean onlySynchronous;
   private final TestSupport testing = new TestSupport();
+  private final BuildingBlocks blocks = new BuildingBlocks();
+  private final CaseChecks checks = new CaseChecks();
 
   /** What the scenario declares of test support. */
   public TestSupport testing() {
@@ -51,6 +53,16 @@ public final class Model {
     return onlySynchronous;
   }
 
+  /** The policies, input adapters and service providers the scenario defines. */
+  public BuildingBlocks blocks() {
+    return blocks;
+  }
+
+  /** The checks of the case that wait for the whole model. */
+  public CaseChecks checks() {
+    return checks;
+  }
+
   /** The workflow the scenario declared. */
   public WorkflowModel workflow() {
     if (declared == null) {
@@ -64,7 +76,7 @@ public final class Model {
     if (declared != null) {
       throw new ModelException("a workflow is already declared");
     }
-    declared = new WorkflowModel(name, steps);
+    declared = new WorkflowModel(name, steps, blocks);
   }
 
   /** The script of a step, or of a rescue step, of the workflow. */

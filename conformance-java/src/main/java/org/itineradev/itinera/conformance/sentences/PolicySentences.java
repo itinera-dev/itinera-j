@@ -30,12 +30,12 @@ public final class PolicySentences {
 
   @Given("a step policy {string} defines the hook {string}")
   public void definesAStepHook(String policy, String hook) {
-    workflow().define(policy, PolicyKind.STEP, Hook.named(hook));
+    world.model().blocks().define(policy, PolicyKind.STEP, Hook.named(hook));
   }
 
   @Given("a workflow policy {string} defines the hook {string}")
   public void definesAWorkflowHook(String policy, String hook) {
-    workflow().define(policy, PolicyKind.WORKFLOW, Hook.named(hook));
+    world.model().blocks().define(policy, PolicyKind.WORKFLOW, Hook.named(hook));
   }
 
   @Given("^step \"([^\"]*)\" has the policies (\"[^\"]*\"(?:, \"[^\"]*\")*)$")
@@ -50,12 +50,12 @@ public final class PolicySentences {
 
   @Given("the policy {string} fails when it is built")
   public void failsWhenBuilt(String policy) {
-    workflow().policy(policy).failsToBuild(null);
+    world.model().blocks().policy(policy).failsToBuild(null);
   }
 
   @Given("the policy {string} fails with {string} when it is built")
   public void failsWithWhenBuilt(String policy, String message) {
-    workflow().policy(policy).failsToBuild(message);
+    world.model().blocks().policy(policy).failsToBuild(message);
   }
 
   @Given("the workflow provides the role {string} with the operation {string}")

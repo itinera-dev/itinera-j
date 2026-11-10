@@ -50,29 +50,67 @@ internal class ModelTest {
     fun `a sentence about a provider needs exactly one of its name declared`() {
         val model =
             orders().apply {
-                workflow.provide("stock", "stock", ServiceType.LABELLER, ProviderScope.JOURNEY)
+                blocks.provide("stock", "stock", ServiceType.LABELLER, ProviderScope.JOURNEY)
             }
-        assertThrows<ModelException> { model.workflow.provider("payments") }
-        model.workflow.provide("stock", "labels", ServiceType.LABELLER, ProviderScope.ATTEMPT)
-        assertThrows<ModelException> { model.workflow.provider("stock") }
+        assertThrows<ModelException> { model.blocks.provider("payments") }
+        model.blocks.provide("stock", "labels", ServiceType.LABELLER, ProviderScope.ATTEMPT)
+        assertThrows<ModelException> { model.blocks.provider("stock") }
     }
 
     @Test
     fun `a sentence about an input adapter needs exactly one of its name declared`() {
-        val model = orders().apply { workflow.adapt("pricing", listOf("charge")) }
-        assertThrows<ModelException> { model.workflow.adapter("discounts") }
-        model.workflow.adapt("pricing", listOf("charge"))
-        assertThrows<ModelException> { model.workflow.adapter("pricing") }
+        val model = orders().apply { blocks.adapt("pricing", listOf("charge")) }
+        assertThrows<ModelException> { model.blocks.adapter("discounts") }
+        model.blocks.adapt("pricing", listOf("charge"))
+        assertThrows<ModelException> { model.blocks.adapter("pricing") }
+    }
+
+    @Test
+    fun `an input adapter defined before the workflow is the one its binding declares`() {
+        val model = Model()
+        val defined = model.blocks.definedAdapter("pricing")
+        model.declare("orders", listOf("charge"))
+        assertEquals(emptyList<AdapterModel>(), model.workflow.adapters)
+        model.blocks.bindAdapter("pricing", listOf("charge"))
+        assertEquals(listOf(defined), model.workflow.adapters)
+        assertEquals(listOf("charge"), defined.steps)
+    }
+
+    @Test
+    fun `a provider defined before the workflow is declared only once bound`() {
+        val model = Model()
+        model.blocks.defineProvider("stock", "stock", ServiceType.LABELLER, ProviderScope.JOURNEY)
+        assertThrows<ModelException> {
+            model.blocks.defineProvider(
+                "stock",
+                "labels",
+                ServiceType.LABELLER,
+                ProviderScope.ATTEMPT,
+            )
+        }
+        model.declare("orders", listOf("charge"))
+        assertEquals(emptyList<ProviderModel>(), model.workflow.providers)
+        model.blocks.bindProvider("stock", listOf("charge"))
+        assertEquals(listOf("charge"), model.workflow.providers.single().steps)
+        assertThrows<ModelException> { model.blocks.bindProvider("stock", null) }
+    }
+
+    @Test
+    fun `a check that needs the whole model is made only when asked`() {
+        val model = Model()
+        model.checks.add { whole -> whole.step("charge") }
+        model.declare("orders", listOf("ship"))
+        assertThrows<ModelException> { model.checks.make(model) }
     }
 
     @Test
     fun `the steps a provider serves are stated once`() {
         val model =
             orders().apply {
-                workflow.provide("stock", "stock", ServiceType.LABELLER, ProviderScope.JOURNEY)
+                blocks.provide("stock", "stock", ServiceType.LABELLER, ProviderScope.JOURNEY)
             }
-        model.workflow.provider("stock").servesOnly(listOf("charge"))
-        assertThrows<ModelException> { model.workflow.provider("stock").servesOnly(listOf("ship")) }
+        model.blocks.provider("stock").servesOnly(listOf("charge"))
+        assertThrows<ModelException> { model.blocks.provider("stock").servesOnly(listOf("ship")) }
     }
 
     @Test

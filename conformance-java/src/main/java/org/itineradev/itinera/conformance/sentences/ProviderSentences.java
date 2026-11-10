@@ -19,7 +19,7 @@ public final class ProviderSentences {
   }
 
   private ProviderModel provider(String name) {
-    return world.model().workflow().provider(name);
+    return world.model().blocks().provider(name);
   }
 
   @Given(

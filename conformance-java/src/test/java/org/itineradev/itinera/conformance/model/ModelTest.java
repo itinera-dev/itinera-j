@@ -52,27 +52,62 @@ final class ModelTest {
   @Test
   void aSentenceAboutAProviderNeedsExactlyOneOfItsNameDeclared() {
     var model = orders();
-    model.workflow().provide("stock", "stock", ServiceType.LABELLER, ProviderScope.JOURNEY);
-    assertThrows(ModelException.class, () -> model.workflow().provider("payments"));
-    model.workflow().provide("stock", "labels", ServiceType.LABELLER, ProviderScope.ATTEMPT);
-    assertThrows(ModelException.class, () -> model.workflow().provider("stock"));
+    model.blocks().provide("stock", "stock", ServiceType.LABELLER, ProviderScope.JOURNEY);
+    assertThrows(ModelException.class, () -> model.blocks().provider("payments"));
+    model.blocks().provide("stock", "labels", ServiceType.LABELLER, ProviderScope.ATTEMPT);
+    assertThrows(ModelException.class, () -> model.blocks().provider("stock"));
   }
 
   @Test
   void aSentenceAboutAnInputAdapterNeedsExactlyOneOfItsNameDeclared() {
     var model = orders();
-    model.workflow().adapt("pricing", List.of("charge"));
-    assertThrows(ModelException.class, () -> model.workflow().adapter("discounts"));
-    model.workflow().adapt("pricing", List.of("charge"));
-    assertThrows(ModelException.class, () -> model.workflow().adapter("pricing"));
+    model.blocks().adapt("pricing", List.of("charge"));
+    assertThrows(ModelException.class, () -> model.blocks().adapter("discounts"));
+    model.blocks().adapt("pricing", List.of("charge"));
+    assertThrows(ModelException.class, () -> model.blocks().adapter("pricing"));
+  }
+
+  @Test
+  void anInputAdapterDefinedBeforeTheWorkflowIsTheOneItsBindingDeclares() {
+    var model = new Model();
+    var defined = model.blocks().definedAdapter("pricing");
+    model.declare("orders", List.of("charge"));
+    assertEquals(List.of(), model.workflow().adapters());
+    model.blocks().bindAdapter("pricing", List.of("charge"));
+    assertEquals(List.of(defined), model.workflow().adapters());
+    assertEquals(List.of("charge"), defined.steps());
+  }
+
+  @Test
+  void aProviderDefinedBeforeTheWorkflowIsDeclaredOnlyOnceBound() {
+    var model = new Model();
+    var blocks = model.blocks();
+    blocks.defineProvider("stock", "stock", ServiceType.LABELLER, ProviderScope.JOURNEY);
+    assertThrows(
+        ModelException.class,
+        () ->
+            blocks.defineProvider("stock", "labels", ServiceType.LABELLER, ProviderScope.ATTEMPT));
+    model.declare("orders", List.of("charge"));
+    assertEquals(List.of(), model.workflow().providers());
+    blocks.bindProvider("stock", List.of("charge"));
+    assertEquals(List.of("charge"), model.workflow().providers().get(0).steps());
+    assertThrows(ModelException.class, () -> blocks.bindProvider("stock", null));
+  }
+
+  @Test
+  void aCheckThatNeedsTheWholeModelIsMadeOnlyWhenAsked() {
+    var model = new Model();
+    model.checks().add(whole -> whole.step("charge"));
+    model.declare("orders", List.of("ship"));
+    assertThrows(ModelException.class, () -> model.checks().make(model));
   }
 
   @Test
   void theStepsAProviderServesAreStatedOnce() {
     var model = orders();
-    model.workflow().provide("stock", "stock", ServiceType.LABELLER, ProviderScope.JOURNEY);
-    model.workflow().provider("stock").servesOnly(List.of("charge"));
-    var provider = model.workflow().provider("stock");
+    model.blocks().provide("stock", "stock", ServiceType.LABELLER, ProviderScope.JOURNEY);
+    model.blocks().provider("stock").servesOnly(List.of("charge"));
+    var provider = model.blocks().provider("stock");
     var ship = List.of("ship");
     assertThrows(ModelException.class, () -> provider.servesOnly(ship));
   }

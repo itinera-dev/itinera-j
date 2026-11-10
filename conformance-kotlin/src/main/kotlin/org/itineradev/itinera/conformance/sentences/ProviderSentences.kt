@@ -9,7 +9,7 @@ import org.itineradev.itinera.conformance.model.value
 
 /** The sentences that script what each service provider does when called. */
 internal class ProviderSentences(private val world: World) {
-    private fun provider(name: String) = world.model.workflow.provider(name)
+    private fun provider(name: String) = world.model.blocks.provider(name)
 
     @Given(
         "the service provider {string} labels each instance with the value it received for {string}"

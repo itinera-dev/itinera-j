@@ -31,6 +31,12 @@ internal class Model {
     var onlySynchronous = false
         private set
 
+    /** The policies, input adapters and service providers the scenario defines. */
+    val blocks = BuildingBlocks()
+
+    /** The checks of the case that wait for the whole model. */
+    val checks = CaseChecks()
+
     /** The workflow the scenario declared. */
     val workflow: WorkflowModel
         get() = declared ?: throw ModelException("no workflow is declared yet")
@@ -38,7 +44,7 @@ internal class Model {
     /** Declares the workflow, once, with its steps in declaration order. */
     fun declare(name: String, steps: List<String>) {
         if (declared != null) throw ModelException("a workflow is already declared")
-        declared = WorkflowModel(name, steps)
+        declared = WorkflowModel(name, steps, blocks)
     }
 
     /** The script of a step, or of a rescue step, of the workflow. */

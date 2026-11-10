@@ -95,6 +95,7 @@ public final class World {
   }
 
   private Admission admitted() {
+    model.checks().make(model);
     try {
       return new Admission.Admitted(LocalJourneys.of(model, recorders, witness, tested));
     } catch (Violations violations) {

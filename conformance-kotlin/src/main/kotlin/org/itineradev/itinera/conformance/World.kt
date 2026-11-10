@@ -68,11 +68,13 @@ internal class World {
     /** Builds the workflow the scenario declares, in the scenario's column, once. */
     fun admit(): Admission = admitted ?: admittedInColumn().also(::keep)
 
-    private fun admittedInColumn(): Admission =
-        when (column) {
+    private fun admittedInColumn(): Admission {
+        model.checks.make(model)
+        return when (column) {
             Column.SYNCHRONOUS -> admittedBy { localJourneys(model, recorders, witness, tested) }
             Column.ASYNCHRONOUS -> admittedBy { asyncJourneys(model, recorders, witness, tested) }
         }
+    }
 
     private fun keep(admission: Admission) {
         admitted = admission

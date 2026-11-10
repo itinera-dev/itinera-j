@@ -40,7 +40,16 @@ internal sealed interface AdapterAnswer {
  * it requests in the order written and what it does for each input it is scripted for. For any
  * other input it leaves the input to the data bag.
  */
-internal class AdapterModel(val name: String, val steps: List<String>) {
+internal class AdapterModel(val name: String, steps: List<String>) {
+    /** The steps it is attached to, each as often as named. */
+    var steps: List<String> = steps
+        private set
+
+    /** Attaches it to [attached], each as often as named. */
+    fun attach(attached: List<String>) {
+        steps = attached
+    }
+
     /** Whether the adapter runs asynchronously. */
     var isAsynchronous = false
 

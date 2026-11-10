@@ -23,7 +23,7 @@ public final class ExecutorSentences {
 
   @Given("the input adapter {string} is asynchronous")
   public void adapterIsAsynchronous(String adapter) {
-    world.model().workflow().adapter(adapter).markAsynchronous();
+    world.model().blocks().definedAdapter(adapter).markAsynchronous();
   }
 
   @Given("the executor accepts only synchronous steps, hooks and reporters")

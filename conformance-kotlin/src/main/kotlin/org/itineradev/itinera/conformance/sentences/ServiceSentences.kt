@@ -18,7 +18,7 @@ internal class ServiceSentences(private val world: World) {
         """^the workflow declares the input adapter "([^"]*)" for the steps ("[^"]*"(?:, "[^"]*")*)$"""
     )
     fun declaresTheInputAdapter(adapter: String, steps: String) {
-        model.workflow.adapt(adapter, names(steps))
+        model.blocks.adapt(adapter, names(steps))
     }
 
     @Given("""^step "([^"]*)" requests the service "([^"]*)" of type (\w+)$""")
@@ -30,18 +30,18 @@ internal class ServiceSentences(private val world: World) {
         """^the workflow declares the service provider "([^"]*)" for "([^"]*)" of type (\w+), once per journey$"""
     )
     fun declaresAJourneyProvider(provider: String, key: String, type: String) {
-        model.workflow.provide(provider, key, ServiceType.named(type), ProviderScope.JOURNEY)
+        model.blocks.provide(provider, key, ServiceType.named(type), ProviderScope.JOURNEY)
     }
 
     @Given(
         """^the workflow declares the service provider "([^"]*)" for "([^"]*)" of type (\w+), for each attempt$"""
     )
     fun declaresAnAttemptProvider(provider: String, key: String, type: String) {
-        model.workflow.provide(provider, key, ServiceType.named(type), ProviderScope.ATTEMPT)
+        model.blocks.provide(provider, key, ServiceType.named(type), ProviderScope.ATTEMPT)
     }
 
     @Given("""^the service provider "([^"]*)" serves only the steps ("[^"]*"(?:, "[^"]*")*)$""")
     fun servesOnly(provider: String, steps: String) {
-        model.workflow.provider(provider).servesOnly(names(steps))
+        model.blocks.provider(provider).servesOnly(names(steps))
     }
 }

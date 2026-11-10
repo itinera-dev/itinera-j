@@ -2,7 +2,6 @@ package org.itineradev.itinera.conformance.run
 
 import kotlinx.coroutines.runBlocking
 import org.itineradev.itinera.conformance.Column
-import org.itineradev.itinera.conformance.model.AdapterModel
 import org.itineradev.itinera.conformance.model.HookRequest
 import org.itineradev.itinera.conformance.model.Model
 import org.itineradev.itinera.conformance.model.ModelException
@@ -123,14 +122,10 @@ internal fun adapterCalledAlone(
     input: String,
     values: List<Pair<String, Any?>>,
 ): Supplied {
-    val script =
-        model.workflow.adapters.find { declared -> isNamed(declared, adapter) }
-            ?: throw ModelException("the workflow has no input adapter \"$adapter\"")
+    val script = model.blocks.adapter(adapter)
     val bag = values.fold(TestDataBag(), ::holding)
     return Adapting(script).suppliedAlone(step, input, bag.access)
 }
-
-private fun isNamed(adapter: AdapterModel, name: String): Boolean = adapter.name == name
 
 private fun holding(bag: TestDataBag, entry: Pair<String, Any?>): TestDataBag =
     bag.with(entry.first, entry.second)

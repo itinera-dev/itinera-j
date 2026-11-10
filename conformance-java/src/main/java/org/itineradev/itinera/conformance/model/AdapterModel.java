@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public final class AdapterModel {
   private final String name;
-  private final List<String> steps;
+  private List<String> steps;
   private final List<AdapterRequest> requests = new ArrayList<>();
   private final Map<Called, AdapterAnswer> answers = new HashMap<>();
   private String keepsAccessOf;
@@ -34,6 +34,11 @@ public final class AdapterModel {
   /** The steps it is attached to, each as often as named. */
   public List<String> steps() {
     return steps;
+  }
+
+  /** Attaches it to {@code attached}, each as often as named. */
+  void attach(List<String> attached) {
+    steps = List.copyOf(attached);
   }
 
   /** What it requests, in the order written. */

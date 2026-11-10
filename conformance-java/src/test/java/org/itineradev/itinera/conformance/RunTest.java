@@ -136,6 +136,27 @@ final class RunTest {
   }
 
   @Test
+  void everyScenarioThatDefinesItsBuildingBlocksBeforeTheWorkflowPasses() {
+    assertTrue(runs("@defining"), errors().toString());
+    assertEquals(4, scenarios().size());
+  }
+
+  @Test
+  void aTableWithAColumnItsSentenceDoesNotDefineFails() {
+    assertFalse(runs("@unknown-column"));
+    assertTrue(
+        errors().stream().allMatch(error -> error.contains("has no column")), errors().toString());
+  }
+
+  @Test
+  void aCheckThatWaitsForTheWholeModelFailsTheScenarioWhenItRuns() {
+    assertFalse(runs("@deferred-check"));
+    assertTrue(
+        errors().stream().allMatch(error -> error.contains("has the operation")),
+        errors().toString());
+  }
+
+  @Test
   void aScenarioWhoseSentencesDoNotMakeAModelFails() {
     assertFalse(runs("@wrong-case"));
   }

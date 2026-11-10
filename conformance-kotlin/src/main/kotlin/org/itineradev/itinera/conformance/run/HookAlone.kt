@@ -28,7 +28,7 @@ internal fun hookRunAlone(
     column: Column,
 ): RanAlone {
     val script =
-        model.workflow.policy(policy).hooks[Hook.named(hook)]
+        model.blocks.policy(policy).hooks[Hook.named(hook)]
             ?: throw ModelException("the policy \"$policy\" defines no hook \"$hook\"")
     if (script.requests.isNotEmpty()) {
         throw ModelException(

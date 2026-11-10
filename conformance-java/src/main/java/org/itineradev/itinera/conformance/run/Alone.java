@@ -54,7 +54,7 @@ public final class Alone {
    *     its handles, which a hook called alone is not given
    */
   public static RanAlone hookRunAlone(Model model, Witness witness, String policy, String hook) {
-    var script = model.workflow().policy(policy).hook(Hook.named(hook));
+    var script = model.blocks().policy(policy).hook(Hook.named(hook));
     if (!script.requests().isEmpty()) {
       throw new ModelException(
           "the hook \""
@@ -94,7 +94,7 @@ public final class Alone {
       String input,
       List<Map.Entry<String, Object>> values) {
     var bag = values.stream().reduce(new TestDataBag(), Alone::holding, (earlier, later) -> later);
-    return new Adapting(model.workflow().adapter(adapter))
+    return new Adapting(model.blocks().adapter(adapter))
         .suppliedAlone(step, input, bag.getAccess());
   }
 
